@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/menu_pokedex"
+        android:icon="@drawable/ic_pokedex"
+        android:title="@string/bar_pokedex"
+        android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/menu_dmg_calc"
+        android:icon="@drawable/ic_dmg_calc"
+        android:title="@string/bar_dmg_calc"
+        android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/menu_login"
+        android:icon="@drawable/ic_action_person"
+        android:title="@string/bar_login"
+        android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/bar_settings"
+        android:showAsAction="ifRoom" />
+
+</menu>

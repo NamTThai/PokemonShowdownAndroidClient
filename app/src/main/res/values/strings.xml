@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Showdown!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!-- These are for Battle Field Action Bar -->
+    <string-array name="bar_left_drawer">
+        <item>Find Battle!</item>
+        <item>Team Builder</item>
+        <item>Watch Battle</item>
+        <item>Replays</item>
+        <item>Credits</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="bar_room">Room</string>
+    <string name="bar_pokedex">Pokedex</string>
+    <string name="bar_dmg_calc">Damage Calculator</string>
+    <string name="bar_login">Login</string>
+    <string name="bar_settings">Settings</string>
+
+    <!-- These are for Pokedex Action Bar -->
+    <string name="bar_pokedex_search">Search for Pokemon</string>
+
+    <!-- These are for Credits -->
+    <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>
+
+</resources>
