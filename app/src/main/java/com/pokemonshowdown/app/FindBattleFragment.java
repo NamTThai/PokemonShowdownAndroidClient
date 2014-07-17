@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +17,12 @@ public class FindBattleFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
-		View v = inflater.inflate(R.layout.activity_find_battle, parent, false);
-		return v;
+		return inflater.inflate(R.layout.activity_find_battle, parent, false);
 	}
 
-
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getView().setFocusableInTouchMode(true);
+    }
 }

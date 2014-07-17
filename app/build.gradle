@@ -22,3 +22,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:20.0.+'
 }
+
+task appStart(type: Exec, dependsOn: 'installDebug') {
+    // linux
+    commandLine 'adb', 'shell', 'am', 'start', '-n', 'com.pokemonshowdown.app/.BattleFieldActivity'
+}

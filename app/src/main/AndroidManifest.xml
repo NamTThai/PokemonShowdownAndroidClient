@@ -31,6 +31,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".BattleFieldActivity" />
         </activity>
+
+        <activity
+            android:name="com.pokemonshowdown.app.DmgCalcActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BattleFieldActivity" />
+        </activity>
     </application>
 
 </manifest>

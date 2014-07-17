@@ -1,14 +1,11 @@
 package com.pokemonshowdown.app;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -20,14 +17,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 /**
- * Created by thain on 7/15/14.
+ * Created by thain on 7/17/14.
  */
-public class BattleFieldActivity extends FragmentActivity {
-    private int mPosition;
+public class DmgCalcActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
@@ -35,12 +30,12 @@ public class BattleFieldActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_battle_field);
+        setContentView(R.layout.activity_dmgcalc);
 
         mTitle = mDrawerTitle = getTitle();
-        mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_battle_field_drawer);
-        mDrawerList = (ListView) findViewById(R.id.layout_battle_field_left_drawer);
+        mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer_generation);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_dmgcalc_drawer);
+        mDrawerList = (ListView) findViewById(R.id.layout_dmgcalc_left_drawer);
 
         // enable ActionBar application icon to behave as action to toggle navigation drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,7 +44,7 @@ public class BattleFieldActivity extends FragmentActivity {
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_battle_field, mLeftDrawerTitles));
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_dmgcalc, mLeftDrawerTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         // ActionBarDrawerToggle ties together the the proper interactions
@@ -74,7 +69,6 @@ public class BattleFieldActivity extends FragmentActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            mPosition = 0;
             selectItem(0);
         }
     }
@@ -82,7 +76,7 @@ public class BattleFieldActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.fragment_battle_field, menu);
+        inflater.inflate(R.menu.fragment_dmgcalc, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -100,11 +94,7 @@ public class BattleFieldActivity extends FragmentActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
         // Handle action buttons
         switch(item.getItemId()) {
-            case R.id.menu_pokedex:
-                startActivity(new Intent(this, PokedexActivity.class));
-                return true;
-            case R.id.menu_dmg_calc:
-                startActivity(new Intent(this, DmgCalcActivity.class));
+            case R.id.menu_back:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -139,45 +129,16 @@ public class BattleFieldActivity extends FragmentActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment;
-        switch(position) {
-            case 0:
-                mPosition = 0;
-                fragment = new FindBattleFragment();
-                break;
-            case 4:
-                mPosition = 4;
-                fragment = new CreditsFragment();
-                break;
-            default:
-                mPosition = 0;
-                fragment = new FindBattleFragment();
-        }
-
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .commit();
-
-        // update selected item and title, then close the drawer
+    // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mPosition != 0) {
-            selectItem(0);
-            return;
-        }
-        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
-            return;
-        }
-        super.onBackPressed();
     }
 
     // The click listener for ListView in the navigation drawer
@@ -189,3 +150,4 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
 }
+
