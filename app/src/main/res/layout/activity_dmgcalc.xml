@@ -9,7 +9,7 @@
     <FrameLayout
         android:id="@+id/fragmentContainerDmgCalc"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <!-- The navigation drawer -->
     <!-- should not be larger than 320 to show content -->

@@ -35,6 +35,16 @@
     </string-array>
     <string name="back">Back</string>
 
+    <!-- These are for Pokemon List -->
+    <string name="pokemon_list">Pokemon List</string>
+    <string name="pokemon_fragment_description">Save Pokemon</string>
+    <string name="stats_HP">HP</string>
+    <string name="stats_Atk">Atk</string>
+    <string name="stats_Def">Def</string>
+    <string name="stats_Spd">Spd</string>
+    <string name="stats_SpAtk">SpAtk</string>
+    <string name="stats_SpDef">SpDef</string>
+
     <!-- These are for Credits -->
     <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>
 

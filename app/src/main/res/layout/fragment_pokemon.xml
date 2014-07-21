@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_marginLeft="112dp"
+    android:layout_marginRight="112dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="32dp"
+    android:background="@drawable/border_frame"
+    android:weightSum="8">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        >
+
+        <ImageView
+            android:id="@+id/pokemon_icon"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/pokemon_list">
+    
+        </ImageView>
+        
+        <TextView
+            android:id="@+id/pokemon_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="fill_vertical"
+            android:layout_toRightOf="@id/pokemon_icon"/>
+        
+        <ImageButton
+            android:id="@+id/save_pokemon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_pokedex"
+            android:contentDescription="@string/pokemon_fragment_description"/>
+        
+    </RelativeLayout>
+
+    <View style="@style/divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4">
+
+        <ImageView
+            android:id="@+id/pokemon_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/pokemon_list"/>
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/pokemon_view"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true">
+
+            <TableRow>
+
+                <LinearLayout
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/stats_HP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                    <TextView
+                        android:id="@+id/stats_Atk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                    <TextView
+                        android:id="@+id/stats_SpAtk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+
+                <LinearLayout
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/stats_Spd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                    <TextView
+                        android:id="@+id/stats_Def"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                    <TextView
+                        android:id="@+id/stats_SpDef"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/editable_frame"
+                        android:layout_margin="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"/>
+
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:id="@+id/stats_abilities"
+                    android:gravity="fill_vertical"
+                    android:background="@drawable/uneditable_frame"
+                    android:layout_gravity="center"/>
+
+            </TableRow>
+
+        </TableLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3">
+
+    </RelativeLayout>
+
+</LinearLayout>

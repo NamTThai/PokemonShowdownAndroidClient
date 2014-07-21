@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="p184">Azumarill</string>
+    <string name="p184HP">100</string>
+    <string name="p184Atk">50</string>
+    <string name="p184Def">80</string>
+    <string name="p184SpAtk">60</string>
+    <string name="p184SpDef">80</string>
+    <string name="p184Spd">50</string>
+    <string-array name="p184Ability">
+        <item>Huge Power</item>
+        <item>Sap Sipper</item>
+        <item>Thick Fat</item>
+    </string-array>
+</resources>

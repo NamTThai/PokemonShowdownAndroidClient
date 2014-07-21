@@ -5,7 +5,9 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -136,6 +138,12 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private void selectItem(int position) {
     // update selected item and title, then close the drawer
+        Fragment fragment = new PokemonFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerDmgCalc, fragment)
+                .commit();
+
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
