@@ -10,22 +10,26 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 /**
  * Created by thain on 7/18/14.
+ *
+ * Array indices:
+ * 0 HP
+ * 1 Atk
+ * 2 Def
+ * 3 Spd
+ * 4 SpAtk
+ * 5 SpDef
  */
 public class PokemonFragment extends DialogFragment {
     public final static String PokemonTAG = "POKEMON_FRAGMENT";
 
-    private int mHP;
-    private int mAtk;
-    private int mDef;
-    private int mSpd;
-    private int mSpAtk;
-    private int mSpDef;
+    private int[] mStats;
+    private int[] mBaseStats;
     private int[] mEV;
     private int[] mIV;
     private int mAbility;
@@ -34,6 +38,10 @@ public class PokemonFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStats = new int[6];
+        mBaseStats = new int[6];
+        mEV = new int[6];
+        mIV = new int[6];
     }
 
     @Override
@@ -58,16 +66,31 @@ public class PokemonFragment extends DialogFragment {
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
         pokemonView.setImageResource(R.drawable.p184);
 
-        mHP = Integer.parseInt(getResources().getString(R.string.p184HP));
-        mAtk = Integer.parseInt(getResources().getString(R.string.p184Atk));
-        mDef = Integer.parseInt(getResources().getString(R.string.p184Def));
-        mSpd = Integer.parseInt(getResources().getString(R.string.p184Spd));
-        mSpAtk = Integer.parseInt(getResources().getString(R.string.p184SpAtk));
-        mSpDef = Integer.parseInt(getResources().getString(R.string.p184SpDef));
+        mStats[0] = Integer.parseInt(getResources().getString(R.string.p184HP));
+        mStats[1] = Integer.parseInt(getResources().getString(R.string.p184Atk));
+        mStats[2] = Integer.parseInt(getResources().getString(R.string.p184Def));
+        mStats[3] = Integer.parseInt(getResources().getString(R.string.p184Spd));
+        mStats[4] = Integer.parseInt(getResources().getString(R.string.p184SpAtk));
+        mStats[5] = Integer.parseInt(getResources().getString(R.string.p184SpDef));
+
+        Arrays.fill(mIV, 31);
 
         TextView pokemonStats= (TextView) view.findViewById(R.id.stats);
         setStatsString(pokemonStats);
         pokemonStats.setBackgroundResource(R.drawable.editable_frame);
+        pokemonStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                StatsDialog statsDialog = new StatsDialog();
+                Bundle bundle = new Bundle();
+                bundle.putIntArray("Stats", mStats);
+                bundle.putIntArray("EVs", mEV);
+                bundle.putIntArray("IVs", mIV);
+                statsDialog.setArguments(bundle);
+                statsDialog.show(fm, StatsDialog.STAG);
+            }
+        });
 
         TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
         pokemonAbility.setBackgroundResource(R.drawable.editable_frame);
@@ -92,60 +115,11 @@ public class PokemonFragment extends DialogFragment {
                 bundle.putStringArray("AbilityList", mAbilityList);
                 bundle.putInt("SelectedAbility", mAbility);
                 abilityDialog.setArguments(bundle);
-
                 abilityDialog.show(fm, AbilityDialog.ATAG);
             }
         });
 
         return view;
-    }
-
-    public int getHP() {
-        return mHP;
-    }
-
-    public void setHP(int HP) {
-        mHP = HP;
-    }
-
-    public int getAtk() {
-        return mAtk;
-    }
-
-    public void setAtk(int atk) {
-        mAtk = atk;
-    }
-
-    public int getDef() {
-        return mDef;
-    }
-
-    public void setDef(int def) {
-        mDef = def;
-    }
-
-    public int getSpd() {
-        return mSpd;
-    }
-
-    public void setSpd(int spd) {
-        mSpd = spd;
-    }
-
-    public int getSpAtk() {
-        return mSpAtk;
-    }
-
-    public void setSpAtk(int spAtk) {
-        mSpAtk = spAtk;
-    }
-
-    public int getSpDef() {
-        return mSpDef;
-    }
-
-    public void setSpDef(int spDef) {
-        mSpDef = spDef;
     }
 
     public int[] getEV() {
@@ -184,75 +158,24 @@ public class PokemonFragment extends DialogFragment {
         mAbilityList = abilityList;
     }
 
-    //TODO: get stats power and color code them accordingly
-    private void resetStatsColor() {
-
-    }
-
     private String getStatsString() {
-        return ("HP " + Integer.toString(mHP) + " / Atk " + Integer.toString(mAtk) + " / Def " + Integer.toString(mDef) + " / Spd " + Integer.toString(mSpd) + " / SpAtk " + Integer.toString(mSpAtk) + " / SpDef " + Integer.toString(mSpDef));
+        return ("HP " + Integer.toString(mStats[0]) + " / Atk " + Integer.toString(mStats[1]) + " / Def " + Integer.toString(mStats[2]) + " / Spd " + Integer.toString(mStats[3]) + " / SpAtk " + Integer.toString(mStats[4]) + " / SpDef " + Integer.toString(mStats[5]));
     }
 
     private void setStatsString(TextView textView) {
         textView.setText(getStatsString());
     }
 
+    private String getBaseStatsString() {
+        return ("HP " + Integer.toString(mBaseStats[0]) + " / Atk " + Integer.toString(mBaseStats[1]) + " / Def " + Integer.toString(mBaseStats[2]) + " / Spd " + Integer.toString(mBaseStats[3]) + " / SpAtk " + Integer.toString(mBaseStats[4]) + " / SpDef " + Integer.toString(mBaseStats[5]));
+    }
+
+    private void setBaseStatsString(TextView textView) {
+        textView.setText(getBaseStatsString());
+    }
+
     private void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class AbilityDialog extends DialogFragment {
-        public static final String ATAG = "ABILITY_DIALOG";
-
-        private String[] mAbilityList;
-
-        public AbilityDialog() {
-
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-            View view = inflater.inflate(R.layout.dialog_ability, container);
-
-            RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.pokemon_ability_list);
-            radioGroup.removeAllViews();
-            mAbilityList = getArguments().getStringArray("AbilityList");
-            int selectedAbility = getArguments().getInt("SelectedAbility");
-            for (int i=0; i < mAbilityList.length; i++) {
-                RadioButton radioButton = new RadioButton(getActivity());
-                radioButton.setText(mAbilityList[i]);
-                radioButton.setPadding(0, 0, 48, 0);
-                if (i == selectedAbility) {
-                    radioButton.setChecked(true);
-                }
-                radioGroup.addView(radioButton);
-            }
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
-                    pokemonFragment.setAbility(group.indexOfChild(group.findViewById(checkedId)));
-                    getDialog().dismiss();
-                }
-            });
-
-            return view;
-        }
-    }
-
-    private class StatsDialog extends DialogFragment {
-        public static final String STAG = "STATS_DIALOG";
-
-        public StatsDialog() {
-
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-            View view = inflater.inflate(R.layout.dialog_stats, container);
-        }
-    }
 }
