@@ -122,6 +122,22 @@ public class PokemonFragment extends DialogFragment {
         return view;
     }
 
+    public int[] getStats() {
+        return mStats;
+    }
+
+    public void setStats(int[] stats) {
+        mStats = stats;
+    }
+
+    public int[] getBaseStats() {
+        return mBaseStats;
+    }
+
+    public void setBaseStats(int[] baseStats) {
+        mBaseStats = baseStats;
+    }
+
     public int[] getEV() {
         return mEV;
     }

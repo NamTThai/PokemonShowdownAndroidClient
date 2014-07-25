@@ -3,13 +3,15 @@ package com.pokemonshowdown.app;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
@@ -37,10 +39,9 @@ public class StatsDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.dialog_stats, container);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.dialog_stats, container);
-
-        return view;
+        return v;
     }
 
     @Override
@@ -50,31 +51,68 @@ public class StatsDialog extends DialogFragment {
         setEVs(mEVs);
         setIVs(mIVs);
 
+        getView().findViewById(R.id.save_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {FragmentManager fm = getActivity().getSupportFragmentManager();
+                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
+                pokemonFragment.setStats(mStats);
+                pokemonFragment.setEV(mEVs);
+                pokemonFragment.setIV(mIVs);
+                getDialog().dismiss();
+            }
+        });
+
         // Below are SeekBars
+        SeekBar seekBar;
+        seekBar = (SeekBar) getView().findViewById(R.id.bar_HP);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setEVs(progress*4, -1, -1, -1, -1, -1);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         // Below are EVs
         EditText editText;
 
         // Below are IVs
         editText = (EditText) getView().findViewById(R.id.IV_HP);
-        editText.addTextChangedListener(new TextWatcher() {
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.d(STAG, "The user has pressed done");
+                return false;
             }
         });
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) ||
+                        (keyCode == KeyEvent.KEYCODE_HOME && event.getAction() == KeyEvent.ACTION_DOWN) ||
+                        (keyCode == KeyEvent.KEYCODE_WINDOW && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    Log.d(STAG, "The user has pressed back");
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void validateEV() {
+
+    }
+
+    private void validateIV() {
 
     }
 
@@ -126,35 +164,48 @@ public class StatsDialog extends DialogFragment {
 
     private void setEVs(int HP, int Atk, int Def, int Spd, int SpAtk, int SpDef) {
         EditText editText;
+        SeekBar seekBar;
         if (HP != -1) {
             mEVs[0] = HP;
             editText = (EditText) getView().findViewById(R.id.EV_HP);
             editText.setText(Integer.toString(HP), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_HP);
+            seekBar.setProgress(HP/4);
         }
         if (Atk != -1) {
             mEVs[1] = Atk;
             editText = (EditText) getView().findViewById(R.id.EV_Atk);
             editText.setText(Integer.toString(Atk), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_Atk);
+            seekBar.setProgress(Atk/4);
         }
         if (Def != -1) {
             mEVs[2] = Def;
             editText = (EditText) getView().findViewById(R.id.EV_Def);
             editText.setText(Integer.toString(Def), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_Def);
+            seekBar.setProgress(Def/4);
         }
         if (Spd != -1) {
             mEVs[3] = Spd;
             editText = (EditText) getView().findViewById(R.id.EV_Spd);
             editText.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_Spd);
+            seekBar.setProgress(Spd/4);
         }
         if (SpAtk != -1) {
             mEVs[4] = SpAtk;
             editText = (EditText) getView().findViewById(R.id.EV_SpAtk);
             editText.setText(Integer.toString(SpAtk), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_SpAtk);
+            seekBar.setProgress(SpAtk/4);
         }
         if (SpDef != -1) {
             mEVs[5] = SpDef;
             editText = (EditText) getView().findViewById(R.id.EV_SpDef);
             editText.setText(Integer.toString(SpDef), TextView.BufferType.EDITABLE);
+            seekBar = (SeekBar) getView().findViewById(R.id.bar_SpDef);
+            seekBar.setProgress(SpDef/4);
         }
         editText = (EditText) getView().findViewById(R.id.EV_HP);
         int remainingEVs = getRemainingEVs();

@@ -47,6 +47,7 @@
     <string name="stats_SpDef">SpDef</string>
     <string name="EVs">EVs</string>
     <string name="IVs">IVs</string>
+    <string name="save">Save</string>
 
     <!-- These are for Credits -->
     <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>
