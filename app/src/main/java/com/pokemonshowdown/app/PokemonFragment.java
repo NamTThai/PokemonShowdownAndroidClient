@@ -17,14 +17,6 @@ import java.util.Iterator;
 
 /**
  * Created by thain on 7/18/14.
- *
- * Array indices:
- * 0 HP
- * 1 Atk
- * 2 Def
- * 3 Spd
- * 4 SpAtk
- * 5 SpDef
  */
 public class PokemonFragment extends DialogFragment {
     public final static String PokemonTAG = "POKEMON_FRAGMENT";
@@ -128,7 +120,7 @@ public class PokemonFragment extends DialogFragment {
     }
 
     public String getStatsString() {
-        return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpAtk " + Integer.toString(getPokemon().getSpAtk()) + " / SpDef " + Integer.toString(getPokemon().getSpDef()) + " / Spd " + Integer.toString(getPokemon().getSpd()));
+        return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpA " + Integer.toString(getPokemon().getSpAtk()) + " / SpD " + Integer.toString(getPokemon().getSpDef()) + " / Spe " + Integer.toString(getPokemon().getSpd()));
     }
 
     public void resetStatsString() {
@@ -137,7 +129,7 @@ public class PokemonFragment extends DialogFragment {
     }
 
     private String getBaseStatsString() {
-        return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpAtk " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpDef " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spd " + Integer.toString(getPokemon().getBaseSpd()));
+        return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
     }
 
     private void resetBaseStatsString() {

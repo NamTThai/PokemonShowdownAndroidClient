@@ -42,9 +42,9 @@
     <string name="stats_HP">HP</string>
     <string name="stats_Atk">Atk</string>
     <string name="stats_Def">Def</string>
-    <string name="stats_Spd">Spd</string>
-    <string name="stats_SpAtk">SpAtk</string>
-    <string name="stats_SpDef">SpDef</string>
+    <string name="stats_Spd">Spe</string>
+    <string name="stats_SpAtk">SpA</string>
+    <string name="stats_SpDef">SpD</string>
     <string name="EVs">EVs</string>
     <string name="IVs">IVs</string>
     <string name="save">Save</string>

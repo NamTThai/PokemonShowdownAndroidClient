@@ -150,50 +150,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_Spd"
-                android:layout_marginLeft="8dp"
-                />
-
-            <TextView
-                android:id="@+id/final_Spd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_Spd"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <EditText
-                android:id="@+id/EV_Spd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
-                />
-
-            <EditText
-                android:id="@+id/IV_Spd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
-                />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="@string/stats_SpAtk"
                 android:layout_marginLeft="8dp"
                 />
@@ -267,6 +223,50 @@
 
             <EditText
                 android:id="@+id/IV_SpDef"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_Spd"
+                android:layout_marginLeft="8dp"
+                />
+
+            <TextView
+                android:id="@+id/final_Spd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                />
+
+            <SeekBar
+                android:id="@+id/bar_Spd"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:max="63"
+                />
+
+            <EditText
+                android:id="@+id/EV_Spd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                />
+
+            <EditText
+                android:id="@+id/IV_Spd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="number"

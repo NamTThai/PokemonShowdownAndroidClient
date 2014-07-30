@@ -2,6 +2,9 @@ package com.pokemonshowdown.data;
 
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
+
+import com.pokemonshowdown.app.StatsDialog;
 
 /**
  * Created by thain on 7/30/14.
@@ -19,6 +22,7 @@ public class InputFilterMinMax implements InputFilter {
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         try {
             int input = Integer.parseInt(dest.toString() + source.toString());
+            Log.d(StatsDialog.STAG, "Dest.toString() " + dest.toString() + ", source.toString() " + source.toString());
             if (isInRange(mMin, mMax, input)) {
                 return null;
             }
