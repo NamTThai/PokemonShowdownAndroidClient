@@ -12,7 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by thain on 7/18/14.
@@ -28,20 +29,12 @@ import java.util.Arrays;
 public class PokemonFragment extends DialogFragment {
     public final static String PokemonTAG = "POKEMON_FRAGMENT";
 
-    private int[] mStats;
-    private int[] mBaseStats;
-    private int[] mEV;
-    private int[] mIV;
-    private int mAbility;
-    private String[] mAbilityList;
+    private Pokemon mPokemon;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mStats = new int[6];
-        mBaseStats = new int[6];
-        mEV = new int[6];
-        mIV = new int[6];
+        mPokemon = new Pokemon(getActivity(), "azumarill");
     }
 
     @Override
@@ -49,11 +42,18 @@ public class PokemonFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_pokemon, container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         ImageView pokemonIcon = (ImageView) view.findViewById(R.id.pokemon_icon);
         pokemonIcon.setImageResource(R.drawable.p184s);
 
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
-        pokemonName.setText(R.string.p184);
+        pokemonName.setText(getPokemon().getName());
 
         ImageButton imageButton = (ImageButton) view.findViewById(R.id.save_pokemon);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -66,17 +66,8 @@ public class PokemonFragment extends DialogFragment {
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
         pokemonView.setImageResource(R.drawable.p184);
 
-        mStats[0] = Integer.parseInt(getResources().getString(R.string.p184HP));
-        mStats[1] = Integer.parseInt(getResources().getString(R.string.p184Atk));
-        mStats[2] = Integer.parseInt(getResources().getString(R.string.p184Def));
-        mStats[3] = Integer.parseInt(getResources().getString(R.string.p184Spd));
-        mStats[4] = Integer.parseInt(getResources().getString(R.string.p184SpAtk));
-        mStats[5] = Integer.parseInt(getResources().getString(R.string.p184SpDef));
-
-        Arrays.fill(mIV, 31);
-
         TextView pokemonStats= (TextView) view.findViewById(R.id.stats);
-        setStatsString(pokemonStats);
+        resetStatsString();
         pokemonStats.setBackgroundResource(R.drawable.editable_frame);
         pokemonStats.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,9 +75,12 @@ public class PokemonFragment extends DialogFragment {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 StatsDialog statsDialog = new StatsDialog();
                 Bundle bundle = new Bundle();
-                bundle.putIntArray("Stats", mStats);
-                bundle.putIntArray("EVs", mEV);
-                bundle.putIntArray("IVs", mIV);
+                bundle.putIntArray("Stats", getPokemon().getStats());
+                bundle.putIntArray("BaseStats", getPokemon().getBaseStats());
+                bundle.putIntArray("EVs", getPokemon().getEVs());
+                bundle.putIntArray("IVs", getPokemon().getIVs());
+                bundle.putInt("Level", getPokemon().getLevel());
+                bundle.putFloatArray("NatureMultiplier", getPokemon().getNatureMultiplier());
                 statsDialog.setArguments(bundle);
                 statsDialog.show(fm, StatsDialog.STAG);
             }
@@ -94,15 +88,19 @@ public class PokemonFragment extends DialogFragment {
 
         TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
         pokemonAbility.setBackgroundResource(R.drawable.editable_frame);
-        mAbilityList = getResources().getStringArray(R.array.p184Ability);
-        String abilities = mAbilityList[0];
-        for (int i=1; i < mAbilityList.length; i++) {
-            abilities += " / " + mAbilityList[i];
-        }
-        if (getArguments() != null && getArguments().getInt("Ability") != 0) {
-            setAbility(getArguments().getInt("Ability") - 1);
+        String abilities;
+        if (getArguments() != null && getArguments().getString("Ability") != null) {
+            getPokemon().setAbility(getArguments().getString("Ability"));
+            abilities = getPokemon().getAbility();
         } else {
-            mAbility = -1;
+            HashMap<String, String> abilityList = getPokemon().getAbilityList();
+            Iterator<String> abilityTags = abilityList.keySet().iterator();
+            String abilityTag = abilityTags.next();
+            abilities = abilityList.get(abilityTag);
+            while (abilityTags.hasNext()) {
+                abilityTag = abilityTags.next();
+                abilities += "/" + abilityList.get(abilityTag);
+            }
         }
 
         pokemonAbility.setText(abilities);
@@ -112,82 +110,39 @@ public class PokemonFragment extends DialogFragment {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 AbilityDialog abilityDialog = new AbilityDialog();
                 Bundle bundle = new Bundle();
-                bundle.putStringArray("AbilityList", mAbilityList);
-                bundle.putInt("SelectedAbility", mAbility);
+                bundle.putSerializable("AbilityList", getPokemon().getAbilityList());
+                bundle.putString("SelectedAbility", getPokemon().getAbilityTag());
                 abilityDialog.setArguments(bundle);
                 abilityDialog.show(fm, AbilityDialog.ATAG);
             }
         });
-
-        return view;
     }
 
-    public int[] getStats() {
-        return mStats;
+    public Pokemon getPokemon() {
+        return mPokemon;
     }
 
-    public void setStats(int[] stats) {
-        mStats = stats;
+    public void setAbilityString(String ability) {
+        TextView pokemonAbility = (TextView) getView().findViewById(R.id.stats_abilities);
+        pokemonAbility.setText(ability);
     }
 
-    public int[] getBaseStats() {
-        return mBaseStats;
+    public String getStatsString() {
+        return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpAtk " + Integer.toString(getPokemon().getSpAtk()) + " / SpDef " + Integer.toString(getPokemon().getSpDef()) + " / Spd " + Integer.toString(getPokemon().getSpd()));
     }
 
-    public void setBaseStats(int[] baseStats) {
-        mBaseStats = baseStats;
-    }
-
-    public int[] getEV() {
-        return mEV;
-    }
-
-    public void setEV(int[] EV) {
-        mEV = EV;
-    }
-
-    public int[] getIV() {
-        return mIV;
-    }
-
-    public void setIV(int[] IV) {
-        mIV = IV;
-    }
-
-    public int getAbility() {
-        return mAbility;
-    }
-
-    public void setAbility(int ability) {
-        mAbility = ability;
-        if (mAbility != -1) {
-            TextView pokemonAbility = (TextView) getView().findViewById(R.id.stats_abilities);
-            pokemonAbility.setText(mAbilityList[ability]);
-        }
-    }
-
-    public String[] getAbilityList() {
-        return mAbilityList;
-    }
-
-    public void setAbilityList(String[] abilityList) {
-        mAbilityList = abilityList;
-    }
-
-    private String getStatsString() {
-        return ("HP " + Integer.toString(mStats[0]) + " / Atk " + Integer.toString(mStats[1]) + " / Def " + Integer.toString(mStats[2]) + " / Spd " + Integer.toString(mStats[3]) + " / SpAtk " + Integer.toString(mStats[4]) + " / SpDef " + Integer.toString(mStats[5]));
-    }
-
-    private void setStatsString(TextView textView) {
-        textView.setText(getStatsString());
+    public void resetStatsString() {
+        TextView pokemonStats= (TextView) getView().findViewById(R.id.stats);
+        pokemonStats.setText(getStatsString());
     }
 
     private String getBaseStatsString() {
-        return ("HP " + Integer.toString(mBaseStats[0]) + " / Atk " + Integer.toString(mBaseStats[1]) + " / Def " + Integer.toString(mBaseStats[2]) + " / Spd " + Integer.toString(mBaseStats[3]) + " / SpAtk " + Integer.toString(mBaseStats[4]) + " / SpDef " + Integer.toString(mBaseStats[5]));
+        return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpAtk " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpDef " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spd " + Integer.toString(getPokemon().getBaseSpd()));
     }
 
-    private void setBaseStatsString(TextView textView) {
-        textView.setText(getBaseStatsString());
+    private void resetBaseStatsString() {
+        TextView pokemonStats= (TextView) getView().findViewById(R.id.stats);
+        pokemonStats.setText(getBaseStatsString());
     }
 
     private void closeFragment() {

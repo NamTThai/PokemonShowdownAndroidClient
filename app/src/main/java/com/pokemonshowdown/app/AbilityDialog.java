@@ -11,6 +11,9 @@ import android.view.Window;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 /**
  * Created by thain on 7/22/14.
  */
@@ -18,7 +21,7 @@ import android.widget.RadioGroup;
 public class AbilityDialog extends DialogFragment {
     public static final String ATAG = "ABILITY_DIALOG";
 
-    private String[] mAbilityList;
+    private HashMap<String, String> mAbilityList;
 
     public AbilityDialog() {
 
@@ -31,13 +34,16 @@ public class AbilityDialog extends DialogFragment {
 
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.pokemon_ability_list);
         radioGroup.removeAllViews();
-        mAbilityList = getArguments().getStringArray("AbilityList");
-        int selectedAbility = getArguments().getInt("SelectedAbility");
-        for (int i=0; i < mAbilityList.length; i++) {
+        mAbilityList = (HashMap<String, String>) getArguments().getSerializable("AbilityList");
+        String selectedAbility = getArguments().getString("SelectedAbility");
+        Iterator<String> keys = mAbilityList.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
             RadioButton radioButton = new RadioButton(getActivity());
-            radioButton.setText(mAbilityList[i]);
+            radioButton.setText(mAbilityList.get(key));
             radioButton.setPadding(0, 0, 48, 0);
-            if (i == selectedAbility) {
+            radioButton.setTag(key);
+            if (key.equals(selectedAbility)) {
                 radioButton.setChecked(true);
             }
             radioGroup.addView(radioButton);
@@ -47,7 +53,8 @@ public class AbilityDialog extends DialogFragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
-                pokemonFragment.setAbility(group.indexOfChild(group.findViewById(checkedId)));
+                pokemonFragment.getPokemon().setAbility((String) group.findViewById(checkedId).getTag());
+                pokemonFragment.setAbilityString(pokemonFragment.getPokemon().getAbility());
                 getDialog().dismiss();
             }
         });

@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.pokemonshowdown.data.InputFilterMinMax;
 
 /**
  * Created by thain on 7/22/14.
@@ -22,8 +25,11 @@ public class StatsDialog extends DialogFragment {
     public static final int maxEV = 508;
 
     private int[] mStats;
+    private int[] mBaseStats;
     private int[] mEVs;
     private int[] mIVs;
+    private int mLevel;
+    private float[] mNatureMultiplier;
 
     public StatsDialog() {
 
@@ -33,8 +39,11 @@ public class StatsDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mStats = getArguments().getIntArray("Stats");
+        mBaseStats = getArguments().getIntArray("BaseStats");
         mEVs = getArguments().getIntArray("EVs");
         mIVs = getArguments().getIntArray("IVs");
+        mLevel = getArguments().getInt("Level");
+        mNatureMultiplier = getArguments().getFloatArray("NatureMultiplier");
     }
 
     @Override
@@ -55,9 +64,10 @@ public class StatsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {FragmentManager fm = getActivity().getSupportFragmentManager();
                 PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
-                pokemonFragment.setStats(mStats);
-                pokemonFragment.setEV(mEVs);
-                pokemonFragment.setIV(mIVs);
+                pokemonFragment.getPokemon().setStats(mStats);
+                pokemonFragment.getPokemon().setEVs(mEVs);
+                pokemonFragment.getPokemon().setIVs(mIVs);
+                pokemonFragment.resetStatsString();
                 getDialog().dismiss();
             }
         });
@@ -87,32 +97,172 @@ public class StatsDialog extends DialogFragment {
 
         // Below are IVs
         editText = (EditText) getView().findViewById(R.id.IV_HP);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Log.d(STAG, "The user has pressed done");
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
-        });
-        editText.setOnKeyListener(new View.OnKeyListener() {
+
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) ||
-                        (keyCode == KeyEvent.KEYCODE_HOME && event.getAction() == KeyEvent.ACTION_DOWN) ||
-                        (keyCode == KeyEvent.KEYCODE_WINDOW && event.getAction() == KeyEvent.ACTION_DOWN)) {
-                    Log.d(STAG, "The user has pressed back");
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
                 }
-                return false;
+                mIVs[0] = intValue;
+                mStats[0] = Pokemon.calculateHP(mBaseStats[0], mIVs[0], mEVs[0], mLevel);
+                setStats(mStats[0], -1, -1, -1, -1, -1);
             }
         });
 
-    }
+        editText = (EditText) getView().findViewById(R.id.IV_Atk);
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-    private void validateEV() {
+            }
 
-    }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-    private void validateIV() {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
+                }
+                mIVs[1] = intValue;
+                mStats[1] = Pokemon.calculateAtk(mBaseStats[1], mIVs[1], mEVs[1], mLevel, mNatureMultiplier[1]);
+                setStats(-1, mStats[1], -1, -1, -1, -1);
+            }
+        });
+
+        editText = (EditText) getView().findViewById(R.id.IV_Def);
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
+                }
+                mIVs[2] = intValue;
+                mStats[2] = Pokemon.calculateDef(mBaseStats[2], mIVs[2], mEVs[2], mLevel, mNatureMultiplier[2]);
+                setStats(-1, -1, mStats[2], -1, -1, -1);
+            }
+        });
+
+        editText = (EditText) getView().findViewById(R.id.IV_SpAtk);
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
+                }
+                mIVs[3] = intValue;
+                mStats[3] = Pokemon.calculateSpAtk(mBaseStats[3], mIVs[3], mEVs[3], mLevel, mNatureMultiplier[3]);
+                setStats(-1, -1, -1, mStats[3], -1, -1);
+            }
+        });
+
+        editText = (EditText) getView().findViewById(R.id.IV_SpDef);
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
+                }
+                mIVs[4] = intValue;
+                mStats[4] = Pokemon.calculateSpDef(mBaseStats[4], mIVs[4], mEVs[4], mLevel, mNatureMultiplier[4]);
+                setStats(-1, -1, -1, -1, mStats[4], -1);
+            }
+        });
+
+        editText = (EditText) getView().findViewById(R.id.IV_Spd);
+        editText.setFilters(new InputFilter[]{new InputFilterMinMax(0, 31)});
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String newValue = s.toString();
+                int intValue;
+                if (newValue.matches("")) {
+                    intValue = 0;
+                } else {
+                    intValue = Integer.parseInt(newValue);
+                }
+                mIVs[5] = intValue;
+                mStats[5] = Pokemon.calculateSpd(mBaseStats[5], mIVs[5], mEVs[5], mLevel, mNatureMultiplier[5]);
+                setStats(-1, -1, -1, -1, -1, mStats[5]);
+            }
+        });
 
     }
 

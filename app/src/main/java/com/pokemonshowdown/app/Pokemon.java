@@ -1,6 +1,18 @@
 package com.pokemonshowdown.app;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.pokemonshowdown.data.Pokedex;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by thain on 7/22/14.
@@ -14,6 +26,10 @@ import java.io.Serializable;
  * Spd: 5
  *
  * Example for Modest mNatureMultiplier array (+SpAtk, -Atk) [1.0, 0.9, 1.0, 1.1, 1.0, 1.0]
+ *
+ * Gender -1: female; 0: genderless; 1: male
+ *
+ * mAbility holds ability tag
  */
 public class Pokemon implements Serializable {
     private final static String PTAG = "POKEMON_OBJECT";
@@ -22,28 +38,69 @@ public class Pokemon implements Serializable {
     private int mIconSmall;
     private int mIconShiny;
 
+    private String mName;
+    private String mNickName;
     private int[] mStats;
     private int[] mBaseStats;
     private int[] mEVs;
     private int[] mIVs;
     private int mLevel;
-    private int mGender;
-    private int[] mNatureMultiplier;
+    private String mGender;
+    private float[] mNatureMultiplier;
     private String mNature;
     private boolean mShiny;
-    private int mAbility;
-    private String[] mAbilityList;
+    private String mAbility;
+    private HashMap<String, String> mAbilityList;
     private String[] mType;
     private String[] mMoves;
     private String[] mMoveList;
     private int mWeight;
 
-    public Pokemon(int id) {
-
+    public Pokemon(Context appContext, String name) {
+        try {
+            JSONObject jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            mName = jsonObject.getString("species");
+            setNickName(mName);
+            setStats(new int[6]);
+            setBaseStats(new int[6]);
+            JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
+            mBaseStats[0] = baseStats.getInt("hp");
+            mBaseStats[1] = baseStats.getInt("atk");
+            mBaseStats[2] = baseStats.getInt("def");
+            mBaseStats[3] = baseStats.getInt("spa");
+            mBaseStats[4] = baseStats.getInt("spd");
+            mBaseStats[5] = baseStats.getInt("spe");
+            setEVs(new int[6]);
+            setIVs(new int[6]); Arrays.fill(mIVs, 31);
+            setLevel(100);
+            try {
+                setGender(jsonObject.getString("gender"));
+            } catch (JSONException e) {
+                setGender("M");
+            }
+            setNature("Hardy");
+            setNatureMultiplier(new float[6]); Arrays.fill(mNatureMultiplier, 1.0f);
+            setStats(calculateStats());
+            setShiny(false);
+            JSONArray types = jsonObject.getJSONArray("types");
+            setType(new String[types.length()]);
+            for(int i=0; i<types.length(); i++) {
+                mType[i] = types.get(i).toString();
+            }
+            JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
+            Iterator<String> keys = abilityList.keys();
+            mAbilityList = new HashMap<String, String>();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                mAbilityList.put(key, abilityList.getString(key));
+            }
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
     }
     
     public int[] calculateStats() {
-        int[] stats = new int[5];
+        int[] stats = new int[6];
         stats[0] = calculateHP();
         stats[1] = calculateAtk();
         stats[2] = calculateDef();
@@ -58,27 +115,27 @@ public class Pokemon implements Serializable {
     }
 
     public int calculateAtk() {
-        return ((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1];
+        return (int) (((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1]);
     }
 
     public int calculateDef() {
-        return ((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2];
+        return (int) (((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2]);
     }
 
     public int calculateSpAtk() {
-        return ((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3];
+        return (int) (((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3]);
     }
 
     public int calculateSpDef() {
-        return ((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4];
+        return (int) (((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4]);
     }
 
     public int calculateSpd() {
-        return ((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5];
+        return (int) (((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5]);
     }
 
     public static int[] calculateStats(int[] baseStats, int[] IVs, int[] EVs, int level, int[] natureMultiplier) {
-        int[] stats = new int[5];
+        int[] stats = new int[6];
         stats[0] = calculateHP(baseStats[0], IVs[0], EVs[0], level);
         stats[1] = calculateAtk(baseStats[1], IVs[1], EVs[1], level, natureMultiplier[1]);
         stats[2] = calculateDef(baseStats[2], IVs[2], EVs[2], level, natureMultiplier[2]);
@@ -92,24 +149,36 @@ public class Pokemon implements Serializable {
         return ((HPIV + 2 * baseHP + HPEV / 4 + 100) * level / 100 + 10);
     }
 
-    public static int calculateAtk(int baseAtk, int AtkIV, int AtkEV, int level, int natureMultiplier) {
-        return ((AtkIV + 2 * baseAtk + AtkEV / 4) * level / 100 + 5) * natureMultiplier;
+    public static int calculateAtk(int baseAtk, int AtkIV, int AtkEV, int level, float natureMultiplier) {
+        return (int) (((AtkIV + 2 * baseAtk + AtkEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
-    public static int calculateDef(int baseDef, int DefIV, int DefEV, int level, int natureMultiplier) {
-        return ((DefIV + 2 * baseDef + DefEV / 4) * level / 100 + 5) * natureMultiplier;
+    public static int calculateDef(int baseDef, int DefIV, int DefEV, int level, float natureMultiplier) {
+        return (int) (((DefIV + 2 * baseDef + DefEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
-    public static int calculateSpAtk(int baseSpAtk, int SpAtkIV, int SpAtkEV, int level, int natureMultiplier) {
-        return ((SpAtkIV + 2 * baseSpAtk + SpAtkEV / 4) * level / 100 + 5) * natureMultiplier;
+    public static int calculateSpAtk(int baseSpAtk, int SpAtkIV, int SpAtkEV, int level, float natureMultiplier) {
+        return (int) (((SpAtkIV + 2 * baseSpAtk + SpAtkEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
-    public static int calculateSpDef(int baseSpDef, int SpDefIV, int SpDefEV, int level, int natureMultiplier) {
-        return ((SpDefIV + 2 * baseSpDef + SpDefEV / 4) * level / 100 + 5) * natureMultiplier;
+    public static int calculateSpDef(int baseSpDef, int SpDefIV, int SpDefEV, int level, float natureMultiplier) {
+        return (int) (((SpDefIV + 2 * baseSpDef + SpDefEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
-    public static int calculateSpd(int baseSpd, int SpdIV, int SpdEV, int level, int natureMultiplier) {
-        return ((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier;
+    public static int calculateSpd(int baseSpd, int SpdIV, int SpdEV, int level, float natureMultiplier) {
+        return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier);
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public String getNickName() {
+        return mNickName;
+    }
+
+    public void setNickName(String nickName) {
+        mNickName = nickName;
     }
 
     public int getIcon() {
@@ -344,19 +413,19 @@ public class Pokemon implements Serializable {
         mLevel = level;
     }
 
-    public int getGender() {
+    public String getGender() {
         return mGender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(String gender) {
         mGender = gender;
     }
 
-    public int[] getNatureMultiplier() {
+    public float[] getNatureMultiplier() {
         return mNatureMultiplier;
     }
 
-    public void setNatureMultiplier(int[] natureMultiplier) {
+    public void setNatureMultiplier(float[] natureMultiplier) {
         mNatureMultiplier = natureMultiplier;
     }
 
@@ -376,19 +445,23 @@ public class Pokemon implements Serializable {
         mShiny = shiny;
     }
 
-    public int getAbility() {
+    public String getAbility() {
+        return getAbilityList().get(mAbility);
+    }
+
+    public String getAbilityTag() {
         return mAbility;
     }
 
-    public void setAbility(int ability) {
-        mAbility = ability;
+    public void setAbility(String abilityTag) {
+        mAbility = abilityTag;
     }
 
-    public String[] getAbilityList() {
+    public HashMap<String, String> getAbilityList() {
         return mAbilityList;
     }
 
-    public void setAbilityList(String[] abilityList) {
+    public void setAbilityList(HashMap<String, String> abilityList) {
         mAbilityList = abilityList;
     }
 
