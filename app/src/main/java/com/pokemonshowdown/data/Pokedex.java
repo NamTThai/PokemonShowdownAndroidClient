@@ -35,6 +35,13 @@ public class Pokedex {
         return sPokedex;
     }
 
+    public static Pokedex getWithApplicationContext(Context appContext) {
+        if (sPokedex == null) {
+            sPokedex = new Pokedex(appContext);
+        }
+        return sPokedex;
+    }
+
     public HashMap<String, String> getPokedexEntries() {
         return mPokedexEntries;
     }

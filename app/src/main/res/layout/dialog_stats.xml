@@ -37,12 +37,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_HP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
@@ -81,12 +80,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_Atk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
@@ -125,12 +123,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_Def"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
@@ -169,12 +166,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_SpAtk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
@@ -213,12 +209,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_SpDef"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
@@ -257,12 +252,11 @@
                 android:max="63"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/EV_Spd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:imeOptions="actionDone"
+                android:textColor="@drawable/dialog_button"
                 />
 
             <EditText
