@@ -27,9 +27,11 @@ import java.util.Iterator;
  *
  * Example for Modest mNatureMultiplier array (+SpAtk, -Atk) [1.0, 0.9, 1.0, 1.1, 1.0, 1.0]
  *
- * Gender -1: female; 0: genderless; 1: male
- *
  * mAbility holds ability tag
+ *
+ * Default:
+ * Gender: male unless no option (M, F, N)
+ * Level: 100
  */
 public class Pokemon implements Serializable {
     private final static String PTAG = "POKEMON_OBJECT";
@@ -56,9 +58,22 @@ public class Pokemon implements Serializable {
     private String[] mMoveList;
     private int mWeight;
 
-    public Pokemon(Context appContext, String name) {
+    public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
-            JSONObject jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            }
+            initializePokemon(jsonObject);
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+    }
+
+    private void initializePokemon(JSONObject jsonObject) {
+        try {
             mName = jsonObject.getString("species");
             setNickName(mName);
             setStats(new int[6]);
@@ -71,7 +86,8 @@ public class Pokemon implements Serializable {
             mBaseStats[4] = baseStats.getInt("spd");
             mBaseStats[5] = baseStats.getInt("spe");
             setEVs(new int[6]);
-            setIVs(new int[6]); Arrays.fill(mIVs, 31);
+            setIVs(new int[6]);
+            Arrays.fill(mIVs, 31);
             setLevel(100);
             try {
                 setGender(jsonObject.getString("gender"));
@@ -79,12 +95,13 @@ public class Pokemon implements Serializable {
                 setGender("M");
             }
             setNature("Hardy");
-            setNatureMultiplier(new float[6]); Arrays.fill(mNatureMultiplier, 1.0f);
+            setNatureMultiplier(new float[6]);
+            Arrays.fill(mNatureMultiplier, 1.0f);
             setStats(calculateStats());
             setShiny(false);
             JSONArray types = jsonObject.getJSONArray("types");
             setType(new String[types.length()]);
-            for(int i=0; i<types.length(); i++) {
+            for (int i = 0; i < types.length(); i++) {
                 mType[i] = types.get(i).toString();
             }
             JSONObject abilityList = (JSONObject) jsonObject.get("abilities");

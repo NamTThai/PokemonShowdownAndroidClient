@@ -92,14 +92,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress + remainingEVs);
+                    mEVs[0] = storedProgress + remainingEVs;
                 } else {
                     mEVs[0] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_HP);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[0] = Pokemon.calculateHP(mBaseStats[0], mIVs[0], mEVs[0], mLevel);
-                    setStats(mStats[0], -1, -1, -1, -1, -1);
                 }
+                seekBar.setProgress(mEVs[0] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_HP);
+                textView.setText(Integer.toString(mEVs[0]));
+                mStats[0] = Pokemon.calculateHP(mBaseStats[0], mIVs[0], mEVs[0], mLevel);
+                setStats(mStats[0], -1, -1, -1, -1, -1);
             }
 
             @Override
@@ -121,14 +122,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress + remainingEVs);
+                    mEVs[1] = storedProgress + remainingEVs;
                 } else {
                     mEVs[1] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_Atk);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[1] = Pokemon.calculateAtk(mBaseStats[1], mIVs[1], mEVs[1], mLevel, mNatureMultiplier[1]);
-                    setStats(-1, mStats[1], -1, -1, -1, -1);
                 }
+                seekBar.setProgress(mEVs[1] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_Atk);
+                textView.setText(Integer.toString(mEVs[1]));
+                mStats[1] = Pokemon.calculateAtk(mBaseStats[1], mIVs[1], mEVs[1], mLevel, mNatureMultiplier[1]);
+                setStats(-1, mStats[1], -1, -1, -1, -1);
             }
 
             @Override
@@ -150,14 +152,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress + remainingEVs);
+                    mEVs[2] = storedProgress + remainingEVs;
                 } else {
                     mEVs[2] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_Def);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[2] = Pokemon.calculateDef(mBaseStats[2], mIVs[2], mEVs[2], mLevel, mNatureMultiplier[2]);
-                    setStats(-1, -1, mStats[2], -1, -1, -1);
                 }
+                seekBar.setProgress(mEVs[2] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_Def);
+                textView.setText(Integer.toString(mEVs[2]));
+                mStats[2] = Pokemon.calculateDef(mBaseStats[2], mIVs[2], mEVs[2], mLevel, mNatureMultiplier[2]);
+                setStats(-1, -1, mStats[2], -1, -1, -1);
             }
 
             @Override
@@ -179,14 +182,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress + remainingEVs);
+                    mEVs[3] = storedProgress + remainingEVs;
                 } else {
                     mEVs[3] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_SpAtk);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[3] = Pokemon.calculateSpAtk(mBaseStats[3], mIVs[3], mEVs[3], mLevel, mNatureMultiplier[3]);
-                    setStats(-1, -1, -1, mStats[3], -1, -1);
                 }
+                seekBar.setProgress(mEVs[3] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_SpAtk);
+                textView.setText(Integer.toString(mEVs[3]));
+                mStats[3] = Pokemon.calculateSpAtk(mBaseStats[3], mIVs[3], mEVs[3], mLevel, mNatureMultiplier[3]);
+                setStats(-1, -1, -1, mStats[3], -1, -1);
             }
 
             @Override
@@ -208,14 +212,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress + remainingEVs);
+                    mEVs[4] = storedProgress + remainingEVs;
                 } else {
                     mEVs[4] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_SpDef);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[4] = Pokemon.calculateSpDef(mBaseStats[4], mIVs[4], mEVs[4], mLevel, mNatureMultiplier[4]);
-                    setStats(-1, -1, -1, -1, mStats[4], -1);
                 }
+                seekBar.setProgress(mEVs[4] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_SpDef);
+                textView.setText(Integer.toString(mEVs[4]));
+                mStats[4] = Pokemon.calculateSpDef(mBaseStats[4], mIVs[4], mEVs[4], mLevel, mNatureMultiplier[4]);
+                setStats(-1, -1, -1, -1, mStats[4], -1);
             }
 
             @Override
@@ -237,14 +242,15 @@ public class StatsDialog extends DialogFragment {
                 int changes = progress * 4 - storedProgress;
                 int remainingEVs = getRemainingEVs();
                 if (changes > 0 && changes > remainingEVs) {
-                    seekBar.setProgress(storedProgress);
+                    mEVs[5] = storedProgress + remainingEVs;
                 } else {
                     mEVs[5] = progress * 4;
-                    TextView textView = (TextView) getView().findViewById(R.id.EV_Spd);
-                    textView.setText(Integer.toString(progress * 4));
-                    mStats[5] = Pokemon.calculateSpd(mBaseStats[5], mIVs[5], mEVs[5], mLevel, mNatureMultiplier[5]);
-                    setStats(-1, -1, -1, -1, -1, mStats[5]);
                 }
+                seekBar.setProgress(mEVs[5] / 4);
+                TextView textView = (TextView) getView().findViewById(R.id.EV_Spd);
+                textView.setText(Integer.toString(mEVs[5]));
+                mStats[5] = Pokemon.calculateSpd(mBaseStats[5], mIVs[5], mEVs[5], mLevel, mNatureMultiplier[5]);
+                setStats(-1, -1, -1, -1, -1, mStats[5]);
             }
 
             @Override

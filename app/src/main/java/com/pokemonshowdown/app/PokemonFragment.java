@@ -26,7 +26,7 @@ public class PokemonFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPokemon = new Pokemon(getActivity(), "azumarill");
+        mPokemon = (Pokemon) getArguments().getSerializable("Pokemon");
     }
 
     @Override

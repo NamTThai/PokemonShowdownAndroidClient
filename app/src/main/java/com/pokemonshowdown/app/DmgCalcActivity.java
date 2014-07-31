@@ -29,6 +29,9 @@ public class DmgCalcActivity extends FragmentActivity {
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
 
+    private Pokemon mAttacker;
+    private Pokemon mDefender;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +74,7 @@ public class DmgCalcActivity extends FragmentActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            selectItem(0);
+            selectItem(5);
         }
     }
 
@@ -136,9 +139,29 @@ public class DmgCalcActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
+    public Pokemon getAttacker() {
+        return mAttacker;
+    }
+
+    public void setAttacker(Pokemon attacker) {
+        mAttacker = attacker;
+    }
+
+    public Pokemon getDefender() {
+        return mDefender;
+    }
+
+    public void setDefender(Pokemon defender) {
+        mDefender = defender;
+    }
+
     private void selectItem(int position) {
     // update selected item and title, then close the drawer
         DialogFragment fragment = new PokemonFragment();
+        Bundle bundle = new Bundle();
+        setAttacker(new Pokemon(getApplicationContext(), "azumarill", true));
+        bundle.putSerializable("Pokemon", mAttacker);
+        fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PokemonTAG);
 
