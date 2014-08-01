@@ -94,9 +94,7 @@ public class Pokemon implements Serializable {
             } catch (JSONException e) {
                 setGender("M");
             }
-            setNature("Hardy");
-            setNatureMultiplier(new float[6]);
-            Arrays.fill(mNatureMultiplier, 1.0f);
+            setNature("Adamant");
             setStats(calculateStats());
             setShiny(false);
             JSONArray types = jsonObject.getJSONArray("types");
@@ -442,8 +440,89 @@ public class Pokemon implements Serializable {
         return mNatureMultiplier;
     }
 
-    public void setNatureMultiplier(float[] natureMultiplier) {
-        mNatureMultiplier = natureMultiplier;
+    public void setNatureMultiplier(String nature) {
+        mNatureMultiplier = new float[6];
+        Arrays.fill(mNatureMultiplier, 1.0f);
+        if (nature.equals("Adamant")) {
+            mNatureMultiplier[1] = 1.1f;
+            mNatureMultiplier[3] = 0.9f;
+        }
+        if (nature.equals("Bold")) {
+            mNatureMultiplier[2] = 1.1f;
+            mNatureMultiplier[1] = 0.9f;
+        }
+        if (nature.equals("Brave")) {
+            mNatureMultiplier[1] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Calm")) {
+            mNatureMultiplier[4] = 1.1f;
+            mNatureMultiplier[1] = 0.9f;
+        }
+        if (nature.equals("Careful")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[3] = 0.9f;
+        }
+        if (nature.equals("Gentle")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[2] = 0.9f;
+        }
+        if (nature.equals("Hasty")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[2] = 0.9f;
+        }
+        if (nature.equals("Impish")) {
+            mNatureMultiplier[2] = 1.1f;
+            mNatureMultiplier[3] = 0.9f;
+        }
+        if (nature.equals("Jolly")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[3] = 0.9f;
+        }
+        if (nature.equals("Lax")) {
+            mNatureMultiplier[2] = 1.1f;
+            mNatureMultiplier[4] = 0.9f;
+        }
+        if (nature.equals("Lonely")) {
+            mNatureMultiplier[1] = 1.1f;
+            mNatureMultiplier[2] = 0.9f;
+        }
+        if (nature.equals("Mild")) {
+            mNatureMultiplier[3] = 1.1f;
+            mNatureMultiplier[2] = 0.9f;
+        }
+        if (nature.equals("Modest")) {
+            mNatureMultiplier[3] = 1.1f;
+            mNatureMultiplier[1] = 0.9f;
+        }
+        if (nature.equals("Naive")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[4] = 0.9f;
+        }
+        if (nature.equals("Naughty")) {
+            mNatureMultiplier[1] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Quiet")) {
+            mNatureMultiplier[3] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Rash")) {
+            mNatureMultiplier[3] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Relaxed")) {
+            mNatureMultiplier[2] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Sassy")) {
+            mNatureMultiplier[4] = 1.1f;
+            mNatureMultiplier[5] = 0.9f;
+        }
+        if (nature.equals("Timid")) {
+            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[1] = 0.9f;
+        }
     }
 
     public String getNature() {
@@ -452,6 +531,7 @@ public class Pokemon implements Serializable {
 
     public void setNature(String nature) {
         mNature = nature;
+        setNatureMultiplier(nature);
     }
 
     public boolean isShiny() {

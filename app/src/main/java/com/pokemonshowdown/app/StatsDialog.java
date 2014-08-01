@@ -79,6 +79,7 @@ public class StatsDialog extends DialogFragment {
                 getDialog().dismiss();
             }
         });
+        highlightNature();
 
         SeekBar seekBar;
         EditText editText;
@@ -643,6 +644,51 @@ public class StatsDialog extends DialogFragment {
             mIVs[5] = Spd;
             editText = (EditText) getView().findViewById(R.id.IV_Spd);
             editText.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
+        }
+    }
+
+    private void highlightNature() {
+        TextView textViewPositive;
+        TextView textViewNegative;
+
+        if (mNatureMultiplier[1] == 1.1f) {
+            textViewPositive = (TextView) getView().findViewById(R.id.final_Atk);
+            textViewPositive.setBackgroundResource(R.drawable.nature_positive);
+        } else if (mNatureMultiplier[1] == 0.9f) {
+            textViewNegative = (TextView) getView().findViewById(R.id.final_Atk);
+            textViewNegative.setBackgroundResource(R.drawable.nature_negative);
+        }
+
+        if (mNatureMultiplier[2] == 1.1f) {
+            textViewPositive = (TextView) getView().findViewById(R.id.final_Def);
+            textViewPositive.setBackgroundResource(R.drawable.nature_positive);
+        } else if (mNatureMultiplier[2] == 0.9f) {
+            textViewNegative = (TextView) getView().findViewById(R.id.final_Def);
+            textViewNegative.setBackgroundResource(R.drawable.nature_negative);
+        }
+
+        if (mNatureMultiplier[3] == 1.1f) {
+            textViewPositive = (TextView) getView().findViewById(R.id.final_SpAtk);
+            textViewPositive.setBackgroundResource(R.drawable.nature_positive);
+        } else if (mNatureMultiplier[3] == 0.9f) {
+            textViewNegative = (TextView) getView().findViewById(R.id.final_SpAtk);
+            textViewNegative.setBackgroundResource(R.drawable.nature_negative);
+        }
+
+        if (mNatureMultiplier[4] == 1.1f) {
+            textViewPositive = (TextView) getView().findViewById(R.id.final_SpDef);
+            textViewPositive.setBackgroundResource(R.drawable.nature_positive);
+        } else if (mNatureMultiplier[4] == 0.9f) {
+            textViewNegative = (TextView) getView().findViewById(R.id.final_SpDef);
+            textViewNegative.setBackgroundResource(R.drawable.nature_negative);
+        }
+
+        if (mNatureMultiplier[5] == 1.1f) {
+            textViewPositive = (TextView) getView().findViewById(R.id.final_Spd);
+            textViewPositive.setBackgroundResource(R.drawable.nature_positive);
+        } else if (mNatureMultiplier[5] == 0.9f) {
+            textViewNegative = (TextView) getView().findViewById(R.id.final_Spd);
+            textViewNegative.setBackgroundResource(R.drawable.nature_negative);
         }
     }
 }

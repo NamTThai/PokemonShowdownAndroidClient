@@ -65,7 +65,6 @@ public class Pokedex {
             }
             jsonString = stringBuilder.toString();
             inputStream.close();
-            Log.d(DexTAG, jsonString);
 
             JSONObject jsonObject = new JSONObject(jsonString);
 
