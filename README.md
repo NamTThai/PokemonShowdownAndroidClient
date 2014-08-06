@@ -1,4 +1,4 @@
-PokemonShowdown
+PokemonShowdown Android Client
 ===============
 
 ## Requirements
