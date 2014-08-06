@@ -25,4 +25,4 @@ PokemonShowdown
 
 * Launch a non-launcher activity (Install .apk fist and make sure adb is in the $PATH variable)
 
-`adb shell am start -n com.pokemonshowdown.app/.ActivityNameHere
+`adb shell am start -n com.pokemonshowdown.app/.ActivityNameHere`
