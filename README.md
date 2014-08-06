@@ -3,7 +3,7 @@ PokemonShowdown
 
 ## Requirements
 
-* AndroidStudio stable version (I'm using Android Studio 0.5.2)
+* AndroidStudio stable release (I'm using Android Studio 0.5.2)
 
 ## Setup
 
