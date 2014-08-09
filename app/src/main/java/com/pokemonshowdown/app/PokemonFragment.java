@@ -81,8 +81,7 @@ public class PokemonFragment extends DialogFragment {
         TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
         pokemonAbility.setBackgroundResource(R.drawable.editable_frame);
         String abilities;
-        if (getArguments() != null && getArguments().getString("Ability") != null) {
-            getPokemon().setAbility(getArguments().getString("Ability"));
+        if (getPokemon().getAbilityTag() != null) {
             abilities = getPokemon().getAbility();
         } else {
             HashMap<String, String> abilityList = getPokemon().getAbilityList();

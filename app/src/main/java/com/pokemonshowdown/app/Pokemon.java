@@ -1,7 +1,6 @@
 package com.pokemonshowdown.app;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 import com.pokemonshowdown.data.Pokedex;
