@@ -34,6 +34,7 @@
         <item>X/Y</item>
     </string-array>
     <string name="back">Back</string>
+    <string name="dmgcalc_switch">Switch</string>
 
     <!-- These are for Pokemon List -->
     <string name="pokemon_list">Pokemon List</string>

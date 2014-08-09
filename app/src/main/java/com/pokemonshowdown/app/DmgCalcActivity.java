@@ -1,22 +1,25 @@
 package com.pokemonshowdown.app;
 
-import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by thain on 7/17/14.
@@ -28,6 +31,7 @@ public class DmgCalcActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
+    private int mCurrentPosition;
 
     private Pokemon mAttacker;
     private Pokemon mDefender;
@@ -73,10 +77,53 @@ public class DmgCalcActivity extends FragmentActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        ImageView switchButton = (ImageView) findViewById(R.id.dmgcalc_switch);
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Pokemon temp = getAttacker();
+                setAttacker(getDefender());
+                setDefender(temp);
+            }
+        });
+
+        TextView attacker = (TextView) findViewById(R.id.dmgcalc_attacker);
+        attacker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPokemon(getAttacker());
+            }
+        });
+
+        TextView defender = (TextView) findViewById(R.id.dmgcalc_defender);
+        defender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPokemon(getDefender());
+            }
+        });
+
         if (savedInstanceState == null) {
-            selectItem(5);
+            mCurrentPosition = 5;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        selectItem(mCurrentPosition);
+        setAttacker("azumarill");
+        setDefender("heatran");
+
+    }
+
+    @Override
+    public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,13 +153,10 @@ public class DmgCalcActivity extends FragmentActivity {
         }
     }
 
-    @TargetApi(11)
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            getActionBar().setTitle(mTitle);
-        }
+        getActionBar().setTitle(mTitle);
     }
 
     /**
@@ -143,28 +187,46 @@ public class DmgCalcActivity extends FragmentActivity {
         return mAttacker;
     }
 
+    public void setAttacker(String attacker) {
+        setAttacker(new Pokemon(getApplicationContext(), attacker, true));
+    }
+
     public void setAttacker(Pokemon attacker) {
         mAttacker = attacker;
+
+        TextView textView = (TextView) findViewById(R.id.dmgcalc_attacker);
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.p184s, 0, 0, 0);
+        textView.setText(attacker.getName());
     }
+
+
 
     public Pokemon getDefender() {
         return mDefender;
     }
 
-    public void setDefender(Pokemon defender) {
-        mDefender = defender;
+    public void setDefender(String defender) {
+        setDefender(new Pokemon(getApplicationContext(), defender, true));
     }
 
-    private void selectItem(int position) {
-    // update selected item and title, then close the drawer
+    public void setDefender(Pokemon defender) {
+        mDefender = defender;
+        TextView textView = (TextView) findViewById(R.id.dmgcalc_defender);
+        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.p485s, 0, 0, 0);
+        textView.setText(defender.getName());
+    }
+
+    private void loadPokemon(Pokemon pokemon) {
         DialogFragment fragment = new PokemonFragment();
         Bundle bundle = new Bundle();
-        setAttacker(new Pokemon(getApplicationContext(), "azumarill", true));
-        bundle.putSerializable("Pokemon", mAttacker);
+        bundle.putSerializable("Pokemon", pokemon);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PokemonTAG);
+    }
 
+    private void selectItem(int position) {
+        mCurrentPosition = position;
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);

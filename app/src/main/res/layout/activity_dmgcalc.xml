@@ -6,10 +6,55 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-    <FrameLayout
-        android:id="@+id/fragmentContainerDmgCalc"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <ImageView
+                android:id="@+id/dmgcalc_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_pokedex"
+                android:contentDescription="@string/dmgcalc_switch"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_centerInParent="true"/>
+
+            <TextView
+                android:id="@+id/dmgcalc_attacker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/border_frame"
+                android:textSize="16sp"
+                android:gravity="bottom"
+                android:layout_toLeftOf="@id/dmgcalc_switch"/>
+
+            <TextView
+                android:id="@+id/dmgcalc_defender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/border_frame"
+                android:textSize="16sp"
+                android:gravity="bottom"
+                android:layout_toRightOf="@id/dmgcalc_switch"/>
+            
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <!-- The navigation drawer -->
     <!-- should not be larger than 320 to show content -->
