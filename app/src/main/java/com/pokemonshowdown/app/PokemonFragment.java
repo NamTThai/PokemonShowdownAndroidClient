@@ -42,7 +42,7 @@ public class PokemonFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ImageView pokemonIcon = (ImageView) view.findViewById(R.id.pokemon_icon);
-        pokemonIcon.setImageResource(R.drawable.p184s);
+        pokemonIcon.setImageResource(getPokemon().getIconSmall());
 
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(getPokemon().getName());
@@ -56,7 +56,7 @@ public class PokemonFragment extends DialogFragment {
         });
 
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
-        pokemonView.setImageResource(R.drawable.p184);
+        pokemonView.setImageResource(getPokemon().getIcon());
 
         TextView pokemonStats= (TextView) view.findViewById(R.id.stats);
         resetStatsString();

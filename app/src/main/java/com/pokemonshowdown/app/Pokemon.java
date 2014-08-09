@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.pokemonshowdown.data.Pokedex;
@@ -66,14 +67,18 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
             }
-            initializePokemon(jsonObject);
+            initializePokemon(appContext, jsonObject);
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         }
     }
 
-    private void initializePokemon(JSONObject jsonObject) {
+    private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
+            mIcon = appContext.getResources().getIdentifier("p"+jsonObject.getString("num"), "drawable", appContext.getPackageName());
+            mIconShiny = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"sh", "drawable", appContext.getPackageName());
+            mIconSmall = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"s", "drawable", appContext.getPackageName());
+
             mName = jsonObject.getString("species");
             setNickName(mName);
             setStats(new int[6]);
@@ -111,6 +116,8 @@ public class Pokemon implements Serializable {
             }
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (java.lang.NullPointerException e) {
+            Log.e(PTAG, e.toString());
         }
     }
     

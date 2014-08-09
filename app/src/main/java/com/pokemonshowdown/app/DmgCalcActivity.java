@@ -103,9 +103,7 @@ public class DmgCalcActivity extends FragmentActivity {
             }
         });
 
-        if (savedInstanceState == null) {
-            mCurrentPosition = 5;
-        }
+        mCurrentPosition = 5;
     }
 
     @Override
@@ -195,7 +193,7 @@ public class DmgCalcActivity extends FragmentActivity {
         mAttacker = attacker;
 
         TextView textView = (TextView) findViewById(R.id.dmgcalc_attacker);
-        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.p184s, 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(attacker.getIconSmall(), 0, 0, 0);
         textView.setText(attacker.getName());
     }
 
@@ -212,7 +210,7 @@ public class DmgCalcActivity extends FragmentActivity {
     public void setDefender(Pokemon defender) {
         mDefender = defender;
         TextView textView = (TextView) findViewById(R.id.dmgcalc_defender);
-        textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.p485s, 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(defender.getIconSmall(), 0, 0, 0);
         textView.setText(defender.getName());
     }
 
