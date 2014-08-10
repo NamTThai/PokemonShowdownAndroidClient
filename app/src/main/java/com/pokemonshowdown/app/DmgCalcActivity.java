@@ -1,16 +1,14 @@
 package com.pokemonshowdown.app;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +23,8 @@ import android.widget.TextView;
  * Created by thain on 7/17/14.
  */
 public class DmgCalcActivity extends FragmentActivity {
+    private final static String DCTAG = "DMG_CALC_TAG";
+
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -103,25 +103,31 @@ public class DmgCalcActivity extends FragmentActivity {
             }
         });
 
-        mCurrentPosition = 5;
+        if (savedInstanceState == null) {
+            mCurrentPosition = 5;
+            selectItem(mCurrentPosition);
+            setAttacker("azumarill");
+            setDefender("heatran");
+        } else {
+            try {
+                mCurrentPosition = savedInstanceState.getInt("position");
+                selectItem(mCurrentPosition);
+                setAttacker((Pokemon) savedInstanceState.getSerializable("Attacker"));
+                setDefender((Pokemon) savedInstanceState.getSerializable("Defender"));
+            } catch (NullPointerException e) {
+                Log.e(DCTAG, e.toString());
+            }
+        }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        selectItem(mCurrentPosition);
-        setAttacker("azumarill");
-        setDefender("heatran");
-
+        outState.putSerializable("Attacker", getAttacker());
+        outState.putSerializable("Defender", getDefender());
+        outState.putInt("position", mCurrentPosition);
     }
-
-    @Override
-    public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
-    }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
