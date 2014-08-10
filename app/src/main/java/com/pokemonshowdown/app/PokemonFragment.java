@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.SearchableActivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,17 +51,12 @@ public class PokemonFragment extends DialogFragment {
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(getPokemon().getName());
 
-        ImageButton imageButton = (ImageButton) view.findViewById(R.id.pokemon_fragment_functions);
-        imageButton.setImageResource(R.drawable.ic_action_search);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFragment();
-            }
-        });
-
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
         pokemonView.setImageResource(getPokemon().getIcon());
+
+        if (getArguments().getBoolean("Search")) {
+            addSearchWidget(view);
+        }
 
         TextView pokemonStats= (TextView) view.findViewById(R.id.stats);
         resetStatsString();
@@ -107,6 +104,20 @@ public class PokemonFragment extends DialogFragment {
                 bundle.putString("SelectedAbility", getPokemon().getAbilityTag());
                 abilityDialog.setArguments(bundle);
                 abilityDialog.show(fm, AbilityDialog.ATAG);
+            }
+        });
+    }
+
+    private void addSearchWidget(View view) {
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.pokemon_fragment_functions);
+        imageButton.setImageResource(R.drawable.ic_action_search);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFragment();
+                Intent intent = new Intent(getActivity(), SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                getActivity().startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
             }
         });
     }

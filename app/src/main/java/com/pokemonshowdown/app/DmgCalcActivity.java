@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -21,12 +22,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.SearchableActivity;
 
 /**
  * Created by thain on 7/17/14.
  */
 public class DmgCalcActivity extends FragmentActivity {
-    private final static String DCTAG = "DMG_CALC_TAG";
+    public final static String DCTAG = "DMG_CALC_TAG";
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -120,6 +122,12 @@ public class DmgCalcActivity extends FragmentActivity {
                 Log.e(DCTAG, e.toString());
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(SearchableActivity.SearchTAG, "Result code : " +Integer.toString(resultCode));
     }
 
     @Override
@@ -227,6 +235,7 @@ public class DmgCalcActivity extends FragmentActivity {
         DialogFragment fragment = new PokemonFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("Pokemon", pokemon);
+        bundle.putBoolean("Search", true);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PokemonTAG);

@@ -3,8 +3,6 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.pokemonshowdown.data.Pokedex;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,9 +60,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
-            } else {
                 jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
             initializePokemon(appContext, jsonObject);
         } catch (JSONException e) {
@@ -118,6 +116,36 @@ public class Pokemon implements Serializable {
         } catch (java.lang.NullPointerException e) {
             Log.e(PTAG, e.toString());
         }
+    }
+
+    public static String getPokemonName(Context appContext, String name, boolean withAppContext) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            return jsonObject.getString("species");
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+        return null;
+    }
+
+    public static int getPokemonIconSmall(Context appContext, String name, boolean withAppContext) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            return appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"s", "drawable", appContext.getPackageName());
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+        return 0;
     }
     
     public int[] calculateStats() {

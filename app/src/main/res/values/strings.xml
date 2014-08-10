@@ -67,6 +67,11 @@
     <string name="IVs">IVs</string>
     <string name="save">Save</string>
 
+    <!-- These are for Search function -->
+    <string name="search_title">Search</string>
+    <string name="search_label_pokemon">Search Pokemon&#8230;</string>
+    <string name="search_hint_pokemon">Search Pokemon&#8230;</string>
+
     <!-- These are for Credits -->
     <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>
 
