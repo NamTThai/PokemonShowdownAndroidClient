@@ -1,4 +1,4 @@
-package com.pokemonshowdown.app;
+package com.pokemonshowdown.data;
 
 import android.content.Context;
 import android.util.Log;

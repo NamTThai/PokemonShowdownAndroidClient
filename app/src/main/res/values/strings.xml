@@ -35,6 +35,23 @@
     </string-array>
     <string name="back">Back</string>
     <string name="dmgcalc_switch">Switch</string>
+    <string name="dmg_calc_field_singles">Singles</string>
+    <string name="dmg_calc_field_doubles">Doubles</string>
+    <string name="dmg_calc_field_none">None</string>
+    <string name="dmg_calc_field_sun">Sun</string>
+    <string name="dmg_calc_field_rain">Rain</string>
+    <string name="dmg_calc_field_sand">Sand</string>
+    <string name="dmg_calc_field_hail">Hail</string>
+    <string name="dmg_calc_field_gravity">Gravity</string>
+    <string name="dmg_calc_field_sr">Stealth Rock</string>
+    <string name="dmg_calc_field_0spike">0</string>
+    <string name="dmg_calc_field_1spike">1</string>
+    <string name="dmg_calc_field_2spike">2</string>
+    <string name="dmg_calc_field_3spike">3 Spikes</string>
+    <string name="dmg_calc_field_reflect">Reflect</string>
+    <string name="dmg_calc_field_lightscreen">Light Screen</string>
+    <string name="dmg_calc_field_foresight">Foresight</string>
+    <string name="dmg_calc_field_helpinghand">Helping Hand</string>
 
     <!-- These are for Pokemon List -->
     <string name="pokemon_list">Pokemon List</string>

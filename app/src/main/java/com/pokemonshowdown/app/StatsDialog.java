@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.InputFilterMinMax;
+import com.pokemonshowdown.data.Pokemon;
 
 /**
  * Created by thain on 7/22/14.

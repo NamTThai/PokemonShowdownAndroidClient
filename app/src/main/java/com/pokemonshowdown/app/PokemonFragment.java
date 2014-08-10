@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.Pokemon;
+
 import java.util.HashMap;
 import java.util.Iterator;
 

@@ -75,6 +75,7 @@
             android:id="@+id/stats_abilities"
             android:gravity="fill_vertical"
             android:layout_toRightOf="@id/pokemon_view"
+            android:layout_margin="4dp"
             android:layout_below="@id/stats"
             android:layout_gravity="center"/>
 

@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.pokemonshowdown.data.Pokemon;
 
 /**
  * Created by thain on 7/17/14.
@@ -104,8 +107,7 @@ public class DmgCalcActivity extends FragmentActivity {
         });
 
         if (savedInstanceState == null) {
-            mCurrentPosition = 5;
-            selectItem(mCurrentPosition);
+            selectItem(5);
             setAttacker("azumarill");
             setDefender("heatran");
         } else {
@@ -234,6 +236,20 @@ public class DmgCalcActivity extends FragmentActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+
+        Fragment fieldFragment;
+        switch (position) {
+            case 5:
+                fieldFragment = new DmgCalcFieldXYFragment();
+                break;
+            default:
+                fieldFragment = new DmgCalcFieldXYFragment();
+                break;
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.dmgcalc_field_container, fieldFragment)
+                .commit();
     }
 
     // The click listener for ListView in the navigation drawer
