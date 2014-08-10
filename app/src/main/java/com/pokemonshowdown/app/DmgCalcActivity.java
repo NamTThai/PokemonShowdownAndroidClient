@@ -153,6 +153,7 @@ public class DmgCalcActivity extends FragmentActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.menu_back:
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

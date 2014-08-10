@@ -186,16 +186,24 @@ public class DmgCalcFieldXYFragment extends Fragment {
         reflect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reflect.setTypeface(null, Typeface.BOLD);
-                lightscreen.setTypeface(null, Typeface.ITALIC);
+                Typeface typeface = reflect.getTypeface();
+                if (typeface.isBold()) {
+                    reflect.setTypeface(null, Typeface.ITALIC);
+                } else {
+                    reflect.setTypeface(null, Typeface.BOLD);
+                }
             }
         });
 
         lightscreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reflect.setTypeface(null, Typeface.ITALIC);
-                lightscreen.setTypeface(null, Typeface.BOLD);
+                Typeface typeface = lightscreen.getTypeface();
+                if (typeface.isBold()) {
+                    lightscreen.setTypeface(null, Typeface.ITALIC);
+                } else {
+                    lightscreen.setTypeface(null, Typeface.BOLD);
+                }
             }
         });
 

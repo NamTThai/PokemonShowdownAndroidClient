@@ -49,7 +49,8 @@ public class PokemonFragment extends DialogFragment {
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(getPokemon().getName());
 
-        ImageButton imageButton = (ImageButton) view.findViewById(R.id.save_pokemon);
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.pokemon_fragment_functions);
+        imageButton.setImageResource(R.drawable.ic_action_search);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +96,6 @@ public class PokemonFragment extends DialogFragment {
                 abilities += "/" + abilityList.get(abilityTag);
             }
         }
-
         pokemonAbility.setText(abilities);
         pokemonAbility.setOnClickListener(new View.OnClickListener() {
             @Override

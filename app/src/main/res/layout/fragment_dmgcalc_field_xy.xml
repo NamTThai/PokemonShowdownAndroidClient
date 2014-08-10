@@ -9,7 +9,7 @@
               android:layout_marginTop="8dp"
               android:layout_marginRight="8dp"
               android:layout_marginBottom="8dp"
-              android:weightSum="6">
+              android:weightSum="5">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -140,73 +140,80 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/uneditable_frame"
         android:layout_margin="2dp">
 
-        <TextView
-            android:id="@+id/dmg_calc_field_sr"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="italic"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dmg_calc_field_sr"/>
+            android:layout_height="match_parent"
+            android:background="@drawable/uneditable_frame"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/dmg_calc_field_sr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="italic"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dmg_calc_field_sr"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/uneditable_frame"
-        android:layout_margin="2dp">
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/dmg_calc_field_0spike"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="bold"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dmg_calc_field_0spike"/>
+            android:layout_height="match_parent"
+            android:background="@drawable/uneditable_frame"
+            android:orientation="horizontal"
+            android:layout_marginLeft="8dp">
 
-        <View style="@style/divider_vertical" />
+            <TextView
+                android:id="@+id/dmg_calc_field_0spike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dmg_calc_field_0spike"/>
 
-        <TextView
-            android:id="@+id/dmg_calc_field_1spike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="italic"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dmg_calc_field_1spike"/>
+            <View style="@style/divider_vertical" />
 
-        <View style="@style/divider_vertical" />
+            <TextView
+                android:id="@+id/dmg_calc_field_1spike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="italic"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dmg_calc_field_1spike"/>
 
-        <TextView
-            android:id="@+id/dmg_calc_field_2spike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="italic"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dmg_calc_field_2spike"/>
+            <View style="@style/divider_vertical" />
 
-        <View style="@style/divider_vertical" />
+            <TextView
+                android:id="@+id/dmg_calc_field_2spike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="italic"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dmg_calc_field_2spike"/>
 
-        <TextView
-            android:id="@+id/dmg_calc_field_3spike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="italic"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/dmg_calc_field_3spike"/>
+            <View style="@style/divider_vertical" />
+
+            <TextView
+                android:id="@+id/dmg_calc_field_3spike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textStyle="italic"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/dmg_calc_field_3spike"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -33,7 +33,7 @@
                 android:padding="8dp"
                 android:background="@drawable/border_frame"
                 android:textSize="16sp"
-                android:gravity="bottom"
+                android:gravity="center_vertical"
                 android:layout_toLeftOf="@id/dmgcalc_switch"/>
 
             <TextView
@@ -43,7 +43,7 @@
                 android:padding="8dp"
                 android:background="@drawable/border_frame"
                 android:textSize="16sp"
-                android:gravity="bottom"
+                android:gravity="center_vertical"
                 android:layout_toRightOf="@id/dmgcalc_switch"/>
             
         </RelativeLayout>

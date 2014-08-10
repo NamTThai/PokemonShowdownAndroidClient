@@ -43,7 +43,7 @@
     <string name="dmg_calc_field_sand">Sand</string>
     <string name="dmg_calc_field_hail">Hail</string>
     <string name="dmg_calc_field_gravity">Gravity</string>
-    <string name="dmg_calc_field_sr">Stealth Rock</string>
+    <string name="dmg_calc_field_sr">SRocks</string>
     <string name="dmg_calc_field_0spike">0</string>
     <string name="dmg_calc_field_1spike">1</string>
     <string name="dmg_calc_field_2spike">2</string>
@@ -55,7 +55,7 @@
 
     <!-- These are for Pokemon List -->
     <string name="pokemon_list">Pokemon List</string>
-    <string name="pokemon_fragment_description">Save Pokemon</string>
+    <string name="pokemon_fragment_description">Depends on the functionality, can be save, search, or empty</string>
     <string name="stats">Stats</string>
     <string name="stats_HP">HP</string>
     <string name="stats_Atk">Atk</string>
