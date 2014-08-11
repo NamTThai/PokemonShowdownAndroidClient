@@ -117,7 +117,7 @@ public class PokemonFragment extends DialogFragment {
                 closeFragment();
                 Intent intent = new Intent(getActivity(), SearchableActivity.class);
                 intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
-                getActivity().startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                getActivity().startActivityForResult(intent, getArguments().getInt("Search Code"));
             }
         });
     }

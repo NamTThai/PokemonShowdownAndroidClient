@@ -22,25 +22,25 @@
 
         </ImageView>
         
-        <TextView
-            android:id="@+id/pokemon_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignBottom="@id/pokemon_icon"
-            android:gravity="fill_vertical"
-            android:layout_toRightOf="@id/pokemon_icon"/>
-        
         <ImageButton
             android:id="@+id/pokemon_fragment_functions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignBottom="@id/pokemon_icon"
             android:adjustViewBounds="true"
             android:scaleType="fitEnd"
             android:background="#00FFFFFF"
             android:contentDescription="@string/pokemon_fragment_description"/>
+
+        <TextView
+            android:id="@+id/pokemon_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@id/pokemon_fragment_functions"
+            android:layout_marginLeft="8dp"
+            android:gravity="fill_vertical"
+            android:layout_toRightOf="@id/pokemon_icon"/>
         
     </RelativeLayout>
 

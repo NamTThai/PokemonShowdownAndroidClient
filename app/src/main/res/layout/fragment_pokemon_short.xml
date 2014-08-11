@@ -2,8 +2,9 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/short_pokemon_name"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="20sp"
     android:padding="8dp"
-    android:gravity="center_vertical"/>
+    android:gravity="center_vertical"
+    android:background="@drawable/onclick_blue"/>

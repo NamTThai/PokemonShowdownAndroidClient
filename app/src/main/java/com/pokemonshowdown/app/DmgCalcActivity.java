@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -22,13 +23,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
-import com.pokemonshowdown.data.SearchableActivity;
 
 /**
  * Created by thain on 7/17/14.
  */
 public class DmgCalcActivity extends FragmentActivity {
     public final static String DCTAG = "DMG_CALC_TAG";
+    public final static int REQUEST_CODE_FIND_ATTACKER = 0;
+    public final static int REQUEST_CODE_FIND_DEFENDER = 1;
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -96,7 +98,7 @@ public class DmgCalcActivity extends FragmentActivity {
         attacker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadPokemon(getAttacker());
+                loadPokemon(getAttacker(), REQUEST_CODE_FIND_ATTACKER);
             }
         });
 
@@ -104,7 +106,7 @@ public class DmgCalcActivity extends FragmentActivity {
         defender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadPokemon(getDefender());
+                loadPokemon(getDefender(), REQUEST_CODE_FIND_DEFENDER);
             }
         });
 
@@ -127,7 +129,13 @@ public class DmgCalcActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(SearchableActivity.SearchTAG, "Result code : " +Integer.toString(resultCode));
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE_FIND_ATTACKER) {
+                setAttacker(data.getExtras().getString("Search"));
+            } else {
+                setDefender(data.getExtras().getString("Search"));
+            }
+        }
     }
 
     @Override
@@ -231,11 +239,12 @@ public class DmgCalcActivity extends FragmentActivity {
         textView.setText(defender.getName());
     }
 
-    private void loadPokemon(Pokemon pokemon) {
+    private void loadPokemon(Pokemon pokemon, int searchCode) {
         DialogFragment fragment = new PokemonFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("Pokemon", pokemon);
         bundle.putBoolean("Search", true);
+        bundle.putInt("Search Code", searchCode);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PokemonTAG);

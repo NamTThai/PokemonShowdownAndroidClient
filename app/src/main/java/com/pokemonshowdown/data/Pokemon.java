@@ -111,6 +111,9 @@ public class Pokemon implements Serializable {
                 String key = keys.next();
                 mAbilityList.put(key, abilityList.getString(key));
             }
+            if (mAbilityList.size() == 1) {
+                setAbility("0");
+            }
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         } catch (java.lang.NullPointerException e) {
@@ -147,7 +150,7 @@ public class Pokemon implements Serializable {
         }
         return 0;
     }
-    
+
     public int[] calculateStats() {
         int[] stats = new int[6];
         stats[0] = calculateHP();
@@ -261,11 +264,11 @@ public class Pokemon implements Serializable {
     public void setStats(int[] stats) {
         mStats = stats;
     }
-    
+
     public int getHP() {
         return mStats[0];
     }
-    
+
     public void setHP(int HP) {
         mStats[0] = HP;
     }

@@ -5,7 +5,6 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +26,8 @@ public class SearchableActivity extends ListActivity {
     public final static String SearchTAG = "SEARCH_DIALOG_POKEMON";
     public final static int REQUEST_CODE_SEARCH_POKEMON = 0;
 
-    private ListView mListView;
+    private ArrayAdapter<String> mAdapter;
+    private ArrayList<String> mAdapterList;
     private int mSearchType;
 
     @Override
@@ -41,12 +41,21 @@ public class SearchableActivity extends ListActivity {
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:
                 HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
-                PokemonAdapter adapter = new PokemonAdapter(this, new ArrayList<String>(pokedex.keySet()));
-                setListAdapter(adapter);
+                mAdapterList = new ArrayList<String>(pokedex.keySet());
+                mAdapter = new PokemonAdapter(this, mAdapterList);
+                setListAdapter(mAdapter);
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent();
+        intent.putExtra("Search", mAdapterList.get(position));
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     @Override
@@ -89,11 +98,14 @@ public class SearchableActivity extends ListActivity {
 
     private void searchPokemon(String query) {
         HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
-        for (String string : pokedex.keySet()) {
-            if (string.contains(query.toLowerCase())) {
-                Log.d(SearchTAG, string);
+        mAdapterList = new ArrayList<String>();
+        for (String pokemonName : pokedex.keySet()) {
+            if (pokemonName.contains(query.toLowerCase())) {
+                mAdapterList.add(pokemonName);
             }
         }
+        mAdapter = new PokemonAdapter(this, mAdapterList);
+        setListAdapter(mAdapter);
     }
 
     private class PokemonAdapter extends ArrayAdapter<String> {
