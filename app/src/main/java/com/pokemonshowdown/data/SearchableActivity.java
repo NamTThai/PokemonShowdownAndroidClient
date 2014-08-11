@@ -44,6 +44,7 @@ public class SearchableActivity extends ListActivity {
                 mAdapterList = new ArrayList<String>(pokedex.keySet());
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
+                getActionBar().setTitle(R.string.search_label_pokemon);
                 break;
             default:
                 break;
