@@ -32,7 +32,7 @@ public class NodeConnection extends AsyncTask<String, Void, String> {
         try {
             Log.d(CTAG, "Initiating connection");
 
-            URL url = new URL("http://nthai.cs.trincoll.edu:8000");
+            URL url = new URL("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
