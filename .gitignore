@@ -3,3 +3,4 @@
 .DS_Store
 *.iml
 app/app.iml
+.idea
