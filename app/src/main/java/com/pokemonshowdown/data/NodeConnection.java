@@ -3,12 +3,11 @@ package com.pokemonshowdown.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedReader;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Created by thain on 8/9/14.
@@ -27,33 +26,38 @@ public class NodeConnection extends AsyncTask<String, Void, String> {
     }
 
     private String downloadFromServer() throws IOException {
-        InputStream inputStream = null;
 
         try {
             Log.d(CTAG, "Initiating connection");
 
-            URL url = new URL("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
+            URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
 
-            int response = conn.getResponseCode();
-            Log.d(CTAG, "The response code is : " + response);
+            WebSocketClient webSocketClient = new WebSocketClient(uri) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    Log.d(CTAG, "Opened");
+                    send("|/join lobby");
+                }
 
-            inputStream = conn.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((inputStream)));
+                @Override
+                public void onMessage(String s) {
+                    Log.d(CTAG, s);
+                }
 
-            String output;
-            Log.d(CTAG, "Output from server...");
-            while ((output = bufferedReader.readLine()) != null) {
-                Log.d(CTAG, output);
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    Log.d(CTAG, "Closed: code " + code + " reason " + reason + " remote " + remote);
+                }
 
-                if (isCancelled()) break;
-            }
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
+                @Override
+                public void onError(Exception e) {
+                    Log.d(CTAG, "Error: " + e.toString());
+                }
+            };
+            webSocketClient.connect();
+            webSocketClient.getConnection().send("|/ranking RainFountain");
+        } catch (Exception e) {
+            Log.d(CTAG, e.toString());
         }
         return null;
     }

@@ -19,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 /**
  * Created by thain on 7/15/14.
  */
@@ -31,6 +33,8 @@ public class BattleFieldActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
+
+    private ArrayList<String> mRoomList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,13 +80,26 @@ public class BattleFieldActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             mPosition = 0;
             selectItem(0);
+            mRoomList = new ArrayList<>();
+            mRoomList.add("lobby");
+        } else {
+            mPosition = savedInstanceState.getInt("Drawer Position");
+            selectItem(mPosition);
+            mRoomList = (ArrayList<String>) savedInstanceState.getSerializable("Room List");
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("Drawer Position", mPosition);
+        outState.putSerializable("Room List", mRoomList);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.fragment_battle_field, menu);
+        inflater.inflate(R.menu.battle_field, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -147,8 +164,12 @@ public class BattleFieldActivity extends FragmentActivity {
                 mPosition = 0;
                 fragment = new FindBattleFragment();
                 break;
-            case 4:
-                mPosition = 4;
+            case 1:
+                mPosition = 1;
+                fragment = CommunityLoungeFragment.newInstance(mRoomList);
+                break;
+            case 5:
+                mPosition = 5;
                 fragment = new CreditsFragment();
                 break;
             default:

@@ -21,7 +21,7 @@ public class PokedexActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.clear();
-        getMenuInflater().inflate(R.menu.fragment_pokedex, menu);
+        getMenuInflater().inflate(R.menu.pokedex, menu);
         return true;
     }
 

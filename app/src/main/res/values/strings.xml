@@ -7,12 +7,14 @@
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
-        <item>Find Battle!</item>
+        <item>Battle Field</item>
+        <item>Community Lounge</item>
         <item>Team Builder</item>
         <item>Watch Battle</item>
         <item>Replays</item>
         <item>Credits</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="bar_room">Room</string>
@@ -25,14 +27,6 @@
     <string name="bar_pokedex_search">Search for Pokemon</string>
 
     <!-- These are for Damage Calculator -->
-    <string-array name="bar_left_drawer_generation">
-        <item>RBY</item>
-        <item>GSC</item>
-        <item>ADV</item>
-        <item>DPP</item>
-        <item>B/W</item>
-        <item>X/Y</item>
-    </string-array>
     <string name="back">Back</string>
     <string name="dmgcalc_switch">Switch</string>
     <string name="dmg_calc_field_singles">Singles</string>
@@ -69,10 +63,14 @@
 
     <!-- These are for Search function -->
     <string name="search_title">Search</string>
-    <string name="search_label_pokemon">Search Pokemon&#8230;</string>
-    <string name="search_hint_pokemon">Search Pokemon&#8230;</string>
+    <string name="search_label_pokemon">Search Pokemon…</string>
+    <string name="search_hint_pokemon">Search Pokemon…</string>
 
     <!-- These are for Credits -->
     <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>
+
+    <!-- These are for Chat Room -->
+    <string name="bar_chatroom">Community Lounge</string>
+    <string name="hint_chatroom">Please login to chat</string>
 
 </resources>
