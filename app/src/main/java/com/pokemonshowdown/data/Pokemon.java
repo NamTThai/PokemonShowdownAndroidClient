@@ -37,7 +37,8 @@ public class Pokemon implements Serializable {
     private int mIcon;
     private int mIconSmall;
     private int mIconShiny;
-
+    private String mTagName;
+    private String mNameWithUnderScore;
     private String mName;
     private String mNickName;
     private int[] mStats;
@@ -59,6 +60,7 @@ public class Pokemon implements Serializable {
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
+            mTagName = name;
             JSONObject jsonObject;
             if (withAppContext) {
                 jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
@@ -73,11 +75,14 @@ public class Pokemon implements Serializable {
 
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
-            mIcon = appContext.getResources().getIdentifier("p"+jsonObject.getString("num"), "drawable", appContext.getPackageName());
+            mName = jsonObject.getString("species");
+            mNameWithUnderScore = mName.replaceAll("-", "_");
+            mNameWithUnderScore = mNameWithUnderScore.toLowerCase();
+
+            mIcon = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconShiny = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"sh", "drawable", appContext.getPackageName());
             mIconSmall = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"s", "drawable", appContext.getPackageName());
 
-            mName = jsonObject.getString("species");
             setNickName(mName);
             setStats(new int[6]);
             setBaseStats(new int[6]);
@@ -152,6 +157,29 @@ public class Pokemon implements Serializable {
             Log.d(PTAG, e.toString());
         }
         return 0;
+    }
+
+    public static Integer[] getPokemonBaseStats(Context appContext, String name, boolean withAppContext) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
+            Integer[] baseStatsInteger = new Integer[6];
+            baseStatsInteger[0] = baseStats.getInt("hp");
+            baseStatsInteger[1] = baseStats.getInt("atk");
+            baseStatsInteger[2] = baseStats.getInt("def");
+            baseStatsInteger[3] = baseStats.getInt("spa");
+            baseStatsInteger[4] = baseStats.getInt("spd");
+            baseStatsInteger[5] = baseStats.getInt("spe");
+            return baseStatsInteger;
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+        return null;
     }
 
     public static Integer[] getPokemonTypeIcon(Context appContext, String name, boolean withAppContext) {

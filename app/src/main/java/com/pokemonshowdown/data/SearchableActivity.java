@@ -137,6 +137,22 @@ public class SearchableActivity extends ListActivity {
             } else {
                 type2.setImageResource(0);
             }
+            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
+            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
+            hp.setText(baseStats[0].toString());
+            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
+            atk.setText(baseStats[1].toString());
+            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
+            def.setText(baseStats[2].toString());
+            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
+            spa.setText(baseStats[3].toString());
+            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
+            spd.setText(baseStats[4].toString());
+            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
+            spe.setText(baseStats[5].toString());
+            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
+            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
+            bst.setText(Integer.toString(BST));
             return convertView;
         }
     }

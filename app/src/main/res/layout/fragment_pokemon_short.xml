@@ -31,5 +31,178 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/type_2"
         android:layout_weight="1"/>
+    
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_HP"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_hp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_HP"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Atk"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_Atk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Atk"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Def"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_Def"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Def"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_SpAtk"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_SpAtk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_SpAtk"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_SpDef"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_SpDef"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_SpDef"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Spd"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_Spd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_Spd"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_BST"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/pokemon_short_BST"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_BST"
+            android:layout_gravity="center"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
