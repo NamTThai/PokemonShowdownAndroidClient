@@ -60,6 +60,8 @@
     <string name="EVs">EVs</string>
     <string name="IVs">IVs</string>
     <string name="save">Save</string>
+    <string name="type_1">Type 1</string>
+    <string name="type_2">Type 2</string>
 
     <!-- These are for Search function -->
     <string name="search_title">Search</string>

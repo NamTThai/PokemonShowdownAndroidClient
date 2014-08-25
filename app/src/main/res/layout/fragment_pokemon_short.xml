@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/short_pokemon_name"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="20sp"
+    android:background="@drawable/onclick_blue"
+    android:orientation="horizontal"
     android:padding="8dp"
-    android:gravity="center_vertical"
-    android:background="@drawable/onclick_blue"/>
+    android:weightSum="16">
+
+    <TextView
+        android:id="@+id/short_pokemon_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:gravity="center_vertical"
+        android:layout_weight="6"/>
+
+    <ImageView
+        android:id="@+id/type_1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/type_1"
+        android:layout_weight="1"/>
+
+    <ImageView
+        android:id="@+id/type_2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/type_2"
+        android:layout_weight="1"/>
+
+</LinearLayout>

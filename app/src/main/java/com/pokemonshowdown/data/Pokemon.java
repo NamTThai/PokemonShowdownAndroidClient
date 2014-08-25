@@ -52,6 +52,7 @@ public class Pokemon implements Serializable {
     private String mAbility;
     private HashMap<String, String> mAbilityList;
     private String[] mType;
+    private int[] mTypeIcon;
     private String[] mMoves;
     private String[] mMoveList;
     private int mWeight;
@@ -101,12 +102,14 @@ public class Pokemon implements Serializable {
             setShiny(false);
             JSONArray types = jsonObject.getJSONArray("types");
             setType(new String[types.length()]);
+            setTypeIcon(new int[types.length()]);
             for (int i = 0; i < types.length(); i++) {
                 mType[i] = types.get(i).toString();
+                mTypeIcon[i] = appContext.getResources().getIdentifier("types_"+mType[i].toLowerCase(), "drawable", appContext.getPackageName());
             }
             JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
             Iterator<String> keys = abilityList.keys();
-            mAbilityList = new HashMap<String, String>();
+            mAbilityList = new HashMap<>();
             while (keys.hasNext()) {
                 String key = keys.next();
                 mAbilityList.put(key, abilityList.getString(key));
@@ -149,6 +152,28 @@ public class Pokemon implements Serializable {
             Log.d(PTAG, e.toString());
         }
         return 0;
+    }
+
+    public static Integer[] getPokemonTypeIcon(Context appContext, String name, boolean withAppContext) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            JSONArray types = jsonObject.getJSONArray("types");
+            String[] typesString = new String[types.length()];
+            Integer[] typesIcon = new Integer[types.length()];
+            for (int i = 0; i < types.length(); i++) {
+                typesString[i] = types.get(i).toString();
+                typesIcon[i] = appContext.getResources().getIdentifier("types_"+typesString[i].toLowerCase(), "drawable", appContext.getPackageName());
+            }
+            return typesIcon;
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+        return null;
     }
 
     public int[] calculateStats() {
@@ -605,6 +630,14 @@ public class Pokemon implements Serializable {
 
     public void setType(String[] type) {
         mType = type;
+    }
+
+    public int[] getTypeIcon() {
+        return mTypeIcon;
+    }
+
+    public void setTypeIcon(int[] typeIcon) {
+        mTypeIcon = typeIcon;
     }
 
     public String[] getMoves() {
