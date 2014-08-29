@@ -4,12 +4,13 @@
 
   <meta charset="utf-8">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="ability.js"></script>
 
     <script>
 	$(document).ready(function() {
         $("button").click(function()
            {
-             $("#text").text("abdedf");
+             $("#text").text(json);
 			 $("button").hide();
            }
         );
@@ -20,8 +21,8 @@
 
 <body>
 	  
-	  <p id="text">Paragraph</p>
-      <button>Translate</button>
+	  <p id="text">Loader</p>
+      <button>Get JSON</button>
 	  
 </body>
 </html>
