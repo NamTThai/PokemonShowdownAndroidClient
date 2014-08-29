@@ -81,7 +81,7 @@ public class Pokemon implements Serializable {
 
             mIcon = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconShiny = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"sh", "drawable", appContext.getPackageName());
-            mIconSmall = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"s", "drawable", appContext.getPackageName());
+            mIconSmall = appContext.getResources().getIdentifier("smallicons_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
 
             setNickName(mName);
             setStats(new int[6]);
@@ -152,7 +152,7 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
-            return appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"s", "drawable", appContext.getPackageName());
+            return appContext.getResources().getIdentifier("smallicons_"+jsonObject.getString("species").toLowerCase().replaceAll("-", "_"), "drawable", appContext.getPackageName());
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         }
