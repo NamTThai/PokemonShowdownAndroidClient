@@ -54,6 +54,23 @@ public class SpriteSheetDecomposer {
                 } else {
                     String fileName = pre+pokemonName+pos;
                     switch (pokemonTag) {
+                        case "arceusbug": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusdark": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusdragon": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceuselectric": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusfairy": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusfighting": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusfire": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusflying": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusghost": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusgrass": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusground": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusice": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceuspoison": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceuspsychic": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceusrock": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceussteel": cutSpriteSheet(spriteSheet, 493, fileName); break;
+                        case "arceuswater": cutSpriteSheet(spriteSheet, 493, fileName); break;
                         case "pumpkaboosmall": cutSpriteSheet(spriteSheet, 710, filename); break;
                         case "pumpkaboolarge": cutSpriteSheet(spriteSheet, 710, filename); break;
                         case "pumpkaboosuper": cutSpriteSheet(spriteSheet, 710, filename); break;
