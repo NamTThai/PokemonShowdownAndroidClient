@@ -54,6 +54,12 @@ public class SpriteSheetDecomposer {
                 } else {
                     String fileName = pre+pokemonName+pos;
                     switch (pokemonTag) {
+                        case "pumpkaboosmall": cutSpriteSheet(spriteSheet, 710, filename); break;
+                        case "pumpkaboolarge": cutSpriteSheet(spriteSheet, 710, filename); break;
+                        case "pumpkaboosuper": cutSpriteSheet(spriteSheet, 710, filename); break;
+                        case "gourgeistsmall": cutSpriteSheet(spriteSheet, 711, fileName); break;
+                        case "gourgeistlarge": cutSpriteSheet(spriteSheet, 711, fileName); break;
+                        case "gourgeistsuper": cutSpriteSheet(spriteSheet, 711, fileName); break;
                         case "egg": cutSpriteSheet(spriteSheet, 731, fileName); break;
                         case "rotomfan": cutSpriteSheet(spriteSheet, 779, fileName); break;
                         case "rotomfrost": cutSpriteSheet(spriteSheet, 780, fileName); break;
