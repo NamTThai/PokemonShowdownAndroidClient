@@ -39,21 +39,51 @@ public class SpriteSheetDecomposer {
             while (pokemonTags.hasNext()) {
                 String pokemonTag = (String) pokemonTags.next();
                 org.json.JSONObject pokemonData = (org.json.JSONObject) pokedex.get(pokemonTag);
-                String pokemonName = pokemonData.getString("species").toLowerCase().replaceAll("-", "_");
-                if (pokemonName.toLowerCase().equals(pokemonTag)) {
+                String pokemonName = pokemonData.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "");
+                System.out.print(pokemonName);
+                if (pokemonName.equals(pokemonTag)) {
                     int num = pokemonData.getInt("num");
                     if (num >= 0) {
                         cutSpriteSheet(spriteSheet, num, pre+pokemonName+pos);
                     }
+                    String fileName = pre+pokemonName+pos;
                     switch (pokemonTag) {
                         case "unfezant": cutSpriteSheet(spriteSheet, 788, pre+pokemonName+"_f"+pos); break;
                         case "frillish": cutSpriteSheet(spriteSheet, 801, pre+pokemonName+"_f"+pos); break;
                         case "jellicent": cutSpriteSheet(spriteSheet, 802, pre+pokemonName+"_f"+pos); break;
                         case "meowstic": cutSpriteSheet(spriteSheet, 809, pre+pokemonName+"_f"+pos); break;
+                        case "syclant": cutSpriteSheet(spriteSheet,832 + 0, fileName); break;
+                        case "revenankh": cutSpriteSheet(spriteSheet,832 + 1, fileName); break;
+                        case "pyroak": cutSpriteSheet(spriteSheet,832 + 2, fileName); break;
+                        case "fidgit": cutSpriteSheet(spriteSheet,832 + 3, fileName); break;
+                        case "stratagem": cutSpriteSheet(spriteSheet,832 + 4, fileName); break;
+                        case "arghonaut": cutSpriteSheet(spriteSheet,832 + 5, fileName); break;
+                        case "kitsunoh": cutSpriteSheet(spriteSheet,832 + 6, fileName); break;
+                        case "cyclohm": cutSpriteSheet(spriteSheet,832 + 7, fileName); break;
+                        case "colossoil": cutSpriteSheet(spriteSheet,832 + 8, fileName); break;
+                        case "krilowatt": cutSpriteSheet(spriteSheet,832 + 9, fileName); break;
+                        case "voodoom": cutSpriteSheet(spriteSheet,832 + 10, fileName); break;
+                        case "tomohawk": cutSpriteSheet(spriteSheet,832 + 11, fileName); break;
+                        case "necturna": cutSpriteSheet(spriteSheet,832 + 12, fileName); break;
+                        case "mollux": cutSpriteSheet(spriteSheet,832 + 13, fileName); break;
+                        case "aurumoth": cutSpriteSheet(spriteSheet,832 + 14, fileName); break;
+                        case "malaconda": cutSpriteSheet(spriteSheet,832 + 15, fileName); break;
+                        case "cawmodore": cutSpriteSheet(spriteSheet,832 + 16, fileName); break;
+                        case "volkraken": cutSpriteSheet(spriteSheet,832 + 17, fileName); break;
                     }
                 } else {
                     String fileName = pre+pokemonName+pos;
                     switch (pokemonTag) {
+                        case "aegislashblade": cutSpriteSheet(spriteSheet, 681, fileName); break;
+                        case "nidoranm": cutSpriteSheet(spriteSheet, 32, fileName); break;
+                        case "nidoranf": cutSpriteSheet(spriteSheet, 29, fileName); break;
+                        case "pichuspikyeared": cutSpriteSheet(spriteSheet, 172, fileName); break;
+                        case "porygonz": cutSpriteSheet(spriteSheet, 474, fileName); break;
+                        case "hooh": cutSpriteSheet(spriteSheet, 250, fileName); break;
+                        case "genesectdouse": cutSpriteSheet(spriteSheet, 649, fileName); break;
+                        case "genesectshock": cutSpriteSheet(spriteSheet, 649, fileName); break;
+                        case "genesectburn": cutSpriteSheet(spriteSheet, 649, fileName); break;
+                        case "genesectchill": cutSpriteSheet(spriteSheet, 649, fileName); break;
                         case "arceusbug": cutSpriteSheet(spriteSheet, 493, fileName); break;
                         case "arceusdark": cutSpriteSheet(spriteSheet, 493, fileName); break;
                         case "arceusdragon": cutSpriteSheet(spriteSheet, 493, fileName); break;
@@ -71,9 +101,9 @@ public class SpriteSheetDecomposer {
                         case "arceusrock": cutSpriteSheet(spriteSheet, 493, fileName); break;
                         case "arceussteel": cutSpriteSheet(spriteSheet, 493, fileName); break;
                         case "arceuswater": cutSpriteSheet(spriteSheet, 493, fileName); break;
-                        case "pumpkaboosmall": cutSpriteSheet(spriteSheet, 710, filename); break;
-                        case "pumpkaboolarge": cutSpriteSheet(spriteSheet, 710, filename); break;
-                        case "pumpkaboosuper": cutSpriteSheet(spriteSheet, 710, filename); break;
+                        case "pumpkaboosmall": cutSpriteSheet(spriteSheet, 710, fileName); break;
+                        case "pumpkaboolarge": cutSpriteSheet(spriteSheet, 710, fileName); break;
+                        case "pumpkaboosuper": cutSpriteSheet(spriteSheet, 710, fileName); break;
                         case "gourgeistsmall": cutSpriteSheet(spriteSheet, 711, fileName); break;
                         case "gourgeistlarge": cutSpriteSheet(spriteSheet, 711, fileName); break;
                         case "gourgeistsuper": cutSpriteSheet(spriteSheet, 711, fileName); break;
@@ -135,24 +165,6 @@ public class SpriteSheetDecomposer {
                         case "abomasnowmega": cutSpriteSheet(spriteSheet,891, fileName); break;
                         case "latiasmega": cutSpriteSheet(spriteSheet,892, fileName); break;
                         case "latiosmega": cutSpriteSheet(spriteSheet,893, fileName); break;
-                        case "syclant": cutSpriteSheet(spriteSheet,832 + 0, fileName); break;
-                        case "revenankh": cutSpriteSheet(spriteSheet,832 + 1, fileName); break;
-                        case "pyroak": cutSpriteSheet(spriteSheet,832 + 2, fileName); break;
-                        case "fidgit": cutSpriteSheet(spriteSheet,832 + 3, fileName); break;
-                        case "stratagem": cutSpriteSheet(spriteSheet,832 + 4, fileName); break;
-                        case "arghonaut": cutSpriteSheet(spriteSheet,832 + 5, fileName); break;
-                        case "kitsunoh": cutSpriteSheet(spriteSheet,832 + 6, fileName); break;
-                        case "cyclohm": cutSpriteSheet(spriteSheet,832 + 7, fileName); break;
-                        case "colossoil": cutSpriteSheet(spriteSheet,832 + 8, fileName); break;
-                        case "krilowatt": cutSpriteSheet(spriteSheet,832 + 9, fileName); break;
-                        case "voodoom": cutSpriteSheet(spriteSheet,832 + 10, fileName); break;
-                        case "tomohawk": cutSpriteSheet(spriteSheet,832 + 11, fileName); break;
-                        case "necturna": cutSpriteSheet(spriteSheet,832 + 12, fileName); break;
-                        case "mollux": cutSpriteSheet(spriteSheet,832 + 13, fileName); break;
-                        case "aurumoth": cutSpriteSheet(spriteSheet,832 + 14, fileName); break;
-                        case "malaconda": cutSpriteSheet(spriteSheet,832 + 15, fileName); break;
-                        case "cawmodore": cutSpriteSheet(spriteSheet,832 + 16, fileName); break;
-                        case "volkraken": cutSpriteSheet(spriteSheet,832 + 17, fileName); break;
                     }
                 }
             }
