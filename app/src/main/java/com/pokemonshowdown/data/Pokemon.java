@@ -76,8 +76,7 @@ public class Pokemon implements Serializable {
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("species");
-            mNameWithUnderScore = mName.replaceAll("-", "_");
-            mNameWithUnderScore = mNameWithUnderScore.toLowerCase();
+            mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'),"").toLowerCase();
 
             mIcon = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconShiny = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"sh", "drawable", appContext.getPackageName());
@@ -152,7 +151,7 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
-            return appContext.getResources().getIdentifier("smallicons_"+jsonObject.getString("species").toLowerCase().replaceAll("-", "_"), "drawable", appContext.getPackageName());
+            return appContext.getResources().getIdentifier("smallicons_"+jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'),""), "drawable", appContext.getPackageName());
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         }
