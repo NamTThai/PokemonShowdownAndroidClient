@@ -15,6 +15,15 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Modify the following:
+ * porygonz -> porygon_z
+ * hooh -> ho_oh
+ * pichu_spikyeared -> pichu_spiky_eared
+ * nidoranm -> nidoran_m
+ * nidoranf -> nidoran_f
+ */
+
 public class SpriteSheetDecomposer {
 
     public static void main(String[] args) {
