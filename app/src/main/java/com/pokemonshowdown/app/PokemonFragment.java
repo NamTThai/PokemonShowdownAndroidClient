@@ -106,6 +106,32 @@ public class PokemonFragment extends DialogFragment {
                 abilityDialog.show(fm, AbilityDialog.ATAG);
             }
         });
+
+        int[] typesIcon = getPokemon().getTypeIcon();
+        ImageView type1 = (ImageView) view.findViewById(R.id.type_1);
+        type1.setImageResource(typesIcon[0]);
+        ImageView type2 = (ImageView) view.findViewById(R.id.type_2);
+        if (typesIcon.length == 2) {
+            type2.setImageResource(typesIcon[1]);
+        } else {
+            type2.setImageResource(0);
+        }
+
+        TextView level = (TextView) view.findViewById(R.id.level);
+        level.setBackgroundResource(R.drawable.editable_frame);
+        level.setText(Integer.toString(getPokemon().getLevel()));
+
+        level.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                LevelDialog levelDialog = new LevelDialog();
+                Bundle bundle = new Bundle();
+                bundle.putInt("Level", getPokemon().getLevel());
+                levelDialog.setArguments(bundle);
+                levelDialog.show(fm, LevelDialog.LTAG);
+            }
+        });
     }
 
     private void addSearchWidget(View view) {
@@ -140,13 +166,18 @@ public class PokemonFragment extends DialogFragment {
         pokemonStats.setText(getStatsString());
     }
 
-    private String getBaseStatsString() {
+    public String getBaseStatsString() {
         return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
     }
 
-    private void resetBaseStatsString() {
+    public void resetBaseStatsString() {
         TextView pokemonStats= (TextView) getView().findViewById(R.id.stats);
         pokemonStats.setText(getBaseStatsString());
+    }
+
+    public void setLevelString(int lv) {
+        TextView level = (TextView) getView().findViewById(R.id.level);
+        level.setText(Integer.toString(lv));
     }
 
     private void closeFragment() {
