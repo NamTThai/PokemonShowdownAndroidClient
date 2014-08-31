@@ -13,24 +13,18 @@ import android.util.Log;
  */
 public class MyApplication extends Application {
     public Pokedex mPokedex;
+    public NodeConnection mNodeConnection;
 
     @Override
     public void onCreate() {
         super.onCreate();
-/*
+
         connectToServer();
-*/
         initPokedex();
     }
 
     private void connectToServer() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new NodeConnection().execute();
-        } else {
-            Log.d(NodeConnection.CTAG, "Check network connection");
-        }
+        mNodeConnection = NodeConnection.getWithApplicationContext(getApplicationContext());
     }
 
     private void initPokedex() {

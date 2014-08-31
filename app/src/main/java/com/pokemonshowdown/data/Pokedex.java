@@ -17,7 +17,7 @@ import java.util.Iterator;
  * Created by thain on 7/28/14.
  */
 public class Pokedex {
-    private final static String DexTAG = "POKEDEX_TAG";
+    private final static String DTAG = "POKEDEX_TAG";
     private HashMap<String, String> mPokedexEntries;
 
     private static Pokedex sPokedex;
