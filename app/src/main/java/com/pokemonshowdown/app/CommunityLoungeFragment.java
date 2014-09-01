@@ -42,6 +42,8 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         setHasOptionsMenu(true);
         if (getArguments().getSerializable("Room List") != null) {
             mRoomList = (ArrayList<String>) getArguments().getSerializable(ROOM_LIST);
+        } else {
+            mRoomList = new ArrayList<>();
         }
     }
 

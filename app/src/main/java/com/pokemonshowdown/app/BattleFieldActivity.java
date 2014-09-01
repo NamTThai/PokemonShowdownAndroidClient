@@ -1,8 +1,12 @@
 package com.pokemonshowdown.app;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -11,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,12 +24,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.pokemonshowdown.data.NodeConnection;
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by thain on 7/15/14.
  */
 public class BattleFieldActivity extends FragmentActivity {
+    private final static String BTAG = "BattleFieldActivity";
+
     private int mPosition;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -36,10 +51,17 @@ public class BattleFieldActivity extends FragmentActivity {
 
     private ArrayList<String> mRoomList;
 
+    private WebSocketClient mWebSocketClient;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle_field);
+
+        mWebSocketClient = NodeConnection.getWithApplicationContext(getApplicationContext()).getWebSocketClient();
+        if (mWebSocketClient == null) {
+            mWebSocketClient = getWebSocketClient();
+        }
 
         mTitle = mDrawerTitle = getTitle();
         mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
@@ -84,8 +106,8 @@ public class BattleFieldActivity extends FragmentActivity {
             mRoomList.add("lobby");
         } else {
             mPosition = savedInstanceState.getInt("Drawer Position");
-            selectItem(mPosition);
             mRoomList = (ArrayList<String>) savedInstanceState.getSerializable("Room List");
+            selectItem(mPosition);
         }
     }
 
@@ -201,11 +223,99 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
+    private WebSocketClient getWebSocketClient() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) BattleFieldActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            if (mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
+                return mWebSocketClient;
+            } else {
+                new ConnectToServer().execute();
+                return mWebSocketClient;
+            }
+        } else {
+            Log.d(NodeConnection.NTAG, "Check network connection");
+            return null;
+        }
+    }
+
+    private void closeActiveConnection() {
+        if(mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
+            mWebSocketClient.close();
+        }
+    }
+
+    private void sendClientMessage(String message) {
+        WebSocketClient webSocketClient = getWebSocketClient();
+        if (webSocketClient != null) {
+            webSocketClient.send(message);
+        } else {
+            // TODO: get alert dialog for failed connection
+            return;
+        }
+    }
+
+    private void processMessage(String message) {
+
+    }
+
     // The click listener for ListView in the navigation drawer
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
+        }
+    }
+
+    private class ConnectToServer extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params){
+            try {
+                openNewConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private String openNewConnection() throws IOException {
+
+            try {
+
+                URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
+
+                if (mWebSocketClient == null) {
+                    mWebSocketClient = new WebSocketClient(uri) {
+                        @Override
+                        public void onOpen(ServerHandshake serverHandshake) {
+                            Log.d(BTAG, "Opened");
+                            NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(mWebSocketClient);
+                        }
+
+                        @Override
+                        public void onMessage(String s) {
+                            Log.d(BTAG, s);
+                            processMessage(s);
+                        }
+
+                        @Override
+                        public void onClose(int code, String reason, boolean remote) {
+                            Log.d(BTAG, "Closed: code " + code + " reason " + reason + " remote " + remote);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d(BTAG, "Error: " + e.toString());
+                        }
+                    };
+                }
+                if (!mWebSocketClient.getConnection().isOpen()) {
+                    mWebSocketClient.connect();
+                }
+            } catch (Exception e) {
+                Log.d(BTAG, e.toString());
+            }
+            return null;
         }
     }
 
