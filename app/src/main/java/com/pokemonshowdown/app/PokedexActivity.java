@@ -10,7 +10,6 @@ public class PokedexActivity extends FragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pokedex);
         getActionBar().setTitle(R.string.bar_pokedex);

@@ -201,7 +201,7 @@ public class BattleFieldActivity extends FragmentActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
+                .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(position))
                 .commit();
 
         // update selected item and title, then close the drawer
@@ -234,7 +234,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 return mWebSocketClient;
             }
         } else {
-            Log.d(NodeConnection.NTAG, "Check network connection");
+            // TODO: get alert dialog for failed connection
             return null;
         }
     }
@@ -249,14 +249,56 @@ public class BattleFieldActivity extends FragmentActivity {
         WebSocketClient webSocketClient = getWebSocketClient();
         if (webSocketClient != null) {
             webSocketClient.send(message);
-        } else {
-            // TODO: get alert dialog for failed connection
-            return;
         }
     }
 
+    /**
+     * Channel list:
+     * -1: global or lobby
+     * 0: battle
+     * 1: chatroom
+     */
     private void processMessage(String message) {
+        // Break down message to see which channel it has to go through
+        int channel;
+        int roomId;
+        if (message.charAt(0) != '>') {
+            channel = -1;
+            processGlobalMessage(message);
+        } else {
+            // TODO: deal with server messages that come with ROOMID
+        }
+    }
 
+    private void processGlobalMessage(String message) {
+        int channel;
+        if (message.charAt(0) != '|') {
+            channel = 1;
+        } else {
+            message = message.substring(1);
+            String command = message.substring(0, message.indexOf('|'));
+            switch (command) {
+                case "popup":
+                case "pm":
+                case "usercount":
+                case "nametaken":
+                case "formats":
+                case "updatesearch":
+                case "updatechallenges":
+                case "queryresponse":
+                case "updateuser":
+                case "challstr":
+                    channel = -1;
+                    break;
+                default:
+                    channel = 1;
+            }
+        }
+
+        if (channel == mPosition) {
+            CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer " + mPosition);
+            fragment.processServerMessage("lobby", message);
+        }
     }
 
     // The click listener for ListView in the navigation drawer
@@ -288,23 +330,25 @@ public class BattleFieldActivity extends FragmentActivity {
                     mWebSocketClient = new WebSocketClient(uri) {
                         @Override
                         public void onOpen(ServerHandshake serverHandshake) {
-                            Log.d(BTAG, "Opened");
+                            // Log.d(BTAG, "Opened");
                             NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(mWebSocketClient);
                         }
 
                         @Override
                         public void onMessage(String s) {
-                            Log.d(BTAG, s);
+                            Log.d("NodeConnection", s);
                             processMessage(s);
                         }
 
                         @Override
                         public void onClose(int code, String reason, boolean remote) {
+                            mWebSocketClient = null;
                             Log.d(BTAG, "Closed: code " + code + " reason " + reason + " remote " + remote);
                         }
 
                         @Override
                         public void onError(Exception e) {
+                            mWebSocketClient = null;
                             Log.d(BTAG, "Error: " + e.toString());
                         }
                     };

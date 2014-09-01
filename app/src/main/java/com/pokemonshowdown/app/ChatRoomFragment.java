@@ -8,19 +8,22 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.NodeConnection;
+
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
     private final static String CTAG = "ChatRoomFragment";
-    private static final String ROOM_NAME = "Room Name";
+    private final static String ROOM_NAME = "Room Name";
+    private final static String ROOM_ID = "Room Id";
 
     private String mRoomName;
     private String mRoomId;
     private ListView mUserList;
     private TextView mChatLog;
 
-    public static ChatRoomFragment newInstance(String roomName) {
+    public static ChatRoomFragment newInstance(String roomId) {
         ChatRoomFragment fragment = new ChatRoomFragment();
         Bundle args = new Bundle();
-        args.putString(ROOM_NAME, roomName);
+        args.putString(ROOM_ID, roomId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -32,7 +35,8 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mRoomName = getArguments().getString(ROOM_NAME);
+            mRoomId = getArguments().getString(ROOM_ID);
+            NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
         }
     }
 
@@ -53,7 +57,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         super.onDetach();
     }
 
-    public void processServerOutput(String output) {
+    public void processServerMessage(String message) {
 
     }
 
