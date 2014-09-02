@@ -159,13 +159,10 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
-    @TargetApi(11)
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            getActionBar().setTitle(mTitle);
-        }
+        getActionBar().setTitle(mTitle);
     }
 
     /**
@@ -339,13 +336,13 @@ public class BattleFieldActivity extends FragmentActivity {
                     mWebSocketClient = new WebSocketClient(uri) {
                         @Override
                         public void onOpen(ServerHandshake serverHandshake) {
+                            Log.d(BTAG, "Opened connection");
                             // Log.d(BTAG, "Opened");
-                            NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(mWebSocketClient);
                         }
 
                         @Override
                         public void onMessage(String s) {
-                            Log.d("NodeConnection", s);
+                            Log.d(BTAG, s);
                             processMessage(s);
                         }
 
@@ -361,6 +358,7 @@ public class BattleFieldActivity extends FragmentActivity {
                             Log.d(BTAG, "Error: " + e.toString());
                         }
                     };
+                    NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(mWebSocketClient);
                 }
                 if (!mWebSocketClient.getConnection().isOpen()) {
                     mWebSocketClient.connect();

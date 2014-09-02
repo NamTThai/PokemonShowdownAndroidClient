@@ -54,7 +54,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_community_lounge, container, false);
         v.setFocusableInTouchMode(true);
-        mCommunityLoungePagerAdapter = new CommunityLoungePagerAdapter(getActivity().getSupportFragmentManager());
+        mCommunityLoungePagerAdapter = new CommunityLoungePagerAdapter(getChildFragmentManager());
         mViewPager = (ViewPager) v.findViewById(R.id.community_pager);
         mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
@@ -65,6 +65,11 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
                 });
         mViewPager.setAdapter(mCommunityLoungePagerAdapter);
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -131,7 +136,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
 
     public void processServerMessage(String roomId, String message) {
         int index = mRoomList.indexOf(roomId);
-        ChatRoomFragment fragment = (ChatRoomFragment) getActivity().getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
+        ChatRoomFragment fragment = (ChatRoomFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
         if (fragment != null) {
             fragment.processServerMessage(message);
         }
@@ -144,7 +149,6 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
 
         @Override
         public Fragment getItem(int i) {
-            Log.d(CTAG, "getItem from Pager Adapter");
             return ChatRoomFragment.newInstance(mRoomList.get(i));
         }
 

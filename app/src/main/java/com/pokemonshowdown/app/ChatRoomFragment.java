@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.NodeConnection;
+
+import org.java_websocket.client.WebSocketClient;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
     private final static String CTAG = "ChatRoomFragment";
@@ -39,7 +42,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
             //TODO: move send message back from BattleFieldActivity to NodeConnection
-            //NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
+            NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
         }
     }
 
