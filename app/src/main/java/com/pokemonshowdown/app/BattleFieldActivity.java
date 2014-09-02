@@ -49,6 +49,8 @@ public class BattleFieldActivity extends FragmentActivity {
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
 
+    private String mUsername;
+
     private ArrayList<String> mRoomList;
 
     private WebSocketClient mWebSocketClient;
@@ -144,6 +146,13 @@ public class BattleFieldActivity extends FragmentActivity {
                 return true;
             case R.id.menu_dmg_calc:
                 startActivity(new Intent(this, DmgCalcActivity.class));
+                return true;
+            case R.id.menu_login:
+                FragmentManager fm = getSupportFragmentManager();
+                OnboardingDialog fragment = new OnboardingDialog();
+                Bundle bundle = new Bundle();
+                fragment.setArguments(bundle);
+                fragment.show(fm, OnboardingDialog.OTAG);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

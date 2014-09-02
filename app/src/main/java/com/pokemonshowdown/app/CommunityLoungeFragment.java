@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 
 public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
+    public final static String CTAG = CommunityLoungeFragment.class.getName();
     private CommunityLoungePagerAdapter mCommunityLoungePagerAdapter;
     private ViewPager mViewPager;
 
@@ -43,8 +45,6 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         setHasOptionsMenu(true);
         if (getArguments().getSerializable("Room List") != null) {
             mRoomList = (ArrayList<String>) getArguments().getSerializable(ROOM_LIST);
-        } else {
-            mRoomList = new ArrayList<>();
         }
     }
 
@@ -126,21 +126,25 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
                             .setTabListener(tabListener)
             );
         }
+
     }
 
     public void processServerMessage(String roomId, String message) {
-        if (mRoomList.indexOf(roomId) == mViewPager.getCurrentItem()) {
-            
+        int index = mRoomList.indexOf(roomId);
+        ChatRoomFragment fragment = (ChatRoomFragment) getActivity().getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
+        if (fragment != null) {
+            fragment.processServerMessage(message);
         }
     }
 
-    private class CommunityLoungePagerAdapter extends FragmentStatePagerAdapter {
+    private class CommunityLoungePagerAdapter extends FragmentPagerAdapter {
         public CommunityLoungePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int i) {
+            Log.d(CTAG, "getItem from Pager Adapter");
             return ChatRoomFragment.newInstance(mRoomList.get(i));
         }
 

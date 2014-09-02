@@ -2,6 +2,7 @@ package com.pokemonshowdown.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +34,12 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(CTAG, "onCreate");
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
-            NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
+            //TODO: move send message back from BattleFieldActivity to NodeConnection
+            //NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
         }
     }
 
@@ -44,6 +47,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d(CTAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_chat_room, container, false);
     }
 
@@ -53,12 +57,25 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        Log.d(CTAG, "onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(CTAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public void onDetach() {
+        Log.d(CTAG ,"onDeTach");
         super.onDetach();
     }
 
     public void processServerMessage(String message) {
-
+        Log.d("BattleFieldActivity", "Received server messages");
     }
 
     private void formatChatLog(String type, String data) {

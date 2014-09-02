@@ -5,6 +5,10 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
 
+    <!-- These are for Onboarding -->
+    <string name="choose_username">Choose Username</string>
+    <string name="cancel">Cancel</string>
+
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
         <item>Battle Field</item>
