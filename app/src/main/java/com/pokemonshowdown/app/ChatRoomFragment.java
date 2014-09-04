@@ -18,7 +18,7 @@ import org.java_websocket.client.WebSocketClient;
 import java.util.HashMap;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
-    private final static String CTAG = "ChatRoomFragment";
+    public final static String CTAG = "ChatRoomFragment";
     private final static String ROOM_NAME = "Room Name";
     private final static String ROOM_ID = "Room Id";
 

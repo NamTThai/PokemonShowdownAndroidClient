@@ -163,8 +163,9 @@ public class BattleFieldActivity extends FragmentActivity {
                     return true;
                 }
                 if (onboarding.isSignedIn()) {
-                    //TODO: Add a user dialog showing picture, information, signout, etc.
-                    Log.d(Onboarding.OTAG, "User has signed in with username "+ onboarding.getUsername());
+                    FragmentManager fm = getSupportFragmentManager();
+                    UserDialog userDialog = new UserDialog();
+                    userDialog.show(fm, UserDialog.UTAG);
                     return true;
                 }
                 FragmentManager fm = getSupportFragmentManager();
@@ -275,7 +276,7 @@ public class BattleFieldActivity extends FragmentActivity {
 
                 @Override
                 public void onMessage(String s) {
-                    Log.d(BTAG, s);
+                    Log.d(NodeConnection.NTAG, s);
                     processMessage(s);
                 }
 
@@ -323,6 +324,12 @@ public class BattleFieldActivity extends FragmentActivity {
         int roomId;
         if (message.charAt(0) != '>') {
             channel = -1;
+            int newLine = message.indexOf('\n');
+            while (newLine != -1) {
+                processGlobalMessage(message.substring(0, newLine));
+                message = message.substring(newLine + 1);
+                newLine = message.indexOf('\n');
+            }
             processGlobalMessage(message);
         } else {
             // TODO: deal with server messages that come with ROOMID
@@ -338,9 +345,11 @@ public class BattleFieldActivity extends FragmentActivity {
             int endOfCommand = message.indexOf('|');
             String command = (endOfCommand == -1)? message : message.substring(0, endOfCommand);
             String messageDetail = (endOfCommand == -1)? "" : message.substring(endOfCommand + 1);
+
+            Onboarding onboarding;
             switch (command) {
                 case "challstr":
-                    Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                     onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
                     onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
                     String result = Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
@@ -354,7 +363,19 @@ public class BattleFieldActivity extends FragmentActivity {
                     sendClientMessage("|/trn "+name+",0,"+assertion);
                     break;
                 case "updateuser":
-                    
+                    String username = messageDetail.substring(0, messageDetail.indexOf('|'));
+                    String guestStatus = messageDetail.substring(messageDetail.indexOf('|') + 1, messageDetail.lastIndexOf('|'));
+                    String avatar = messageDetail.substring(messageDetail.lastIndexOf('|') + 1);
+                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    if (guestStatus.equals("0")) {
+                        onboarding.setUsername(username);
+                        onboarding.setSignedIn(false);
+                        onboarding.setAvatar(avatar);
+                    } else {
+                        onboarding.setUsername(username);
+                        onboarding.setSignedIn(true);
+                        onboarding.setAvatar(avatar);
+                    }
                     break;
                 case "popup":
                 case "pm":

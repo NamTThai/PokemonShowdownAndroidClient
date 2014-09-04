@@ -11,6 +11,8 @@
     <string name="sign_in">Sign In</string>
     <string name="name_has_been_registered">This username has been registered</string>
     <string name="pick_another_name">Pick another name</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="avatar">Avatar</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
@@ -27,7 +29,7 @@
     <string name="bar_room">Room</string>
     <string name="bar_pokedex">Pokedex</string>
     <string name="bar_dmg_calc">Damage Calculator</string>
-    <string name="bar_login">Login</string>
+    <string name="bar_login">Trainer</string>
     <string name="bar_settings">Settings</string>
 
     <!-- These are for Pokedex Action Bar -->

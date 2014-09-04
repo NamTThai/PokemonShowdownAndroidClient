@@ -8,19 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.Pokemon;
-
-import java.util.HashMap;
-import java.util.Iterator;
-
 public class LevelDialog extends DialogFragment {
-    public static final String LTAG = "LEVEL_DIALOG";
+    public static final String LTAG = LevelDialog.class.getName();
 
     private int mLevel;
 
@@ -29,7 +21,6 @@ public class LevelDialog extends DialogFragment {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.dialog_level, container);
