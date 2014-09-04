@@ -11,6 +11,8 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.Onboarding;
+
 public class SignInDialog extends DialogFragment {
     public static final String STAG = SignInDialog.class.getName();
 
@@ -23,13 +25,26 @@ public class SignInDialog extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.dialog_signin, container);
 
-        final EditText password = (EditText) view.findViewById(R.id.password);
+        final String username = getArguments().getString("username");
+        ((TextView) view.findViewById(R.id.username)).setText(username);
+
+        final EditText passwordBox = (EditText) view.findViewById(R.id.password);
 
         TextView onboarding = (TextView) view.findViewById(R.id.onboarding);
         onboarding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String password = passwordBox.getText().toString();
+                if (!password.equals("")) {
+                    Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+                    String assertion = onboarding.signingIn(username, password);
+                    if (assertion.charAt(0) == ';') {
+                        passwordBox.setText("");
+                    } else {
+                        ((BattleFieldActivity) getActivity()).processGlobalMessage("|assertion|"+username+"|"+assertion);
+                        getDialog().dismiss();
+                    }
+                }
             }
         });
 

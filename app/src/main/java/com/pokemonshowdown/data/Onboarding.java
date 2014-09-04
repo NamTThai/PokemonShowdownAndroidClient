@@ -28,6 +28,8 @@ public class Onboarding {
     private String mChallenge;
     private boolean isSignedIn;
     private String mUsername;
+    private String mNamed;
+    private String mAvatar;
 
     private Onboarding(Context appContext) {
         mAppContext = appContext;
@@ -47,12 +49,11 @@ public class Onboarding {
         signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge);
         try {
             String result = signIn.get(5, TimeUnit.SECONDS);
-            Log.d(OTAG, result);
             JSONObject resultJson = new JSONObject(result);
             if (!resultJson.getBoolean("loggedin")) {
                 return null;
             } else {
-                return resultJson.getString("assertion");
+                return resultJson.getString("username") + ",0," + resultJson.getString("assertion");
             }
         } catch (Exception e) {
             Log.d(OTAG, e.toString());
@@ -71,17 +72,17 @@ public class Onboarding {
         }
     }
 
-    public boolean signingIn(String username, String password) {
+    public String signingIn(String username, String password) {
         SignIn signIn = new SignIn();
         signIn.execute(SIGNING_IN, username, password, mKeyId, mChallenge);
         try {
             String result = signIn.get(5, TimeUnit.SECONDS);
-            Log.d(OTAG, result);
             JSONObject resultJson = new JSONObject(result);
+            return resultJson.getString("assertion");
         } catch (Exception e) {
             Log.d(OTAG, e.toString());
         }
-        return false;
+        return null;
     }
 
     public boolean isSignedIn() {
@@ -114,6 +115,22 @@ public class Onboarding {
 
     public void setChallenge(String challenge) {
         mChallenge = challenge;
+    }
+
+    public String getNamed() {
+        return mNamed;
+    }
+
+    public void setNamed(String named) {
+        mNamed = named;
+    }
+
+    public String getAvatar() {
+        return mAvatar;
+    }
+
+    public void setAvatar(String avatar) {
+        mAvatar = avatar;
     }
 
     private class SignIn extends AsyncTask<String, Void, String> {

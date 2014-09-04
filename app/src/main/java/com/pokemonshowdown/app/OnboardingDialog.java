@@ -52,10 +52,11 @@ public class OnboardingDialog extends DialogFragment {
                         FragmentManager fm = getActivity().getSupportFragmentManager();
                         SignInDialog fragment = new SignInDialog();
                         Bundle bundle = new Bundle();
+                        bundle.putString("username", name);
                         fragment.setArguments(bundle);
                         fragment.show(fm, SignInDialog.STAG);
                     } else {
-                        ((BattleFieldActivity) getActivity()).processGlobalMessage("assertion|"+name+"|"+assertion);
+                        ((BattleFieldActivity) getActivity()).processGlobalMessage("|assertion|"+name+"|"+assertion);
                         getDialog().dismiss();
                     }
                 }

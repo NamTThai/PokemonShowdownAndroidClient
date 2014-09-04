@@ -343,7 +343,18 @@ public class BattleFieldActivity extends FragmentActivity {
                     Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                     onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
                     onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
-                    Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
+                    String result = Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
+                    if (result != null) {
+                        sendClientMessage("|/trn "+result);
+                    }
+                    break;
+                case "assertion":
+                    String name = messageDetail.substring(0, messageDetail.indexOf('|'));
+                    String assertion = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    sendClientMessage("|/trn "+name+",0,"+assertion);
+                    break;
+                case "updateuser":
+                    
                     break;
                 case "popup":
                 case "pm":
@@ -353,9 +364,9 @@ public class BattleFieldActivity extends FragmentActivity {
                 case "updatesearch":
                 case "updatechallenges":
                 case "queryresponse":
-                case "updateuser":
                 case "deinit":
                     channel = -1;
+                    Log.d(BTAG, message);
                     break;
                 default:
                     channel = 1;
