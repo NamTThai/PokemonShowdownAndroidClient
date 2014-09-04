@@ -5,9 +5,11 @@ import android.util.Log;
 
 import com.pokemonshowdown.app.R;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.Iterator;
  * Created by thain on 7/28/14.
  */
 public class Pokedex {
-    private final static String DTAG = "POKEDEX_TAG";
+    private final static String PTAG = "POKEDEX_TAG";
     private HashMap<String, String> mPokedexEntries;
 
     private static Pokedex sPokedex;
@@ -78,8 +80,10 @@ public class Pokedex {
                     pokedexEntries.put(key, entry.toString());
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.d(PTAG, "JSON Exception");
+        } catch (IOException e) {
+            Log.d(PTAG, "Input Output problem");
         }
 
         return pokedexEntries;

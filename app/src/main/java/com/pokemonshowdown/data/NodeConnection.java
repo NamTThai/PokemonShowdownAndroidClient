@@ -6,11 +6,14 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pokemonshowdown.app.BattleFieldActivity;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 
 public class NodeConnection {
     public final static String NTAG = "PKM_SERVER_CONNECTION";
@@ -20,9 +23,11 @@ public class NodeConnection {
 
     private Context mAppContext;
     private WebSocketClient mWebSocketClient;
+    private HashMap<String, String> mRoomLog;
 
     private NodeConnection(Context appContext) {
         mAppContext = appContext;
+        mRoomLog = new HashMap<String, String>();
         mWebSocketClient = null;
     }
 
@@ -39,5 +44,26 @@ public class NodeConnection {
 
     public void setWebSocketClient(WebSocketClient webSocketClient) {
         mWebSocketClient = webSocketClient;
+    }
+
+    private void closeActiveConnection() {
+        if(mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
+            mWebSocketClient.close();
+        }
+    }
+
+    private void sendClientMessage(String message) {
+        WebSocketClient webSocketClient = getWebSocketClient();
+        if (webSocketClient != null) {
+            webSocketClient.send(message);
+        }
+    }
+
+    public HashMap<String, String> getRoomLog() {
+        return mRoomLog;
+    }
+
+    public void setRoomLog(HashMap<String, String> roomLog) {
+        mRoomLog = roomLog;
     }
 }

@@ -14,20 +14,16 @@ import android.util.Log;
 public class MyApplication extends Application {
     public Pokedex mPokedex;
     public NodeConnection mNodeConnection;
+    public Onboarding mOnboarding;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        Context appContext = getApplicationContext();
 
-        connectToServer();
-        initPokedex();
-    }
-
-    private void connectToServer() {
-        mNodeConnection = NodeConnection.getWithApplicationContext(getApplicationContext());
-    }
-
-    private void initPokedex() {
-        mPokedex = Pokedex.getWithApplicationContext(getApplicationContext());
+        mNodeConnection = NodeConnection.getWithApplicationContext(appContext);
+        mPokedex = Pokedex.getWithApplicationContext(appContext);
+        mOnboarding = Onboarding.getWithApplicationContext(appContext);
     }
 }

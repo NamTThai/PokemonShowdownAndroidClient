@@ -8,6 +8,9 @@
     <!-- These are for Onboarding -->
     <string name="choose_username">Choose Username</string>
     <string name="cancel">Cancel</string>
+    <string name="sign_in">Sign In</string>
+    <string name="name_has_been_registered">This username has been registered</string>
+    <string name="pick_another_name">Pick another name</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">

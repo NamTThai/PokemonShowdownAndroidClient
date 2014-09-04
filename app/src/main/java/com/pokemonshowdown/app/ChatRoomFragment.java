@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.pokemonshowdown.data.NodeConnection;
 
 import org.java_websocket.client.WebSocketClient;
+
+import java.util.HashMap;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
     private final static String CTAG = "ChatRoomFragment";
@@ -37,21 +40,30 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(CTAG, "onCreate");
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mRoomId = getArguments().getString(ROOM_ID);
-            //TODO: move send message back from BattleFieldActivity to NodeConnection
-            NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getWebSocketClient().send("|/join " + mRoomId);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d(CTAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_chat_room, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (getArguments() != null) {
+            mRoomId = getArguments().getString(ROOM_ID);
+            //TODO: move send message back from BattleFieldActivity to NodeConnection
+            ((BattleFieldActivity) getActivity()).sendClientMessage("|/join " + mRoomId);
+        }
+        HashMap<String, String> roomLog = NodeConnection.getWithApplicationContext(getActivity().getApplicationContext()).getRoomLog();
+        String log = roomLog.get(mRoomId);
+        if (log != null) {
+            roomLog.remove(mRoomId);
+            processServerMessage(log);
+        }
     }
 
     @Override
@@ -61,24 +73,22 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onDestroyView() {
-        Log.d(CTAG, "onDestroyView");
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(CTAG, "onDestroy");
+        ((BattleFieldActivity) getActivity()).sendClientMessage("|/leave "+mRoomId);
         super.onDestroy();
     }
 
     @Override
     public void onDetach() {
-        Log.d(CTAG ,"onDeTach");
         super.onDetach();
     }
 
     public void processServerMessage(String message) {
-        Log.d("BattleFieldActivity", "Received server messages");
+        Log.d(CTAG, message);
     }
 
     private void formatChatLog(String type, String data) {

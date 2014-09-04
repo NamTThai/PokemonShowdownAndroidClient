@@ -25,20 +25,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.pokemonshowdown.data.NodeConnection;
+import com.pokemonshowdown.data.Onboarding;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by thain on 7/15/14.
  */
 public class BattleFieldActivity extends FragmentActivity {
-    private final static String BTAG = "BattleFieldActivity";
+    public final static String BTAG = "BattleFieldActivity";
 
     private int mPosition;
     private DrawerLayout mDrawerLayout;
@@ -48,8 +52,6 @@ public class BattleFieldActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
-
-    private String mUsername;
 
     private ArrayList<String> mRoomList;
 
@@ -113,6 +115,13 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -148,10 +157,18 @@ public class BattleFieldActivity extends FragmentActivity {
                 startActivity(new Intent(this, DmgCalcActivity.class));
                 return true;
             case R.id.menu_login:
+                Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
+                    //TODO: Add alert dialog saying that no internet connection detected
+                    return true;
+                }
+                if (onboarding.isSignedIn()) {
+                    //TODO: Add a user dialog showing picture, information, signout, etc.
+                    Log.d(Onboarding.OTAG, "User has signed in with username "+ onboarding.getUsername());
+                    return true;
+                }
                 FragmentManager fm = getSupportFragmentManager();
                 OnboardingDialog fragment = new OnboardingDialog();
-                Bundle bundle = new Bundle();
-                fragment.setArguments(bundle);
                 fragment.show(fm, OnboardingDialog.OTAG);
                 return true;
             default:
@@ -229,14 +246,15 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
-    private WebSocketClient getWebSocketClient() {
+    public WebSocketClient getWebSocketClient() {
         ConnectivityManager connectivityManager = (ConnectivityManager) BattleFieldActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             if (mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
                 return mWebSocketClient;
             } else {
-                new ConnectToServer().execute();
+                NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(openNewConnection());
+                mWebSocketClient = NodeConnection.getWithApplicationContext(getApplicationContext()).getWebSocketClient();
                 return mWebSocketClient;
             }
         } else {
@@ -245,13 +263,48 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
-    private void closeActiveConnection() {
+    public WebSocketClient openNewConnection() {
+        try {
+            URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
+
+            WebSocketClient webSocketClient = new WebSocketClient(uri) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    Log.d(BTAG, "Opened connection");
+                }
+
+                @Override
+                public void onMessage(String s) {
+                    Log.d(BTAG, s);
+                    processMessage(s);
+                }
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    Log.d(BTAG, "Closed: code " + code + " reason " + reason + " remote " + remote);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.d(BTAG, "Problem with websocket connection: " + e);
+                    e.printStackTrace();
+                }
+            };
+            webSocketClient.connect();
+            return webSocketClient;
+        } catch (URISyntaxException e) {
+            Log.d(BTAG, "Wrong URI");
+            return null;
+        }
+    }
+
+    public void closeActiveConnection() {
         if(mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
             mWebSocketClient.close();
         }
     }
 
-    private void sendClientMessage(String message) {
+    public void sendClientMessage(String message) {
         WebSocketClient webSocketClient = getWebSocketClient();
         if (webSocketClient != null) {
             webSocketClient.send(message);
@@ -264,7 +317,7 @@ public class BattleFieldActivity extends FragmentActivity {
      * 0: battle
      * 1: chatroom
      */
-    private void processMessage(String message) {
+    public void processMessage(String message) {
         // Break down message to see which channel it has to go through
         int channel;
         int roomId;
@@ -276,14 +329,22 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
-    private void processGlobalMessage(String message) {
-        int channel;
+    public void processGlobalMessage(String message) {
+        int channel = 1;
         if (message.charAt(0) != '|') {
             channel = 1;
         } else {
             message = message.substring(1);
-            String command = message.substring(0, message.indexOf('|'));
+            int endOfCommand = message.indexOf('|');
+            String command = (endOfCommand == -1)? message : message.substring(0, endOfCommand);
+            String messageDetail = (endOfCommand == -1)? "" : message.substring(endOfCommand + 1);
             switch (command) {
+                case "challstr":
+                    Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
+                    onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
+                    Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
+                    break;
                 case "popup":
                 case "pm":
                 case "usercount":
@@ -293,7 +354,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 case "updatechallenges":
                 case "queryresponse":
                 case "updateuser":
-                case "challstr":
+                case "deinit":
                     channel = -1;
                     break;
                 default:
@@ -303,7 +364,11 @@ public class BattleFieldActivity extends FragmentActivity {
 
         if (channel == mPosition) {
             CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer " + mPosition);
-            fragment.processServerMessage("lobby", message);
+            if (fragment != null) {
+                fragment.processServerMessage("lobby", message);
+            } else {
+                NodeConnection.getWithApplicationContext(getApplicationContext()).getRoomLog().put("lobby", message);
+            }
         }
     }
 
@@ -312,61 +377,6 @@ public class BattleFieldActivity extends FragmentActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
-        }
-    }
-
-    private class ConnectToServer extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params){
-            try {
-                openNewConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        private String openNewConnection() throws IOException {
-
-            try {
-
-                URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
-
-                if (mWebSocketClient == null) {
-                    mWebSocketClient = new WebSocketClient(uri) {
-                        @Override
-                        public void onOpen(ServerHandshake serverHandshake) {
-                            Log.d(BTAG, "Opened connection");
-                            // Log.d(BTAG, "Opened");
-                        }
-
-                        @Override
-                        public void onMessage(String s) {
-                            Log.d(BTAG, s);
-                            processMessage(s);
-                        }
-
-                        @Override
-                        public void onClose(int code, String reason, boolean remote) {
-                            mWebSocketClient = null;
-                            Log.d(BTAG, "Closed: code " + code + " reason " + reason + " remote " + remote);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            mWebSocketClient = null;
-                            Log.d(BTAG, "Error: " + e.toString());
-                        }
-                    };
-                    NodeConnection.getWithApplicationContext(getApplicationContext()).setWebSocketClient(mWebSocketClient);
-                }
-                if (!mWebSocketClient.getConnection().isOpen()) {
-                    mWebSocketClient.connect();
-                }
-            } catch (Exception e) {
-                Log.d(BTAG, e.toString());
-            }
-            return null;
         }
     }
 
