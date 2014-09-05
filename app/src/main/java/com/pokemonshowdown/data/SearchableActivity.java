@@ -42,7 +42,7 @@ public class SearchableActivity extends ListActivity {
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:
                 HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
-                mAdapterList = new ArrayList<String>(pokedex.keySet());
+                mAdapterList = new ArrayList<>(pokedex.keySet());
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_pokemon);

@@ -22,6 +22,7 @@ public class Onboarding {
     private final static String GET_LOGGED_IN = "Get logged in";
     private final static String VERIFY_USERNAME_REGISTERED = "Verify username registered";
     private final static String SIGNING_IN = "Signing in";
+    private final static String SIGNING_OUT = "Signing out";
 
     private Context mAppContext;
     private String mKeyId;
@@ -85,6 +86,15 @@ public class Onboarding {
         return null;
     }
 
+    public void signingOut() {
+        SignIn signIn = new SignIn();
+        signIn.execute(SIGNING_OUT, mUsername);
+
+        setSignedIn(false);
+        setUsername(null);
+        setAvatar(null);
+    }
+
     public boolean isSignedIn() {
         return isSignedIn;
     }
@@ -138,6 +148,7 @@ public class Onboarding {
         private String[] postDataComponent = {"act=login&name=","&pass=","&challengekeyid=","&challenge="};
         private String postUrl = "http://play.pokemonshowdown.com/action.php";
         private String[] verifyUsernameComponent = {"act=getassertion&userid=","&challengekeyid=","&challenge="};
+        private String signOut = "act=logout&userid=";
 
         @Override
         protected String doInBackground(String... params) {
@@ -149,6 +160,8 @@ public class Onboarding {
                     return verifyUsernameSignedIn(params[1], params[2], params[3]);
                 case SIGNING_IN:
                     return signingIn(params[1], params[2], params[3], params[4]);
+                case SIGNING_OUT:
+                    return signingOut(params[0]);
             }
             return null;
         }
@@ -224,6 +237,36 @@ public class Onboarding {
 
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
+            } catch (IOException e) {
+                Log.e(OTAG, e.toString());
+                return null;
+            }
+        }
+
+        private String signingOut(String username) {
+            try {
+                String postData = signOut + username;
+                URL url = new URL(postUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                DataOutputStream outStream = new DataOutputStream(conn.getOutputStream());
+
+                // Send request
+                outStream.writeBytes(postData);
+                outStream.flush();
+                outStream.close();
+
+                InputStream inputStream = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((inputStream)));
+
+                String output = bufferedReader.readLine();
+
+                inputStream.close();
+
+                return output;
             } catch (IOException e) {
                 Log.e(OTAG, e.toString());
                 return null;

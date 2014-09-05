@@ -23,15 +23,15 @@
         android:layout_weight="3"
         android:layout_margin="16dp">
 
-        <TextView
+        <EditText
             android:id="@+id/community_chat_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hint_chatroom"
             android:layout_marginTop="4dp"
+            android:inputType="textNoSuggestions"
             android:padding="4dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/editable_frame"/>
+            android:background="@drawable/uneditable_frame"/>
 
         <TextView
             android:id="@+id/community_chat_log"

@@ -1,7 +1,10 @@
 package com.pokemonshowdown.app;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -28,6 +31,7 @@ import com.pokemonshowdown.data.NodeConnection;
 import com.pokemonshowdown.data.Onboarding;
 
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.io.IOException;
@@ -159,7 +163,11 @@ public class BattleFieldActivity extends FragmentActivity {
             case R.id.menu_login:
                 Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                 if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
-                    //TODO: Add alert dialog saying that no internet connection detected
+                    getWebSocketClient();
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.weak_connection)
+                            .create()
+                            .show();
                     return true;
                 }
                 if (onboarding.isSignedIn()) {
@@ -259,7 +267,10 @@ public class BattleFieldActivity extends FragmentActivity {
                 return mWebSocketClient;
             }
         } else {
-            // TODO: get alert dialog for failed connection
+            Dialog alert = new AlertDialog.Builder(this)
+                    .setTitle(R.string.no_connection)
+                    .create();
+            alert.show();
             return null;
         }
     }
@@ -308,7 +319,14 @@ public class BattleFieldActivity extends FragmentActivity {
     public void sendClientMessage(String message) {
         WebSocketClient webSocketClient = getWebSocketClient();
         if (webSocketClient != null) {
-            webSocketClient.send(message);
+            try {
+                webSocketClient.send(message);
+            } catch (WebsocketNotConnectedException e) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.no_connection)
+                        .create()
+                        .show();
+            }
         }
     }
 
@@ -349,6 +367,7 @@ public class BattleFieldActivity extends FragmentActivity {
             Onboarding onboarding;
             switch (command) {
                 case "challstr":
+                    channel = -1;
                     onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                     onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
                     onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
@@ -358,11 +377,13 @@ public class BattleFieldActivity extends FragmentActivity {
                     }
                     break;
                 case "assertion":
+                    channel = -1;
                     String name = messageDetail.substring(0, messageDetail.indexOf('|'));
                     String assertion = messageDetail.substring(messageDetail.indexOf('|') + 1);
                     sendClientMessage("|/trn "+name+",0,"+assertion);
                     break;
                 case "updateuser":
+                    channel = -1;
                     String username = messageDetail.substring(0, messageDetail.indexOf('|'));
                     String guestStatus = messageDetail.substring(messageDetail.indexOf('|') + 1, messageDetail.lastIndexOf('|'));
                     String avatar = messageDetail.substring(messageDetail.lastIndexOf('|') + 1);

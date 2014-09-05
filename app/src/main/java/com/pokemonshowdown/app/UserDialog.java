@@ -22,7 +22,7 @@ public class UserDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_user, container);
 
-        Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+        final Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
 
         getDialog().setTitle(onboarding.getUsername());
         String avatarId = onboarding.getAvatar();
@@ -34,6 +34,8 @@ public class UserDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
+                onboarding.signingOut();
+                ((BattleFieldActivity) getActivity()).sendClientMessage("|/logout");
             }
         });
 
