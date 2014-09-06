@@ -234,6 +234,7 @@ public class BattleFieldActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(position))
+                .addToBackStack("Battle Field Drawer " + Integer.toString(position))
                 .commit();
 
         // update selected item and title, then close the drawer
@@ -355,7 +356,7 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
     public void processGlobalMessage(String message) {
-        int channel = 1;
+        int channel;
         if (message.charAt(0) != '|') {
             channel = 1;
         } else {

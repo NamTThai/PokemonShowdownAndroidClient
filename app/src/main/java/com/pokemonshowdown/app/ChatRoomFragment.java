@@ -33,7 +33,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
     private String mRoomName;
     private String mRoomId;
-    private ListView mUserList;
     private TextView mChatLog;
 
     private ArrayList<String> mUserListData;
@@ -68,12 +67,10 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUserListData = new ArrayList<>();
-        mUserListData.add("HudsonRain");
         mUserAdapter = new UserAdapter(getActivity(), mUserListData);
         ListView listView = (ListView) view.findViewById(R.id.user_list);
         listView.setAdapter(mUserAdapter);
-        mUserListData.add("RainFountain");
-        mUserAdapter.notifyDataSetChanged();
+
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
             ((BattleFieldActivity) getActivity()).sendClientMessage("|/join " + mRoomId);
@@ -113,7 +110,16 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                     }
                 }
                 mUserListData = userListData;
-                mUserAdapter.notifyDataSetChanged();
+                mUserAdapter = new UserAdapter(getActivity(), mUserListData);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        View view = getView();
+                        if (view != null) {
+                            ((ListView) view.findViewById(R.id.user_list)).setAdapter(mUserAdapter);
+                        }
+                    }
+                });
                 break;
         }
     }
