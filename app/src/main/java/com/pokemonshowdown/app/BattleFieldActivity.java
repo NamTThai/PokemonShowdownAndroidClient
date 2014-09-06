@@ -34,17 +34,10 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
-/**
- * Created by thain on 7/15/14.
- */
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = "BattleFieldActivity";
 
@@ -66,10 +59,7 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle_field);
 
-        mWebSocketClient = NodeConnection.getWithApplicationContext(getApplicationContext()).getWebSocketClient();
-        if (mWebSocketClient == null) {
-            mWebSocketClient = getWebSocketClient();
-        }
+        mWebSocketClient = getWebSocketClient();
 
         mTitle = mDrawerTitle = getTitle();
         mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
@@ -234,7 +224,6 @@ public class BattleFieldActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(position))
-                .addToBackStack("Battle Field Drawer " + Integer.toString(position))
                 .commit();
 
         // update selected item and title, then close the drawer

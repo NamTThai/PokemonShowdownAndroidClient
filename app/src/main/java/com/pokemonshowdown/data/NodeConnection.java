@@ -17,8 +17,6 @@ import java.util.HashMap;
 
 public class NodeConnection {
     public final static String NTAG = "PKM_SERVER_CONNECTION";
-    public final static int SUCCESS = 1;
-    public final static int FAILURE = 0;
     private static NodeConnection sNodeConnection;
 
     private Context mAppContext;
@@ -27,7 +25,7 @@ public class NodeConnection {
 
     private NodeConnection(Context appContext) {
         mAppContext = appContext;
-        mRoomLog = new HashMap<String, String>();
+        mRoomLog = new HashMap<>();
         mWebSocketClient = null;
     }
 
@@ -44,19 +42,6 @@ public class NodeConnection {
 
     public void setWebSocketClient(WebSocketClient webSocketClient) {
         mWebSocketClient = webSocketClient;
-    }
-
-    private void closeActiveConnection() {
-        if(mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
-            mWebSocketClient.close();
-        }
-    }
-
-    private void sendClientMessage(String message) {
-        WebSocketClient webSocketClient = getWebSocketClient();
-        if (webSocketClient != null) {
-            webSocketClient.send(message);
-        }
     }
 
     public HashMap<String, String> getRoomLog() {
