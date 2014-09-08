@@ -1,16 +1,12 @@
 package com.pokemonshowdown.app;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -45,6 +41,7 @@ public class BattleFieldActivity extends FragmentActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private AlertDialog mDialog;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -97,6 +94,10 @@ public class BattleFieldActivity extends FragmentActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+
         if (savedInstanceState == null) {
             mPosition = 0;
             selectItem(0);
@@ -113,6 +114,10 @@ public class BattleFieldActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+        closeActiveConnection();
         super.onDestroy();
     }
 
@@ -154,10 +159,13 @@ public class BattleFieldActivity extends FragmentActivity {
                 Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                 if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                     getWebSocketClient();
-                    new AlertDialog.Builder(this)
+                    if (mDialog != null && mDialog.isShowing()) {
+                        mDialog.dismiss();
+                    }
+                    mDialog = new AlertDialog.Builder(this)
                             .setTitle(R.string.weak_connection)
-                            .create()
-                            .show();
+                            .create();
+                    mDialog.show();
                     return true;
                 }
                 if (onboarding.isSignedIn()) {
@@ -257,10 +265,13 @@ public class BattleFieldActivity extends FragmentActivity {
                 return mWebSocketClient;
             }
         } else {
-            Dialog alert = new AlertDialog.Builder(this)
+            if (mDialog != null && mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
+            mDialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.no_connection)
                     .create();
-            alert.show();
+            mDialog.show();
             return null;
         }
     }
@@ -301,7 +312,7 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
     public void closeActiveConnection() {
-        if(mWebSocketClient != null && mWebSocketClient.getConnection().isOpen()) {
+        if(mWebSocketClient != null) {
             mWebSocketClient.close();
         }
     }
@@ -312,10 +323,14 @@ public class BattleFieldActivity extends FragmentActivity {
             try {
                 webSocketClient.send(message);
             } catch (WebsocketNotConnectedException e) {
-                new AlertDialog.Builder(this)
+                //TODO: figure out a way to tie socket connection with application context instead of activity
+                if (mDialog != null && mDialog.isShowing()) {
+                    mDialog.dismiss();
+                }
+                mDialog = new AlertDialog.Builder(this)
                         .setTitle(R.string.no_connection)
-                        .create()
-                        .show();
+                        .create();
+                mDialog.show();
             }
         }
     }

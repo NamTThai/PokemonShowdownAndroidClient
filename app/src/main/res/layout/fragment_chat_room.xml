@@ -33,12 +33,18 @@
             android:layout_alignParentBottom="true"
             android:background="@drawable/uneditable_frame"/>
 
-        <TextView
-            android:id="@+id/community_chat_log"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/community_chat_box"
-            android:background="@drawable/uneditable_frame"/>
+            android:background="@drawable/uneditable_frame"
+            android:layout_above="@id/community_chat_box">
+
+            <TextView
+                android:id="@+id/community_chat_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </ScrollView>
 
     </RelativeLayout>
 
