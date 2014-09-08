@@ -171,7 +171,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mUserListData.remove(messageDetails);
+                        removeUserFromList(mUserListData, messageDetails);
                         mUserAdapter.notifyDataSetChanged();
                     }
                 });
@@ -185,7 +185,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mUserListData.remove(oldName);
+                        removeUserFromList(mUserListData, oldName);
                         mUserListData.add(newName);
                         mUserAdapter.notifyDataSetChanged();
                     }
@@ -205,7 +205,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
             case "tc":
             case "c:":
                 separator = messageDetails.indexOf('|');
-                String timeStamp = messageDetails.substring(0, separator);
+                // String timeStamp = messageDetails.substring(0, separator);
                 String messageDetailsWithStamp = messageDetails.substring(separator + 1);
                 separator = messageDetailsWithStamp.indexOf('|');
                 String userStamp = messageDetailsWithStamp.substring(0, separator);
@@ -236,6 +236,23 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 }
             });
         }
+    }
+
+    private void removeUserFromList(ArrayList<String> userList, String username) {
+        for(int i=0; i < userList.size(); i++) {
+            String user = sanitizeUsername(userList.get(i));
+            username = sanitizeUsername(username);
+            if (user.equals(username)) {
+                userList.remove(i);
+                return;
+            }
+        }
+    }
+
+    private String sanitizeUsername(String user) {
+        String toReturn = user.toLowerCase();
+        toReturn = toReturn.trim();
+        return toReturn;
     }
 
     private class UserAdapter extends ArrayAdapter<String> {
