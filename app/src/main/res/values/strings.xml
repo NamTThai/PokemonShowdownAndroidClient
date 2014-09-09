@@ -80,6 +80,13 @@
     <string name="type_1">Type 1</string>
     <string name="type_2">Type 2</string>
 
+    <!-- These are for Moves -->
+    <string name="move_type">Move Type</string>
+    <string name="move_category">Move Category</string>
+    <string name="move_power">Pow</string>
+    <string name="move_acc">Acc</string>
+    <string name="move_pp">PP</string>
+
     <!-- These are for Search function -->
     <string name="search_title">Search</string>
     <string name="search_label_pokemon">Search Pokemon…</string>

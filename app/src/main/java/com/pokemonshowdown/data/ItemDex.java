@@ -67,7 +67,7 @@ public class ItemDex {
         HashMap<String, String> ItemDexEntries = new HashMap<>();
         String jsonString;
         try {
-            InputStream inputStream = appContext.getResources().openRawResource(R.raw.moves);
+            InputStream inputStream = appContext.getResources().openRawResource(R.raw.item);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
 

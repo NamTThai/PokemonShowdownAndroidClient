@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.pokemonshowdown.data.AbilityDex;
 import com.pokemonshowdown.data.ItemDex;
+import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
 
@@ -62,6 +63,15 @@ public class PokedexActivity extends FragmentActivity {
                 PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ITEM);
             }
         });
+
+        findViewById(R.id.movedex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_MOVES);
+            }
+        });
     }
 
     @Override
@@ -94,11 +104,21 @@ public class PokedexActivity extends FragmentActivity {
                         break;
                     case REQUEST_CODE_SEARCH_ITEM:
                         String item = data.getExtras().getString("Search");
-                        JSONObject itemJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(item);
+                        JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(item);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(itemJson.getString("name"))
                                 .setMessage(itemJson.getString("desc"))
                                 .setIcon(ItemDex.getItemIcon(getApplicationContext(), item))
+                                .create();
+                        dialog.show();
+                        break;
+                    case REQUEST_CODE_SEARCH_MOVES:
+                        String move = data.getExtras().getString("Search");
+                        JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+                        dialog = new AlertDialog.Builder(this)
+                                .setTitle(moveJson.getString("name"))
+                                .setMessage(moveJson.getString("desc"))
+                                .setIcon(MoveDex.getMoveType(getApplicationContext(), moveJson.getString("type")))
                                 .create();
                         dialog.show();
                         break;

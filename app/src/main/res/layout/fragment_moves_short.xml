@@ -9,7 +9,7 @@
     android:weightSum="12">
 
     <TextView
-        android:id="@+id/short_pokemon_name"
+        android:id="@+id/short_move_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:textSize="20sp"
@@ -17,19 +17,19 @@
         android:layout_weight="6"/>
 
     <ImageView
-        android:id="@+id/type_1"
+        android:id="@+id/type"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/type_1"
+        android:contentDescription="@string/move_type"
         android:layout_weight="1"/>
 
     <ImageView
-        android:id="@+id/type_2"
+        android:id="@+id/category"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/type_2"
+        android:contentDescription="@string/move_category"
         android:layout_weight="1"/>
     
     <View
@@ -46,16 +46,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_HP"
+            android:text="@string/move_power"
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
         <TextView
-            android:id="@+id/pokemon_short_hp"
+            android:id="@+id/move_power"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_HP"
             android:layout_gravity="center"
             android:textSize="12sp"/>
 
@@ -70,16 +69,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Atk"
+            android:text="@string/move_acc"
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
         <TextView
-            android:id="@+id/pokemon_short_Atk"
+            android:id="@+id/move_acc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Atk"
             android:layout_gravity="center"
             android:textSize="12sp"/>
 
@@ -94,16 +92,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Def"
+            android:text="@string/move_pp"
             android:layout_gravity="center"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
         <TextView
-            android:id="@+id/pokemon_short_Def"
+            android:id="@+id/move_pp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Def"
             android:layout_gravity="center"
             android:textSize="12sp"/>
 

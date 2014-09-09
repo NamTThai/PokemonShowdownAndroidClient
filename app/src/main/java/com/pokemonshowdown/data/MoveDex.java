@@ -59,6 +59,20 @@ public class MoveDex {
         }
     }
 
+    public static int getMoveType(Context appContext, String types) {
+        return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
+    }
+
+    public static int getMoveCategory(Context appContext, String category) {
+        return appContext.getResources().getIdentifier("category_" + category.toLowerCase(), "drawable", appContext.getPackageName());
+    }
+
+    public static String getMaxPP(String pp) {
+        int ppInt = Integer.parseInt(pp);
+        ppInt *= 1.6;
+        return Integer.toString(ppInt);
+    }
+
     private HashMap<String, String> readFile(Context appContext) {
         HashMap<String, String> MoveDexEntries = new HashMap<>();
         String jsonString;

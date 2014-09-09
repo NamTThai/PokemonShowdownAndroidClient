@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -61,9 +62,16 @@ public class SearchableActivity extends ListActivity {
             case REQUEST_CODE_SEARCH_ITEM:
                 HashMap<String, String> itemDex = ItemDex.getWithApplicationContext(getApplicationContext()).getItemDexEntries();
                 mAdapterList = new ArrayList<>(itemDex.keySet());
-                mAdapter = new AbilityAdapter(this, mAdapterList);
+                mAdapter = new ItemAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_item);
+                break;
+            case REQUEST_CODE_SEARCH_MOVES:
+                HashMap<String, String> moveDex = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveDexEntries();
+                mAdapterList = new ArrayList<>(moveDex.keySet());
+                mAdapter = new MovesAdapter(this, mAdapterList);
+                setListAdapter(mAdapter);
+                getActionBar().setTitle(R.string.search_label_moves);
                 break;
         }
     }
@@ -90,6 +98,9 @@ public class SearchableActivity extends ListActivity {
                     break;
                 case REQUEST_CODE_SEARCH_ITEM:
                     searchItem(query);
+                    break;
+                case REQUEST_CODE_SEARCH_MOVES:
+                    searchMove(query);
                     break;
             }
         }
@@ -150,7 +161,19 @@ public class SearchableActivity extends ListActivity {
                 mAdapterList.add(itemName);
             }
         }
-        mAdapter = new AbilityAdapter(this, mAdapterList);
+        mAdapter = new ItemAdapter(this, mAdapterList);
+        setListAdapter(mAdapter);
+    }
+
+    private void searchMove(String query) {
+        HashMap<String, String> moveDex = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveDexEntries();
+        mAdapterList = new ArrayList<>();
+        for (String moveName : moveDex.keySet()) {
+            if (moveName.contains(query.toLowerCase())) {
+                mAdapterList.add(moveName);
+            }
+        }
+        mAdapter = new MovesAdapter(this, mAdapterList);
         setListAdapter(mAdapter);
     }
 
@@ -241,38 +264,33 @@ public class SearchableActivity extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_pokemon_short, null);
+                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_moves_short, null);
             }
 
-            String pokemonName = getItem(position);
-            TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
-            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
-            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIconSmall(getApplicationContext(), pokemonName, true), 0, 0, 0);
-            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
-            ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
-            type1.setImageResource(typesIcon[0]);
-            ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
-            if (typesIcon.length == 2) {
-                type2.setImageResource(typesIcon[1]);
-            } else {
-                type2.setImageResource(0);
+            try {
+                String move = getItem(position);
+
+                JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+                TextView textView = (TextView) convertView.findViewById(R.id.short_move_name);
+                textView.setText(moveJson.getString("name"));
+                ImageView type = (ImageView) convertView.findViewById(R.id.type);
+                type.setImageResource(MoveDex.getMoveType(getApplicationContext(), moveJson.getString("type")));
+                ImageView category = (ImageView) convertView.findViewById(R.id.category);
+                category.setImageResource(MoveDex.getMoveCategory(getApplicationContext(), moveJson.getString("category")));
+
+                TextView power = (TextView) convertView.findViewById(R.id.move_power);
+                power.setText(moveJson.getString("basePower"));
+                TextView acc = (TextView) convertView.findViewById(R.id.move_acc);
+                String accuracy = moveJson.getString("accuracy");
+                if (accuracy.equals("true")) {
+                    accuracy = "--";
+                }
+                acc.setText(accuracy);
+                TextView pp = (TextView) convertView.findViewById(R.id.move_pp);
+                pp.setText(MoveDex.getMaxPP(moveJson.getString("pp")));
+            } catch (JSONException e) {
+                Log.d(STAG, e.toString());
             }
-            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
-            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
-            hp.setText(baseStats[0].toString());
-            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
-            atk.setText(baseStats[1].toString());
-            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
-            def.setText(baseStats[2].toString());
-            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
-            spa.setText(baseStats[3].toString());
-            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
-            spd.setText(baseStats[4].toString());
-            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
-            spe.setText(baseStats[5].toString());
-            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
-            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
-            bst.setText(Integer.toString(BST));
             return convertView;
         }
     }
@@ -295,9 +313,9 @@ public class SearchableActivity extends ListActivity {
                 String itemTag = getItem(position);
                 JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(itemTag);
                 TextView textView = (TextView) convertView.findViewById(R.id.short_item_name);
-                textView.setText(Pokemon.getPokemonName(getApplicationContext(), itemJson.getString("name"), true));
+                textView.setText(itemJson.getString("name"));
                 textView.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getApplicationContext(), itemTag), 0, 0, 0);
-                ((TextView) convertView.findViewById(R.id.short_ability_description)).setText(itemJson.getString("desc"));
+                ((TextView) convertView.findViewById(R.id.short_item_description)).setText(itemJson.getString("desc"));
             } catch (JSONException e) {
                 Log.d(STAG, e.toString());
             }
