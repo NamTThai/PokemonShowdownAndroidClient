@@ -7,12 +7,12 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 /**
- * Created by thain on 7/31/14.
- *
  * This class is to initialize all the data singletons
  */
 public class MyApplication extends Application {
     public Pokedex mPokedex;
+    public MoveDex mMoveDex;
+    public AbilityDex mAbilityDex;
     public NodeConnection mNodeConnection;
     public Onboarding mOnboarding;
 
@@ -24,6 +24,8 @@ public class MyApplication extends Application {
 
         mNodeConnection = NodeConnection.getWithApplicationContext(appContext);
         mPokedex = Pokedex.getWithApplicationContext(appContext);
+        mMoveDex = MoveDex.getWithApplicationContext(appContext);
+        mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
     }
 }

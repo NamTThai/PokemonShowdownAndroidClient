@@ -15,45 +15,45 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class Pokedex {
-    public final static String PTAG = Pokedex.class.getName();
-    private HashMap<String, String> mPokedexEntries;
+public class AbilityDex {
+    public final static String ATAG = AbilityDex.class.getName();
+    private HashMap<String, String> mAbilityDexEntries;
 
-    private static Pokedex sPokedex;
+    private static AbilityDex sAbilityDex;
     private Context mAppContext;
 
-    private Pokedex(Context appContext) {
+    private AbilityDex(Context appContext) {
         mAppContext = appContext;
-        mPokedexEntries = readFile(appContext);
+        mAbilityDexEntries = readFile(appContext);
     }
 
-    public static Pokedex get(Context c) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(c.getApplicationContext());
+    public static AbilityDex get(Context c) {
+        if (sAbilityDex == null) {
+            sAbilityDex = new AbilityDex(c.getApplicationContext());
         }
-        return sPokedex;
+        return sAbilityDex;
     }
 
-    public static Pokedex getWithApplicationContext(Context appContext) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(appContext);
+    public static AbilityDex getWithApplicationContext(Context appContext) {
+        if (sAbilityDex == null) {
+            sAbilityDex = new AbilityDex(appContext);
         }
-        return sPokedex;
+        return sAbilityDex;
     }
 
-    public HashMap<String, String> getPokedexEntries() {
-        return mPokedexEntries;
+    public HashMap<String, String> getAbilityDexEntries() {
+        return mAbilityDexEntries;
     }
 
-    public String getPokemon(String name) {
-        return mPokedexEntries.get(name);
+    public String getAbility(String name) {
+        return mAbilityDexEntries.get(name);
     }
 
     private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> pokedexEntries = new HashMap<>();
+        HashMap<String, String> AbilityDexEntries = new HashMap<>();
         String jsonString;
         try {
-            InputStream inputStream = appContext.getResources().openRawResource(R.raw.pokedex);
+            InputStream inputStream = appContext.getResources().openRawResource(R.raw.ability);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -74,15 +74,15 @@ public class Pokedex {
                 Object value = jsonObject.get(key);
                 if (jsonObject.get(key) instanceof JSONObject) {
                     JSONObject entry = (JSONObject) value;
-                    pokedexEntries.put(key, entry.toString());
+                    AbilityDexEntries.put(key, entry.toString());
                 }
             }
         } catch (JSONException e) {
-            Log.d(PTAG, "JSON Exception");
+            Log.d(ATAG, "JSON Exception");
         } catch (IOException e) {
-            Log.d(PTAG, "Input Output problem");
+            Log.d(ATAG, "Input Output problem");
         }
 
-        return pokedexEntries;
+        return AbilityDexEntries;
     }
 }
