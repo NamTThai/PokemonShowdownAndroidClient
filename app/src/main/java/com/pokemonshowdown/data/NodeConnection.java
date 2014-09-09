@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.HashMap;
 
 public class NodeConnection {
-    public final static String NTAG = "PKM_SERVER_CONNECTION";
+    public final static String NTAG = NodeConnection.class.getName();
     private static NodeConnection sNodeConnection;
 
     private Context mAppContext;

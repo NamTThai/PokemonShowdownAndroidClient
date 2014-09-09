@@ -29,6 +29,7 @@ import com.pokemonshowdown.data.Onboarding;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
+import org.w3c.dom.Node;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -159,13 +160,18 @@ public class BattleFieldActivity extends FragmentActivity {
                 Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                 if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                     getWebSocketClient();
-                    if (mDialog != null && mDialog.isShowing()) {
-                        mDialog.dismiss();
-                    }
-                    mDialog = new AlertDialog.Builder(this)
-                            .setTitle(R.string.weak_connection)
-                            .create();
-                    mDialog.show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mDialog != null && mDialog.isShowing()) {
+                                mDialog.dismiss();
+                            }
+                            mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                    .setMessage(R.string.weak_connection)
+                                    .create();
+                            mDialog.show();
+                        }
+                    });
                     return true;
                 }
                 if (onboarding.isSignedIn()) {
@@ -265,13 +271,18 @@ public class BattleFieldActivity extends FragmentActivity {
                 return mWebSocketClient;
             }
         } else {
-            if (mDialog != null && mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
-            mDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.no_connection)
-                    .create();
-            mDialog.show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mDialog != null && mDialog.isShowing()) {
+                        mDialog.dismiss();
+                    }
+                    mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                            .setMessage(R.string.no_connection)
+                            .create();
+                    mDialog.show();
+                }
+            });
             return null;
         }
     }
@@ -324,15 +335,47 @@ public class BattleFieldActivity extends FragmentActivity {
                 webSocketClient.send(message);
             } catch (WebsocketNotConnectedException e) {
                 //TODO: figure out a way to tie socket connection with application context instead of activity
-                if (mDialog != null && mDialog.isShowing()) {
-                    mDialog.dismiss();
-                }
-                mDialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.no_connection)
-                        .create();
-                mDialog.show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage(R.string.no_connection)
+                                .create();
+                        mDialog.show();
+                    }
+                });
             }
         }
+    }
+
+    public boolean verifySignedInBeforeSendingMessage() {
+        Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+        if (!onboarding.isSignedIn()) {
+            if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
+                getWebSocketClient();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage(R.string.weak_connection)
+                                .create();
+                        mDialog.show();
+                    }
+                });
+                return false;
+            }
+            FragmentManager fm = getSupportFragmentManager();
+            OnboardingDialog fragment = new OnboardingDialog();
+            fragment.show(fm, OnboardingDialog.OTAG);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -392,6 +435,13 @@ public class BattleFieldActivity extends FragmentActivity {
                     String username = messageDetail.substring(0, messageDetail.indexOf('|'));
                     String guestStatus = messageDetail.substring(messageDetail.indexOf('|') + 1, messageDetail.lastIndexOf('|'));
                     String avatar = messageDetail.substring(messageDetail.lastIndexOf('|') + 1);
+                    if (avatar.length() == 1) {
+                        avatar = "00" + avatar;
+                    } else {
+                        if (avatar.length() == 2) {
+                            avatar = "0" + avatar;
+                        }
+                    }
                     onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
                     if (guestStatus.equals("0")) {
                         onboarding.setUsername(username);
@@ -403,10 +453,25 @@ public class BattleFieldActivity extends FragmentActivity {
                         onboarding.setAvatar(avatar);
                     }
                     break;
+                case "nametaken":
+                    channel = -1;
+                    final String errorMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mDialog != null && mDialog.isShowing()) {
+                                mDialog.dismiss();
+                            }
+                            mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                    .setMessage(errorMessage)
+                                    .create();
+                            mDialog.show();
+                        }
+                    });
+                    break;
                 case "popup":
                 case "pm":
                 case "usercount":
-                case "nametaken":
                 case "formats":
                 case "updatesearch":
                 case "updatechallenges":

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.NodeConnection;
+import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.Pokemon;
 
 import org.java_websocket.client.WebSocketClient;
@@ -104,7 +106,10 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String message = chatBox.getText().toString();
                     message = (mRoomId.equals("lobby")) ? ("|" + message) : (mRoomId + "|" + message);
-                    ((BattleFieldActivity) getActivity()).sendClientMessage(message);
+                    BattleFieldActivity activity = (BattleFieldActivity) getActivity();
+                    if (activity.verifySignedInBeforeSendingMessage()) {
+                        activity.sendClientMessage(message);
+                    }
                     chatBox.setText(null);
                     return false;
                 }
@@ -160,6 +165,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        removeUserFromList(mUserListData, messageDetails);
                         mUserListData.add(messageDetails);
                         mUserAdapter.notifyDataSetChanged();
                     }
@@ -249,10 +255,11 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private String sanitizeUsername(String user) {
-        String toReturn = user.toLowerCase();
-        toReturn = toReturn.trim();
-        return toReturn;
+    /**
+     * Trim everything except for letter and number
+     */
+    public static String sanitizeUsername(String user) {
+        return user.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 
     private class UserAdapter extends ArrayAdapter<String> {
