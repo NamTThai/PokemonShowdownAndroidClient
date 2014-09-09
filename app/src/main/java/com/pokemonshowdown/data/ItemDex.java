@@ -15,45 +15,45 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class Pokedex {
-    public final static String PTAG = Pokedex.class.getName();
-    private HashMap<String, String> mPokedexEntries;
+public class ItemDex {
+    private final static String ITAG = ItemDex.class.getName();
+    private HashMap<String, String> mItemDexEntries;
 
-    private static Pokedex sPokedex;
+    private static ItemDex sItemDex;
     private Context mAppContext;
 
-    private Pokedex(Context appContext) {
+    private ItemDex(Context appContext) {
         mAppContext = appContext;
-        mPokedexEntries = readFile(appContext);
+        mItemDexEntries = readFile(appContext);
     }
 
-    public static Pokedex get(Context c) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(c.getApplicationContext());
+    public static ItemDex get(Context c) {
+        if (sItemDex == null) {
+            sItemDex = new ItemDex(c.getApplicationContext());
         }
-        return sPokedex;
+        return sItemDex;
     }
 
-    public static Pokedex getWithApplicationContext(Context appContext) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(appContext);
+    public static ItemDex getWithApplicationContext(Context appContext) {
+        if (sItemDex == null) {
+            sItemDex = new ItemDex(appContext);
         }
-        return sPokedex;
+        return sItemDex;
     }
 
-    public HashMap<String, String> getPokedexEntries() {
-        return mPokedexEntries;
+    public HashMap<String, String> getItemDexEntries() {
+        return mItemDexEntries;
     }
 
-    public String getPokemon(String name) {
-        return mPokedexEntries.get(name);
+    public String getItem(String name) {
+        return mItemDexEntries.get(name);
     }
 
     private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> pokedexEntries = new HashMap<>();
+        HashMap<String, String> ItemDexEntries = new HashMap<>();
         String jsonString;
         try {
-            InputStream inputStream = appContext.getResources().openRawResource(R.raw.pokedex);
+            InputStream inputStream = appContext.getResources().openRawResource(R.raw.moves);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -74,19 +74,15 @@ public class Pokedex {
                 Object value = jsonObject.get(key);
                 if (jsonObject.get(key) instanceof JSONObject) {
                     JSONObject entry = (JSONObject) value;
-                    pokedexEntries.put(key, entry.toString());
+                    ItemDexEntries.put(key, entry.toString());
                 }
             }
         } catch (JSONException e) {
-            Log.d(PTAG, "JSON Exception");
+            Log.d(ITAG, "JSON Exception");
         } catch (IOException e) {
-            Log.d(PTAG, "Input Output problem");
+            Log.d(ITAG, "Input Output problem");
         }
 
-        return pokedexEntries;
-    }
-
-    public static int getUnownIcon(Context appContext, String name) {
-        return appContext.getResources().getIdentifier("unown_"+name.toLowerCase().charAt(0), "drawable", appContext.getPackageName());
+        return ItemDexEntries;
     }
 }

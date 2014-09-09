@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,15 +18,18 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.app.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by thain on 8/10/14.
- */
 public class SearchableActivity extends ListActivity {
-    public final static String SearchTAG = "SEARCH_DIALOG_POKEMON";
+    public final static String STAG = SearchableActivity.class.getName();
     public final static int REQUEST_CODE_SEARCH_POKEMON = 0;
+    public final static int REQUEST_CODE_SEARCH_ABILITY = 1;
+    public final static int REQUEST_CODE_SEARCH_ITEM = 2;
+    public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mAdapterList;
@@ -47,7 +51,12 @@ public class SearchableActivity extends ListActivity {
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_pokemon);
                 break;
-            default:
+            case REQUEST_CODE_SEARCH_ABILITY:
+                HashMap<String, String> abilityDex = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityDexEntries();
+                mAdapterList = new ArrayList<>(abilityDex.keySet());
+                mAdapter = new AbilityAdapter(this, mAdapterList);
+                setListAdapter(mAdapter);
+                getActionBar().setTitle(R.string.search_label_ability);
                 break;
         }
     }
@@ -69,7 +78,8 @@ public class SearchableActivity extends ListActivity {
                 case REQUEST_CODE_SEARCH_POKEMON:
                     searchPokemon(query);
                     break;
-                default:
+                case REQUEST_CODE_SEARCH_ABILITY:
+                    searchAbility(query);
                     break;
             }
         }
@@ -100,7 +110,7 @@ public class SearchableActivity extends ListActivity {
 
     private void searchPokemon(String query) {
         HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
-        mAdapterList = new ArrayList<String>();
+        mAdapterList = new ArrayList<>();
         for (String pokemonName : pokedex.keySet()) {
             if (pokemonName.contains(query.toLowerCase())) {
                 mAdapterList.add(pokemonName);
@@ -110,10 +120,145 @@ public class SearchableActivity extends ListActivity {
         setListAdapter(mAdapter);
     }
 
+    private void searchAbility(String query) {
+        HashMap<String, String> abilityDex = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityDexEntries();
+        mAdapterList = new ArrayList<>();
+        for (String abilityName : abilityDex.keySet()) {
+            if (abilityName.contains(query.toLowerCase())) {
+                mAdapterList.add(abilityName);
+            }
+        }
+        mAdapter = new AbilityAdapter(this, mAdapterList);
+        setListAdapter(mAdapter);
+    }
+
     private class PokemonAdapter extends ArrayAdapter<String> {
         private Activity mContext;
 
         public PokemonAdapter(Activity getContext, ArrayList<String> pokemonList) {
+            super(getContext, 0, pokemonList);
+            mContext = getContext;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_pokemon_short, null);
+            }
+
+            String pokemonName = getItem(position);
+            TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
+            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
+            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIconSmall(getApplicationContext(), pokemonName, true), 0, 0, 0);
+            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
+            ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
+            type1.setImageResource(typesIcon[0]);
+            ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
+            if (typesIcon.length == 2) {
+                type2.setImageResource(typesIcon[1]);
+            } else {
+                type2.setImageResource(0);
+            }
+            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
+            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
+            hp.setText(baseStats[0].toString());
+            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
+            atk.setText(baseStats[1].toString());
+            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
+            def.setText(baseStats[2].toString());
+            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
+            spa.setText(baseStats[3].toString());
+            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
+            spd.setText(baseStats[4].toString());
+            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
+            spe.setText(baseStats[5].toString());
+            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
+            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
+            bst.setText(Integer.toString(BST));
+            return convertView;
+        }
+    }
+
+    private class AbilityAdapter extends ArrayAdapter<String> {
+        private Activity mContext;
+
+        public AbilityAdapter(Activity getContext, ArrayList<String> pokemonList) {
+            super(getContext, 0, pokemonList);
+            mContext = getContext;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_ability_short, null);
+            }
+
+            try {
+                String abilityName = getItem(position);
+
+                JSONObject abilityJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(abilityName);
+                TextView textView = (TextView) convertView.findViewById(R.id.short_ability_name);
+                textView.setText(abilityJson.getString("name"));
+                textView.setCompoundDrawablesWithIntrinsicBounds(Pokedex.getUnownIcon(getApplicationContext(), abilityName), 0, 0, 0);
+                ((TextView) convertView.findViewById(R.id.short_ability_description)).setText(abilityJson.getString("shortDesc"));
+            } catch (JSONException e) {
+                Log.d(STAG, e.toString());
+            }
+            return convertView;
+        }
+    }
+
+    private class MovesAdapter extends ArrayAdapter<String> {
+        private Activity mContext;
+
+        public MovesAdapter(Activity getContext, ArrayList<String> pokemonList) {
+            super(getContext, 0, pokemonList);
+            mContext = getContext;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_pokemon_short, null);
+            }
+
+            String pokemonName = getItem(position);
+            TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
+            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
+            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIconSmall(getApplicationContext(), pokemonName, true), 0, 0, 0);
+            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
+            ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
+            type1.setImageResource(typesIcon[0]);
+            ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
+            if (typesIcon.length == 2) {
+                type2.setImageResource(typesIcon[1]);
+            } else {
+                type2.setImageResource(0);
+            }
+            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
+            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
+            hp.setText(baseStats[0].toString());
+            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
+            atk.setText(baseStats[1].toString());
+            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
+            def.setText(baseStats[2].toString());
+            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
+            spa.setText(baseStats[3].toString());
+            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
+            spd.setText(baseStats[4].toString());
+            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
+            spe.setText(baseStats[5].toString());
+            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
+            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
+            bst.setText(Integer.toString(BST));
+            return convertView;
+        }
+    }
+
+    private class ItemAdapter extends ArrayAdapter<String> {
+        private Activity mContext;
+
+        public ItemAdapter(Activity getContext, ArrayList<String> pokemonList) {
             super(getContext, 0, pokemonList);
             mContext = getContext;
         }

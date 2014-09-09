@@ -55,7 +55,7 @@ public class LevelDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
+                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PTAG);
                 pokemonFragment.getPokemon().setLevel(mLevel);
                 pokemonFragment.getPokemon().setStats(pokemonFragment.getPokemon().calculateStats());
                 pokemonFragment.resetStatsString();

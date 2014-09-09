@@ -13,6 +13,7 @@ public class MyApplication extends Application {
     public Pokedex mPokedex;
     public MoveDex mMoveDex;
     public AbilityDex mAbilityDex;
+    public ItemDex mItemDex;
     public NodeConnection mNodeConnection;
     public Onboarding mOnboarding;
 
@@ -26,6 +27,7 @@ public class MyApplication extends Application {
         mPokedex = Pokedex.getWithApplicationContext(appContext);
         mMoveDex = MoveDex.getWithApplicationContext(appContext);
         mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
+        mItemDex = ItemDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
     }
 }

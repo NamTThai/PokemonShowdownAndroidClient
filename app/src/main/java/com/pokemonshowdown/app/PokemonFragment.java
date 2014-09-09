@@ -23,7 +23,7 @@ import java.util.Iterator;
  * Created by thain on 7/18/14.
  */
 public class PokemonFragment extends DialogFragment {
-    public final static String PokemonTAG = "POKEMON_FRAGMENT";
+    public final static String PTAG = PokemonFragment.class.getName();
 
     private Pokemon mPokemon;
 

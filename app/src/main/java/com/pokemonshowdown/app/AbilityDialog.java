@@ -53,7 +53,7 @@ public class AbilityDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
+                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PTAG);
                 pokemonFragment.getPokemon().setAbility((String) group.findViewById(checkedId).getTag());
                 pokemonFragment.setAbilityString(pokemonFragment.getPokemon().getAbility());
                 getDialog().dismiss();

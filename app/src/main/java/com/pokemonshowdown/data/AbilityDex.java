@@ -49,6 +49,16 @@ public class AbilityDex {
         return mAbilityDexEntries.get(name);
     }
 
+    public JSONObject getAbilityJsonObject(String name) {
+        try {
+            String ability = mAbilityDexEntries.get(name);
+            return new JSONObject(ability);
+        } catch (JSONException e) {
+            Log.d(ATAG, "JSONException");
+            return null;
+        }
+    }
+
     private HashMap<String, String> readFile(Context appContext) {
         HashMap<String, String> AbilityDexEntries = new HashMap<>();
         String jsonString;

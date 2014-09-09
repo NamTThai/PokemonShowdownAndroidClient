@@ -35,8 +35,12 @@
     <string name="bar_login">Trainer</string>
     <string name="bar_settings">Settings</string>
 
-    <!-- These are for Pokedex Action Bar -->
+    <!-- These are for Pokedex -->
     <string name="bar_pokedex_search">Search for Pokemon</string>
+    <string name="pokedex_pokemon">PokeDex</string>
+    <string name="pokedex_ability">AbilityDex</string>
+    <string name="pokedex_item">ItemDex</string>
+    <string name="pokedex_moves">MovesDex</string>
 
     <!-- These are for Damage Calculator -->
     <string name="back">Back</string>
@@ -80,6 +84,9 @@
     <string name="search_title">Search</string>
     <string name="search_label_pokemon">Search Pokemon…</string>
     <string name="search_hint_pokemon">Search Pokemon…</string>
+    <string name="search_label_ability">Search Ability…</string>
+    <string name="search_label_item">Search Item…</string>
+    <string name="search_label_moves">Search Move…</string>
 
     <!-- These are for Credits -->
     <string name="credits">To be updated! (nam.thai.cs@gmail.com)</string>

@@ -72,7 +72,7 @@ public class StatsDialog extends DialogFragment {
         getView().findViewById(R.id.save_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {FragmentManager fm = getActivity().getSupportFragmentManager();
-                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PokemonTAG);
+                PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PTAG);
                 pokemonFragment.getPokemon().setStats(mStats);
                 pokemonFragment.getPokemon().setEVs(mEVs);
                 pokemonFragment.getPokemon().setIVs(mIVs);

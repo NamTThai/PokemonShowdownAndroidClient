@@ -2,34 +2,22 @@ package com.pokemonshowdown.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
 
-/**
- * Created by thain on 7/17/14.
- */
 public class DmgCalcActivity extends FragmentActivity {
-    public final static String DCTAG = "DMG_CALC_TAG";
+    public final static String DTAG = DmgCalcActivity.class.getName();
     public final static int REQUEST_CODE_FIND_ATTACKER = 0;
     public final static int REQUEST_CODE_FIND_DEFENDER = 1;
 
@@ -84,7 +72,7 @@ public class DmgCalcActivity extends FragmentActivity {
                 setAttacker((Pokemon) savedInstanceState.getSerializable("Attacker"));
                 setDefender((Pokemon) savedInstanceState.getSerializable("Defender"));
             } catch (NullPointerException e) {
-                Log.e(DCTAG, e.toString());
+                Log.e(DTAG, e.toString());
             }
         }
     }
@@ -160,7 +148,7 @@ public class DmgCalcActivity extends FragmentActivity {
         bundle.putInt("Search Code", searchCode);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragment.show(fragmentManager, PokemonFragment.PokemonTAG);
+        fragment.show(fragmentManager, PokemonFragment.PTAG);
     }
 
 }
