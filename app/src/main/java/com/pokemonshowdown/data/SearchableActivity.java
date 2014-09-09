@@ -58,6 +58,13 @@ public class SearchableActivity extends ListActivity {
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_ability);
                 break;
+            case REQUEST_CODE_SEARCH_ITEM:
+                HashMap<String, String> itemDex = ItemDex.getWithApplicationContext(getApplicationContext()).getItemDexEntries();
+                mAdapterList = new ArrayList<>(itemDex.keySet());
+                mAdapter = new AbilityAdapter(this, mAdapterList);
+                setListAdapter(mAdapter);
+                getActionBar().setTitle(R.string.search_label_item);
+                break;
         }
     }
 
@@ -80,6 +87,9 @@ public class SearchableActivity extends ListActivity {
                     break;
                 case REQUEST_CODE_SEARCH_ABILITY:
                     searchAbility(query);
+                    break;
+                case REQUEST_CODE_SEARCH_ITEM:
+                    searchItem(query);
                     break;
             }
         }
@@ -126,6 +136,18 @@ public class SearchableActivity extends ListActivity {
         for (String abilityName : abilityDex.keySet()) {
             if (abilityName.contains(query.toLowerCase())) {
                 mAdapterList.add(abilityName);
+            }
+        }
+        mAdapter = new AbilityAdapter(this, mAdapterList);
+        setListAdapter(mAdapter);
+    }
+
+    private void searchItem(String query) {
+        HashMap<String, String> itemDex = ItemDex.getWithApplicationContext(getApplicationContext()).getItemDexEntries();
+        mAdapterList = new ArrayList<>();
+        for (String itemName : itemDex.keySet()) {
+            if (itemName.contains(query.toLowerCase())) {
+                mAdapterList.add(itemName);
             }
         }
         mAdapter = new AbilityAdapter(this, mAdapterList);
@@ -266,39 +288,21 @@ public class SearchableActivity extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_pokemon_short, null);
+                convertView = mContext.getLayoutInflater().inflate(R.layout.fragment_item_short, null);
             }
 
-            String pokemonName = getItem(position);
-            TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
-            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
-            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIconSmall(getApplicationContext(), pokemonName, true), 0, 0, 0);
-            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
-            ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
-            type1.setImageResource(typesIcon[0]);
-            ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
-            if (typesIcon.length == 2) {
-                type2.setImageResource(typesIcon[1]);
-            } else {
-                type2.setImageResource(0);
+            try {
+                String itemTag = getItem(position);
+                JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(itemTag);
+                TextView textView = (TextView) convertView.findViewById(R.id.short_item_name);
+                textView.setText(Pokemon.getPokemonName(getApplicationContext(), itemJson.getString("name"), true));
+                textView.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getApplicationContext(), itemTag), 0, 0, 0);
+                ((TextView) convertView.findViewById(R.id.short_ability_description)).setText(itemJson.getString("desc"));
+            } catch (JSONException e) {
+                Log.d(STAG, e.toString());
             }
-            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
-            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
-            hp.setText(baseStats[0].toString());
-            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
-            atk.setText(baseStats[1].toString());
-            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
-            def.setText(baseStats[2].toString());
-            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
-            spa.setText(baseStats[3].toString());
-            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
-            spd.setText(baseStats[4].toString());
-            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
-            spe.setText(baseStats[5].toString());
-            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
-            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
-            bst.setText(Integer.toString(BST));
             return convertView;
         }
+
     }
 }

@@ -49,6 +49,20 @@ public class ItemDex {
         return mItemDexEntries.get(name);
     }
 
+    public JSONObject getItemJsonObject(String name) {
+        try {
+            String item = mItemDexEntries.get(name);
+            return new JSONObject(item);
+        } catch (JSONException e) {
+            Log.d(ITAG, e.toString());
+            return null;
+        }
+    }
+
+    public static int getItemIcon(Context appContext, String itemName) {
+            return appContext.getResources().getIdentifier("item_" + itemName.toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+    }
+
     private HashMap<String, String> readFile(Context appContext) {
         HashMap<String, String> ItemDexEntries = new HashMap<>();
         String jsonString;

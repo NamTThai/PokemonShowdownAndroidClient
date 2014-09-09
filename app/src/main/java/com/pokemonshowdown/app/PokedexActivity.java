@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.pokemonshowdown.data.AbilityDex;
+import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
 
@@ -52,6 +53,15 @@ public class PokedexActivity extends FragmentActivity {
                 PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ABILITY);
             }
         });
+
+        findViewById(R.id.itemdex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ITEM);
+            }
+        });
     }
 
     @Override
@@ -79,6 +89,16 @@ public class PokedexActivity extends FragmentActivity {
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(abilityJson.getString("name"))
                                 .setMessage(abilityJson.getString("desc"))
+                                .create();
+                        dialog.show();
+                        break;
+                    case REQUEST_CODE_SEARCH_ITEM:
+                        String item = data.getExtras().getString("Search");
+                        JSONObject itemJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(item);
+                        dialog = new AlertDialog.Builder(this)
+                                .setTitle(itemJson.getString("name"))
+                                .setMessage(itemJson.getString("desc"))
+                                .setIcon(ItemDex.getItemIcon(getApplicationContext(), item))
                                 .create();
                         dialog.show();
                         break;

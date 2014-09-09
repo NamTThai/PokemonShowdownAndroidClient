@@ -49,6 +49,16 @@ public class MoveDex {
         return mMoveDexEntries.get(name);
     }
 
+    public JSONObject getMoveJsonObject(String name) {
+        try {
+            String move = mMoveDexEntries.get(name);
+            return new JSONObject(move);
+        } catch (JSONException e) {
+            Log.d(MTAG, e.toString());
+            return null;
+        }
+    }
+
     private HashMap<String, String> readFile(Context appContext) {
         HashMap<String, String> MoveDexEntries = new HashMap<>();
         String jsonString;
