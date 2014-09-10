@@ -16,6 +16,7 @@
             android:id="@+id/pokemon_icon"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:paddingLeft="8dp"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
             android:contentDescription="@string/pokemon_list">
@@ -80,40 +81,41 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="8dp">
 
-        <LinearLayout
-            android:id="@+id/type"
+        <ImageView
+            android:id="@+id/type_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentLeft="true">
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/type_1"/>
 
-            <ImageView
-                android:id="@+id/type_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/type_1"/>
-
-            <ImageView
-                android:id="@+id/type_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/type_2"/>
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/type_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/type_2"/>
 
         <TextView
             android:id="@+id/level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="8dp"
-            android:layout_below="@id/type"/>
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"/>
 
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:contentDescription="@string/gender"/>
+
+    </LinearLayout>
 
 </LinearLayout>

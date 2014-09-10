@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +14,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Created by thain on 7/18/14.
- */
 public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
 
@@ -51,7 +53,7 @@ public class PokemonFragment extends DialogFragment {
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(getPokemon().getName());
 
-        ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
+        final ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
         pokemonView.setImageResource(getPokemon().getIcon());
 
         if (getArguments().getBoolean("Search")) {
@@ -132,6 +134,21 @@ public class PokemonFragment extends DialogFragment {
                 levelDialog.show(fm, LevelDialog.LTAG);
             }
         });
+
+        final ImageView gender = (ImageView) view.findViewById(R.id.gender);
+        gender.setImageResource(getPokemon().getGenderIcon());
+        gender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getPokemon().isGenderAvailable()) {
+                    getPokemon().switchGender();
+                    gender.setImageResource(getPokemon().getGenderIcon());
+                    int pokemonIcon = (getPokemon().isShiny()) ? getPokemon().getIconShiny() : getPokemon().getIcon();
+                    pokemonView.setImageResource(pokemonIcon);
+                }
+            }
+        });
+
     }
 
     private void addSearchWidget(View view) {

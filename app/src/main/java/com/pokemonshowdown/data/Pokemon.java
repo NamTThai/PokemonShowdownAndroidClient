@@ -3,6 +3,8 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.pokemonshowdown.app.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +37,12 @@ public class Pokemon implements Serializable {
     private final static String PTAG = "POKEMON_OBJECT";
 
     private int mIcon;
+    private int mIconM;
+    private int mIconF;
     private int mIconSmall;
     private int mIconShiny;
+    private int mIconShinyM;
+    private int mIconShinyF;
     private String mTagName;
     private String mNameWithUnderScore;
     private String mName;
@@ -47,6 +53,7 @@ public class Pokemon implements Serializable {
     private int[] mIVs;
     private int mLevel;
     private String mGender;
+    private boolean mGenderAvailable;
     private float[] mNatureMultiplier;
     private String mNature;
     private boolean mShiny;
@@ -57,6 +64,7 @@ public class Pokemon implements Serializable {
     private String[] mMoves;
     private String[] mMoveList;
     private int mWeight;
+    private String mItem;
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
@@ -79,7 +87,11 @@ public class Pokemon implements Serializable {
             mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'),"").toLowerCase();
 
             mIcon = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
-            mIconShiny = appContext.getResources().getIdentifier("p"+jsonObject.getString("num")+"sh", "drawable", appContext.getPackageName());
+            mIconM = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconF = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore+"_f", "drawable", appContext.getPackageName());
+            mIconShiny = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconShinyM = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconShinyF = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore+"_f", "drawable", appContext.getPackageName());
             mIconSmall = appContext.getResources().getIdentifier("smallicons_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
 
             setNickName(mName);
@@ -98,7 +110,9 @@ public class Pokemon implements Serializable {
             setLevel(100);
             try {
                 setGender(jsonObject.getString("gender"));
+                mGenderAvailable = false;
             } catch (JSONException e) {
+                mGenderAvailable = true;
                 setGender("M");
             }
             setNature("Adamant");
@@ -121,6 +135,7 @@ public class Pokemon implements Serializable {
             if (mAbilityList.size() == 1) {
                 setAbility("0");
             }
+            setItem("leftovers");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         } catch (java.lang.NullPointerException e) {
@@ -525,6 +540,46 @@ public class Pokemon implements Serializable {
         mGender = gender;
     }
 
+    public boolean isGenderAvailable() {
+        return mGenderAvailable;
+    }
+
+    public int getGenderIcon() {
+        switch (mGender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
+    }
+
+    public void switchGender() {
+        if (!isGenderAvailable()) {
+            return;
+        }
+        switch (mGender) {
+            case "M":
+                setGender("F");
+                if (mIconF != 0) {
+                    setIcon(mIconF);
+                }
+                if (mIconShinyF != 0) {
+                    setIconShiny(mIconShinyF);
+                }
+                return;
+            case "F":
+                setGender("M");
+                if (mIconM != 0) {
+                    setIcon(mIconM);
+                }
+                if (mIconShinyM != 0) {
+                    setIconShiny(mIconShinyM);
+                }
+        }
+    }
+
     public float[] getNatureMultiplier() {
         return mNatureMultiplier;
     }
@@ -689,5 +744,13 @@ public class Pokemon implements Serializable {
 
     public void setWeight(int weight) {
         mWeight = weight;
+    }
+
+    public String getItem() {
+        return mItem;
+    }
+
+    public void setItem(String item) {
+        mItem = item;
     }
 }
