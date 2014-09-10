@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * Created by thain on 8/9/14.
- */
 public class DmgCalcFieldXYFragment extends Fragment {
 
     @Override

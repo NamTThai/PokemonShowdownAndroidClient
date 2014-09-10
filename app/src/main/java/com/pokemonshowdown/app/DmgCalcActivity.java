@@ -14,12 +14,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.SearchableActivity;
 
 public class DmgCalcActivity extends FragmentActivity {
     public final static String DTAG = DmgCalcActivity.class.getName();
     public final static int REQUEST_CODE_FIND_ATTACKER = 0;
     public final static int REQUEST_CODE_FIND_DEFENDER = 1;
+    public final static int REQUEST_CODE_GET_MOVE_1 = 2;
+    public final static int REQUEST_CODE_GET_MOVE_2 = 3;
+    public final static int REQUEST_CODE_GET_MOVE_3 = 4;
+    public final static int REQUEST_CODE_GET_MOVE_4 = 5;
 
     private Pokemon mAttacker;
     private Pokemon mDefender;
@@ -45,6 +51,10 @@ public class DmgCalcActivity extends FragmentActivity {
                 Pokemon temp = getAttacker();
                 setAttacker(getDefender());
                 setDefender(temp);
+                setMove1(getAttacker().getMove1());
+                setMove2(getAttacker().getMove2());
+                setMove3(getAttacker().getMove3());
+                setMove4(getAttacker().getMove4());
             }
         });
 
@@ -75,6 +85,47 @@ public class DmgCalcActivity extends FragmentActivity {
                 Log.e(DTAG, e.toString());
             }
         }
+
+        TextView move1 = (TextView) findViewById(R.id.move1);
+        setMove1(mAttacker.getMove1());
+        move1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DmgCalcActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                DmgCalcActivity.this.startActivityForResult(intent, REQUEST_CODE_GET_MOVE_1);
+            }
+        });
+        TextView move2 = (TextView) findViewById(R.id.move2);
+        setMove2(mAttacker.getMove2());
+        move2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DmgCalcActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                DmgCalcActivity.this.startActivityForResult(intent, REQUEST_CODE_GET_MOVE_2);
+            }
+        });
+        TextView move3 = (TextView) findViewById(R.id.move3);
+        setMove3(mAttacker.getMove3());
+        move3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DmgCalcActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                DmgCalcActivity.this.startActivityForResult(intent, REQUEST_CODE_GET_MOVE_3);
+            }
+        });
+        TextView move4 = (TextView) findViewById(R.id.move4);
+        setMove4(mAttacker.getMove4());
+        move4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DmgCalcActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                DmgCalcActivity.this.startActivityForResult(intent, REQUEST_CODE_GET_MOVE_4);
+            }
+        });
     }
 
     @Override
@@ -93,10 +144,24 @@ public class DmgCalcActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CODE_FIND_ATTACKER) {
-                setAttacker(data.getExtras().getString("Search"));
-            } else {
-                setDefender(data.getExtras().getString("Search"));
+            switch (requestCode) {
+                case REQUEST_CODE_FIND_ATTACKER:
+                    setAttacker(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_FIND_DEFENDER:
+                    setDefender(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_1:
+                    setMove1(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_2:
+                    setMove2(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_3:
+                    setMove3(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_4:
+                    setMove4(data.getExtras().getString("Search"));
             }
         }
     }
@@ -149,6 +214,52 @@ public class DmgCalcActivity extends FragmentActivity {
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PTAG);
+    }
+
+    private void setMove1(String move) {
+        mAttacker.setMove1(move);
+        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        ((TextView) findViewById(R.id.move1)).setText(moveName);
+        calculateDamage(1);
+    }
+
+    private void setMove2(String move) {
+        mAttacker.setMove2(move);
+        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        ((TextView) findViewById(R.id.move2)).setText(moveName);
+        calculateDamage(2);
+    }
+
+    private void setMove3(String move) {
+        mAttacker.setMove3(move);
+        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        ((TextView) findViewById(R.id.move3)).setText(moveName);
+        calculateDamage(3);
+    }
+
+    private void setMove4(String move) {
+        mAttacker.setMove4(move);
+        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        ((TextView) findViewById(R.id.move4)).setText(moveName);
+        calculateDamage(4);
+    }
+    
+    private void calculateDamage(int moveIndex) {
+        String damage = "0.0%";
+        switch (moveIndex) {
+            case 1:
+                ((TextView) findViewById(R.id.move1_result)).setText(damage);
+                break;
+            case 2:
+                ((TextView) findViewById(R.id.move2_result)).setText(damage);
+                break;
+            case 3:
+                ((TextView) findViewById(R.id.move3_result)).setText(damage);
+                break;
+            case 4:
+                ((TextView) findViewById(R.id.move4_result)).setText(damage);
+                break;
+        }
     }
 
 }

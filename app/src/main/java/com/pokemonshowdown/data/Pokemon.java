@@ -63,10 +63,12 @@ public class Pokemon implements Serializable {
     private HashMap<String, String> mAbilityList;
     private String[] mType;
     private int[] mTypeIcon;
-    private String[] mMoves;
-    private String[] mMoveList;
     private int mWeight;
     private String mItem;
+    private String mMove1;
+    private String mMove2;
+    private String mMove3;
+    private String mMove4;
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
@@ -138,6 +140,11 @@ public class Pokemon implements Serializable {
                 setAbility("0");
             }
             setItem("leftovers");
+
+            setMove1("--");
+            setMove2("--");
+            setMove3("--");
+            setMove4("--");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         } catch (java.lang.NullPointerException e) {
@@ -731,22 +738,6 @@ public class Pokemon implements Serializable {
         mTypeIcon = typeIcon;
     }
 
-    public String[] getMoves() {
-        return mMoves;
-    }
-
-    public void setMoves(String[] moves) {
-        mMoves = moves;
-    }
-
-    public String[] getMoveList() {
-        return mMoveList;
-    }
-
-    public void setMoveList(String[] moveList) {
-        mMoveList = moveList;
-    }
-
     public int getWeight() {
         return mWeight;
     }
@@ -761,5 +752,37 @@ public class Pokemon implements Serializable {
 
     public void setItem(String item) {
         mItem = item;
+    }
+
+    public String getMove1() {
+        return mMove1;
+    }
+
+    public void setMove1(String move1) {
+        mMove1 = move1;
+    }
+
+    public String getMove2() {
+        return mMove2;
+    }
+
+    public void setMove2(String move2) {
+        mMove2 = move2;
+    }
+
+    public String getMove3() {
+        return mMove3;
+    }
+
+    public void setMove3(String move3) {
+        mMove3 = move3;
+    }
+
+    public String getMove4() {
+        return mMove4;
+    }
+
+    public void setMove4(String move4) {
+        mMove4 = move4;
     }
 }

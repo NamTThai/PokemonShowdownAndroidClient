@@ -59,6 +59,16 @@ public class MoveDex {
         }
     }
 
+    public static String getMoveName(Context appContext, String name) {
+        try {
+            JSONObject moveJson = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(name);
+            return moveJson.getString("name");
+        } catch (JSONException e) {
+            Log.d(MTAG, e.toString());
+            return null;
+        }
+    }
+
     public static int getMoveType(Context appContext, String types) {
         return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
     }
