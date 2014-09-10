@@ -2,6 +2,7 @@ package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -36,7 +37,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class BattleFieldActivity extends FragmentActivity {
-    public final static String BTAG = "BattleFieldActivity";
+    public final static String BTAG = BattleFieldActivity.class.getName();
 
     private int mPosition;
     private DrawerLayout mDrawerLayout;

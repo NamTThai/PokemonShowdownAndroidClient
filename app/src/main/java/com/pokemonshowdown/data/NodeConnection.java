@@ -34,6 +34,7 @@ public class NodeConnection {
             sNodeConnection = new NodeConnection(c);
         }
         return sNodeConnection;
+
     }
 
     public WebSocketClient getWebSocketClient() {
