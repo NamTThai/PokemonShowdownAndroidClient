@@ -1,5 +1,8 @@
 package com.pokemonshowdown.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +24,7 @@ import com.pokemonshowdown.data.SearchableActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -162,6 +166,29 @@ public class PokemonFragment extends DialogFragment {
                     int pokemonIcon = (getPokemon().isShiny()) ? getPokemon().getIconShiny() : getPokemon().getIcon();
                     pokemonView.setImageResource(pokemonIcon);
                 }
+            }
+        });
+
+        final TextView nature = (TextView) view.findViewById(R.id.nature);
+        nature.setText(getPokemon().getNature());
+        nature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int selectedNature = Arrays.binarySearch(Pokemon.NATURES, getPokemon().getNature());
+                Dialog dialog = new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(Pokemon.NATURES, selectedNature, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String newNature = Pokemon.NATURES[which];
+                                nature.setText(newNature);
+                                mPokemon.setNature(newNature);
+                                mPokemon.setStats(getPokemon().calculateStats());
+                                PokemonFragment.this.resetStatsString();
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
 

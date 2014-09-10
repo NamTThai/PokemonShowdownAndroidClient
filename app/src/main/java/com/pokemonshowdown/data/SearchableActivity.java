@@ -279,7 +279,12 @@ public class SearchableActivity extends ListActivity {
                 category.setImageResource(MoveDex.getMoveCategory(getApplicationContext(), moveJson.getString("category")));
 
                 TextView power = (TextView) convertView.findViewById(R.id.move_power);
-                power.setText(moveJson.getString("basePower"));
+                String pow = moveJson.getString("basePower");
+                if (pow.equals("0")) {
+                    power.setText("--");
+                } else {
+                    power.setText(pow);
+                }
                 TextView acc = (TextView) convertView.findViewById(R.id.move_acc);
                 String accuracy = moveJson.getString("accuracy");
                 if (accuracy.equals("true")) {
