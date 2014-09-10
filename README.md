@@ -4,6 +4,7 @@ PokemonShowdown Android Client
 ## Requirements
 
 * AndroidStudio stable release (I'm using Android Studio 0.5.2)
+* When you finish installing, go to SDK Manager and download all supporting stuffs. It doesn't hurt. 
 * Android SDK
 * Java JDK 
 
