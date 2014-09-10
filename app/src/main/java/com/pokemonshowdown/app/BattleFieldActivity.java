@@ -226,10 +226,6 @@ public class BattleFieldActivity extends FragmentActivity {
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance(mRoomList);
                 break;
-            case 5:
-                mPosition = 5;
-                fragment = new CreditsFragment();
-                break;
             default:
                 mPosition = 0;
                 fragment = new FindBattleFragment();

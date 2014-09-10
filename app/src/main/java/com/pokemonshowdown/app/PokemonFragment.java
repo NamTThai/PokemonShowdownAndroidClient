@@ -176,7 +176,7 @@ public class PokemonFragment extends DialogFragment {
             public void onClick(View v) {
                 int selectedNature = Arrays.binarySearch(Pokemon.NATURES, getPokemon().getNature());
                 Dialog dialog = new AlertDialog.Builder(getActivity())
-                        .setSingleChoiceItems(Pokemon.NATURES, selectedNature, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(Pokemon.NATURES_DETAILS, selectedNature, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String newNature = Pokemon.NATURES[which];
