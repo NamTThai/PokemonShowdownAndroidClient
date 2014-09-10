@@ -54,7 +54,23 @@ public class PokemonFragment extends DialogFragment {
         pokemonName.setText(getPokemon().getName());
 
         final ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
-        pokemonView.setImageResource(getPokemon().getIcon());
+        if (getPokemon().isShiny()) {
+            pokemonView.setImageResource(getPokemon().getIconShiny());
+        } else {
+            pokemonView.setImageResource(getPokemon().getIcon());
+        }
+
+        pokemonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getPokemon().switchShiny();
+                if (getPokemon().isShiny()) {
+                    pokemonView.setImageResource(getPokemon().getIconShiny());
+                } else {
+                    pokemonView.setImageResource(getPokemon().getIcon());
+                }
+            }
+        });
 
         if (getArguments().getBoolean("Search")) {
             addSearchWidget(view);

@@ -34,7 +34,8 @@ import java.util.Iterator;
  * Level: 100
  */
 public class Pokemon implements Serializable {
-    private final static String PTAG = "POKEMON_OBJECT";
+    public final static String PTAG = "POKEMON_OBJECT";
+    public final static String[] NATURES = {"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"};
 
     private int mIcon;
     private int mIconM;
@@ -317,6 +318,9 @@ public class Pokemon implements Serializable {
     }
 
     public int getIconShiny() {
+        if (mIconShiny == 0) {
+            return mIcon;
+        }
         return mIconShiny;
     }
 
@@ -684,6 +688,10 @@ public class Pokemon implements Serializable {
 
     public void setShiny(boolean shiny) {
         mShiny = shiny;
+    }
+
+    public void switchShiny() {
+        setShiny(!isShiny());
     }
 
     public String getAbility() {
