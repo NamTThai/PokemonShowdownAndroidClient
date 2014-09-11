@@ -22,6 +22,6 @@ public class FindBattleFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getView().setFocusableInTouchMode(true);
+        view.setFocusableInTouchMode(true);
     }
 }

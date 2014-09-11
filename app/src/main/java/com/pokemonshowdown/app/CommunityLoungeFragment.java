@@ -87,9 +87,8 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        MenuItem addRoom = menu.add(R.string.bar_chatroom);
-        addRoom.setIcon(R.drawable.ic_action_group);
-        addRoom.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        MenuItem addRoom = menu.findItem(R.id.community_lounge);
+        addRoom.setVisible(true);
         addRoom.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

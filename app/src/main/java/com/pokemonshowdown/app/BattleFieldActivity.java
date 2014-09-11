@@ -147,12 +147,10 @@ public class BattleFieldActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.battle_field, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        MenuItem addRoom = menu.findItem(R.id.community_lounge);
+        addRoom.setVisible(false);
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -207,11 +205,6 @@ public class BattleFieldActivity extends FragmentActivity {
         mTitle = title;
         getActionBar().setTitle(mTitle);
     }
-
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -321,16 +314,12 @@ public class BattleFieldActivity extends FragmentActivity {
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1 && roomId.equals("lobby")) {
-            processLobbyMessage(message);
+            CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 1");
+            if (fragment != null) {
+                fragment.processServerMessage("lobby", message);
+            }
         } else {
             // TODO: deal with server messages that come with ROOMID
-        }
-    }
-
-    public void processLobbyMessage(String message) {
-        CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 1");
-        if (fragment != null) {
-            fragment.processServerMessage("lobby", message);
         }
     }
 
