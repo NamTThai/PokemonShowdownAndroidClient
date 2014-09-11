@@ -40,7 +40,7 @@
     <string name="pokedex_pokemon">PokeDex</string>
     <string name="pokedex_ability">AbilityDex</string>
     <string name="pokedex_item">ItemDex</string>
-    <string name="pokedex_moves">MovesDex</string>
+    <string name="pokedex_moves">MoveDex</string>
 
     <!-- These are for Damage Calculator -->
     <string name="back">Back</string>

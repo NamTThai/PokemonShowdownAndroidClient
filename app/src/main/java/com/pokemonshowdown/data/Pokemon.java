@@ -136,9 +136,7 @@ public class Pokemon implements Serializable {
                 String key = keys.next();
                 mAbilityList.put(key, abilityList.getString(key));
             }
-            if (mAbilityList.size() == 1) {
-                setAbility("0");
-            }
+            setAbilityTag("0");
             setItem("leftovers");
 
             setMove1("--");
@@ -710,7 +708,7 @@ public class Pokemon implements Serializable {
         return mAbility;
     }
 
-    public void setAbility(String abilityTag) {
+    public void setAbilityTag(String abilityTag) {
         mAbility = abilityTag;
     }
 

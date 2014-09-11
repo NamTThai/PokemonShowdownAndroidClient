@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
@@ -100,32 +102,36 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
-        TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
+        final TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
         pokemonAbility.setBackgroundResource(R.drawable.editable_frame);
-        String abilities;
-        if (getPokemon().getAbilityTag() != null) {
-            abilities = getPokemon().getAbility();
-        } else {
-            HashMap<String, String> abilityList = getPokemon().getAbilityList();
-            Iterator<String> abilityTags = abilityList.keySet().iterator();
-            String abilityTag = abilityTags.next();
-            abilities = abilityList.get(abilityTag);
-            while (abilityTags.hasNext()) {
-                abilityTag = abilityTags.next();
-                abilities += "/" + abilityList.get(abilityTag);
-            }
-        }
+        String abilities = getPokemon().getAbility();
         pokemonAbility.setText(abilities);
         pokemonAbility.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                AbilityDialog abilityDialog = new AbilityDialog();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("AbilityList", getPokemon().getAbilityList());
-                bundle.putString("SelectedAbility", getPokemon().getAbilityTag());
-                abilityDialog.setArguments(bundle);
-                abilityDialog.show(fm, AbilityDialog.ATAG);
+                final Set<String> abilitySet = getPokemon().getAbilityList().keySet();
+                final String[] abilityList = abilitySet.toArray(new String[abilitySet.size()]);
+                final String[] abilityNames = new String[abilityList.length];
+                String selectedAbilityTag = getPokemon().getAbilityTag();
+                int selectedAbility = 0;
+                for (int i=0; i<abilityList.length; i++) {
+                    abilityNames[i] = getPokemon().getAbilityList().get(abilityList[i]);
+                    if (abilityList[i].equals(selectedAbilityTag)) {
+                        selectedAbility = i;
+                    }
+                }
+                Dialog dialog = new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(abilityNames, selectedAbility, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String newAbilityTag = abilityList[which];
+                                getPokemon().setAbilityTag(newAbilityTag);
+                                setAbilityString(getPokemon().getAbility());
+                                dialog.dismiss();
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
 
