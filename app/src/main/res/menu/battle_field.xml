@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item android:id="@+id/team_building"
+          android:icon="@drawable/ic_action_computer"
+          android:title="@string/team_builder"
+          android:showAsAction="ifRoom" />
+
     <item android:id="@+id/menu_pokedex"
         android:icon="@drawable/ic_pokedex"
         android:title="@string/bar_pokedex"

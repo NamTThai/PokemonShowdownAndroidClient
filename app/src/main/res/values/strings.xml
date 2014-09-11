@@ -21,7 +21,6 @@
     <string-array name="bar_left_drawer">
         <item>Battle Field</item>
         <item>Community Lounge</item>
-        <item>Team Builder</item>
         <item>Watch Battle</item>
         <item>Replays</item>
         <item>Credits</item>
@@ -30,6 +29,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="bar_room">Room</string>
+    <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>
     <string name="bar_dmg_calc">Damage Calculator</string>
     <string name="bar_login">Trainer</string>
@@ -104,5 +104,6 @@
     <!-- These are for Chat Room -->
     <string name="bar_chatroom">Community Lounge</string>
     <string name="hint_chatroom">Please login to chat</string>
+    <string name="title_activity_team_building">TeamBuildingActivity</string>
 
 </resources>

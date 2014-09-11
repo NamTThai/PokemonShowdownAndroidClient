@@ -160,6 +160,9 @@ public class BattleFieldActivity extends FragmentActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         switch(item.getItemId()) {
+            case R.id.team_building:
+                startActivity(new Intent(this, TeamBuildingActivity.class));
+                return true;
             case R.id.menu_pokedex:
                 startActivity(new Intent(this, PokedexActivity.class));
                 return true;
