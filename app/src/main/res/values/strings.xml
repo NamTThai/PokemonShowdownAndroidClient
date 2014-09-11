@@ -62,6 +62,8 @@
     <string name="dmg_calc_field_lightscreen">Light Screen</string>
     <string name="dmg_calc_field_foresight">Foresight</string>
     <string name="dmg_calc_field_helpinghand">Helping Hand</string>
+    <string name="attacker">Attacker</string>
+    <string name="defender">Defender</string>
 
     <!-- These are for Pokemon List -->
     <string name="pokemon_list">Pokemon List</string>

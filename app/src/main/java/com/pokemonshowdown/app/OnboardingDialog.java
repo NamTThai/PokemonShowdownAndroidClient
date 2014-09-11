@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class OnboardingDialog extends DialogFragment {
                         fragment.setArguments(bundle);
                         fragment.show(fm, SignInDialog.STAG);
                     } else {
-                        ((BattleFieldActivity) getActivity()).processGlobalMessage("|assertion|"+name+"|"+assertion);
+                        MyApplication.getMyApplication().processGlobalMessage("|assertion|"+name+"|"+assertion);
                         getDialog().dismiss();
                     }
                 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 public class UserDialog extends DialogFragment {
@@ -35,7 +36,7 @@ public class UserDialog extends DialogFragment {
             public void onClick(View v) {
                 getDialog().dismiss();
                 onboarding.signingOut();
-                ((BattleFieldActivity) getActivity()).sendClientMessage("|/logout");
+                MyApplication.getMyApplication().sendClientMessage("|/logout");
             }
         });
 
