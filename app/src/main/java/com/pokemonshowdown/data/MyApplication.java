@@ -8,14 +8,17 @@ import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.pokemonshowdown.app.CommunityLoungeFragment;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Initialize all the data singletons
@@ -32,14 +35,18 @@ public class MyApplication extends Application {
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
     
-    public static MyApplication sMyApplication;
+    private static MyApplication sMyApplication;
     
-    public Pokedex mPokedex;
-    public MoveDex mMoveDex;
-    public AbilityDex mAbilityDex;
-    public ItemDex mItemDex;
-    public WebSocketClient mWebSocketClient;
-    public Onboarding mOnboarding;
+    private Pokedex mPokedex;
+    private MoveDex mMoveDex;
+    private AbilityDex mAbilityDex;
+    private ItemDex mItemDex;
+    private WebSocketClient mWebSocketClient;
+    private Onboarding mOnboarding;
+    private JSONObject mClientInitiationJson;
+    private int mUserCount;
+    private int mBattleCount;
+    private HashMap<String, JSONArray> mRoomCategoryList;
 
     @Override
     public void onCreate() {
@@ -54,6 +61,8 @@ public class MyApplication extends Application {
         mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
         mItemDex = ItemDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
+        mRoomCategoryList = new HashMap<>();
+        initiateChatRoomList();
     }
 
     @Override
@@ -89,7 +98,8 @@ public class MyApplication extends Application {
 
     public WebSocketClient openNewConnection() {
         try {
-            URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
+            URI uri = new URI("ws://sim.smogon.com:8000/showdown/websocket");
+            // URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
 
             WebSocketClient webSocketClient = new WebSocketClient(uri) {
                 @Override
@@ -219,13 +229,30 @@ public class MyApplication extends Application {
                     final String errorMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
                     LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_ERROR_MESSAGE).putExtra(EXTRA_ERROR_MESSAGE, errorMessage));
                     break;
+                case "queryresponse":
+                    channel = -1;
+                    final String query = messageDetail.substring(0, messageDetail.indexOf('|'));
+                    switch (query) {
+                        case "rooms":
+                            final String rooms = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            if (!rooms.equals("null")) {
+                                try {
+                                    setClientInitiationJson(new JSONObject(rooms));
+                                } catch (JSONException e) {
+                                    Log.d(MTAG, e.toString());
+                                }
+                            }
+                            break;
+                        default:
+                            Log.d(MTAG, message);
+                    }
+                    break;
                 case "popup":
                 case "pm":
                 case "usercount":
                 case "formats":
                 case "updatesearch":
                 case "updatechallenges":
-                case "queryresponse":
                 case "deinit":
                     channel = -1;
                     Log.d(MTAG, message);
@@ -255,4 +282,62 @@ public class MyApplication extends Application {
         return true;
     }
 
+    private void initiateChatRoomList() {
+        sendClientMessage("|/cmd rooms");
+    }
+
+    public JSONObject getClientInitiationJson() {
+        return mClientInitiationJson;
+    }
+
+    public void setClientInitiationJson(JSONObject clientInitiationJson) {
+        mClientInitiationJson = clientInitiationJson;
+        try {
+            Iterator<String> keySet = clientInitiationJson.keys();
+            while (keySet.hasNext()) {
+                String key = keySet.next();
+                switch (key) {
+                    case "userCount":
+                        setUserCount(clientInitiationJson.getInt("userCount"));
+                        break;
+                    case "battleCount":
+                        setBattleCount(clientInitiationJson.getInt("battleCount"));
+                        break;
+                    default:
+                        JSONArray rooms = clientInitiationJson.getJSONArray(key);
+                        getRoomCategoryList().put(key, rooms);
+                }
+            }
+        } catch (JSONException e) {
+            Log.d(MTAG, e.toString());
+        }
+    }
+
+    public int getUserCount() {
+        return mUserCount;
+    }
+
+    public void setUserCount(int userCount) {
+        mUserCount = userCount;
+    }
+
+    public int getBattleCount() {
+        return mBattleCount;
+    }
+
+    public void setBattleCount(int battleCount) {
+        mBattleCount = battleCount;
+    }
+
+    public HashMap<String, JSONArray> getRoomCategoryList() {
+        return mRoomCategoryList;
+    }
+
+    public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
+        mRoomCategoryList = roomCategoryList;
+    }
+
+    public String getId(String name) {
+        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
 }

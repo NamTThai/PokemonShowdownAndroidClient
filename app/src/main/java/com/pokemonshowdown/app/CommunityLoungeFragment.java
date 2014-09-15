@@ -1,12 +1,14 @@
 package com.pokemonshowdown.app;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pokemonshowdown.data.MyApplication;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 
 public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
@@ -92,7 +102,8 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         addRoom.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                return false;
+                generateRoomCategoryList();
+                return true;
             }
         });
     }
@@ -139,6 +150,55 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         if (fragment != null) {
             fragment.processServerMessage(message);
         }
+    }
+
+    private void generateRoomCategoryList() {
+        final HashMap<String, JSONArray> rooms = MyApplication.getMyApplication().getRoomCategoryList();
+        Set<String> roomSet = rooms.keySet();
+        final String[] roomCategories = new String[roomSet.size()];
+        int count = 0;
+        for (String room : roomSet) {
+            roomCategories[count] = room.toUpperCase();
+            count++;
+        }
+        Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setItems(roomCategories, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String roomCategory = roomCategories[which];
+                        generateRoomList(rooms.get(roomCategory));
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private void generateRoomList(JSONArray rooms) {
+        try {
+            String[] roomList = new String[rooms.length()];
+            for (int i = 0; i < rooms.length(); i++) {
+                JSONObject room = rooms.getJSONObject(i);
+                roomList[i] = room.getString("title");
+            }
+            final String[] finalRoomList = roomList;
+
+            Dialog dialog = new AlertDialog.Builder(getActivity())
+                    .setItems(roomList, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String room = finalRoomList[which];
+                            processNewRoomRequest(room);
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        } catch (JSONException e) {
+            Log.d(CTAG, e.toString());
+        }
+    }
+
+    private void processNewRoomRequest(String room) {
+
     }
 
     private class CommunityLoungePagerAdapter extends FragmentPagerAdapter {

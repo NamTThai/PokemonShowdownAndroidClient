@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -167,8 +168,8 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
             case "n":
             case "N":
                 separator = messageDetails.indexOf('|');
-                final String newName = messageDetails.substring(0, separator);
-                final String oldName = messageDetails.substring(separator + 1);
+                final String oldName = messageDetails.substring(0, separator);
+                final String newName = messageDetails.substring(separator + 1);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -198,6 +199,9 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 String userStamp = messageDetailsWithStamp.substring(0, separator);
                 String userMessageStamp = messageDetailsWithStamp.substring(separator + 1);
                 appendUserMessage(userStamp, userMessageStamp);
+                break;
+            case "raw":
+                appendUserMessage("YOUR BELOVED SERVER", Html.fromHtml(messageDetails).toString());
                 break;
             default:
                 Log.d(CTAG, message);
