@@ -156,11 +156,7 @@ public class MyApplication extends Application {
      * 1: chatroom
      */
     private void processMessage(String message) {
-        // Break down message to see which channel it has to go through
-        int channel;
-        int roomId;
         if (message.charAt(0) != '>') {
-            channel = -1;
             int newLine = message.indexOf('\n');
             while (newLine != -1) {
                 processGlobalMessage(message.substring(0, newLine));
@@ -169,7 +165,17 @@ public class MyApplication extends Application {
             }
             processGlobalMessage(message);
         } else {
-            // TODO: deal with server messages that come with ROOMID
+            int newLine = message.indexOf('\n');
+            String roomId = message.substring(1, newLine);
+            message = message.substring(newLine + 1);
+            newLine = message.indexOf('\n');
+            while (newLine != -1) {
+                processRoomMessage(roomId, message.substring(0, newLine));
+                message = message.substring(newLine + 1);
+                newLine = message.indexOf('\n');
+            }
+            Log.d("Text", message);
+            processRoomMessage(roomId, message);
         }
     }
 
@@ -265,6 +271,22 @@ public class MyApplication extends Application {
         if (channel == 1) {
             LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, "lobby"));
         }
+
+    }
+
+    public void processRoomMessage(String roomId, String message) {
+        int channel;
+        if (roomId.startsWith("battle")) {
+            channel = 0;
+        } else {
+            channel = 1;
+        }
+
+        if (message.charAt(0) == '|') {
+            message = message.substring(1);
+        }
+
+        LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
 
     }
 
