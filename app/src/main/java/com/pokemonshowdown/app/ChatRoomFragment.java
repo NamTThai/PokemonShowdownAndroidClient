@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
-    public final static String CTAG = "ChatRoomFragment";
+    public final static String CTAG = ChatRoomFragment.class.getName();
     protected final static String ROOM_NAME = "Room Name";
     protected final static String ROOM_ID = "Room Id";
     public final static String[] COLOR_STRONG = {"#0099CC", "#9933CC", "#669900", "#FF8800", "#CC0000"};
@@ -49,8 +50,21 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onPause() {
+        Log.d("Test", mRoomId + " onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("Test", mRoomId + " onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.d("Test", mRoomId + " onSaveInstanceState");
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -59,14 +73,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         mLayoutInflater = inflater;
         return inflater.inflate(R.layout.fragment_chat_room, container, false);
-    }
-
-    @Override
-    public void onDestroy() {
-        if (getActivity() != null) {
-            MyApplication.getMyApplication().sendClientMessage("|/leave " + mRoomId);
-        }
-        super.onDestroy();
     }
 
     @Override
@@ -79,7 +85,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
-            MyApplication.getMyApplication().sendClientMessage("|/join " + mRoomId);
         }
 
         final EditText chatBox = (EditText) view.findViewById(R.id.community_chat_box);
@@ -226,6 +231,9 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                     chatlog.append("\n");
                 }
             });
+
+            ScrollView scrollView = (ScrollView) getView().findViewById(R.id.chatroom_scrollview);
+            scrollView.fullScroll(View.FOCUS_DOWN);
         }
     }
 

@@ -14,7 +14,6 @@ public class CommunityLoungeData {
     private CommunityLoungeData(Context appContext) {
         mAppContext = appContext;
         mRoomList = new ArrayList<>();
-        mRoomList.add("lobby");
     }
 
     public static CommunityLoungeData get(Context c) {
@@ -33,5 +32,27 @@ public class CommunityLoungeData {
 
     public ArrayList<String> getRoomList() {
         return mRoomList;
+    }
+
+    public void joinRoom(String roomId) {
+        mRoomList.add(roomId);
+        MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
+    }
+
+    public void leaveRoom(String roomId) {
+        mRoomList.remove(roomId);
+        MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
+    }
+
+    public void joinAllRooms() {
+        for (String roomId : mRoomList) {
+            joinRoom(roomId);
+        }
+    }
+
+    public void leaveAllRooms() {
+        for (String roomId : mRoomList) {
+            leaveRoom(roomId);
+        }
     }
 }

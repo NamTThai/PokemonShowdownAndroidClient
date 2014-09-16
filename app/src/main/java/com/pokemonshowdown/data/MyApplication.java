@@ -69,9 +69,10 @@ public class MyApplication extends Application {
 
     @Override
     public void onTerminate() {
-        super.onTerminate();
         Onboarding.getWithApplicationContext(this).signingOut();
+        CommunityLoungeData.getWithApplicationContext(this).leaveAllRooms();
         closeActiveConnection();
+        super.onTerminate();
     }
 
     public static MyApplication getMyApplication() {

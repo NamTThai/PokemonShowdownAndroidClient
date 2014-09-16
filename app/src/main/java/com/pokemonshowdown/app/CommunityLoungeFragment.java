@@ -50,6 +50,9 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mRoomList = CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).getRoomList();
+        if (mRoomList.size() == 0) {
+            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom("lobby");
+        }
     }
 
     @Override
@@ -72,16 +75,6 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -97,6 +90,15 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 generateRoomCategoryList();
+                return true;
+            }
+        });
+        MenuItem cancel = menu.findItem(R.id.cancel);
+        cancel.setVisible(true);
+        cancel.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                removeCurrentRoom();
                 return true;
             }
         });
@@ -192,13 +194,25 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private void removeCurrentRoom() {
+        ActionBar actionBar = getActivity().getActionBar();
+        ActionBar.Tab tab = actionBar.getSelectedTab();
+        String roomId = mRoomList.get(tab.getPosition());
+        if (roomId.equals("lobby")) {
+            return;
+        }
+        CommunityLoungeData.get(getActivity()).leaveRoom(roomId);
+        mCommunityLoungePagerAdapter.notifyDataSetChanged();
+        actionBar.removeTab(tab);
+    }
+
     private void processNewRoomRequest(String room) {
         String roomId = MyApplication.getMyApplication().toId(room);
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
-            mRoomList.add(roomId);
+            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom(roomId);
             mCommunityLoungePagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override

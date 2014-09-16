@@ -141,8 +141,8 @@ public class BattleFieldActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.battle_field, menu);
-        MenuItem addRoom = menu.findItem(R.id.community_lounge);
-        addRoom.setVisible(false);
+        menu.findItem(R.id.community_lounge).setVisible(false);
+        menu.findItem(R.id.cancel).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
