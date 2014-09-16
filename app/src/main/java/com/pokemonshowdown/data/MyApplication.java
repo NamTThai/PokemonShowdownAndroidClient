@@ -43,6 +43,7 @@ public class MyApplication extends Application {
     private ItemDex mItemDex;
     private WebSocketClient mWebSocketClient;
     private Onboarding mOnboarding;
+    private CommunityLoungeData mCommunityLoungeData;
     private JSONObject mClientInitiationJson;
     private int mUserCount;
     private int mBattleCount;
@@ -61,6 +62,7 @@ public class MyApplication extends Application {
         mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
         mItemDex = ItemDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
+        mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
     }

@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 
 import org.json.JSONArray;
@@ -34,15 +35,10 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     private CommunityLoungePagerAdapter mCommunityLoungePagerAdapter;
     private ViewPager mViewPager;
 
-    private static final String ROOM_LIST = "Room List";
-
     private ArrayList<String> mRoomList;
 
-    public static CommunityLoungeFragment newInstance(ArrayList<String> roomList) {
+    public static CommunityLoungeFragment newInstance() {
         CommunityLoungeFragment fragment = new CommunityLoungeFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ROOM_LIST, roomList);
-        fragment.setArguments(args);
         return fragment;
     }
     public CommunityLoungeFragment() {
@@ -53,9 +49,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments().getSerializable("Room List") != null) {
-            mRoomList = (ArrayList<String>) getArguments().getSerializable(ROOM_LIST);
-        }
+        mRoomList = CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).getRoomList();
     }
 
     @Override

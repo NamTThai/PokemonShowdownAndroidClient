@@ -49,8 +49,6 @@ public class BattleFieldActivity extends FragmentActivity {
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
 
-    public ArrayList<String> mRoomList;
-
     private BroadcastReceiver mBroadcastReceiver;
 
     @Override
@@ -101,11 +99,8 @@ public class BattleFieldActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             mPosition = 0;
             selectItem(0);
-            mRoomList = new ArrayList<>();
-            mRoomList.add("lobby");
         } else {
             mPosition = savedInstanceState.getInt("Drawer Position");
-            mRoomList = (ArrayList<String>) savedInstanceState.getSerializable("Room List");
             selectItem(mPosition);
         }
     }
@@ -140,7 +135,6 @@ public class BattleFieldActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("Drawer Position", mPosition);
-        outState.putSerializable("Room List", mRoomList);
     }
 
     @Override
@@ -230,7 +224,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 break;
             case 1:
                 mPosition = 1;
-                fragment = CommunityLoungeFragment.newInstance(mRoomList);
+                fragment = CommunityLoungeFragment.newInstance();
                 break;
             default:
                 mPosition = 0;
