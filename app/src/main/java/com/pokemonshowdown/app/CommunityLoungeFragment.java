@@ -155,6 +155,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     private void generateRoomCategoryList() {
         final HashMap<String, JSONArray> rooms = MyApplication.getMyApplication().getRoomCategoryList();
         Set<String> roomSet = rooms.keySet();
+        final String[] roomCategoryNames = roomSet.toArray(new String[roomSet.size()]);
         final String[] roomCategories = new String[roomSet.size()];
         int count = 0;
         for (String room : roomSet) {
@@ -165,7 +166,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
                 .setItems(roomCategories, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String roomCategory = roomCategories[which];
+                        String roomCategory = roomCategoryNames[which];
                         generateRoomList(rooms.get(roomCategory));
                         dialog.dismiss();
                     }
@@ -198,7 +199,37 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     }
 
     private void processNewRoomRequest(String room) {
+        String roomId = MyApplication.getMyApplication().toId(room);
+        ActionBar actionBar = getActivity().getActionBar();
+        if (mRoomList.contains(roomId)) {
+            actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
+        } else {
+            mRoomList.add(roomId);
+            mCommunityLoungePagerAdapter.notifyDataSetChanged();
+            ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+                @Override
+                public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+                    mViewPager.setCurrentItem(tab.getPosition());
+                }
 
+                @Override
+                public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+                }
+
+                @Override
+                public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+                }
+            };
+
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(roomId)
+                            .setTabListener(tabListener)
+            );
+            actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
+        }
     }
 
     private class CommunityLoungePagerAdapter extends FragmentPagerAdapter {

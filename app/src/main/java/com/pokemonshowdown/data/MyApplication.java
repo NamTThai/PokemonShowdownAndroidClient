@@ -337,7 +337,7 @@ public class MyApplication extends Application {
         mRoomCategoryList = roomCategoryList;
     }
 
-    public String getId(String name) {
+    public String toId(String name) {
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }
