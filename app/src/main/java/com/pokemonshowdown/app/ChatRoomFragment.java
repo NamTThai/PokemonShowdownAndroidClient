@@ -20,9 +20,11 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
@@ -84,6 +86,42 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
+        CharSequence text = ((TextView) getView().findViewById(R.id.community_chat_log)).getText();
+        roomDataHashMap.put(mRoomId, new CommunityLoungeData.RoomData(mRoomId, mUserListData, text));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
+        CommunityLoungeData.RoomData roomData = roomDataHashMap.get(mRoomId);
+        if (roomData != null) {
+            mUserListData = roomData.getUserListData();
+            mUserAdapter = new UserAdapter(getActivity(), mUserListData);
+            ListView listView = (ListView) getView().findViewById(R.id.user_list);
+            listView.setAdapter(mUserAdapter);
+
+            ((TextView) getView().findViewById(R.id.community_chat_log)).setText(roomData.getChatBox());
+
+            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
+            for (String message : pendingMessages) {
+                processServerMessage(message);
+            }
+
+            roomDataHashMap.remove(mRoomId);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        CommunityLoungeData.get(getActivity()).getRoomDataHashMap().remove(mRoomId);
     }
 
     public void processServerMessage(String message) {

@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
@@ -311,6 +312,11 @@ public class BattleFieldActivity extends FragmentActivity {
             CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 1");
             if (fragment != null) {
                 fragment.processServerMessage(roomId, message);
+            } else {
+                CommunityLoungeData.RoomData roomData = CommunityLoungeData.getWithApplicationContext(getApplicationContext()).getRoomInstance(roomId);
+                if (roomData != null) {
+                    roomData.addServerMessageOnHold(message);
+                }
             }
         } else {
             // TODO: deal with battle server message
