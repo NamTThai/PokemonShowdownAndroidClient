@@ -93,7 +93,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         super.onPause();
         HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
         CharSequence text = ((TextView) getView().findViewById(R.id.community_chat_log)).getText();
-        roomDataHashMap.put(mRoomId, new CommunityLoungeData.RoomData(mRoomId, mUserListData, text));
+        roomDataHashMap.put(mRoomId, new CommunityLoungeData.RoomData(mRoomId, mUserListData, text, true));
     }
 
     @Override

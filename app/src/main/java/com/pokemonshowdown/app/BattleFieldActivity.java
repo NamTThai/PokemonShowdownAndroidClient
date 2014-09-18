@@ -309,13 +309,13 @@ public class BattleFieldActivity extends FragmentActivity {
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1) {
-            CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 1");
-            if (fragment != null) {
-                fragment.processServerMessage(roomId, message);
+            CommunityLoungeData.RoomData roomData = CommunityLoungeData.getWithApplicationContext(getApplicationContext()).getRoomInstance(roomId);
+            if (roomData != null && roomData.isMessageListener()) {
+                roomData.addServerMessageOnHold(message);
             } else {
-                CommunityLoungeData.RoomData roomData = CommunityLoungeData.getWithApplicationContext(getApplicationContext()).getRoomInstance(roomId);
-                if (roomData != null) {
-                    roomData.addServerMessageOnHold(message);
+                CommunityLoungeFragment fragment = (CommunityLoungeFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 1");
+                if (fragment != null) {
+                    fragment.processServerMessage(roomId, message);
                 }
             }
         } else {

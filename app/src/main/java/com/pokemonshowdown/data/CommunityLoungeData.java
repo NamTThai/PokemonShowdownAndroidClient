@@ -43,8 +43,8 @@ public class CommunityLoungeData {
         return mRoomDataHashMap;
     }
 
-    public void saveRoomInstance(String roomId, ArrayList<String> userListData, CharSequence chatBox) {
-        mRoomDataHashMap.put(roomId, new RoomData(roomId, userListData, chatBox));
+    public void saveRoomInstance(String roomId, ArrayList<String> userListData, CharSequence chatBox, boolean messageListener) {
+        mRoomDataHashMap.put(roomId, new RoomData(roomId, userListData, chatBox, messageListener));
     }
 
     public RoomData getRoomInstance(String roomId) {
@@ -71,13 +71,15 @@ public class CommunityLoungeData {
         private String mRoomId;
         private ArrayList<String> mUserListData;
         private CharSequence mChatBox;
+        private boolean mMessageListener;
         private ArrayList<String> mServerMessageOnHold;
 
-        public RoomData(String roomId, ArrayList<String> userListData, CharSequence chatBox) {
+        public RoomData(String roomId, ArrayList<String> userListData, CharSequence chatBox, boolean messageListener) {
             mRoomId = roomId;
             mUserListData = userListData;
             mChatBox = chatBox;
             mServerMessageOnHold = new ArrayList<>();
+            mMessageListener = messageListener;
         }
 
         public String getRoomId() {
@@ -110,6 +112,14 @@ public class CommunityLoungeData {
 
         public void addServerMessageOnHold(String serverMessageOnHold) {
             mServerMessageOnHold.add(serverMessageOnHold);
+        }
+
+        public boolean isMessageListener() {
+            return mMessageListener;
+        }
+
+        public void setMessageListener(boolean messageListener) {
+            mMessageListener = messageListener;
         }
     }
 }
