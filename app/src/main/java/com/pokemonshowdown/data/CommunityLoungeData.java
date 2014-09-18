@@ -44,12 +44,6 @@ public class CommunityLoungeData {
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 
-    public void joinAllRooms() {
-        for (String roomId : mRoomList) {
-            joinRoom(roomId);
-        }
-    }
-
     public void leaveAllRooms() {
         for (String roomId : mRoomList) {
             leaveRoom(roomId);

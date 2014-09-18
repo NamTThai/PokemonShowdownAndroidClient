@@ -203,6 +203,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         }
         CommunityLoungeData.get(getActivity()).leaveRoom(roomId);
         mCommunityLoungePagerAdapter.notifyDataSetChanged();
+        mViewPager.setAdapter(mCommunityLoungePagerAdapter);
         actionBar.removeTab(tab);
     }
 

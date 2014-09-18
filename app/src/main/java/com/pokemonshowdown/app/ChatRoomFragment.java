@@ -27,8 +27,7 @@ import java.util.Random;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
     public final static String CTAG = ChatRoomFragment.class.getName();
-    protected final static String ROOM_NAME = "Room Name";
-    protected final static String ROOM_ID = "Room Id";
+    private final static String ROOM_ID = "Room Id";
     public final static String[] COLOR_STRONG = {"#0099CC", "#9933CC", "#669900", "#FF8800", "#CC0000"};
     public final static String[] COLOR_WEAK = {"#33B5E5", "#AA66CC", "#99CC00", "#FFBB33", "#FF4444"};
 
@@ -47,24 +46,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     }
     public ChatRoomFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onPause() {
-        Log.d("Test", mRoomId + " onPause");
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        Log.d("Test", mRoomId + " onResume");
-        super.onResume();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.d("Test", mRoomId + " onSaveInstanceState");
-        super.onSaveInstanceState(outState);
     }
 
     @Override
