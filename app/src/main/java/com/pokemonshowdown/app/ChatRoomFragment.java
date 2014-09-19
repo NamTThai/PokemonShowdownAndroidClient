@@ -35,7 +35,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     private final static String ROOM_ID = "Room Id";
     public final static String[] COLOR_STRONG = {"#0099CC", "#9933CC", "#669900", "#FF8800", "#CC0000"};
     public final static String[] COLOR_WEAK = {"#33B5E5", "#AA66CC", "#99CC00", "#FFBB33", "#FF4444"};
-    public final static String USER_PRIORITY = "~@%+ ";
+    public final static String USER_PRIORITY = "~#@%+ ";
 
     private String mRoomId;
 
@@ -241,7 +241,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         if (getView() != null) {
             final TextView chatlog = (TextView) getView().findViewById(R.id.community_chat_log);
             final Spannable userS = new SpannableString(user + ": ");
-            userS.setSpan(new ForegroundColorSpan(Color.parseColor(COLOR_STRONG[new Random().nextInt(COLOR_STRONG.length)])),
+            userS.setSpan(new ForegroundColorSpan(getColorStrong(user)),
                     0, userS.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             final String messageF = message;
@@ -287,6 +287,14 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private int getColorStrong(String name) {
+        if (name.length() < 2) {
+            return Color.parseColor(COLOR_STRONG[0]);
+        }
+        int value = (int) name.charAt(1) + (int) name.charAt(name.length() - 1);
+        return Color.parseColor(COLOR_STRONG[value % COLOR_STRONG.length]);
+    }
+
     private void removeUserFromList(ArrayList<String> userList, String username) {
         username = sanitizeUsername(username);
         for(int i=0; i < userList.size(); i++) {
@@ -320,7 +328,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
             String userName = getItem(position);
             TextView textView = (TextView) convertView.findViewById(R.id.userNameData);
             textView.setText(userName);
-            textView.setTextColor(Color.parseColor(COLOR_STRONG[new Random().nextInt(COLOR_STRONG.length)]));
+            textView.setTextColor(getColorStrong(userName));
             return convertView;
         }
     }
