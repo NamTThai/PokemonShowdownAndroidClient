@@ -24,6 +24,9 @@ import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -32,6 +35,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     private final static String ROOM_ID = "Room Id";
     public final static String[] COLOR_STRONG = {"#0099CC", "#9933CC", "#669900", "#FF8800", "#CC0000"};
     public final static String[] COLOR_WEAK = {"#33B5E5", "#AA66CC", "#99CC00", "#FFBB33", "#FF4444"};
+    public final static String USER_PRIORITY = "~@%+ ";
 
     private String mRoomId;
 
@@ -118,12 +122,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        CommunityLoungeData.get(getActivity()).getRoomDataHashMap().remove(mRoomId);
-    }
-
     public void processServerMessage(String message) {
         if (message.indexOf('|') == -1) {
             appendUserMessage("", message);
@@ -157,6 +155,12 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                             }
                             mUserListData.add(users);
                         }
+                        Collections.sort(mUserListData, new Comparator<String>() {
+                            @Override
+                            public int compare(String lhs, String rhs) {
+                                return compareUser(lhs, rhs);
+                            }
+                        });
                         mUserAdapter = new UserAdapter(getActivity(), mUserListData);
                         View view = getView();
                         if (view != null) {
@@ -172,7 +176,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void run() {
                         removeUserFromList(mUserListData, messageDetails);
-                        mUserListData.add(messageDetails);
+                        addUserToList(mUserListData, messageDetails);
                         mUserAdapter.notifyDataSetChanged();
                     }
                 });
@@ -198,7 +202,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void run() {
                         removeUserFromList(mUserListData, oldName);
-                        mUserListData.add(newName);
+                        addUserToList(mUserListData, newName);
                         mUserAdapter.notifyDataSetChanged();
                     }
                 });
@@ -256,10 +260,37 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private void addUserToList(ArrayList<String> userList, String username) {
+        for(int i=0; i < userList.size(); i++) {
+            int compare = compareUser(username, userList.get(i));
+            if (compare == 0) {
+                return;
+            }
+            if (compare < 0) {
+                userList.add(i, username);
+                return;
+            }
+        }
+        userList.add(username);
+    }
+
+    /**
+     * @return 1 if a should appear after b
+     */
+    private int compareUser(String a, String b) {
+        char a1 = a.charAt(0); int a1pos = USER_PRIORITY.indexOf(a1); a1pos = (a1pos == -1) ? USER_PRIORITY.length() : a1pos;
+        char b1 = b.charAt(0); int b1pos = USER_PRIORITY.indexOf(b1); b1pos = (b1pos == -1) ? USER_PRIORITY.length() : b1pos;
+        if (a1pos != b1pos) {
+            return (a1pos > b1pos) ? 1 : -1;
+        } else {
+            return sanitizeUsername(a).compareTo(sanitizeUsername(b));
+        }
+    }
+
     private void removeUserFromList(ArrayList<String> userList, String username) {
+        username = sanitizeUsername(username);
         for(int i=0; i < userList.size(); i++) {
             String user = sanitizeUsername(userList.get(i));
-            username = sanitizeUsername(username);
             if (user.equals(username)) {
                 userList.remove(i);
                 return;
