@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 /**
  * Created by thain on 7/22/14.
- *
+ * <p/>
  * Array index (including nature array)
  * HP: 0
  * Atk: 1
@@ -24,11 +24,11 @@ import java.util.Iterator;
  * SpAtk: 3
  * SpDef: 4
  * Spd: 5
- *
+ * <p/>
  * Example for Modest mNatureMultiplier array (+SpAtk, -Atk) [1.0, 0.9, 1.0, 1.1, 1.0, 1.0]
- *
+ * <p/>
  * mAbility holds ability tag
- *
+ * <p/>
  * Default:
  * Gender: male unless no option (M, F, N)
  * Level: 100
@@ -38,6 +38,7 @@ public class Pokemon implements Serializable {
     public final static String[] NATURES = {"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"};
     public final static String[] NATURES_DETAILS = {"Adamant (+Atk -SpA)", "Bashful", "Bold (+Def -Atk)", "Brave (+Atk -Spe)", "Calm (+SpD -Atk)", "Careful (+SpD -SpA)", "Docile", "Gentle (+SpD -Def)", "Hardy", "Hasty (+Spe -Def)", "Impish (+Def -SpA)", "Jolly (+Spe -SpA)", "Lax (+Def -SpD)", "Lonely (+Atk -Def)", "Mild (+SpA -Def)", "Modest (+SpA -Atk)", "Naive (+Spe -SpD)", "Naughty (+Atk -SpD)", "Quiet (+SpA -Spe)", "Quirky", "Rash (+SpA -SpD)", "Relaxed (+Def -Spe)", "Sassy (+SpD -Spe)", "Serious", "Timid (+Spe -Atk)"};
 
+    private int mHappiness;
     private int mIcon;
     private int mIconM;
     private int mIconF;
@@ -70,6 +71,145 @@ public class Pokemon implements Serializable {
     private String mMove3;
     private String mMove4;
 
+    /**
+     * Exporting function
+     * @return A string with the pokemon using Showdown! format
+     */
+    public String export() {
+        StringBuilder sb = new StringBuilder();
+        if (getName().length() > 0) {
+            sb.append(getName());
+            sb.append(" (" + getGender() + ")");
+            if (getItem().length() > 0) {
+                sb.append(" @ " + getItem());
+            }
+            sb.append('\n');
+        }
+        if (getAbility().length() > 0) {
+            sb.append("Ability: " + getAbility() + '\n');
+        }
+
+        if (getLevel() != 100) {
+            sb.append("Level: " + getLevel() + '\n');
+        }
+
+        if (isShiny()) {
+            sb.append("Shiny: Yes\n");
+        }
+
+        if (getHappiness() != 255) {
+            sb.append("Happiness: " + getHappiness() + "\n");
+        }
+
+        boolean difZero = false;
+        for (int i : getEVs()) {
+            if (i != 0) {
+                difZero = true;
+                break;
+            }
+        }
+        if (difZero) {
+            boolean first = true;
+
+            sb.append("EVs: ");
+            if (getHPEV() != 0) {
+                if (first) {
+                    sb.append(getHPEV() + " HP ");
+                    first = false;
+                }
+            }
+            if (getAtkEV() != 0) {
+                if (first) {
+                    sb.append(getAtkEV() + " Atk ");
+                    first = false;
+
+                } else {
+                    sb.append("/ " + getAtkEV() + " Atk ");
+                }
+            }
+            if (getDefEV() != 0) {
+                if (first) {
+                    sb.append(getDefEV() + " Def ");
+                    first = false;
+
+                } else {
+                    sb.append("/ " + getDefEV() + " Def ");
+                }
+            }
+            if (getSpAtkEV() != 0) {
+                if (first) {
+                    sb.append(getSpAtkEV() + " SpA ");
+                    first = false;
+
+                } else {
+                    sb.append("/ " + getSpAtkEV() + " SpA ");
+                }
+            }
+            if (getSpDefEV() != 0) {
+                if (first) {
+                    sb.append(getSpDefEV() + " SpD ");
+                    first = false;
+
+                } else {
+                    sb.append("/ " + getSpDefEV() + " SpD ");
+                }
+            }
+            if (getSpdEV() != 0) {
+                if (first) {
+                    sb.append(getSpdEV() + " Spe ");
+                    first = false;
+                } else {
+                    sb.append("/ " + getSpdEV() + " Spe ");
+                }
+            }
+            sb.append('\n');
+        }
+        boolean noMoves = true;
+        if (!getMove1().equals("--")) {
+            noMoves = false;
+        }
+        if (!getMove2().equals("--")) {
+            noMoves = false;
+        }
+        if (!getMove3().equals("--")) {
+            noMoves = false;
+        }
+        if (!getMove4().equals("--")) {
+            noMoves = false;
+        }
+        if (!noMoves) {
+            if (getMove1().equals("--")) {
+                sb.append("- \n");
+            } else {
+                sb.append("- " + getMove1() + "\n");
+            }
+
+            if (getMove2().equals("--")) {
+                sb.append("- \n");
+            } else {
+                sb.append("- " + getMove2() + "\n");
+            }
+
+            if (getMove3().equals("--")) {
+                sb.append("- \n");
+            } else {
+                sb.append("- " + getMove3() + "\n");
+            }
+
+            if (getMove4().equals("--")) {
+                sb.append("- \n");
+            } else {
+                sb.append("- " + getMove4() + "\n");
+            }
+        }
+
+        if (getNature().length() > 0) {
+            sb.append(getNature() + " Nature" + '\n');
+        }
+
+        return sb.toString();
+    }
+
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
             mTagName = name;
@@ -88,15 +228,15 @@ public class Pokemon implements Serializable {
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("species");
-            mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'),"").toLowerCase();
+            mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "").toLowerCase();
 
-            mIcon = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
-            mIconM = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
-            mIconF = appContext.getResources().getIdentifier("sprites_"+mNameWithUnderScore+"_f", "drawable", appContext.getPackageName());
-            mIconShiny = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
-            mIconShinyM = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
-            mIconShinyF = appContext.getResources().getIdentifier("sprshiny_"+mNameWithUnderScore+"_f", "drawable", appContext.getPackageName());
-            mIconSmall = appContext.getResources().getIdentifier("smallicons_"+mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIcon = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconM = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconF = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore + "_f", "drawable", appContext.getPackageName());
+            mIconShiny = appContext.getResources().getIdentifier("sprshiny_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconShinyM = appContext.getResources().getIdentifier("sprshiny_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
+            mIconShinyF = appContext.getResources().getIdentifier("sprshiny_" + mNameWithUnderScore + "_f", "drawable", appContext.getPackageName());
+            mIconSmall = appContext.getResources().getIdentifier("smallicons_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
 
             setNickName(mName);
             setStats(new int[6]);
@@ -119,6 +259,7 @@ public class Pokemon implements Serializable {
                 mGenderAvailable = true;
                 setGender("M");
             }
+            setHappiness(255);
             setNature("Adamant");
             setStats(calculateStats());
             setShiny(false);
@@ -127,7 +268,7 @@ public class Pokemon implements Serializable {
             setTypeIcon(new int[types.length()]);
             for (int i = 0; i < types.length(); i++) {
                 mType[i] = types.get(i).toString();
-                mTypeIcon[i] = appContext.getResources().getIdentifier("types_"+mType[i].toLowerCase(), "drawable", appContext.getPackageName());
+                mTypeIcon[i] = appContext.getResources().getIdentifier("types_" + mType[i].toLowerCase(), "drawable", appContext.getPackageName());
             }
             JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
             Iterator<String> keys = abilityList.keys();
@@ -173,7 +314,7 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
-            return appContext.getResources().getIdentifier("smallicons_"+jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'),""), "drawable", appContext.getPackageName());
+            return appContext.getResources().getIdentifier("smallicons_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         }
@@ -216,7 +357,7 @@ public class Pokemon implements Serializable {
             Integer[] typesIcon = new Integer[types.length()];
             for (int i = 0; i < types.length(); i++) {
                 typesString[i] = types.get(i).toString();
-                typesIcon[i] = appContext.getResources().getIdentifier("types_"+typesString[i].toLowerCase(), "drawable", appContext.getPackageName());
+                typesIcon[i] = appContext.getResources().getIdentifier("types_" + typesString[i].toLowerCase(), "drawable", appContext.getPackageName());
             }
             return typesIcon;
         } catch (JSONException e) {
@@ -782,5 +923,13 @@ public class Pokemon implements Serializable {
 
     public void setMove4(String move4) {
         mMove4 = move4;
+    }
+
+    public void setHappiness(int happiness) {
+        this.mHappiness = happiness;
+    }
+
+    public int getHappiness() {
+        return mHappiness;
     }
 }
