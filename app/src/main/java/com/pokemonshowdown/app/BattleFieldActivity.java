@@ -221,15 +221,14 @@ public class BattleFieldActivity extends FragmentActivity {
         switch(position) {
             case 0:
                 mPosition = 0;
-                fragment = new FindBattleFragment();
-                break;
+                fragment = FindBattleFragment.newInstance();
             case 1:
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance();
                 break;
             default:
                 mPosition = 0;
-                fragment = new FindBattleFragment();
+                fragment = new PlaceHolderFragment();
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -271,6 +270,10 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
+                return;
+            case MyApplication.EXTRA_AVAILABLE_FORMATS:
+                FindBattleFragment findBattleFragment = (FindBattleFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                findBattleFragment.setAvailableFormat();
                 return;
             case MyApplication.EXTRA_SERVER_MESSAGE:
                 String serverMessage = intent.getExtras().getString(MyApplication.EXTRA_SERVER_MESSAGE);

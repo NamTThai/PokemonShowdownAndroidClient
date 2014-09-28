@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#123456" >
+    android:orientation="horizontal"
+    android:weightSum="4">
+
+    <ListView
+        android:id="@+id/available_formats"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:layout_margin="16dp"
+        android:background="@drawable/uneditable_frame">
+
+
+    </ListView>
     
 
-</RelativeLayout>
+</LinearLayout>

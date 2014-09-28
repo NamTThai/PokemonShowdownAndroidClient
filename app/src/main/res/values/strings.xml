@@ -21,7 +21,6 @@
     <string-array name="bar_left_drawer">
         <item>Battle Field</item>
         <item>Community Lounge</item>
-        <item>Watch Battle</item>
         <item>Replays</item>
         <item>Credits</item>
     </string-array>

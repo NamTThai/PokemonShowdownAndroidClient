@@ -29,6 +29,7 @@ public class MyApplication extends Application {
     public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
     public final static String EXTRA_DETAILS = "Details";
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
+    public final static String EXTRA_AVAILABLE_FORMATS = "Available Formats";
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
@@ -256,10 +257,13 @@ public class MyApplication extends Application {
                             Log.d(MTAG, message);
                     }
                     break;
+                case "formats":
+                    channel = -1;
+                    BattleFieldData.getWithApplicationContext(getApplicationContext()).generateAvailableRoomList(messageDetail);
+                    break;
                 case "popup":
                 case "pm":
                 case "usercount":
-                case "formats":
                 case "updatesearch":
                 case "updatechallenges":
                 case "deinit":
