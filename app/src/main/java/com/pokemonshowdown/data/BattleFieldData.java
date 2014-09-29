@@ -11,6 +11,7 @@ public class BattleFieldData {
     private final static String BTAG = BattleFieldData.class.getName();
     private ArrayList<FormatType> mFormatTypes;
     private ArrayList<String> mRoomList;
+    private ArrayList<Integer> mRoomType; //-1 for global, 0 for battle, 1 for watch battle
     private HashMap<String, RoomData> mRoomDataHashMap;
 
     private static BattleFieldData sBattleFieldData;
@@ -20,6 +21,9 @@ public class BattleFieldData {
         mAppContext = appContext;
         mFormatTypes = new ArrayList<>();
         mRoomList = new ArrayList<>();
+        mRoomList.add("global");
+        mRoomType = new ArrayList<>();
+        mRoomType.add(-1);
         mRoomDataHashMap = new HashMap<>();
     }
 
@@ -50,8 +54,8 @@ public class BattleFieldData {
                 message = message.substring(message.indexOf('|') + 1);
             } else {
                 int separator = message.indexOf('|');
-                String formatName = (separator == -1) ? message : message.substring(separator);
-                mFormatTypes.get(mFormatTypes.size() - 1).getFormatList().add(new Format(formatName));
+                String formatName = (separator == -1) ? message : message.substring(0, separator);
+                mFormatTypes.get(mFormatTypes.size() - 1).getFormatList().add(processSpecialRoomTrait(formatName));
                 message = (separator == -1) ? "" : message.substring(separator + 1);
             }
         }
@@ -59,8 +63,38 @@ public class BattleFieldData {
 
     }
 
+    public Format processSpecialRoomTrait(String query) {
+        int separator = query.indexOf(',');
+        Format format;
+        if (separator == -1) {
+            format = new Format(query);
+        } else {
+            format = new Format(query.substring(0, separator));
+            String special = query.substring(separator);
+            int specs = special.indexOf(",#");
+            if (specs != -1) {
+                format.getSpecialTrait().add(",#");
+                special = special.substring(0, specs);
+            }
+            specs = special.indexOf(",,");
+            if (specs != -1) {
+                format.getSpecialTrait().add(",,");
+                special = special.substring(0, specs);
+            }
+            specs = special.indexOf(",");
+            if (specs != -1) {
+                format.getSpecialTrait().add(",");
+            }
+        }
+        return format;
+    }
+
     public ArrayList<String> getRoomList() {
         return mRoomList;
+    }
+
+    public ArrayList<Integer> getRoomType() {
+        return mRoomType;
     }
 
     public HashMap<String, RoomData> getRoomDataHashMap() {
@@ -162,6 +196,16 @@ public class BattleFieldData {
 
         public void setName(String name) {
             mName = name;
+        }
+
+        public ArrayList<String> getSearchableFormatList() {
+            ArrayList<String> formatList = new ArrayList<>();
+            for (Format format : mFormatList) {
+                if (!format.getSpecialTrait().contains(",")) {
+                    formatList.add(format.getName());
+                }
+            }
+            return formatList;
         }
 
         public ArrayList<Format> getFormatList() {

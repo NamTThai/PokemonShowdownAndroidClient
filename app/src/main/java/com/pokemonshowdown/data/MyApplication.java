@@ -45,6 +45,7 @@ public class MyApplication extends Application {
     private WebSocketClient mWebSocketClient;
     private Onboarding mOnboarding;
     private CommunityLoungeData mCommunityLoungeData;
+    private BattleFieldData mBattleFieldData;
     private JSONObject mClientInitiationJson;
     private int mUserCount;
     private int mBattleCount;
@@ -63,6 +64,7 @@ public class MyApplication extends Application {
         mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
         mItemDex = ItemDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
+        mBattleFieldData = BattleFieldData.getWithApplicationContext(appContext);
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();

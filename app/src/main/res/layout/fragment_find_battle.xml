@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:weightSum="4">
+    android:weightSum="7">
 
     <ListView
         android:id="@+id/available_formats"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:layout_margin="16dp"
+        android:listSelector="#77CBEE"
         android:background="@drawable/uneditable_frame">
 
 

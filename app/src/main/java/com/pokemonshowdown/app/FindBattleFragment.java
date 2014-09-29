@@ -1,47 +1,25 @@
 package com.pokemonshowdown.app;
 
-import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
-    private CommunityLoungePagerAdapter mBattleFieldPagerAdapter;
-    private ViewPager mViewPager;
 
-    private ArrayList<String> mRoomList;
+    private ArrayList<String> mFormatList;
+    private int mPosition;
 
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
@@ -52,224 +30,47 @@ public class FindBattleFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.activity_find_battle, container, false);
-/*
-        v.setFocusableInTouchMode(true);
-        mBattleFieldPagerAdapter = new CommunityLoungePagerAdapter(getChildFragmentManager());
-        mViewPager = (ViewPager) v.findViewById(R.id.community_pager);
-        mViewPager.setOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        getActivity().getActionBar().setSelectedNavigationItem(position);
-                    }
-                });
-        mViewPager.setAdapter(mBattleFieldPagerAdapter);*/
-        return v;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActivity().getActionBar().removeAllTabs();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        MenuItem cancel = menu.findItem(R.id.cancel);
-        cancel.setVisible(true);
-        cancel.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //removeCurrentRoom();
-                return true;
-            }
-        });
+        return inflater.inflate(R.layout.fragment_find_battle, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final ActionBar actionBar = getActivity().getActionBar();
 
         setAvailableFormat();
-
-        // Specify that tabs should be displayed in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-/*
-        // Create a tab listener that is called when the user changes tabs.
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            @Override
-            public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-            }
-
-            @Override
-            public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-            }
-        };
-
-        for(String room : mRoomList) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(room)
-                            .setTabListener(tabListener)
-            );
-        }
-*/
     }
 
     public void setAvailableFormat() {
-        ArrayList<String> formatList = new ArrayList<>();
+        View v = getView();
+        if (v == null) {
+            return;
+        }
+
+        mFormatList = new ArrayList<>();
 
         ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(getActivity()).getFormatTypes();
         for (BattleFieldData.FormatType formatType : formatTypes) {
-            ArrayList<BattleFieldData.Format> formats = formatType.getFormatList();
-            for (BattleFieldData.Format format : formats) {
-                formatList.add(format.getName());
+            ArrayList<String> result = formatType.getSearchableFormatList();
+            for (String name : result) {
+                mFormatList.add(name);
             }
         }
 
-        ((ListView) getView().findViewById(R.id.available_formats)).setAdapter(new ArrayAdapter<>(getActivity(), 0, formatList));
-    }
-
-    public void processServerMessage(String roomId, String message) {
-        int index = mRoomList.indexOf(roomId);
-        ChatRoomFragment fragment = (ChatRoomFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
-        if (fragment != null) {
-            fragment.processServerMessage(message);
-        }
-    }
-
-    private void generateRoomCategoryList() {
-        final HashMap<String, JSONArray> rooms = MyApplication.getMyApplication().getRoomCategoryList();
-        Set<String> roomSet = rooms.keySet();
-        final String[] roomCategoryNames = roomSet.toArray(new String[roomSet.size()]);
-        final String[] roomCategories = new String[roomSet.size()];
-        int count = 0;
-        for (String room : roomSet) {
-            roomCategories[count] = room.toUpperCase();
-            count++;
-        }
-        Dialog dialog = new AlertDialog.Builder(getActivity())
-                .setItems(roomCategories, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String roomCategory = roomCategoryNames[which];
-                        generateRoomList(rooms.get(roomCategory));
-                        dialog.dismiss();
-                    }
-                })
-                .show();
-    }
-
-    private void generateRoomList(JSONArray rooms) {
-        try {
-            String[] roomList = new String[rooms.length()];
-            for (int i = 0; i < rooms.length(); i++) {
-                JSONObject room = rooms.getJSONObject(i);
-                roomList[i] = room.getString("title");
+        final ListView listView = (ListView) v.findViewById(R.id.available_formats);
+        listView.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.fragment_user_list, mFormatList));
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.requestFocusFromTouch();
+        listView.setItemChecked(0, true);
+        mPosition = 0;
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPosition = position;
             }
-            final String[] finalRoomList = roomList;
-
-            Dialog dialog = new AlertDialog.Builder(getActivity())
-                    .setItems(roomList, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String room = finalRoomList[which];
-                            processNewRoomRequest(room);
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-        } catch (JSONException e) {
-            Log.d(FTAG, e.toString());
-        }
-    }
-
-    private void removeCurrentRoom() {
-        ActionBar actionBar = getActivity().getActionBar();
-        ActionBar.Tab tab = actionBar.getSelectedTab();
-        String roomId = mRoomList.get(tab.getPosition());
-        if (roomId.equals("lobby")) {
-            return;
-        }
-        CommunityLoungeData.get(getActivity()).leaveRoom(roomId);
-        mBattleFieldPagerAdapter.notifyDataSetChanged();
-        mViewPager.setAdapter(mBattleFieldPagerAdapter);
-        actionBar.removeTab(tab);
-    }
-
-    private void processNewRoomRequest(String room) {
-        String roomId = MyApplication.getMyApplication().toId(room);
-        ActionBar actionBar = getActivity().getActionBar();
-        if (mRoomList.contains(roomId)) {
-            actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
-        } else {
-            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom(roomId);
-            mBattleFieldPagerAdapter.notifyDataSetChanged();
-            ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-                @Override
-                public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-                    mViewPager.setCurrentItem(tab.getPosition());
-                }
-
-                @Override
-                public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-                }
-
-                @Override
-                public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-                }
-            };
-
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(roomId)
-                            .setTabListener(tabListener)
-            );
-            actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
-        }
-    }
-
-    private class CommunityLoungePagerAdapter extends FragmentPagerAdapter {
-        public CommunityLoungePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            return ChatRoomFragment.newInstance(mRoomList.get(i));
-        }
-
-        @Override
-        public int getCount() {
-            return mRoomList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mRoomList.get(position);
-        }
+        });
     }
 
 }
