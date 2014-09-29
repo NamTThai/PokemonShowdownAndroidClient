@@ -14,8 +14,43 @@
         android:listSelector="#77CBEE"
         android:background="@drawable/uneditable_frame">
 
-
     </ListView>
-    
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/find_battle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/find_battle"
+            android:clickable="true"
+            android:background="@drawable/onclick_light_red"
+            android:textColor="#FFF"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:padding="16dp"
+            android:layout_margin="16dp"/>
+
+        <TextView
+            android:id="@+id/watch_battle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/watch_battle"
+            android:clickable="true"
+            android:background="@drawable/onclick_green"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:padding="16dp"
+            android:layout_margin="16dp"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>

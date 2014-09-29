@@ -17,6 +17,10 @@
     <string name="sign_out">Sign Out</string>
     <string name="avatar">Avatar</string>
 
+    <!-- These are for BattleField -->
+    <string name="find_battle">Find Battle</string>
+    <string name="watch_battle">Watch Battle</string>
+
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
         <item>Battle Field</item>

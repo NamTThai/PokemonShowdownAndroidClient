@@ -234,7 +234,7 @@ public class BattleFieldFragment extends Fragment {
             if (roomType.get(i) == 0) {
                 return FindBattleFragment.newInstance();
             } else {
-                return FindBattleFragment.newInstance();
+                return WatchBattleFragment.newInstance(mRoomList.get(i));
             }
         }
 
