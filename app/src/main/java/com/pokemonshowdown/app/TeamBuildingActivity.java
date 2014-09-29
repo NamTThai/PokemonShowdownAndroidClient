@@ -94,6 +94,14 @@ public class TeamBuildingActivity extends FragmentActivity {
             }
         });
 
+        ImageButton button_importexport = (ImageButton) findViewById(R.id.pokemonteamlist_importexport);
+        button_importexport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+            }
+        });
+
 
     }
 

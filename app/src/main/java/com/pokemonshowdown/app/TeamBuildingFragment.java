@@ -55,7 +55,8 @@ public class TeamBuildingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         pokemonListAdapter.notifyDataSetChanged();
-        /* Notify parent activity that the pokemonTeam changed (so to reprint in the drawer) */
+        // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
+        ((TeamBuildingActivity) getActivity()).updateList();
     }
 
     @Override
@@ -138,6 +139,8 @@ public class TeamBuildingFragment extends Fragment {
             case 1:
                 pokemonTeam.removePokemon(info.position);
                 pokemonListAdapter.notifyDataSetChanged();
+                // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
+                ((TeamBuildingActivity) getActivity()).updateList();
                 return true;
             default:
                 return super.onContextItemSelected(item);

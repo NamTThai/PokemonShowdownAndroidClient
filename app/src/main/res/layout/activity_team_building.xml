@@ -16,7 +16,7 @@
             android:id="@+id/pokemonteamlist_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4"/>
+            android:layout_weight="5"/>
 
         <ImageButton
             android:id="@+id/pokemonteamlist_add"
@@ -25,12 +25,18 @@
             android:src="@drawable/ic_action_new"
             android:layout_weight="1"/>
 
-
         <ImageButton
             android:id="@+id/pokemonteamlist_remove"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_discard"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/pokemonteamlist_importexport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_import_export"
             android:layout_weight="1"/>
 
 
