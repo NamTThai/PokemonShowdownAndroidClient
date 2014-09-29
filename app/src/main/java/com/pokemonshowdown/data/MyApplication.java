@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.pokemonshowdown.app.PokemonTeam;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
@@ -15,10 +17,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Initialize all the data singletons
@@ -34,9 +43,9 @@ public class MyApplication extends Application {
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
-    
+
     private static MyApplication sMyApplication;
-    
+
     private Pokedex mPokedex;
     private MoveDex mMoveDex;
     private AbilityDex mAbilityDex;
@@ -49,13 +58,16 @@ public class MyApplication extends Application {
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
 
+    private final String pokemonTeamStorageName = "pkmnStorage.dat";
+    private List<PokemonTeam> pokemonTeamList;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         sMyApplication = this;
         Context appContext = getApplicationContext();
-        
+
         mWebSocketClient = getWebSocketClient();
         mPokedex = Pokedex.getWithApplicationContext(appContext);
         mMoveDex = MoveDex.getWithApplicationContext(appContext);
@@ -65,6 +77,7 @@ public class MyApplication extends Application {
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
+        loadPokemonTeams();
     }
 
     @Override
@@ -72,6 +85,7 @@ public class MyApplication extends Application {
         Onboarding.getWithApplicationContext(this).signingOut();
         CommunityLoungeData.getWithApplicationContext(this).leaveAllRooms();
         closeActiveConnection();
+        savePokemonTeams();
         super.onTerminate();
     }
 
@@ -360,6 +374,38 @@ public class MyApplication extends Application {
 
     public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
         mRoomCategoryList = roomCategoryList;
+    }
+
+    public final List<PokemonTeam> getPokemonTeamList() {
+        return pokemonTeamList;
+    }
+
+    private void loadPokemonTeams() {
+        FileInputStream fos = null;
+        try {
+            fos = openFileInput(pokemonTeamStorageName);
+            ObjectInputStream oos = new ObjectInputStream(fos);
+            pokemonTeamList = (ArrayList<PokemonTeam>) oos.readObject();
+            oos.close();
+        } catch (IOException e) {
+            pokemonTeamList = new ArrayList<>();
+        } catch (ClassNotFoundException e) {
+            pokemonTeamList = new ArrayList<>();
+        }
+    }
+
+    private void savePokemonTeams() {
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(pokemonTeamStorageName, Context.MODE_PRIVATE);
+
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(pokemonTeamList);
+            oos.close();
+        } catch (IOException e) {
+            // TODO handle
+            e.printStackTrace();
+        }
     }
 
     public String toId(String name) {

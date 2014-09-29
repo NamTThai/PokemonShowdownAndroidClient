@@ -18,14 +18,13 @@ import android.widget.TextView;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class TeamBuildingActivity extends FragmentActivity {
     public static final String TAG = TeamBuildingActivity.class.getName();
     private Spinner pkmn_spinner;
-    private List<PokemonTeam> pokemonTeamList = new ArrayList<>();
+    private List<PokemonTeam> pokemonTeamList = MyApplication.getMyApplication().getPokemonTeamList();
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
 
     public void updateList() {
