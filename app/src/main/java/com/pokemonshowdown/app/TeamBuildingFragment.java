@@ -160,7 +160,7 @@ public class TeamBuildingFragment extends Fragment {
             if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_POKEMON) {
                 Pokemon pokemon = new Pokemon(getActivity().getApplicationContext(), data.getExtras().getString("Search"), true);
                 if (selectedPos != -1) {
-                    pokemonTeam.remplacePokemon(selectedPos, pokemon);
+                    pokemonTeam.replacePokemon(selectedPos, pokemon);
                 } else {
                     pokemonTeam.addPokemon(pokemon);
                 }

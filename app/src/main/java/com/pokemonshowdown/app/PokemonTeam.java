@@ -57,7 +57,7 @@ public class PokemonTeam implements Serializable {
         pokemons.add(p);
     }
 
-    public void remplacePokemon(int oldIndex, Pokemon p) {
+    public void replacePokemon(int oldIndex, Pokemon p) {
         pokemons.set(oldIndex, p);
     }
 
