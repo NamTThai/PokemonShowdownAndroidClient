@@ -39,6 +39,10 @@ public class TeamBuildingFragment extends Fragment {
     private int selectedPos;
     private int selectedMove;
 
+    public TeamBuildingFragment() {
+        super();
+    }
+
     public static final TeamBuildingFragment newInstance(PokemonTeam team) {
         TeamBuildingFragment fragment = new TeamBuildingFragment();
         Bundle bundle = new Bundle();
@@ -47,17 +51,11 @@ public class TeamBuildingFragment extends Fragment {
         return fragment;
     }
 
-
-    public TeamBuildingFragment() {
-        super();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         pokemonListAdapter.notifyDataSetChanged();
         /* Notify parent activity that the pokemonTeam changed (so to reprint in the drawer) */
-        ((TeamBuildingActivity) getActivity()).updateList();
     }
 
     @Override
@@ -140,7 +138,6 @@ public class TeamBuildingFragment extends Fragment {
             case 1:
                 pokemonTeam.removePokemon(info.position);
                 pokemonListAdapter.notifyDataSetChanged();
-                ((TeamBuildingActivity) getActivity()).updateList();
                 return true;
             default:
                 return super.onContextItemSelected(item);
