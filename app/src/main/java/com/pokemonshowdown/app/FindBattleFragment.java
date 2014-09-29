@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
 
@@ -19,7 +22,6 @@ public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
 
     private ArrayList<String> mFormatList;
-    private int mPosition;
 
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
@@ -41,6 +43,23 @@ public class FindBattleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setAvailableFormat();
+
+        TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
+        findBattle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage(R.string.still_in_development)
+                        .create().show();
+            }
+        });
+        TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
+        watchBattle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
+            }
+        });
     }
 
     public void setAvailableFormat() {
@@ -64,11 +83,11 @@ public class FindBattleFragment extends Fragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.requestFocusFromTouch();
         listView.setItemChecked(0, true);
-        mPosition = 0;
+        BattleFieldData.get(getActivity()).setCurrentFormat(0);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mPosition = position;
+                BattleFieldData.get(getActivity()).setCurrentFormat(position);
             }
         });
     }

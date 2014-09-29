@@ -29,6 +29,7 @@ public class MyApplication extends Application {
     public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
     public final static String EXTRA_DETAILS = "Details";
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
+    public final static String EXTRA_WATCH_BATTLE_LIST_READY = "Watch Battle List Ready";
     public final static String EXTRA_AVAILABLE_FORMATS = "Available Formats";
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
@@ -255,6 +256,10 @@ public class MyApplication extends Application {
                                 }
                             }
                             break;
+                        case "roomlist":
+                            String roomlist = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            BattleFieldData.getWithApplicationContext(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
+                            break;
                         default:
                             Log.d(MTAG, message);
                     }
@@ -368,7 +373,7 @@ public class MyApplication extends Application {
         mRoomCategoryList = roomCategoryList;
     }
 
-    public String toId(String name) {
+    public static String toId(String name) {
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }

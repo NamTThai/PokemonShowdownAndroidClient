@@ -208,7 +208,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     }
 
     private void processNewRoomRequest(String room) {
-        String roomId = MyApplication.getMyApplication().toId(room);
+        String roomId = MyApplication.toId(room);
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));

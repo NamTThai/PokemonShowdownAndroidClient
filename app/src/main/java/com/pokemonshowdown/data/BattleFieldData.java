@@ -3,13 +3,20 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class BattleFieldData {
     private final static String BTAG = BattleFieldData.class.getName();
     private ArrayList<FormatType> mFormatTypes;
+    private int mCurrentFormat;
+    private JSONObject mAvailableBattle;
     private ArrayList<String> mRoomList;
     private ArrayList<Integer> mRoomType; //-1 for global, 0 for battle, 1 for watch battle
     private HashMap<String, RoomData> mRoomDataHashMap;
@@ -45,6 +52,20 @@ public class BattleFieldData {
         return mFormatTypes;
     }
 
+    public String getCurrentFormatName() {
+        int currentFormat = mCurrentFormat;
+        int count = 0;
+        do {
+            int mask = mFormatTypes.get(count).getSearchableFormatList().size();
+            if (mask > currentFormat) {
+                return mFormatTypes.get(count).getSearchableFormatList().get(currentFormat);
+            }
+            count++;
+            currentFormat -= mask;
+        } while (currentFormat >= 0);
+        return null;
+    }
+
     public void generateAvailableRoomList(String message) {
         while (message.length() != 0) {
             if (message.charAt(0) == ',') {
@@ -61,6 +82,14 @@ public class BattleFieldData {
         }
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
 
+    }
+
+    public int getCurrentFormat() {
+        return mCurrentFormat;
+    }
+
+    public void setCurrentFormat(int currentFormat) {
+        mCurrentFormat = currentFormat;
     }
 
     public Format processSpecialRoomTrait(String query) {
@@ -87,6 +116,47 @@ public class BattleFieldData {
             }
         }
         return format;
+    }
+
+    public void parseAvailableWatchBattleList(String message) {
+        try {
+            JSONObject jsonObject = new JSONObject(message);
+            mAvailableBattle = jsonObject.getJSONObject("rooms");
+            LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_WATCH_BATTLE_LIST_READY));
+        } catch (JSONException e) {
+            Log.d(BTAG, e.toString());
+        }
+    }
+
+    public ArrayList<String> getAvailableWatchBattleList() {
+        if (mAvailableBattle == null) {
+            return null;
+        }
+        ArrayList<String> toReturn = new ArrayList<>();
+        Iterator<String> rooms = mAvailableBattle.keys();
+        String currentFormat = getCurrentFormatName();
+        currentFormat = "-" + MyApplication.toId(currentFormat) + "-";
+        Log.d(BTAG, currentFormat);
+        while (rooms.hasNext()) {
+            String roomId = rooms.next();
+            if (roomId.contains(currentFormat)) {
+                try {
+                    JSONObject players = mAvailableBattle.getJSONObject(roomId);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(players.getString("p1"))
+                            .append(" vs. ")
+                            .append(players.getString("p2"));
+                    toReturn.add(sb.toString());
+                } catch (JSONException e) {
+                    Log.d(BTAG, e.toString());
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    private static String getRoomFormat(String roomId) {
+        return roomId.substring(roomId.indexOf("-") + 1, roomId.lastIndexOf("-"));
     }
 
     public ArrayList<String> getRoomList() {

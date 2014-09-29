@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
@@ -276,6 +278,12 @@ public class BattleFieldActivity extends FragmentActivity {
                 BattleFieldFragment battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (battleFieldFragment != null) {
                     battleFieldFragment.setAvailableFormat();
+                }
+                return;
+            case MyApplication.EXTRA_WATCH_BATTLE_LIST_READY:
+                battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (battleFieldFragment != null) {
+                    battleFieldFragment.generateAvailableWatchBattleDialog();
                 }
                 return;
             case MyApplication.EXTRA_SERVER_MESSAGE:

@@ -186,8 +186,8 @@ public class BattleFieldFragment extends Fragment {
     }
 
     private void processNewRoomRequest(String room) {
-        /*
-        String roomId = MyApplication.getMyApplication().toId(room);
+
+        String roomId = MyApplication.toId(room);
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
@@ -217,7 +217,27 @@ public class BattleFieldFragment extends Fragment {
                             .setTabListener(tabListener)
             );
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
-        }*/
+        }
+    }
+
+    public void generateAvailableWatchBattleDialog() {
+        ArrayList<String> battleList = BattleFieldData.get(getActivity()).getAvailableWatchBattleList();
+        if (battleList.isEmpty()) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(R.string.no_available_battle)
+                    .create()
+                    .show();
+            return;
+        }
+        new AlertDialog.Builder(getActivity())
+                .setSingleChoiceItems(battleList.toArray(new String[battleList.size()]), -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create()
+                .show();
     }
 
     private class BattleFieldPagerAdapter extends FragmentPagerAdapter {
