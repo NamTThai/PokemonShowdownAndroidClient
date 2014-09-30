@@ -19,13 +19,4 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
     </LinearLayout>
-
-    <View
-        android:id="@+id/separator"
-        android:layout_width="fill_parent"
-        android:layout_height="0.2dp"
-        android:background="@android:color/darker_gray"
-        android:visibility="visible" />
-
-
 </LinearLayout>
