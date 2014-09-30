@@ -18,7 +18,6 @@ public class BattleFieldData {
     private int mCurrentFormat;
     private JSONObject mAvailableBattle;
     private ArrayList<String> mRoomList;
-    private ArrayList<Integer> mRoomType; //-1 for global, 0 for battle, 1 for watch battle
     private HashMap<String, RoomData> mRoomDataHashMap;
 
     private static BattleFieldData sBattleFieldData;
@@ -29,8 +28,6 @@ public class BattleFieldData {
         mFormatTypes = new ArrayList<>();
         mRoomList = new ArrayList<>();
         mRoomList.add("global");
-        mRoomType = new ArrayList<>();
-        mRoomType.add(-1);
         mRoomDataHashMap = new HashMap<>();
     }
 
@@ -52,20 +49,6 @@ public class BattleFieldData {
         return mFormatTypes;
     }
 
-    public String getCurrentFormatName() {
-        int currentFormat = mCurrentFormat;
-        int count = 0;
-        do {
-            int mask = mFormatTypes.get(count).getSearchableFormatList().size();
-            if (mask > currentFormat) {
-                return mFormatTypes.get(count).getSearchableFormatList().get(currentFormat);
-            }
-            count++;
-            currentFormat -= mask;
-        } while (currentFormat >= 0);
-        return null;
-    }
-
     public void generateAvailableRoomList(String message) {
         while (message.length() != 0) {
             if (message.charAt(0) == ',') {
@@ -82,6 +65,20 @@ public class BattleFieldData {
         }
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
 
+    }
+
+    public String getCurrentFormatName() {
+        int currentFormat = getCurrentFormat();
+        int count = 0;
+        do {
+            int mask = mFormatTypes.get(count).getSearchableFormatList().size();
+            if (mask > currentFormat) {
+                return mFormatTypes.get(count).getSearchableFormatList().get(currentFormat);
+            }
+            count++;
+            currentFormat -= mask;
+        } while (currentFormat >= 0);
+        return null;
     }
 
     public int getCurrentFormat() {
@@ -128,25 +125,21 @@ public class BattleFieldData {
         }
     }
 
-    public ArrayList<String> getAvailableWatchBattleList() {
+    public HashMap<String, String> getAvailableWatchBattleList() {
         if (mAvailableBattle == null) {
             return null;
         }
-        ArrayList<String> toReturn = new ArrayList<>();
+        HashMap<String, String> toReturn = new HashMap<>();
         Iterator<String> rooms = mAvailableBattle.keys();
         String currentFormat = getCurrentFormatName();
         currentFormat = "-" + MyApplication.toId(currentFormat) + "-";
-        Log.d(BTAG, currentFormat);
         while (rooms.hasNext()) {
             String roomId = rooms.next();
             if (roomId.contains(currentFormat)) {
                 try {
                     JSONObject players = mAvailableBattle.getJSONObject(roomId);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(players.getString("p1"))
-                            .append(" vs. ")
-                            .append(players.getString("p2"));
-                    toReturn.add(sb.toString());
+                    String sb = players.getString("p1") + " vs. " + players.getString("p2");
+                    toReturn.put(roomId, sb);
                 } catch (JSONException e) {
                     Log.d(BTAG, e.toString());
                 }
@@ -155,7 +148,7 @@ public class BattleFieldData {
         return toReturn;
     }
 
-    private static String getRoomFormat(String roomId) {
+    public static String getRoomFormat(String roomId) {
         return roomId.substring(roomId.indexOf("-") + 1, roomId.lastIndexOf("-"));
     }
 
@@ -163,16 +156,12 @@ public class BattleFieldData {
         return mRoomList;
     }
 
-    public ArrayList<Integer> getRoomType() {
-        return mRoomType;
-    }
-
     public HashMap<String, RoomData> getRoomDataHashMap() {
         return mRoomDataHashMap;
     }
 
-    public void saveRoomInstance(String roomId, ArrayList<String> userListData, CharSequence chatBox, boolean messageListener) {
-        mRoomDataHashMap.put(roomId, new RoomData(roomId, userListData, chatBox, messageListener));
+    public void saveRoomInstance(String roomId, CharSequence chatBox, boolean messageListener) {
+        mRoomDataHashMap.put(roomId, new RoomData(roomId, chatBox, messageListener));
     }
 
     public RoomData getRoomInstance(String roomId) {
@@ -197,14 +186,12 @@ public class BattleFieldData {
 
     public static class RoomData {
         private String mRoomId;
-        private ArrayList<String> mUserListData;
         private CharSequence mChatBox;
         private boolean mMessageListener;
         private ArrayList<String> mServerMessageOnHold;
 
-        public RoomData(String roomId, ArrayList<String> userListData, CharSequence chatBox, boolean messageListener) {
+        public RoomData(String roomId, CharSequence chatBox, boolean messageListener) {
             mRoomId = roomId;
-            mUserListData = userListData;
             mChatBox = chatBox;
             mServerMessageOnHold = new ArrayList<>();
             mMessageListener = messageListener;
@@ -216,14 +203,6 @@ public class BattleFieldData {
 
         public void setRoomId(String roomId) {
             mRoomId = roomId;
-        }
-
-        public ArrayList<String> getUserListData() {
-            return mUserListData;
-        }
-
-        public void setUserListData(ArrayList<String> userListData) {
-            mUserListData = userListData;
         }
 
         public CharSequence getChatBox() {

@@ -163,6 +163,10 @@ public class MyApplication extends Application {
      * 1: chatroom
      */
     private void processMessage(String message) {
+        if (message.length() == 0) {
+            return;
+        }
+
         if (message.charAt(0) != '>') {
             int newLine = message.indexOf('\n');
             while (newLine != -1) {
@@ -296,12 +300,15 @@ public class MyApplication extends Application {
             channel = 1;
         }
 
+        if (message.length() == 0 ) {
+            return;
+        }
+
         if (message.charAt(0) == '|') {
             message = message.substring(1);
         }
 
         LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
-
     }
 
     public boolean verifySignedInBeforeSendingMessage() {

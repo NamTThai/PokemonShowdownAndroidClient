@@ -332,8 +332,16 @@ public class BattleFieldActivity extends FragmentActivity {
                     fragment.processServerMessage(roomId, message);
                 }
             }
-        } else {
-            // TODO: deal with battle server message
+        } else { // channel == 0
+            BattleFieldData.RoomData roomData = BattleFieldData.get(this).getRoomInstance(roomId);
+            if (roomData != null && roomData.isMessageListener()) {
+                roomData.addServerMessageOnHold(message);
+            } else {
+                BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (fragment != null) {
+                    fragment.processServerMessage(roomId, message);
+                }
+            }
         }
     }
 

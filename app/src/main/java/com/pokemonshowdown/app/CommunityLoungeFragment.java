@@ -179,7 +179,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
             }
             final String[] finalRoomList = roomList;
 
-            Dialog dialog = new AlertDialog.Builder(getActivity())
+            new AlertDialog.Builder(getActivity())
                     .setItems(roomList, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -16,20 +16,20 @@ import com.pokemonshowdown.data.MyApplication;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class WatchBattleFragment extends android.support.v4.app.Fragment {
-    public final static String WTAG = WatchBattleFragment.class.getName();
+public class BattleFragment extends android.support.v4.app.Fragment {
+    public final static String BTAG = BattleFragment.class.getName();
     private final static String ROOM_ID = "Room Id";
 
     private String mRoomId;
 
-    public static WatchBattleFragment newInstance(String roomId) {
-        WatchBattleFragment fragment = new WatchBattleFragment();
+    public static BattleFragment newInstance(String roomId) {
+        BattleFragment fragment = new BattleFragment();
         Bundle args = new Bundle();
         args.putString(ROOM_ID, roomId);
         fragment.setArguments(args);
         return fragment;
     }
-    public WatchBattleFragment() {
+    public BattleFragment() {
         // Required empty public constructor
     }
 
@@ -37,13 +37,13 @@ public class WatchBattleFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_room, container, false);
+        return inflater.inflate(R.layout.fragment_battle, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+/*
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
         }
@@ -63,7 +63,7 @@ public class WatchBattleFragment extends android.support.v4.app.Fragment {
                 }
                 return false;
             }
-        });
+        });*/
     }
 
     @Override

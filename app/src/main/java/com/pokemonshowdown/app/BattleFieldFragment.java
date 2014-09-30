@@ -16,9 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
@@ -145,31 +142,10 @@ public class BattleFieldFragment extends Fragment {
 
     public void processServerMessage(String roomId, String message) {
         int index = mRoomList.indexOf(roomId);
-        ChatRoomFragment fragment = (ChatRoomFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
+        BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
         if (fragment != null) {
-            fragment.processServerMessage(message);
+            //fragment.processServerMessage(message);
         }
-    }
-
-    private void generateWatchBattleList() {
-        final HashMap<String, JSONArray> rooms = MyApplication.getMyApplication().getRoomCategoryList();
-        Set<String> roomSet = rooms.keySet();
-        final String[] roomCategoryNames = roomSet.toArray(new String[roomSet.size()]);
-        final String[] roomCategories = new String[roomSet.size()];
-        int count = 0;
-        for (String room : roomSet) {
-            roomCategories[count] = room.toUpperCase();
-            count++;
-        }
-        Dialog dialog = new AlertDialog.Builder(getActivity())
-                .setItems(roomCategories, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String roomCategory = roomCategoryNames[which];
-                        dialog.dismiss();
-                    }
-                })
-                .show();
     }
 
     private void removeCurrentRoom() {
@@ -185,14 +161,12 @@ public class BattleFieldFragment extends Fragment {
         actionBar.removeTab(tab);
     }
 
-    private void processNewRoomRequest(String room) {
-
-        String roomId = MyApplication.toId(room);
+    private void processNewRoomRequest(String roomId) {
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
-            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom(roomId);
+            BattleFieldData.get(getActivity()).joinRoom(roomId);
             mBattleFieldPagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override
@@ -213,7 +187,7 @@ public class BattleFieldFragment extends Fragment {
 
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(roomId)
+                            .setText("Battle" + (mRoomList.size() - 1))
                             .setTabListener(tabListener)
             );
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
@@ -221,7 +195,7 @@ public class BattleFieldFragment extends Fragment {
     }
 
     public void generateAvailableWatchBattleDialog() {
-        ArrayList<String> battleList = BattleFieldData.get(getActivity()).getAvailableWatchBattleList();
+        HashMap<String, String> battleList = BattleFieldData.get(getActivity()).getAvailableWatchBattleList();
         if (battleList.isEmpty()) {
             new AlertDialog.Builder(getActivity())
                     .setMessage(R.string.no_available_battle)
@@ -229,14 +203,23 @@ public class BattleFieldFragment extends Fragment {
                     .show();
             return;
         }
+        final String[] key = new String[battleList.size()];
+        String[] value = new String[battleList.size()];
+        int count = 0;
+        Set<String> iterators = battleList.keySet();
+        for (String iterator : iterators) {
+            key[count] = iterator;
+            value[count] = battleList.get(iterator);
+            count++;
+        }
         new AlertDialog.Builder(getActivity())
-                .setSingleChoiceItems(battleList.toArray(new String[battleList.size()]), -1, new DialogInterface.OnClickListener() {
+                .setItems(value, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        processNewRoomRequest(key[which]);
+                        dialog.dismiss();
                     }
                 })
-                .create()
                 .show();
     }
 
@@ -250,12 +233,7 @@ public class BattleFieldFragment extends Fragment {
             if (i == 0) {
                 return FindBattleFragment.newInstance();
             }
-            ArrayList<Integer> roomType = BattleFieldData.get(getActivity()).getRoomType();
-            if (roomType.get(i) == 0) {
-                return FindBattleFragment.newInstance();
-            } else {
-                return WatchBattleFragment.newInstance(mRoomList.get(i));
-            }
+            return BattleFragment.newInstance(mRoomList.get(i));
         }
 
         @Override
