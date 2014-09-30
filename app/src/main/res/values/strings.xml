@@ -114,5 +114,6 @@
     <string name="import_team">Import</string>
     <string name="export_team">Export</string>
     <string name="open_team_list">Open Team list</string>
+    <string name="moves">Moves</string>
 
 </resources>
