@@ -201,6 +201,10 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         if (roomId.equals("lobby")) {
             return;
         }
+        ChatRoomFragment fragment = (ChatRoomFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
+        if (fragment != null) {
+            getChildFragmentManager().beginTransaction().remove(fragment).commit();
+        }
         CommunityLoungeData.get(getActivity()).leaveRoom(roomId);
         mCommunityLoungePagerAdapter.notifyDataSetChanged();
         mViewPager.setAdapter(mCommunityLoungePagerAdapter);

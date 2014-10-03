@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -154,6 +155,10 @@ public class BattleFieldFragment extends Fragment {
         String roomId = mRoomList.get(tab.getPosition());
         if (roomId.equals("global")) {
             return;
+        }
+        BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
+        if (fragment != null) {
+            getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
         BattleFieldData.get(getActivity()).leaveRoom(roomId);
         mBattleFieldPagerAdapter.notifyDataSetChanged();
