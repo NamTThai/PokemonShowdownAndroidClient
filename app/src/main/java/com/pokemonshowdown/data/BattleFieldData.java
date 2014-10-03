@@ -223,6 +223,10 @@ public class BattleFieldData {
             return mServerMessageOnHold;
         }
 
+        public void setServerMessageOnHold(ArrayList<String> serverMessageOnHold) {
+            mServerMessageOnHold = serverMessageOnHold;
+        }
+
         public void addServerMessageOnHold(String serverMessageOnHold) {
             mServerMessageOnHold.add(serverMessageOnHold);
         }

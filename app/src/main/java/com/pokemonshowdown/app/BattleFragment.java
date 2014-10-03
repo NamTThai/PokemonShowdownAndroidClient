@@ -4,16 +4,24 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
     public final static String BTAG = BattleFragment.class.getName();
@@ -80,9 +88,18 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 mRoomId = getArguments().getString(ROOM_ID);
             }
 
+            return view;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            Log.d(BTAG, "RoomId is " + mRoomId);
+
             BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
             if (roomData != null) {
-                ((TextView) view.findViewById(R.id.battlelog)).setText(roomData.getChatBox());
+                ((TextView) getView().findViewById(R.id.battlelog)).setText(roomData.getChatBox());
 
                 ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
                 for (String message : pendingMessages) {
@@ -90,22 +107,50 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
 
                 roomData.setMessageListener(false);
+                roomData.setServerMessageOnHold(new ArrayList<String>());
             }
-
-            return view;
         }
 
         @Override
-        public void onDismiss(DialogInterface dialog) {
+        public void onPause() {
             BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
-            roomData.setMessageListener(true);
-            CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
-            roomData.setChatBox(text);
-            super.onDismiss(dialog);
+            if (roomData != null) {
+                roomData.setMessageListener(true);
+                CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
+                roomData.setChatBox(text);
+            }
+            super.onPause();
         }
 
         public void processServerMessage(String message) {
-            Log.d(BTAG, message);
+            if (message.indexOf('|') == -1) {
+                appendServerMessage(message);
+                return;
+            }
+            String command = message.substring(0, message.indexOf('|'));
+            final String messageDetails = message.substring(message.indexOf('|') + 1);
+            int separator;
+            switch (command) {
+                default:
+                    appendServerMessage(messageDetails);
+            }
+        }
+
+        private void appendServerMessage(final String message) {
+            if (getView() != null) {
+                final TextView chatlog = (TextView) getView().findViewById(R.id.battlelog);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatlog.append(message);
+                        chatlog.append("\n");
+                    }
+                });
+
+                ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
+                scrollView.fullScroll(View.FOCUS_DOWN);
+            }
         }
     }
 
