@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:weightSum="7">
+    android:weightSum="7"
+    android:baselineAligned="false">
 
     <ListView
         android:id="@+id/available_formats"

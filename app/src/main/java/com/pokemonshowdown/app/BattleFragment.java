@@ -2,18 +2,32 @@ package com.pokemonshowdown.app;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.data.Onboarding;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
@@ -43,51 +57,40 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-/*
+
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
         }
 
-        final EditText chatBox = (EditText) view.findViewById(R.id.community_chat_box);
-        chatBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String message = chatBox.getText().toString();
-                    message = (mRoomId.equals("lobby")) ? ("|" + message) : (mRoomId + "|" + message);
-                    if (MyApplication.getMyApplication().verifySignedInBeforeSendingMessage()) {
-                        MyApplication.getMyApplication().sendClientMessage(message);
-                    }
-                    chatBox.setText(null);
-                    return false;
-                }
-                return false;
+            public void onClick(View v) {
+                DialogFragment dialogFragment = BattleLogDialog.newInstance(mRoomId);
+                dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
-        });*/
+        });
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
-        CharSequence text = ((TextView) getView().findViewById(R.id.community_chat_log)).getText();
-    }
+    public static class BattleLogDialog extends DialogFragment {
+        public static final String BTAG = BattleLogDialog.class.getName();
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
-        CommunityLoungeData.RoomData roomData = roomDataHashMap.get(mRoomId);
-        if (roomData != null) {
+        public static BattleLogDialog newInstance(String roomId) {
+            BattleLogDialog fragment = new BattleLogDialog();
+            Bundle args = new Bundle();
+            args.putString(ROOM_ID, roomId);
+            fragment.setArguments(args);
+            return fragment;
+        }
+        public BattleLogDialog() {
 
-            ((TextView) getView().findViewById(R.id.community_chat_log)).setText(roomData.getChatBox());
+        }
 
-            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
-            for (String message : pendingMessages) {
-                //processServerMessage(message);
-            }
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+            View view = inflater.inflate(R.layout.dialog_battlelog, container);
 
-            roomDataHashMap.remove(mRoomId);
+            return view;
         }
     }
 

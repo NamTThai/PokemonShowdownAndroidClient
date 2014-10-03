@@ -121,10 +121,10 @@ public class BattleFieldFragment extends Fragment {
             }
         };
 
-        for(String room : mRoomList) {
+        for(int i = 0; i< mRoomList.size(); i++) {
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(room)
+                            .setText(i == 0 ? mRoomList.get(i) : "battle" + i)
                             .setTabListener(tabListener)
             );
         }
@@ -243,7 +243,7 @@ public class BattleFieldFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mRoomList.get(position);
+            return "Battle" + position;
         }
     }
 

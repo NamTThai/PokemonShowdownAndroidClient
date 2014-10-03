@@ -4,25 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
-
-import java.util.HashMap;
-import java.util.Iterator;
-
-/**
- * Created by thain on 7/22/14.
- */
 
 public class OnboardingDialog extends DialogFragment {
     public static final String OTAG = OnboardingDialog.class.getName();

@@ -24,6 +24,7 @@
     <string name="watch_battle">Watch Battle</string>
     <string name="no_available_battle">There is no active battle in this format</string>
     <string name="background">Background</string>
+    <string name="log">Log</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
