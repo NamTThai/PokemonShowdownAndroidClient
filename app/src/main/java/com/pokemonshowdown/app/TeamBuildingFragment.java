@@ -32,6 +32,7 @@ import java.util.List;
  * This enables the user to add/remove/edit pokemons from the team
  */
 public class TeamBuildingFragment extends Fragment {
+    public final static String TEAMTAG = "team";
     private PokemonTeam pokemonTeam;
     private PokemonListAdapter pokemonListAdapter;
     private Button footerButton;
@@ -47,7 +48,7 @@ public class TeamBuildingFragment extends Fragment {
     public static final TeamBuildingFragment newInstance(PokemonTeam team) {
         TeamBuildingFragment fragment = new TeamBuildingFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("team", team);
+        bundle.putSerializable(TEAMTAG, team);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -63,7 +64,7 @@ public class TeamBuildingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pokemonTeam = (PokemonTeam) getArguments().get("team");
+        pokemonTeam = (PokemonTeam) getArguments().get(TEAMTAG);
     }
 
     @Override
@@ -71,9 +72,7 @@ public class TeamBuildingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_teambuilding, parent, false);
         ListView lv = (ListView) view.findViewById(R.id.lisview_pokemonteamlist);
 
-        /**
-         * Add Pokemon button
-         */
+        // add pokemon button
         footerButton = new Button(getActivity().getApplicationContext());
         footerButton.setText("Add Pokemon");
         footerButton.setTextColor(Color.BLACK);
@@ -96,9 +95,7 @@ public class TeamBuildingFragment extends Fragment {
 
         registerForContextMenu(lv);
 
-        /**
-         * pokemon list adapter
-         */
+        // pokemon list adapter
         pokemonListAdapter = new PokemonListAdapter(getActivity().getApplicationContext(), pokemonTeam.getPokemons());
         lv.setAdapter(pokemonListAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
