@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.PokemonTeam;
 import com.pokemonshowdown.data.SearchableActivity;
 
 import java.util.List;

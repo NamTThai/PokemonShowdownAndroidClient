@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
 public class TeamBuildingActivity extends FragmentActivity {
     public static final String TAG = TeamBuildingActivity.class.getName();
     private Spinner pkmn_spinner;
-    private List<PokemonTeam> pokemonTeamList = MyApplication.getMyApplication().getPokemonTeamList();
+    private List<PokemonTeam> pokemonTeamList = PokemonTeam.getPokemonTeamList();
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
 
     public void updateList() {
