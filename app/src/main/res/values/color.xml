@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="dark_blue">#0099CC</color>
     <color name="light_blue">#33B5E5</color>
+    <color name="dark_purple">#9933CC</color>
+    <color name="light_purple">#AA66CC</color>
+    <color name="dark_green">#669900</color>
+    <color name="light_green">#99CC00</color>
+    <color name="dark_orange">#FF8800</color>
+    <color name="light_orange">#FFBB33</color>
+    <color name="dark_red">#CC0000</color>
+    <color name="light_red">#FF4444</color>
 </resources>

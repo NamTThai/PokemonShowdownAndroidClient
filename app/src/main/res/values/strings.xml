@@ -6,6 +6,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="weak_connection">Failed to connect to server.. it needs a thing called \'Internet Connection\', brilliant</string>
     <string name="no_connection">Weak signal, genius.. maybe move your camp trailer to somewhere near civilization?</string>
+    <string name="still_in_development">TEASER ALERT: feature still in development</string>
+    <string name="waiting_for_server">Waiting for server…</string>
     <string name="ok">OK</string>
 
     <!-- These are for Onboarding -->
@@ -17,11 +19,18 @@
     <string name="sign_out">Sign Out</string>
     <string name="avatar">Avatar</string>
 
+    <!-- These are for BattleField -->
+    <string name="find_battle">Find Battle</string>
+    <string name="watch_battle">Watch Battle</string>
+    <string name="no_available_battle">There is no active battle in this format</string>
+    <string name="background">Background</string>
+    <string name="battlelog">Battle Log</string>
+    <string name="log">Log</string>
+
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
         <item>Battle Field</item>
         <item>Community Lounge</item>
-        <item>Watch Battle</item>
         <item>Replays</item>
         <item>Credits</item>
     </string-array>

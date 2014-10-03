@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
@@ -221,15 +223,15 @@ public class BattleFieldActivity extends FragmentActivity {
         switch(position) {
             case 0:
                 mPosition = 0;
-                fragment = new FindBattleFragment();
+                fragment = BattleFieldFragment.newInstance();
                 break;
             case 1:
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance();
                 break;
             default:
-                mPosition = 0;
-                fragment = new FindBattleFragment();
+                mPosition = 2;
+                fragment = new PlaceHolderFragment();
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -271,6 +273,18 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
+                return;
+            case MyApplication.EXTRA_AVAILABLE_FORMATS:
+                BattleFieldFragment battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (battleFieldFragment != null) {
+                    battleFieldFragment.setAvailableFormat();
+                }
+                return;
+            case MyApplication.EXTRA_WATCH_BATTLE_LIST_READY:
+                battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (battleFieldFragment != null) {
+                    battleFieldFragment.generateAvailableWatchBattleDialog();
+                }
                 return;
             case MyApplication.EXTRA_SERVER_MESSAGE:
                 String serverMessage = intent.getExtras().getString(MyApplication.EXTRA_SERVER_MESSAGE);
@@ -318,8 +332,17 @@ public class BattleFieldActivity extends FragmentActivity {
                     fragment.processServerMessage(roomId, message);
                 }
             }
-        } else {
-            // TODO: deal with battle server message
+        } else { // channel == 0
+            BattleFieldData.RoomData roomData = BattleFieldData.get(this).getRoomInstance(roomId);
+            if (roomData != null && roomData.isMessageListener()) {
+                roomData.addServerMessageOnHold(message);
+            } else {
+                BattleFragment.BattleLogDialog battleLogDialog =
+                        (BattleFragment.BattleLogDialog) getSupportFragmentManager().findFragmentByTag(roomId);
+                if (battleLogDialog != null) {
+                    battleLogDialog.processServerMessage(message);
+                }
+            }
         }
     }
 

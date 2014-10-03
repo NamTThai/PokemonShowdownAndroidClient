@@ -252,11 +252,16 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                     chatlog.append(userS);
                     chatlog.append(messageF);
                     chatlog.append("\n");
+
+                    final ScrollView scrollView = (ScrollView) getView().findViewById(R.id.chatroom_scrollview);
+                    scrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            scrollView.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
                 }
             });
-
-            ScrollView scrollView = (ScrollView) getView().findViewById(R.id.chatroom_scrollview);
-            scrollView.fullScroll(View.FOCUS_DOWN);
         }
     }
 

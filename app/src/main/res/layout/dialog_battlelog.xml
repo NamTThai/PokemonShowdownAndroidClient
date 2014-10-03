@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="@string/battlelog"
+        android:textColor="@drawable/dialog_button"
+        android:gravity="center"/>
+
+    <View style="@style/divider" />
+
+    <EditText
+        android:id="@+id/battle_chat_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textNoSuggestions"/>
+
+    <ScrollView
+        android:id="@+id/battlelog_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/uneditable_frame" >
+
+        <TextView
+            android:id="@+id/battlelog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp" />
+
+    </ScrollView>
+
+</LinearLayout>

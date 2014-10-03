@@ -29,6 +29,8 @@ public class MyApplication extends Application {
     public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
     public final static String EXTRA_DETAILS = "Details";
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
+    public final static String EXTRA_WATCH_BATTLE_LIST_READY = "Watch Battle List Ready";
+    public final static String EXTRA_AVAILABLE_FORMATS = "Available Formats";
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
@@ -44,6 +46,7 @@ public class MyApplication extends Application {
     private WebSocketClient mWebSocketClient;
     private Onboarding mOnboarding;
     private CommunityLoungeData mCommunityLoungeData;
+    private BattleFieldData mBattleFieldData;
     private JSONObject mClientInitiationJson;
     private int mUserCount;
     private int mBattleCount;
@@ -62,6 +65,7 @@ public class MyApplication extends Application {
         mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
         mItemDex = ItemDex.getWithApplicationContext(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
+        mBattleFieldData = BattleFieldData.getWithApplicationContext(appContext);
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
@@ -69,8 +73,9 @@ public class MyApplication extends Application {
 
     @Override
     public void onTerminate() {
-        Onboarding.getWithApplicationContext(this).signingOut();
-        CommunityLoungeData.getWithApplicationContext(this).leaveAllRooms();
+        mOnboarding.signingOut();
+        mBattleFieldData.leaveAllRooms();
+        mCommunityLoungeData.leaveAllRooms();
         closeActiveConnection();
         super.onTerminate();
     }
@@ -159,6 +164,10 @@ public class MyApplication extends Application {
      * 1: chatroom
      */
     private void processMessage(String message) {
+        if (message.length() == 0) {
+            return;
+        }
+
         if (message.charAt(0) != '>') {
             int newLine = message.indexOf('\n');
             while (newLine != -1) {
@@ -252,14 +261,21 @@ public class MyApplication extends Application {
                                 }
                             }
                             break;
+                        case "roomlist":
+                            String roomlist = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            BattleFieldData.getWithApplicationContext(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
+                            break;
                         default:
                             Log.d(MTAG, message);
                     }
                     break;
+                case "formats":
+                    channel = -1;
+                    BattleFieldData.getWithApplicationContext(getApplicationContext()).generateAvailableRoomList(messageDetail);
+                    break;
                 case "popup":
                 case "pm":
                 case "usercount":
-                case "formats":
                 case "updatesearch":
                 case "updatechallenges":
                 case "deinit":
@@ -285,12 +301,15 @@ public class MyApplication extends Application {
             channel = 1;
         }
 
+        if (message.length() == 0 ) {
+            return;
+        }
+
         if (message.charAt(0) == '|') {
             message = message.substring(1);
         }
 
         LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
-
     }
 
     public boolean verifySignedInBeforeSendingMessage() {
@@ -362,7 +381,7 @@ public class MyApplication extends Application {
         mRoomCategoryList = roomCategoryList;
     }
 
-    public String toId(String name) {
+    public static String toId(String name) {
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }
