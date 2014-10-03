@@ -145,11 +145,16 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     public void run() {
                         chatlog.append(message);
                         chatlog.append("\n");
+
+                        final ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollView.fullScroll(View.FOCUS_DOWN);
+                            }
+                        });
                     }
                 });
-
-                ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
-                scrollView.fullScroll(View.FOCUS_DOWN);
             }
         }
     }
