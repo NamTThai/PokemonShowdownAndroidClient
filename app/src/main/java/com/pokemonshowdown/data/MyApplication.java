@@ -36,9 +36,9 @@ public class MyApplication extends Application {
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
-    
+
     private static MyApplication sMyApplication;
-    
+
     private Pokedex mPokedex;
     private MoveDex mMoveDex;
     private AbilityDex mAbilityDex;
@@ -58,7 +58,7 @@ public class MyApplication extends Application {
 
         sMyApplication = this;
         Context appContext = getApplicationContext();
-        
+
         mWebSocketClient = getWebSocketClient();
         mPokedex = Pokedex.getWithApplicationContext(appContext);
         mMoveDex = MoveDex.getWithApplicationContext(appContext);
@@ -69,6 +69,7 @@ public class MyApplication extends Application {
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
+        PokemonTeam.loadPokemonTeams(appContext);
     }
 
     @Override
@@ -77,6 +78,7 @@ public class MyApplication extends Application {
         mBattleFieldData.leaveAllRooms();
         mCommunityLoungeData.leaveAllRooms();
         closeActiveConnection();
+        PokemonTeam.savePokemonTeams(getApplicationContext());
         super.onTerminate();
     }
 

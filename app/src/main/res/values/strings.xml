@@ -116,4 +116,13 @@
     <string name="hint_chatroom">Please login to chat</string>
     <string name="title_activity_team_building">TeamBuildingActivity</string>
 
+
+    <!-- These are for teambuilder -->
+    <string name="create_team">Create</string>
+    <string name="delete_team">Remove</string>
+    <string name="import_team">Import</string>
+    <string name="export_team">Export</string>
+    <string name="open_team_list">Open Team list</string>
+    <string name="moves">Moves</string>
+
 </resources>
