@@ -337,9 +337,10 @@ public class BattleFieldActivity extends FragmentActivity {
             if (roomData != null && roomData.isMessageListener()) {
                 roomData.addServerMessageOnHold(message);
             } else {
-                BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
-                if (fragment != null) {
-                    fragment.processServerMessage(roomId, message);
+                BattleFragment.BattleLogDialog battleLogDialog =
+                        (BattleFragment.BattleLogDialog) getSupportFragmentManager().findFragmentByTag(roomId);
+                if (battleLogDialog != null) {
+                    battleLogDialog.processServerMessage(message);
                 }
             }
         }

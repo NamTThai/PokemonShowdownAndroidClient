@@ -73,8 +73,9 @@ public class MyApplication extends Application {
 
     @Override
     public void onTerminate() {
-        Onboarding.getWithApplicationContext(this).signingOut();
-        CommunityLoungeData.getWithApplicationContext(this).leaveAllRooms();
+        mOnboarding.signingOut();
+        mBattleFieldData.leaveAllRooms();
+        mCommunityLoungeData.leaveAllRooms();
         closeActiveConnection();
         super.onTerminate();
     }

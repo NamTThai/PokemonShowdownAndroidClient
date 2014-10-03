@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.pokemonshowdown.app.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -170,11 +173,14 @@ public class BattleFieldData {
 
     public void joinRoom(String roomId) {
         mRoomList.add(roomId);
+        HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
+        roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
         MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
     }
 
     public void leaveRoom(String roomId) {
         mRoomList.remove(roomId);
+        getRoomDataHashMap().remove(roomId);
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 

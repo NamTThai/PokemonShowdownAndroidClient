@@ -1,34 +1,19 @@
 package com.pokemonshowdown.app;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
-import com.pokemonshowdown.data.Onboarding;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
     public final static String BTAG = BattleFragment.class.getName();
@@ -73,6 +58,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
     public static class BattleLogDialog extends DialogFragment {
         public static final String BTAG = BattleLogDialog.class.getName();
+        private String mRoomId;
 
         public static BattleLogDialog newInstance(String roomId) {
             BattleLogDialog fragment = new BattleLogDialog();
@@ -90,7 +76,36 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
             View view = inflater.inflate(R.layout.dialog_battlelog, container);
 
+            if (getArguments() != null) {
+                mRoomId = getArguments().getString(ROOM_ID);
+            }
+
+            BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
+            if (roomData != null) {
+                ((TextView) view.findViewById(R.id.battlelog)).setText(roomData.getChatBox());
+
+                ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
+                for (String message : pendingMessages) {
+                    processServerMessage(message);
+                }
+
+                roomData.setMessageListener(false);
+            }
+
             return view;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
+            roomData.setMessageListener(true);
+            CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
+            roomData.setChatBox(text);
+            super.onDismiss(dialog);
+        }
+
+        public void processServerMessage(String message) {
+            Log.d(BTAG, message);
         }
     }
 
