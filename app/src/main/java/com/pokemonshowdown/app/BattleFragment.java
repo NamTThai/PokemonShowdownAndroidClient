@@ -1,13 +1,23 @@
 package com.pokemonshowdown.app;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +27,10 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.pokemonshowdown.data.BattleFieldData;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,6 +79,10 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     public static class BattleLogDialog extends DialogFragment {
         public static final String BTAG = BattleLogDialog.class.getName();
         private String mRoomId;
+        private String mPlayer1;
+        private String mPlayer2;
+        private ArrayList<String> mPlayer1Team;
+        private ArrayList<String> mPlayer2Team;
 
         public static BattleLogDialog newInstance(String roomId) {
             BattleLogDialog fragment = new BattleLogDialog();
@@ -95,10 +111,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         public void onResume() {
             super.onResume();
 
-            Log.d(BTAG, "RoomId is " + mRoomId);
-
             BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
             if (roomData != null) {
+                mPlayer1 = roomData.getPlayer1();
+                mPlayer2 = roomData.getPlayer2();
+
                 ((TextView) getView().findViewById(R.id.battlelog)).setText(roomData.getChatBox());
 
                 ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
@@ -113,7 +130,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
         @Override
         public void onPause() {
-            BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
+            BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
             if (roomData != null) {
                 roomData.setMessageListener(true);
                 CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
@@ -123,20 +140,198 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         public void processServerMessage(String message) {
-            if (message.indexOf('|') == -1) {
-                appendServerMessage(message);
-                return;
-            }
-            String command = message.substring(0, message.indexOf('|'));
+            String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
+            BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
             final String messageDetails = message.substring(message.indexOf('|') + 1);
-            int separator;
+            int separator = messageDetails.indexOf('|');
+            int start;
+            String remaining;
+            String toAppend;
+            StringBuilder toAppendBuilder;
+            Spannable toAppendSpannable;
             switch (command) {
+                case "init":
+                case "title":
+                case "join":
+                case "j":
+                case "J":
+                case "leave":
+                case "l":
+                case "L":
+                    break;
+                case "chat":
+                case "c":
+                    String user = messageDetails.substring(0, separator);
+                    String userMessage = messageDetails.substring(separator + 1);
+                    toAppend = user + ": " + userMessage;
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(user)), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "tc":
+                case "c:":
+                    // String timeStamp = messageDetails.substring(0, separator);
+                    String messageDetailsWithStamp = messageDetails.substring(separator + 1);
+                    separator = messageDetailsWithStamp.indexOf('|');
+                    String userStamp = messageDetailsWithStamp.substring(0, separator);
+                    String userMessageStamp = messageDetailsWithStamp.substring(separator + 1);
+                    toAppend = userStamp + ": " + userMessageStamp;
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(userStamp)), 0, userStamp.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "raw":
+                    appendServerMessage(new SpannableString(Html.fromHtml(messageDetails).toString()));
+                    break;
+                case "message":
+                    appendServerMessage(new SpannableString(messageDetails));
+                case "gametype":
+                case "gen":
+                    break;
+                case "player":
+                    String playerType;
+                    String playerName;
+                    if (separator == -1) {
+                        playerType = messageDetails;
+                        playerName = "";
+                    } else {
+                        playerType = messageDetails.substring(0, separator);
+                        String playerDetails = messageDetails.substring(separator + 1);
+                        separator = playerDetails.indexOf('|');
+                        playerName = playerDetails.substring(0, separator);
+                    }
+                    if (playerType.equals("p1")) {
+                        roomData.setPlayer1(playerName);
+                        mPlayer1 = playerName;
+                    } else {
+                        roomData.setPlayer2(playerName);
+                        mPlayer2 = playerName;
+                    }
+                    break;
+                case "tier":
+                    toAppend = "Format:" + "\n" + messageDetails;
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), toAppend.indexOf('\n') + 1, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "rated":
+                    toAppend = command.toUpperCase();
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "rule":
+                    toAppendSpannable = new SpannableString(messageDetails);
+                    toAppendSpannable.setSpan(new StyleSpan(Typeface.ITALIC), 0, messageDetails.indexOf(':') + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "":
+                    toAppendSpannable = new SpannableString("");
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "clearpoke":
+                    mPlayer1Team = new ArrayList<>();
+                    mPlayer2Team = new ArrayList<>();
+                    break;
+                case "poke":
+                    playerType = messageDetails.substring(0, separator);
+                    String pokeName = messageDetails.substring(separator + 1);
+                    if (playerType.equals("p1")) {
+                        mPlayer1Team.add(pokeName);
+                    } else {
+                        mPlayer2Team.add(pokeName);
+                    }
+                    break;
+                case "teampreview":
+                    toAppendBuilder = new StringBuilder();
+                    toAppendBuilder.append(mPlayer1).append("'s Team: ");
+                    for (int i = 0; i < mPlayer1Team.size() - 1; i++) {
+                        toAppendBuilder.append(mPlayer1Team.get(i)).append("/");
+                    }
+                    toAppendBuilder.append(mPlayer1Team.get(mPlayer1Team.size() - 1));
+                    toAppendBuilder.append("\n").append(mPlayer2).append("'s Team: ");
+                    for (int i = 0; i < mPlayer2Team.size() - 1; i++) {
+                        toAppendBuilder.append(mPlayer2Team.get(i)).append("/");
+                    }
+                    toAppendBuilder.append(mPlayer2Team.get(mPlayer2Team.size() - 1));
+                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "request":
+                    appendServerMessage(new SpannableString(messageDetails));
+                    break;
+                case "inactive":
+                case "inactiveoff":
+                    toAppendSpannable = new SpannableString(messageDetails);
+                    toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red), 0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "start":
+                    toAppend = roomData.getPlayer1() + " vs. " + roomData.getPlayer2();
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
+                case "move":
+                    String attacker = messageDetails.substring(4, separator);
+                    remaining = messageDetails.substring(separator + 1);
+                    toAppendBuilder = new StringBuilder();
+                    if (remaining.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing's ");
+                    }
+                    toAppendBuilder.append(attacker).append(" used ");
+                    String move = remaining.substring(0, remaining.indexOf('|'));
+                    toAppendBuilder.append(move).append("!");
+                    toAppend = toAppendBuilder.toString();
+                    start = toAppend.indexOf(move);
+                    toAppendSpannable = new SpannableString(toAppend);
+                    toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    if (remaining.contains("[miss]")) {
+                        toAppendBuilder = new StringBuilder();
+                        toAppendBuilder.append(attacker).append(" missed the target!");
+                        toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                        toAppendSpannable.setSpan(new RelativeSizeSpan(0.75f), 0, toAppendBuilder.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        appendServerMessage(toAppendSpannable);
+                    }
+                    break;
+                case "switch":
+                case "drag":
+                    toAppendBuilder = new StringBuilder();
+                    attacker = messageDetails.substring(4, separator);
+                    if (messageDetails.startsWith("p1")) {
+                        toAppendBuilder.append("Go! ").append(attacker).append('!');
+                    } else {
+                        toAppendBuilder.append(mPlayer2).append(" sent out ").append(attacker).append("!");
+                    }
+                    appendServerMessage(new SpannableStringBuilder(toAppendBuilder));
+                    break;
+                case "detailschange":
+                    break;
+                case "faint":
+                    attacker = messageDetails.substring(4);
+                    toAppendBuilder = new StringBuilder();
+                    if (messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing ");
+                    }
+                    toAppendBuilder.append(attacker).append(" fainted!");
+                    appendServerMessage(new SpannableStringBuilder(toAppendBuilder));
+                    break;
+                case "turn":
+                    toAppend = "TURN " + messageDetails;
+                    toAppendSpannable = new SpannableString(toAppend.toUpperCase());
+                    toAppendSpannable.setSpan(new UnderlineSpan(), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    toAppendSpannable.setSpan(new RelativeSizeSpan(1.25f), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    appendServerMessage(toAppendSpannable);
+                    break;
                 default:
-                    appendServerMessage(messageDetails);
+                    appendServerMessage(new SpannableString(message));
             }
         }
 
-        private void appendServerMessage(final String message) {
+        private void appendServerMessage(final Spannable message) {
             if (getView() != null) {
                 final TextView chatlog = (TextView) getView().findViewById(R.id.battlelog);
 

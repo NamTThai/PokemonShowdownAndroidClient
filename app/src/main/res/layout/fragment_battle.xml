@@ -6,22 +6,25 @@
         android:id="@+id/battle_background"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
         android:scaleType="fitCenter"
         android:src="@drawable/bg_beach"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/background"/>
 
     <TextView
         android:id="@+id/battlelog"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/log"
         android:clickable="true"
         android:background="@drawable/onclick_green"
-        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/battle_background"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="8dp"/>
