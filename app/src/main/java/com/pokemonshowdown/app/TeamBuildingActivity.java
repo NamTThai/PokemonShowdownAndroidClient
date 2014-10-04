@@ -106,6 +106,27 @@ public class TeamBuildingActivity extends FragmentActivity {
                 popup.getMenuInflater().inflate(R.menu.team_building, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_export_team:
+                                //export to clipboard TODO export to other places
+                                int position = pkmn_spinner.getSelectedItemPosition();
+                                if (position != AdapterView.INVALID_POSITION) {
+                                    PokemonTeam pt = pokemonTeamList.get(position);
+                                    ClipboardManager clipboard = (ClipboardManager)
+                                            getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.export());
+                                    clipboard.setPrimaryClip(clip);
+                                }
+                                break;
+
+                            case R.id.action_import_team:
+                                // TODO
+                                break;
+
+                            case R.id.action_rename_team:
+                                // TODO (create renaming dialog)
+                                break;
+                        }
                         return true;
                     }
                 });
