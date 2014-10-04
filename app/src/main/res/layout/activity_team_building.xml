@@ -33,10 +33,10 @@
             android:layout_weight="1"/>
 
         <ImageButton
-            android:id="@+id/pokemonteamlist_importexport"
+            android:id="@+id/pokemonteamlist_settings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_import_export"
+            android:src="@drawable/ic_action_overflow"
             android:layout_weight="1"/>
 
 
