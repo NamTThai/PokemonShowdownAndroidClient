@@ -364,12 +364,13 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             if (messageDetails.contains("[silent]")) {
                 return;
             }
+
             int separator;
             int start;
             String remaining;
-            String toAppend = "";
+            String toAppend;
             StringBuilder toAppendBuilder = new StringBuilder();
-            Spannable toAppendSpannable = new SpannableString(toAppend);
+            Spannable toAppendSpannable;
 
             String fromEffect;
             String ofSource;
