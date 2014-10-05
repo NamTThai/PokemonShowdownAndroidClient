@@ -26,6 +26,9 @@
     <string name="background">Background</string>
     <string name="battlelog">Battle Log</string>
     <string name="log">Log</string>
+    <string name="pokemon_icon">Pokemon Icon</string>
+    <string name="turn">Turn 0</string>
+    <string name="weather">Normal Weather</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
