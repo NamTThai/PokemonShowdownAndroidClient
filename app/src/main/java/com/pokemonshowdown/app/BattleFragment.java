@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -71,6 +72,9 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
         }
+
+        FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
+        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_standard, frameLayout);
 
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +143,13 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 mPlayer2 = roomData.getPlayer2();
 
                 ((TextView) getView().findViewById(R.id.battlelog)).setText(roomData.getChatBox());
+                final ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
 
                 ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
                 for (String message : pendingMessages) {
