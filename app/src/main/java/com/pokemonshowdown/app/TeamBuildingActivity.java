@@ -1,10 +1,13 @@
 package com.pokemonshowdown.app;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,10 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.PokemonTeam;
 
@@ -95,15 +98,42 @@ public class TeamBuildingActivity extends FragmentActivity {
             }
         });
 
-        ImageButton button_importexport = (ImageButton) findViewById(R.id.pokemonteamlist_importexport);
-        button_importexport.setOnClickListener(new View.OnClickListener() {
+        final ImageButton button_settings = (ImageButton) findViewById(R.id.pokemonteamlist_settings);
+        button_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                PopupMenu popup = new PopupMenu(TeamBuildingActivity.this, button_settings);
+                popup.getMenuInflater().inflate(R.menu.team_building, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_export_team:
+                                //export to clipboard TODO export to other places
+                                int position = pkmn_spinner.getSelectedItemPosition();
+                                if (position != AdapterView.INVALID_POSITION) {
+                                    PokemonTeam pt = pokemonTeamList.get(position);
+                                    ClipboardManager clipboard = (ClipboardManager)
+                                            getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.export());
+                                    clipboard.setPrimaryClip(clip);
+                                }
+                                break;
+
+                            case R.id.action_import_team:
+                                // TODO
+                                break;
+
+                            case R.id.action_rename_team:
+                                // TODO (create renaming dialog)
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+                popup.show();
             }
         });
-
-
     }
 
     /**

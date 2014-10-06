@@ -1,45 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.pokemonshowdown.app.TeamBuildingActivity">
-    <item
-        android:id="@+id/action_create_team"
-        android:icon="@drawable/ic_action_new"
-
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/create_team" />
-
-    <item
-        android:id="@+id/action_remove_team"
-        android:icon="@drawable/ic_action_discard"
-
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/delete_team" />
 
 
     <item
-        android:id="@+id/action_open_team_drawer"
-        android:icon="@drawable/ic_action_view_as_list"
-
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="@string/open_team_list" />
+        android:id="@+id/action_rename_team"
+        android:title="@string/rename_team" />
 
     <item
         android:id="@+id/action_import_team"
-        android:icon="@drawable/ic_action_import_export"
-
-        android:orderInCategory="100"
-        android:showAsAction="withText"
         android:title="@string/import_team" />
 
     <item
         android:id="@+id/action_export_team"
-        android:icon="@drawable/ic_action_import_export"
-
-        android:orderInCategory="100"
-        android:showAsAction="withText"
         android:title="@string/export_team" />
 
 
