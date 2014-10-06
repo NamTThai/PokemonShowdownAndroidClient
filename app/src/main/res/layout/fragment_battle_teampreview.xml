@@ -4,27 +4,104 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/turn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/turn"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:background="@drawable/editable_frame_blackwhite"
-        android:layout_margin="8dp"
-        android:padding="4dp"
-        android:layout_toRightOf="@id/side"/>
+    <ImageView
+        android:id="@+id/p1a_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"/>
 
-    <TextView
-        android:id="@+id/weather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textStyle="italic"
-        android:text="@string/weather"
-        android:layout_marginLeft="12dp"
-        android:layout_toRightOf="@id/side"
-        android:layout_below="@id/turn"/>
+    <ImageView
+        android:id="@+id/p1b_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="34dp"
+        android:layout_marginLeft="24dp"/>
+
+    <ImageView
+        android:id="@+id/p1c_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:layout_marginLeft="48dp"/>
+
+    <ImageView
+        android:id="@+id/p1d_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginLeft="72dp"/>
+
+    <ImageView
+        android:id="@+id/p1e_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="96dp"/>
+
+    <ImageView
+        android:id="@+id/p1f_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="120dp"/>
+
+    <ImageView
+        android:id="@+id/p2f_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="120dp"/>
+
+    <ImageView
+        android:id="@+id/p2e_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="96dp"/>
+
+    <ImageView
+        android:id="@+id/p2d_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="72dp"/>
+
+    <ImageView
+        android:id="@+id/p2c_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="28dp"
+        android:layout_marginRight="48dp"/>
+
+    <ImageView
+        android:id="@+id/p2b_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="34dp"
+        android:layout_marginRight="24dp"/>
+
+    <ImageView
+        android:id="@+id/p2a_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"/>
 
 </RelativeLayout>

@@ -62,7 +62,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
-        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_animation, frameLayout);
+        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_teampreview, frameLayout);
 
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
