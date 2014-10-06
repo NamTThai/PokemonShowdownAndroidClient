@@ -13,14 +13,19 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.data.Pokemon;
 
 import java.util.ArrayList;
 
@@ -49,6 +54,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_battle, container, false);
     }
 
@@ -59,9 +65,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
         }
-
-        FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
-        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_teampreview, frameLayout);
 
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +94,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     public void processServerMessage(String message) {
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
         if (command.startsWith("-")) {
@@ -114,40 +117,23 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "leave":
             case "l":
             case "L":
-                break;
             case "chat":
             case "c":
-                String user = messageDetails.substring(0, separator);
-                String userMessage = messageDetails.substring(separator + 1);
-                toAppend = user + ": " + userMessage;
-                toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(user)), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
-                break;
             case "tc":
             case "c:":
-                // String timeStamp = messageDetails.substring(0, separator);
-                String messageDetailsWithStamp = messageDetails.substring(separator + 1);
-                separator = messageDetailsWithStamp.indexOf('|');
-                String userStamp = messageDetailsWithStamp.substring(0, separator);
-                String userMessageStamp = messageDetailsWithStamp.substring(separator + 1);
-                toAppend = userStamp + ": " + userMessageStamp;
-                toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(userStamp)), 0, userStamp.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
                 break;
             case "raw":
-                appendServerMessage(new SpannableString(Html.fromHtml(messageDetails).toString()));
+                makeToast(Html.fromHtml(messageDetails).toString());
                 break;
             case "message":
-                appendServerMessage(new SpannableString(messageDetails));
+                makeToast(messageDetails);
                 break;
             case "gametype":
             case "gen":
                 break;
             case "player":
-                String playerType;
-                String playerName;
+                final String playerType;
+                final String playerName;
                 if (separator == -1) {
                     playerType = messageDetails;
                     playerName = "";
@@ -158,46 +144,67 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     playerName = playerDetails.substring(0, separator);
                 }
                 if (playerType.equals("p1")) {
-                    roomData.setPlayer1(playerName);
+                    animationData.setPlayer1(playerName);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((TextView) getView().findViewById(R.id.username)).setText(playerName);
+                        }
+                    });
                     mPlayer1 = playerName;
                 } else {
-                    roomData.setPlayer2(playerName);
+                    animationData.setPlayer2(playerName);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((TextView) getView().findViewById(R.id.username_o)).setText(playerName);
+                        }
+                    });
                     mPlayer2 = playerName;
                 }
                 break;
             case "tier":
-                toAppend = "Format:" + "\n" + messageDetails;
-                toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), toAppend.indexOf('\n') + 1, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
                 break;
             case "rated":
-                toAppend = command.toUpperCase();
-                toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
                 break;
             case "rule":
-                toAppendSpannable = new SpannableString(messageDetails);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.ITALIC), 0, messageDetails.indexOf(':') + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
                 break;
             case "":
-                toAppendSpannable = new SpannableString("");
-                appendServerMessage(toAppendSpannable);
                 break;
             case "clearpoke":
                 mPlayer1Team = new ArrayList<>();
                 mPlayer2Team = new ArrayList<>();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+                        frameLayout.removeAllViews();
+                        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
+                    }
+                });
                 break;
             case "poke":
                 playerType = messageDetails.substring(0, separator);
-                String pokeName = messageDetails.substring(separator + 1);
+                int comma = messageDetails.indexOf(',');
+                final String pokeName = (comma == -1) ? messageDetails.substring(separator + 1) :
+                        messageDetails.substring(separator + 1, comma);
+                final int iconId;
                 if (playerType.equals("p1")) {
+                    iconId = mPlayer1Team.size();
                     mPlayer1Team.add(pokeName);
                 } else {
+                    iconId = mPlayer2Team.size();
                     mPlayer2Team.add(pokeName);
                 }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId(playerType, iconId));
+                        sprites.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(pokeName), false));
+                        ImageView icon = (ImageView) getView().findViewById(getIconId(playerType, iconId));
+                        icon.setImageResource(Pokemon.getPokemonIconSmall(getActivity(), MyApplication.toId(pokeName), false));
+                    }
+                });
                 break;
             case "teampreview":
                 toAppendBuilder = new StringBuilder();
@@ -224,7 +231,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 appendServerMessage(toAppendSpannable);
                 break;
             case "start":
-                toAppend = roomData.getPlayer1() + " vs. " + roomData.getPlayer2();
+                toAppend = animationData.getPlayer1() + " vs. " + animationData.getPlayer2();
                 toAppendSpannable = new SpannableString(toAppend);
                 toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 appendServerMessage(toAppendSpannable);
@@ -555,6 +562,10 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
     }
 
+    private void makeToast(final String message) {
+        makeToast(message, Toast.LENGTH_SHORT);
+    }
+
     private void makeToast(final String message, final int duration) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -564,6 +575,93 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 toast.show();
             }
         });
+    }
+
+    /**
+     * @param player can be p1 or p2
+     */
+    private int getTeamPreviewSpriteId(String player, int id) {
+        String p = player.substring(0, 2);
+        switch (p) {
+            case "p1":
+                switch (id) {
+                    case 0:
+                        return R.id.p1a_prev;
+                    case 1:
+                        return R.id.p1b_prev;
+                    case 2:
+                        return R.id.p1c_prev;
+                    case 3:
+                        return R.id.p1d_prev;
+                    case 4:
+                        return R.id.p1e_prev;
+                    case 5:
+                        return R.id.p1f_prev;
+                    default:
+                        return 0;
+                }
+            case "p2":
+                switch (id) {
+                    case 0:
+                        return R.id.p2a_prev;
+                    case 1:
+                        return R.id.p2b_prev;
+                    case 2:
+                        return R.id.p2c_prev;
+                    case 3:
+                        return R.id.p2d_prev;
+                    case 4:
+                        return R.id.p2e_prev;
+                    case 5:
+                        return R.id.p2f_prev;
+                    default:
+                        return 0;
+                }
+            default:
+                return 0;
+        }
+    }
+
+    private int getIconId(String player, int id) {
+        String p = player.substring(0, 2);
+        switch (p) {
+            case "p1":
+                switch (id) {
+                    case 0:
+                        return R.id.icon1;
+                    case 1:
+                        return R.id.icon2;
+                    case 2:
+                        return R.id.icon3;
+                    case 3:
+                        return R.id.icon4;
+                    case 4:
+                        return R.id.icon5;
+                    case 5:
+                        return R.id.icon6;
+                    default:
+                        return 0;
+                }
+            case "p2":
+                switch (id) {
+                    case 0:
+                        return R.id.icon1_o;
+                    case 1:
+                        return R.id.icon2_o;
+                    case 2:
+                        return R.id.icon3_o;
+                    case 3:
+                        return R.id.icon4_o;
+                    case 4:
+                        return R.id.icon5_o;
+                    case 5:
+                        return R.id.icon6_o;
+                    default:
+                        return 0;
+                }
+            default:
+                return 0;
+        }
     }
 
 }
