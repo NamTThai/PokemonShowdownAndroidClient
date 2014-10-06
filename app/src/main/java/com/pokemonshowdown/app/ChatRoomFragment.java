@@ -292,7 +292,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private int getColorStrong(String name) {
+    public static int getColorStrong(String name) {
         if (name.length() < 2) {
             return Color.parseColor(COLOR_STRONG[0]);
         }

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    
+    <RelativeLayout
+        android:id="@+id/p1a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginBottom="36dp">
+
+        <TextView
+            android:id="@+id/p1a_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p1a_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p1a_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p1a_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p1a_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p1a_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p1a_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p1a_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p1a_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1a_hp_layout"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/p1b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/p1b_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p1b_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p1b_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p1b_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p1b_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p1b_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p1b_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p1b_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p1b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1b_hp_layout"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/p1c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="76dp"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/p1c_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p1c_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p1c_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p1c_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p1c_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p1c_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p1c_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p1c_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p1c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1c_hp_layout"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/p2c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="76dp"
+        android:layout_marginTop="4dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/p2c_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p2c_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p2c_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p2c_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p2c_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p2c_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p2c_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p2c_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p2c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2c_hp_layout"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/p2b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/p2b_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p2b_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p2b_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p2b_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p2b_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p2b_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p2b_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p2b_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p2b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2b_hp_layout"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/p2a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="36dp">
+
+        <TextView
+            android:id="@+id/p2a_pkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ludicolo"
+            android:layout_centerHorizontal="true"
+            />
+
+        <ImageView
+            android:id="@+id/p2a_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/p2a_pkm"
+            android:contentDescription="@string/gender"
+            android:paddingLeft="2dp"
+            android:layout_toRightOf="@id/p2a_pkm"
+            android:src="@drawable/ic_gender_male"/>
+
+        <LinearLayout
+            android:id="@+id/p2a_hp_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/p2a_pkm"
+            android:background="@drawable/editable_frame_grey">
+
+            <TextView
+                android:id="@+id/p2a_hp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="@color/android:white"/>
+
+            <ProgressBar
+                android:id="@+id/p2a_bar_hp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:indeterminate="false"
+                android:progress="60"
+                android:max="100"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/p2a_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2a_hp_layout"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/p1a_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"/>
+
+    <ImageView
+        android:id="@+id/p1b_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="34dp"
+        android:layout_marginLeft="24dp"/>
+
+    <ImageView
+        android:id="@+id/p1c_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:layout_marginLeft="48dp"/>
+
+    <ImageView
+        android:id="@+id/p1d_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginLeft="72dp"/>
+
+    <ImageView
+        android:id="@+id/p1e_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="96dp"/>
+
+    <ImageView
+        android:id="@+id/p1f_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="120dp"/>
+
+    <ImageView
+        android:id="@+id/p2f_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="120dp"/>
+
+    <ImageView
+        android:id="@+id/p2e_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="96dp"/>
+
+    <ImageView
+        android:id="@+id/p2d_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="72dp"/>
+
+    <ImageView
+        android:id="@+id/p2c_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="28dp"
+        android:layout_marginRight="48dp"/>
+
+    <ImageView
+        android:id="@+id/p2b_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="34dp"
+        android:layout_marginRight="24dp"/>
+
+    <ImageView
+        android:id="@+id/p2a_prev"
+        style="@style/fragment_battle_teampreview_pokemon"
+        android:contentDescription="@string/pokemon_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"/>
+
+</RelativeLayout>

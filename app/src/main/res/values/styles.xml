@@ -17,8 +17,11 @@
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
-    <style name="pokemon_stats">
-
+    <style name="text_shadow_white">
+        <item name="android:shadowColor">@color/android:white</item>
+        <item name="android:shadowRadius">4</item>
+        <item name="android:shadowDx">4.0</item>
+        <item name="android:shadowDy">4.0</item>
     </style>
 
 </resources>

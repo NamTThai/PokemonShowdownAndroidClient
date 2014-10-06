@@ -145,7 +145,8 @@ public class BattleFieldFragment extends Fragment {
         int index = mRoomList.indexOf(roomId);
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
         if (fragment != null) {
-            //fragment.processServerMessage(message);
+            Log.d(BTAG, message);
+            fragment.processServerMessage(message);
         }
     }
 

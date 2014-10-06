@@ -337,10 +337,20 @@ public class BattleFieldActivity extends FragmentActivity {
             if (roomData != null && roomData.isMessageListener()) {
                 roomData.addServerMessageOnHold(message);
             } else {
-                BattleFragment.BattleLogDialog battleLogDialog =
-                        (BattleFragment.BattleLogDialog) getSupportFragmentManager().findFragmentByTag(roomId);
+                BattleLogDialog battleLogDialog =
+                        (BattleLogDialog) getSupportFragmentManager().findFragmentByTag(roomId);
                 if (battleLogDialog != null) {
                     battleLogDialog.processServerMessage(message);
+                }
+            }
+
+            BattleFieldData.AnimationData animationData = BattleFieldData.get(this).getAnimationInstance(roomId);
+            if (animationData != null && animationData.isMessageListener()) {
+                animationData.addServerMessageOnHold(message);
+            } else {
+                BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (fragment != null) {
+                    fragment.processServerMessage(roomId, message);
                 }
             }
         }
