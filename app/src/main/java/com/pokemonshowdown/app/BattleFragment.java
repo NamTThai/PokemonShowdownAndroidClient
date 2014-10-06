@@ -63,7 +63,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
-        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_standard, frameLayout);
+        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_teampreview, frameLayout);
 
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +72,22 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId).setMessageListener(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId).setMessageListener(true);
+    }
+
+    public void processServerMessage(String message) {
+        Log.d(BTAG, message);
     }
 
     public static class BattleLogDialog extends DialogFragment {

@@ -211,6 +211,30 @@
         </FrameLayout>
 
     <TextView
+        android:id="@+id/turn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:background="@drawable/editable_frame_blackwhite"
+        android:layout_margin="8dp"
+        android:padding="4dp"
+        android:layout_alignLeft="@id/side"/>
+
+    <TextView
+        android:id="@+id/weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:visibility="gone"
+        style="@style/text_shadow_white"
+        android:layout_marginLeft="12dp"
+        android:layout_alignLeft="@id/side"
+        android:layout_below="@id/turn"/>
+
+    <TextView
         android:id="@+id/battlelog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

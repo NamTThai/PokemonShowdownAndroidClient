@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.pokemonshowdown.app.R;
@@ -22,6 +23,7 @@ public class BattleFieldData {
     private JSONObject mAvailableBattle;
     private ArrayList<String> mRoomList;
     private HashMap<String, RoomData> mRoomDataHashMap;
+    private HashMap<String, AnimationData> mAnimationDataHashMap;
 
     private static BattleFieldData sBattleFieldData;
     private Context mAppContext;
@@ -32,6 +34,7 @@ public class BattleFieldData {
         mRoomList = new ArrayList<>();
         mRoomList.add("global");
         mRoomDataHashMap = new HashMap<>();
+        mAnimationDataHashMap = new HashMap<>();
     }
 
     public static BattleFieldData get(Context c) {
@@ -171,16 +174,26 @@ public class BattleFieldData {
         return mRoomDataHashMap.get(roomId);
     }
 
+    public HashMap<String, AnimationData> getAnimationDataHashMap() {
+        return mAnimationDataHashMap;
+    }
+
+    public AnimationData getAnimationInstance(String roomId) {
+        return mAnimationDataHashMap.get(roomId);
+    }
+
     public void joinRoom(String roomId) {
         mRoomList.add(roomId);
         HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
         roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
+        getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));
         MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
     }
 
     public void leaveRoom(String roomId) {
         mRoomList.remove(roomId);
         getRoomDataHashMap().remove(roomId);
+        getAnimationDataHashMap().remove(roomId);
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 
@@ -256,6 +269,46 @@ public class BattleFieldData {
 
         public void setPlayer2(String player2) {
             mPlayer2 = player2;
+        }
+    }
+
+    public static class AnimationData {
+        private String mRoomId;
+        private boolean mMessageListener;
+        private ArrayList<String> mServerMessageOnHold;
+
+        public AnimationData(String roomId, boolean messageListener) {
+            mRoomId = roomId;
+            mServerMessageOnHold = new ArrayList<>();
+            mMessageListener = messageListener;
+        }
+
+        public String getRoomId() {
+            return mRoomId;
+        }
+
+        public void setRoomId(String roomId) {
+            mRoomId = roomId;
+        }
+
+        public ArrayList<String> getServerMessageOnHold() {
+            return mServerMessageOnHold;
+        }
+
+        public void setServerMessageOnHold(ArrayList<String> serverMessageOnHold) {
+            mServerMessageOnHold = serverMessageOnHold;
+        }
+
+        public void addServerMessageOnHold(String serverMessageOnHold) {
+            mServerMessageOnHold.add(serverMessageOnHold);
+        }
+
+        public boolean isMessageListener() {
+            return mMessageListener;
+        }
+
+        public void setMessageListener(boolean messageListener) {
+            mMessageListener = messageListener;
         }
     }
 
