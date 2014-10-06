@@ -13,6 +13,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,22 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId).setMessageListener(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId).setMessageListener(true);
+    }
+
+    public void processServerMessage(String message) {
+        Log.d(BTAG, message);
     }
 
     public static class BattleLogDialog extends DialogFragment {
