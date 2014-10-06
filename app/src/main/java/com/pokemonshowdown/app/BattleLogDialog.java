@@ -27,14 +27,15 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BattleLogDialog extends DialogFragment {
     public static final String BTAG = BattleLogDialog.class.getName();
     private String mRoomId;
     private String mPlayer1;
     private String mPlayer2;
-    private ArrayList<String> mPlayer1Team;
-    private ArrayList<String> mPlayer2Team;
+    private HashMap<String, Integer> mPlayer1Team = new HashMap<>();
+    private HashMap<String, Integer> mPlayer2Team = new HashMap<>();
 
     public static BattleLogDialog newInstance(String roomId) {
         BattleLogDialog fragment = new BattleLogDialog();
@@ -213,30 +214,33 @@ public class BattleLogDialog extends DialogFragment {
                 appendServerMessage(toAppendSpannable);
                 break;
             case "clearpoke":
-                mPlayer1Team = new ArrayList<>();
-                mPlayer2Team = new ArrayList<>();
+                mPlayer1Team = new HashMap<>();
+                mPlayer2Team = new HashMap<>();
                 break;
             case "poke":
                 playerType = messageDetails.substring(0, separator);
                 String pokeName = messageDetails.substring(separator + 1);
                 if (playerType.equals("p1")) {
-                    mPlayer1Team.add(pokeName);
+                    mPlayer1Team.put(pokeName, 100);
                 } else {
-                    mPlayer2Team.add(pokeName);
+                    mPlayer2Team.put(pokeName, 100);
                 }
                 break;
             case "teampreview":
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(mPlayer1).append("'s Team: ");
-                for (int i = 0; i < mPlayer1Team.size() - 1; i++) {
-                    toAppendBuilder.append(mPlayer1Team.get(i)).append("/");
+                String[] p1Team = (String[]) mPlayer1Team.keySet().toArray();
+                for (int i = 0; i < p1Team.length - 1; i++) {
+                    toAppendBuilder.append(p1Team[i]).append("/");
                 }
-                toAppendBuilder.append(mPlayer1Team.get(mPlayer1Team.size() - 1));
+                toAppendBuilder.append(p1Team[p1Team.length - 1]);
+
                 toAppendBuilder.append("\n").append(mPlayer2).append("'s Team: ");
-                for (int i = 0; i < mPlayer2Team.size() - 1; i++) {
-                    toAppendBuilder.append(mPlayer2Team.get(i)).append("/");
+                String[] p2Team = (String[]) mPlayer1Team.keySet().toArray();
+                for (int i = 0; i < p2Team.length - 1; i++) {
+                    toAppendBuilder.append(p2Team[i]).append("/");
                 }
-                toAppendBuilder.append(mPlayer2Team.get(mPlayer2Team.size() - 1));
+                toAppendBuilder.append(p2Team[p2Team.length - 1]);
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 appendServerMessage(toAppendSpannable);
                 break;
@@ -273,6 +277,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "switch":
             case "drag":
+                //TODO need to handle roar & cie
                 toAppendBuilder = new StringBuilder();
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
@@ -325,6 +330,9 @@ public class BattleLogDialog extends DialogFragment {
 
         int separator;
         int start;
+        Integer oldHP;
+        int lostHP;
+        int intAmount;
         String remaining;
         String toAppend;
         StringBuilder toAppendBuilder = new StringBuilder();
@@ -368,17 +376,38 @@ public class BattleLogDialog extends DialogFragment {
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
+                    oldHP = mPlayer2Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer2Team.put(attacker, 100);
+                        oldHP = mPlayer2Team.get(attacker);
+                    }
+                } else {
+                    oldHP = mPlayer1Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer1Team.put(attacker, 100);
+                        oldHP = mPlayer1Team.get(attacker);
+                    }
+
                 }
-                toAppendBuilder.append(attacker);
+                toAppendBuilder.append(attacker + " lost ");
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has lost ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
+                separator = remaining.indexOf("/");
+                if (separator == -1) {
+                    //fainted
+                    intAmount = 0;
+                } else {
                     String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
+                    intAmount = Integer.parseInt(hp);
+                }
+                lostHP = oldHP - intAmount;
+                toAppendBuilder.append(lostHP + "% of its health!");
+                if (messageDetails.startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-heal":
                 attacker = messageDetails.substring(5, separator);
@@ -450,11 +479,35 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has boosted ");
+                toAppendBuilder.append("'s ");
                 separator = remaining.indexOf('|');
                 String stat = remaining.substring(0, separator);
+                switch (stat) {
+                    case "atk":
+                        toAppendBuilder.append("Attack ");
+                        break;
+                    case "def":
+                        toAppendBuilder.append("Defense ");
+                        break;
+                    case "spa":
+                        toAppendBuilder.append("Special Attack ");
+                        break;
+                    case "spd":
+                        toAppendBuilder.append("Special Defense ");
+                        break;
+                    case "spe":
+                        toAppendBuilder.append("Speed ");
+                        break;
+                }
                 String amount = remaining.substring(separator + 1);
-                toAppendBuilder.append(stat).append(" by ").append(amount);
+                if (amount.indexOf("|") != -1) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                intAmount = Integer.parseInt(amount);
+                if (intAmount == 2) {
+                    toAppendBuilder.append("sharply ");
+                }
+                toAppendBuilder.append("rose!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-unboost":
@@ -464,11 +517,36 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has reduced ");
+                toAppendBuilder.append("'s ");
                 separator = remaining.indexOf('|');
                 stat = remaining.substring(0, separator);
+                switch (stat) {
+                    case "atk":
+                        toAppendBuilder.append("Attack ");
+                        break;
+                    case "def":
+                        toAppendBuilder.append("Defense ");
+                        break;
+                    case "spa":
+                        toAppendBuilder.append("Special Attack ");
+                        break;
+                    case "spd":
+                        toAppendBuilder.append("Special Defense ");
+                        break;
+                    case "spe":
+                        toAppendBuilder.append("Speed ");
+                        break;
+                }
                 amount = remaining.substring(separator + 1);
-                toAppendBuilder.append(stat).append(" by ").append(amount);
+                if (amount.indexOf("|") != -1) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                toAppendBuilder.append("fell");
+                intAmount = Integer.parseInt(amount);
+                if (intAmount == 2) {
+                    toAppendBuilder.append(" hashly");
+                }
+                toAppendBuilder.append("!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-weather":
@@ -482,7 +560,7 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableString("It's super effective!");
                 break;
             case "-resisted":
-                toAppendSpannable = new SpannableString("It's not very effective");
+                toAppendSpannable = new SpannableString("It's not very effective...");
                 break;
             case "-immune":
                 attacker = messageDetails.substring(5);
@@ -549,14 +627,26 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-sideend":
                 // todo
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
             case "-hitcount":
-                //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                try {
+                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf(separator) + 1);
+                    int hitCount = Integer.parseInt(hitCountS);
+                    toAppendBuilder.append("Hit " + hitCount + "time");
+                    if (hitCount > 1) {
+                        toAppendBuilder.append("s");
+                    }
+                    toAppendBuilder.append("!");
+                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                } catch (NumberFormatException e) {
+                    // todo handle
+                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                }
                 break;
 
             case "-singleturn":
@@ -566,6 +656,16 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-fieldstart":
                 //todo (trick room, maybe more)
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-fieldend":
+                //todo (trick room, maybe more)
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-start":
+                //todo substitute
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
