@@ -1,9 +1,6 @@
 package com.pokemonshowdown.app;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.effect.Effect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -12,14 +9,10 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,18 +21,13 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
     public final static String BTAG = BattleFragment.class.getName();
@@ -74,7 +62,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
-        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_standard, frameLayout);
+        getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_battle_animation, frameLayout);
 
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
