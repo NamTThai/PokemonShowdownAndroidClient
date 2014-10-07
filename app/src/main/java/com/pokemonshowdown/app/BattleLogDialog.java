@@ -413,11 +413,37 @@ public class BattleLogDialog extends DialogFragment {
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
+                    oldHP = mPlayer2Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer2Team.put(attacker, 100);
+                        oldHP = mPlayer2Team.get(attacker);
+                    }
+                } else {
+                    oldHP = mPlayer1Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer1Team.put(attacker, 100);
+                        oldHP = mPlayer1Team.get(attacker);
+                    }
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" healed ").append(remaining);
+                separator = remaining.indexOf("/");
+                if (separator == -1) {
+                    intAmount = 0; // shouldnt happen sicne we're healing
+                } else {
+                    String hp = remaining.substring(0, separator);
+                    intAmount = Integer.parseInt(hp);
+                }
+                lostHP = intAmount - oldHP;
+                toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
+                if (messageDetails.startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+
                     /*
                     separator = remaining.indexOf(" ");
                     String hp = remaining.substring(0, separator);
@@ -498,13 +524,16 @@ public class BattleLogDialog extends DialogFragment {
                     case "spe":
                         toAppendBuilder.append("Speed ");
                         break;
+                    default:
+                        toAppendBuilder.append(stat + " ");
+                        break;
                 }
                 String amount = remaining.substring(separator + 1);
                 if (amount.indexOf("|") != -1) {
                     amount = amount.substring(0, amount.indexOf("|"));
                 }
                 intAmount = Integer.parseInt(amount);
-                if (intAmount == 2) {
+                if (intAmount >= 2) {
                     toAppendBuilder.append("sharply ");
                 }
                 toAppendBuilder.append("rose!");
@@ -536,6 +565,9 @@ public class BattleLogDialog extends DialogFragment {
                     case "spe":
                         toAppendBuilder.append("Speed ");
                         break;
+                    default:
+                        toAppendBuilder.append(stat + " ");
+                        break;
                 }
                 amount = remaining.substring(separator + 1);
                 if (amount.indexOf("|") != -1) {
@@ -543,7 +575,7 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendBuilder.append("fell");
                 intAmount = Integer.parseInt(amount);
-                if (intAmount == 2) {
+                if (intAmount >= 2) {
                     toAppendBuilder.append(" hashly");
                 }
                 toAppendBuilder.append("!");
@@ -564,6 +596,9 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "-immune":
                 attacker = messageDetails.substring(5);
+                if(attacker.indexOf("|") != -1) {
+                    attacker = attacker.substring(0,attacker.indexOf("|"));
+                }
                 toAppend = attacker + " is immuned";
                 toAppendSpannable = new SpannableString(toAppend);
                 break;
@@ -665,8 +700,17 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-start":
-                //todo substitute
+                //todo substitute,yawn,taunt,flashfire
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-end":
+                //todo substitute,yawn,taunt
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-message":
+                toAppendSpannable = new SpannableString(messageDetails);
                 break;
 
             default:
