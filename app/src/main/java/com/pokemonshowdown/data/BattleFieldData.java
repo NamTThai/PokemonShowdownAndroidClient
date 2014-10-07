@@ -277,6 +277,9 @@ public class BattleFieldData {
         private boolean mMessageListener;
         private ArrayList<String> mServerMessageOnHold;
 
+        private String mPlayer1;
+        private String mPlayer2;
+
         public AnimationData(String roomId, boolean messageListener) {
             mRoomId = roomId;
             mServerMessageOnHold = new ArrayList<>();
@@ -309,6 +312,22 @@ public class BattleFieldData {
 
         public void setMessageListener(boolean messageListener) {
             mMessageListener = messageListener;
+        }
+
+        public String getPlayer1() {
+            return mPlayer1;
+        }
+
+        public void setPlayer1(String player1) {
+            mPlayer1 = player1;
+        }
+
+        public String getPlayer2() {
+            return mPlayer2;
+        }
+
+        public void setPlayer2(String player2) {
+            mPlayer2 = player2;
         }
     }
 

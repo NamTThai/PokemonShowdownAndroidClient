@@ -306,6 +306,21 @@ public class Pokemon implements Serializable {
         return null;
     }
 
+    public static int getPokemonIcon(Context appContext, String name, boolean withAppContext) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            return appContext.getResources().getIdentifier("sprites_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+        return 0;
+    }
+
     public static int getPokemonIconSmall(Context appContext, String name, boolean withAppContext) {
         try {
             JSONObject jsonObject;
