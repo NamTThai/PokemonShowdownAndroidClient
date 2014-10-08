@@ -638,6 +638,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-sidestart":
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
+                messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
                 if (messageDetails.indexOf("Stealth Rock") != -1) {
                     toAppendBuilder.append("Pointed stones float in the air around ");
                 } else if (messageDetails.indexOf("Toxic Spikes") != -1) {
