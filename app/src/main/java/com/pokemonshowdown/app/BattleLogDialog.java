@@ -319,7 +319,8 @@ public class BattleLogDialog extends DialogFragment {
                 //todo (cant attack bec frozen/para etc)
                 break;
             default:
-                appendServerMessage(new SpannableString(message));
+               // appendServerMessage(new SpannableString(message));
+                break;
         }
     }
 
@@ -392,8 +393,7 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendBuilder.append(attacker + " lost ");
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf("/");
-                if (separator == -1) {
-                    //fainted
+                if (separator == -1) { // fainted
                     intAmount = 0;
                 } else {
                     String hp = remaining.substring(0, separator);
@@ -415,12 +415,14 @@ public class BattleLogDialog extends DialogFragment {
                     toAppendBuilder.append("The opposing ");
                     oldHP = mPlayer2Team.get(attacker);
                     if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
                         mPlayer2Team.put(attacker, 100);
                         oldHP = mPlayer2Team.get(attacker);
                     }
                 } else {
                     oldHP = mPlayer1Team.get(attacker);
                     if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
                         mPlayer1Team.put(attacker, 100);
                         oldHP = mPlayer1Team.get(attacker);
                     }
@@ -443,13 +445,6 @@ public class BattleLogDialog extends DialogFragment {
                 }
 
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
                 break;
             case "-status":
                 attacker = messageDetails.substring(5, separator);
