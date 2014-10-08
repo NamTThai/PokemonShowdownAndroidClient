@@ -134,14 +134,17 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "player":
                 final String playerType;
                 final String playerName;
+                final String avatar;
                 if (separator == -1) {
                     playerType = messageDetails;
                     playerName = "";
+                    avatar = null;
                 } else {
                     playerType = messageDetails.substring(0, separator);
                     String playerDetails = messageDetails.substring(separator + 1);
                     separator = playerDetails.indexOf('|');
                     playerName = playerDetails.substring(0, separator);
+                    avatar = playerDetails.substring(separator + 1);
                 }
                 if (playerType.equals("p1")) {
                     animationData.setPlayer1(playerName);
@@ -149,6 +152,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         @Override
                         public void run() {
                             ((TextView) getView().findViewById(R.id.username)).setText(playerName);
+                            if (avatar != null) {
+                                int avatarResource = getActivity().getApplicationContext()
+                                        .getResources().getIdentifier("avatar_" + avatar, "drawable", getActivity().getApplicationContext().getPackageName());
+                                ((ImageView) getView().findViewById(R.id.avatar)).setImageResource(avatarResource);
+                            }
                         }
                     });
                     mPlayer1 = playerName;
@@ -158,6 +166,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         @Override
                         public void run() {
                             ((TextView) getView().findViewById(R.id.username_o)).setText(playerName);
+                            if (avatar != null) {
+                                int avatarResource = getActivity().getApplicationContext()
+                                        .getResources().getIdentifier("avatar_" + avatar, "drawable", getActivity().getApplicationContext().getPackageName());
+                                ((ImageView) getView().findViewById(R.id.avatar_o)).setImageResource(avatarResource);
+                            }
                         }
                     });
                     mPlayer2 = playerName;
@@ -174,14 +187,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "clearpoke":
                 mPlayer1Team = new ArrayList<>();
                 mPlayer2Team = new ArrayList<>();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
-                        frameLayout.removeAllViews();
-                        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
-                    }
-                });
                 break;
             case "poke":
                 playerType = messageDetails.substring(0, separator);
@@ -199,42 +204,79 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId(playerType, iconId));
-                        sprites.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(pokeName), false));
                         ImageView icon = (ImageView) getView().findViewById(getIconId(playerType, iconId));
                         icon.setImageResource(Pokemon.getPokemonIconSmall(getActivity(), MyApplication.toId(pokeName), false));
                     }
                 });
                 break;
             case "teampreview":
-                toAppendBuilder = new StringBuilder();
-                toAppendBuilder.append(mPlayer1).append("'s Team: ");
-                for (int i = 0; i < mPlayer1Team.size() - 1; i++) {
-                    toAppendBuilder.append(mPlayer1Team.get(i)).append("/");
-                }
-                toAppendBuilder.append(mPlayer1Team.get(mPlayer1Team.size() - 1));
-                toAppendBuilder.append("\n").append(mPlayer2).append("'s Team: ");
-                for (int i = 0; i < mPlayer2Team.size() - 1; i++) {
-                    toAppendBuilder.append(mPlayer2Team.get(i)).append("/");
-                }
-                toAppendBuilder.append(mPlayer2Team.get(mPlayer2Team.size() - 1));
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                appendServerMessage(toAppendSpannable);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+                        frameLayout.removeAllViews();
+                        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
+                        for(int i = 0; i < mPlayer1Team.size() ; i++) {
+                            ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p1", i));
+                            sprites.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(mPlayer1Team.get(i)), false));
+                        }
+                        for(int i = 0; i < mPlayer2Team.size() ; i++) {
+                            ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p2", i));
+                            sprites.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(mPlayer2Team.get(i)), false));
+                        }
+                    }
+                });
                 break;
             case "request":
-                appendServerMessage(new SpannableString(messageDetails));
+                makeToast(messageDetails);
                 break;
             case "inactive":
+                final String inactive;
+                final String player;
+                remaining = messageDetails.substring(0, messageDetails.indexOf(' '));
+                if (remaining.equals(mPlayer1)) {
+                    player = "p1";
+                } else {
+                    if (remaining.equals(mPlayer2)) {
+                        player = "p2";
+                    } else {
+                        break;
+                    }
+                }
+                if (messageDetails.contains("has")) {
+                    remaining = messageDetails.substring(messageDetails.indexOf("has ") + 4);
+                    inactive = remaining.substring(0, remaining.indexOf(' ')) + "s";
+                } else {
+                    break;
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (player.equals("p1")) {
+                            ((TextView) getView().findViewById(R.id.inactive)).setText(inactive);
+                        } else {
+                            ((TextView) getView().findViewById(R.id.inactive_o)).setText(inactive);
+                        }
+                    }
+                });
             case "inactiveoff":
-                toAppendSpannable = new SpannableString(messageDetails);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red), 0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) getView().findViewById(R.id.inactive)).setText("");
+                        ((TextView) getView().findViewById(R.id.inactive_o)).setText("");
+                    }
+                });
                 break;
             case "start":
-                toAppend = animationData.getPlayer1() + " vs. " + animationData.getPlayer2();
-                toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
+                /*getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+                        frameLayout.removeAllViews();
+                        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_animation, frameLayout);
+                    }
+                });*/
                 break;
             case "move":
                 String attacker = messageDetails.substring(5, separator);
