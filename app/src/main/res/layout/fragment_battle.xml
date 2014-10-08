@@ -95,14 +95,16 @@
 
     <TextView
         android:id="@+id/inactive"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@id/battle_background"
+        android:layout_alignLeft="@id/battle_background"
+        android:layout_alignBottom="@id/battle_background"
         android:gravity="center_horizontal"
-        android:layout_above="@id/side"
-        android:padding="2dp"
-        android:textColor="@color/dark_red"/>
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:background="@drawable/editable_frame_light_red"
+        android:padding="2dp"/>
 
     <TextView
         android:id="@+id/username_o"
@@ -189,13 +191,14 @@
 
     <TextView
         android:id="@+id/inactive_o"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_toRightOf="@id/battle_background"
-        android:layout_below="@id/side_o"
+        android:layout_alignRight="@id/battle_background"
         android:padding="2dp"
-        android:textColor="@color/dark_red"/>
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:background="@drawable/editable_frame_light_red"/>
 
     <TextView
         android:id="@+id/turn"
