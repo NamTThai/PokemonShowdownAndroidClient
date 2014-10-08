@@ -282,7 +282,12 @@ public class BattleLogDialog extends DialogFragment {
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf(',');
-                String species = remaining.substring(0, separator);
+                if(separator == -1) {
+                    //for genderless
+                    separator = remaining.indexOf('|');
+                }
+                String  species = remaining.substring(0, separator);
+
                 attacker = (!attacker.equals(species)) ? attacker + " (" + species + ")" : attacker;
                 if (messageDetails.startsWith("p1")) {
                     toAppendBuilder.append("Go! ").append(attacker).append('!');
