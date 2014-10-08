@@ -107,6 +107,15 @@
             android:padding="2dp"
             android:textStyle="bold"/>
 
+        <TextView
+            android:id="@+id/inactive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/username"
+            android:padding="2dp"
+            android:textColor="@color/dark_red"/>
+
         </RelativeLayout>
 
     <RelativeLayout
@@ -197,6 +206,15 @@
             android:padding="2dp"
             android:layout_below="@id/icon3_o"
             android:layout_toRightOf="@id/icon5_o"/>
+
+        <TextView
+            android:id="@+id/inactive_o"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/icon4_o"
+            android:padding="2dp"
+            android:textColor="@color/dark_red"/>
 
         </RelativeLayout>
 
