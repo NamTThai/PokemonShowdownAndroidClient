@@ -229,14 +229,14 @@ public class BattleLogDialog extends DialogFragment {
             case "teampreview":
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(mPlayer1).append("'s Team: ");
-                String[] p1Team = (String[]) mPlayer1Team.keySet().toArray();
+                String[] p1Team = mPlayer1Team.keySet().toArray(new String[mPlayer1Team.size()]);
                 for (int i = 0; i < p1Team.length - 1; i++) {
                     toAppendBuilder.append(p1Team[i]).append("/");
                 }
                 toAppendBuilder.append(p1Team[p1Team.length - 1]);
 
                 toAppendBuilder.append("\n").append(mPlayer2).append("'s Team: ");
-                String[] p2Team = (String[]) mPlayer1Team.keySet().toArray();
+                String[] p2Team = mPlayer2Team.keySet().toArray(new String[mPlayer2Team.size()]);
                 for (int i = 0; i < p2Team.length - 1; i++) {
                     toAppendBuilder.append(p2Team[i]).append("/");
                 }
@@ -663,9 +663,9 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-hitcount":
                 try {
-                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf(separator) + 1);
+                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf("|") + 1);
                     int hitCount = Integer.parseInt(hitCountS);
-                    toAppendBuilder.append("Hit " + hitCount + "time");
+                    toAppendBuilder.append("Hit " + hitCount + " time");
                     if (hitCount > 1) {
                         toAppendBuilder.append("s");
                     }
