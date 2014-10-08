@@ -12,163 +12,13 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/background"/>
 
-    <RelativeLayout
-        android:id="@+id/side"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@id/battle_background"
-        android:background="@color/transparent_grey">
-
-        <ImageView
-            android:id="@+id/icon4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_alignParentBottom="true"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="16dp"/>
-
-        <ImageView
-            android:id="@+id/icon5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="16dp"
-            android:layout_toRightOf="@id/icon4"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_alignParentBottom="true"
-            android:paddingBottom="16dp"
-            android:layout_toRightOf="@id/icon5"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_above="@id/icon4"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_above="@id/icon5"
-            android:layout_toRightOf="@id/icon1"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_above="@id/icon6"
-            android:layout_toRightOf="@id/icon2"
-            android:padding="2dp"/>
-
-        </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/side_o"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignRight="@id/battle_background"
-        android:background="@color/transparent_grey">
-
-        <ImageView
-            android:id="@+id/icon1_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon2_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_toRightOf="@id/icon1_o"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon3_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_toRightOf="@id/icon2_o"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon4_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:layout_below="@id/icon1_o"
-            android:padding="2dp"/>
-
-        <ImageView
-            android:id="@+id/icon5_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:padding="2dp"
-            android:layout_below="@id/icon2_o"
-            android:layout_toRightOf="@id/icon4_o"/>
-
-        <ImageView
-            android:id="@+id/icon6_o"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pokeball_available"
-            android:contentDescription="@string/pokemon_icon"
-            android:padding="2dp"
-            android:layout_below="@id/icon3_o"
-            android:layout_toRightOf="@id/icon5_o"/>
-
-        </RelativeLayout>
-
-    <FrameLayout
-        android:id="@+id/battle_interface"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/side"
-        android:layout_toLeftOf="@id/side_o">
-
-
-        </FrameLayout>
-
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/side"
+        android:layout_toLeftOf="@id/battle_background"
         android:padding="2dp"
         android:src="@drawable/avatar_001"
         android:contentDescription="@string/avatar"/>
@@ -179,20 +29,78 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/avatar"
-        android:layout_toLeftOf="@id/side"
+        android:layout_toLeftOf="@id/battle_background"
         android:text="@string/attacker"
         android:gravity="center_horizontal"
         android:padding="2dp"
         android:textStyle="bold"/>
+
+    <LinearLayout
+        android:id="@+id/side"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/username"
+        android:layout_toLeftOf="@id/battle_background"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon5"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon3"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon1"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon6"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon4"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon2"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/inactive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@id/side"
+        android:layout_toLeftOf="@id/battle_background"
         android:gravity="center_horizontal"
-        android:layout_above="@id/username"
+        android:layout_above="@id/side"
         android:padding="2dp"
         android:textColor="@color/dark_red"/>
 
@@ -202,13 +110,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/side_o"
+        android:layout_toRightOf="@id/battle_background"
         android:gravity="center_horizontal"
         android:text="@string/defender"
-        android:paddingTop="16dp"
-        android:paddingRight="2dp"
-        android:paddingLeft="2dp"
-        android:paddingBottom="2dp"
+        android:padding="2dp"
         android:textStyle="bold"/>
 
     <ImageView
@@ -216,21 +121,79 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toRightOf="@id/side_o"
+        android:layout_toRightOf="@id/battle_background"
         android:layout_alignParentRight="true"
         android:layout_below="@id/username_o"
         android:padding="2dp"
         android:src="@drawable/avatar_002"
         android:contentDescription="@string/avatar"/>
 
+    <LinearLayout
+        android:id="@+id/side_o"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/battle_background"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/avatar_o"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon5_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon3_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon1_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/icon6_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon4_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+            <ImageView
+                android:id="@+id/icon2_o"
+                style="@style/fragment_battle_side_icon"
+                android:contentDescription="@string/pokemon_icon"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/inactive_o"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/avatar_o"
+        android:layout_toRightOf="@id/battle_background"
+        android:layout_below="@id/side_o"
         android:padding="2dp"
         android:textColor="@color/dark_red"/>
 
@@ -265,9 +228,18 @@
         android:text="@string/log"
         android:clickable="true"
         android:background="@drawable/onclick_green"
-        android:layout_toLeftOf="@id/side"
+        android:layout_toLeftOf="@id/battle_background"
         android:gravity="center"
         android:padding="2dp"
         android:layout_margin="8dp"/>
+
+    <FrameLayout
+        android:id="@+id/battle_interface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/side"
+        android:layout_toLeftOf="@id/side_o">
+
+    </FrameLayout>
 
 </RelativeLayout>
