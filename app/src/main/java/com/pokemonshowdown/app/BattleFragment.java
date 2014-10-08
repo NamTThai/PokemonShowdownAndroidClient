@@ -253,18 +253,23 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void run() {
                         if (player.equals("p1")) {
-                            ((TextView) getView().findViewById(R.id.inactive)).setText(inactive);
+                            TextView textView = (TextView) getView().findViewById(R.id.inactive);
+                            textView.setVisibility(View.VISIBLE);
+                            textView.setText(inactive);
                         } else {
-                            ((TextView) getView().findViewById(R.id.inactive_o)).setText(inactive);
+                            TextView textView = (TextView) getView().findViewById(R.id.inactive_o);
+                            textView.setVisibility(View.VISIBLE);
+                            textView.setText(inactive);
                         }
                     }
                 });
+                break;
             case "inactiveoff":
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((TextView) getView().findViewById(R.id.inactive)).setText("");
-                        ((TextView) getView().findViewById(R.id.inactive_o)).setText("");
+                        ((TextView) getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
+                        ((TextView) getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
                 });
                 break;
