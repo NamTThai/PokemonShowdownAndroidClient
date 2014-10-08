@@ -596,8 +596,8 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "-immune":
                 attacker = messageDetails.substring(5);
-                if(attacker.indexOf("|") != -1) {
-                    attacker = attacker.substring(0,attacker.indexOf("|"));
+                if (attacker.indexOf("|") != -1) {
+                    attacker = attacker.substring(0, attacker.indexOf("|"));
                 }
                 toAppend = attacker + " is immuned";
                 toAppendSpannable = new SpannableString(toAppend);
@@ -638,23 +638,20 @@ public class BattleLogDialog extends DialogFragment {
             case "-sidestart":
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
-                if (messageDetails.indexOf("move:") != -1) {
-                    move = messageDetails.substring(messageDetails.indexOf("move:") + 5);
-
-                    if (move.indexOf("Stealth Rock") != -1) {
-                        toAppendBuilder.append("Pointed stones float in the air around ");
-                    } else if (move.indexOf("Toxic Spikes") != -1) {
-                        toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
-                    } else if (move.indexOf("Spikes") != -1) {
-                        toAppendBuilder.append("Spikes were scattered all around the feet of ");
-                    } else if (move.indexOf("Reflect") != -1) {
-                        toAppendBuilder.append("A protective veil augments the Defense of ");
-                    } else if (move.indexOf("Light Screen") != -1) {
-                        toAppendBuilder.append("A protective veil augments the Special Defense of ");
-                    } else if (move.indexOf("Sticky Web") != -1) {
-                        toAppendBuilder.append("A sticky web spreads out beneath ");
-                    }
+                if (messageDetails.indexOf("Stealth Rock") != -1) {
+                    toAppendBuilder.append("Pointed stones float in the air around ");
+                } else if (messageDetails.indexOf("Toxic Spikes") != -1) {
+                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
+                } else if (messageDetails.indexOf("Spikes") != -1) {
+                    toAppendBuilder.append("Spikes were scattered all around the feet of ");
+                } else if (messageDetails.indexOf("Reflect") != -1) {
+                    toAppendBuilder.append("A protective veil augments the Defense of ");
+                } else if (messageDetails.indexOf("Light Screen") != -1) {
+                    toAppendBuilder.append("A protective veil augments the Special Defense of ");
+                } else if (messageDetails.indexOf("Sticky Web") != -1) {
+                    toAppendBuilder.append("A sticky web spreads out beneath ");
                 }
+
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("the opposing team!");
                 } else {
