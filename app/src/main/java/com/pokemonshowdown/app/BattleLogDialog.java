@@ -283,11 +283,11 @@ public class BattleLogDialog extends DialogFragment {
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf(',');
-                if(separator == -1) {
+                if (separator == -1) {
                     //for genderless
                     separator = remaining.indexOf('|');
                 }
-                String  species = remaining.substring(0, separator);
+                String species = remaining.substring(0, separator);
 
                 attacker = (!attacker.equals(species)) ? attacker + " (" + species + ")" : attacker;
                 if (messageDetails.startsWith("p1")) {
@@ -325,7 +325,7 @@ public class BattleLogDialog extends DialogFragment {
                 //todo (cant attack bec frozen/para etc)
                 break;
             default:
-               // appendServerMessage(new SpannableString(message));
+                // appendServerMessage(new SpannableString(message));
                 break;
         }
     }
@@ -391,7 +391,7 @@ public class BattleLogDialog extends DialogFragment {
                         oldHP = mPlayer1Team.get(attacker);
                     }
                 }
-                
+
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf("/");
                 if (separator == -1) { // fainted
@@ -402,7 +402,7 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 lostHP = oldHP - intAmount;
 
-                if(fromEffect != null) {
+                if (fromEffect != null) {
                     switch (fromEffect) {
                         case "Stealth Rock":
                             toAppendBuilder.append("Pointed stones dug into " + attacker + "!");
@@ -451,7 +451,7 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attacker + " kept going and crashed!");
                             break;
                         default:
-                            if(ofSource != null) {
+                            if (ofSource != null) {
                                 toAppendBuilder.append(attacker + " is hurt by " + ofSource + "'s " + fromEffect + "!");
                             } else if (fromEffect.contains("item:") || fromEffect.contains("ability:")) {
                                 toAppendBuilder.append(attacker + " is hurt by its " + fromEffect + "!");
@@ -460,8 +460,7 @@ public class BattleLogDialog extends DialogFragment {
                             }
                             break;
                     }
-                }
-                else {
+                } else {
                     if (messageDetails.startsWith("p2")) {
                         toAppendBuilder.append("The opposing ");
                     }
@@ -480,7 +479,6 @@ public class BattleLogDialog extends DialogFragment {
             case "-heal":
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
                     oldHP = mPlayer2Team.get(attacker);
                     if (oldHP == null) {
                         // in randbats , we dont get the pokemon list
@@ -495,7 +493,6 @@ public class BattleLogDialog extends DialogFragment {
                         oldHP = mPlayer1Team.get(attacker);
                     }
                 }
-                toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf("/");
                 if (separator == -1) {
@@ -505,7 +502,48 @@ public class BattleLogDialog extends DialogFragment {
                     intAmount = Integer.parseInt(hp);
                 }
                 lostHP = intAmount - oldHP;
-                toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
+
+                if (fromEffect != null) {
+                    switch (fromEffect) {
+                        case "ingrain":
+                            toAppendBuilder.append(attacker + " absorbed nutrients with its roots!");
+                            break;
+                        case "aquaring":
+                            toAppendBuilder.append("Aqua Ring restored " + attacker + "'s HP");
+                            break;
+                        case "raindish":
+                        case "dryskin":
+                        case "icebody":
+                            toAppendBuilder.append(attacker + "'s " + fromEffect + " heals it!");
+                            break;
+                        case "healingwish":
+                            // TODO
+                            break;
+                        case "lunardance":
+                            // TODO
+                            break;
+                        case "wish":
+                            //TODO wish pass
+                            break;
+                        case "drain":
+                            toAppendBuilder.append(attacker + " had its energy drained!");
+                            break;
+                        case "item: Leftovers":
+                        case "item: Shellbell":
+                            toAppendBuilder.append(attacker + " restored a little HP using its " + fromEffect + "!");
+                            break;
+                        default:
+                            toAppendBuilder.append(attacker + " restored HP using its " + fromEffect + "!");
+                            break;
+                    }
+                } else {
+                    if (messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing ");
+                    }
+
+                    toAppendBuilder.append(attacker);
+                    toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
+                }
                 if (messageDetails.startsWith("p2")) {
                     mPlayer2Team.put(attacker, intAmount);
                 } else {
