@@ -4,43 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <!-- Top of the app : list of mons -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pokemonteamlist_layout"
+    <Spinner
+        android:id="@+id/pokemonteamlist_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/pokemonteamlist_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"/>
-
-        <ImageButton
-            android:id="@+id/pokemonteamlist_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_new"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/pokemonteamlist_remove"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_discard"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/pokemonteamlist_importexport"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_import_export"
-            android:layout_weight="1"/>
-
-
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 
     <!-- Fragment for current selected team -->

@@ -1,10 +1,15 @@
 package com.pokemonshowdown.app;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -60,26 +65,28 @@ public class TeamBuildingActivity extends FragmentActivity {
                 // TODO ?
             }
         });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.team_building, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        //buttons
-        ImageButton button_new = (ImageButton) findViewById(R.id.pokemonteamlist_add);
-        button_new.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PokemonTeam pt = new PokemonTeam();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int position;
+        PokemonTeam pt;
+        switch (item.getItemId()) {
+            case R.id.action_create_team:
+                pt = new PokemonTeam();
                 pokemonTeamList.add(pt);
                 pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
-            }
-        });
-
-
-        ImageButton button_remove = (ImageButton) findViewById(R.id.pokemonteamlist_remove);
-        button_remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = pkmn_spinner.getSelectedItemPosition();
+                return true;
+            case R.id.action_remove_team:
+                position = pkmn_spinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
                     pokemonTeamList.remove(position);
                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
@@ -90,19 +97,27 @@ public class TeamBuildingActivity extends FragmentActivity {
                     if (pokemonTeamList.size() > 0) {
                         pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
                     }
-
                 }
-            }
-        });
-
-        ImageButton button_importexport = (ImageButton) findViewById(R.id.pokemonteamlist_importexport);
-        button_importexport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO
-            }
-        });
-
+                return true;
+            case R.id.action_export_team:
+                position = pkmn_spinner.getSelectedItemPosition();
+                if (position != AdapterView.INVALID_POSITION) {
+                    pt = pokemonTeamList.get(position);
+                    ClipboardManager clipboard = (ClipboardManager)
+                            getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.export());
+                    clipboard.setPrimaryClip(clip);
+                }
+                return true;
+            case R.id.action_import_team:
+                //todo
+                return true;
+            case R.id.action_rename_team:
+                // todo renaming dialog
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
     }
 
