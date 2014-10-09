@@ -277,6 +277,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "switch":
             case "drag":
+            case "replace":
                 //TODO need to handle roar & cie
                 toAppendBuilder = new StringBuilder();
                 attacker = messageDetails.substring(5, separator);
@@ -345,8 +346,8 @@ public class BattleLogDialog extends DialogFragment {
         Spannable toAppendSpannable;
         String move;
 
-        String fromEffect;
-        String ofSource;
+        String fromEffect = null;
+        String ofSource = null;
         int from = messageDetails.indexOf("[from]");
         if (from != -1) {
             remaining = messageDetails.substring(from + 7);
@@ -357,14 +358,11 @@ public class BattleLogDialog extends DialogFragment {
         if (of != -1) {
             remaining = messageDetails.substring(of + 5);
             separator = remaining.indexOf('|');
-            ofSource = (separator == -1) ? remaining : remaining.substring(0, separator);
+            ofSource = (separator == -1) ? remaining : remaining.substring(remaining.indexOf(':'), separator);
         }
 
         separator = messageDetails.indexOf('|');
         switch (command) {
-            case "message":
-                toAppendSpannable = new SpannableString(messageDetails);
-                break;
             case "-miss":
                 String attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
@@ -381,7 +379,6 @@ public class BattleLogDialog extends DialogFragment {
             case "-damage":
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
                     oldHP = mPlayer2Team.get(attacker);
                     if (oldHP == null) {
                         mPlayer2Team.put(attacker, 100);
@@ -393,9 +390,8 @@ public class BattleLogDialog extends DialogFragment {
                         mPlayer1Team.put(attacker, 100);
                         oldHP = mPlayer1Team.get(attacker);
                     }
-
                 }
-                toAppendBuilder.append(attacker + " lost ");
+                
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf("/");
                 if (separator == -1) { // fainted
@@ -405,7 +401,74 @@ public class BattleLogDialog extends DialogFragment {
                     intAmount = Integer.parseInt(hp);
                 }
                 lostHP = oldHP - intAmount;
-                toAppendBuilder.append(lostHP + "% of its health!");
+
+                if(fromEffect != null) {
+                    switch (fromEffect) {
+                        case "Stealth Rock":
+                            toAppendBuilder.append("Pointed stones dug into " + attacker + "!");
+                            break;
+                        case "Spikes":
+                            toAppendBuilder.append(attacker + " is hurt by the spikes!");
+                            break;
+                        case "brn":
+                            toAppendBuilder.append(attacker + " was hurt by its burn!");
+                            break;
+                        case "psn":
+                            toAppendBuilder.append(attacker + " was hurt by poison!");
+                            break;
+                        case "item: Life Orb":
+                            toAppendBuilder.append(attacker + " lost some of its HP!");
+                            break;
+                        case "recoil":
+                            toAppendBuilder.append(attacker + " is damaged by recoil!");
+                            break;
+                        case "sandstorm":
+                            toAppendBuilder.append(attacker + " is buffeted by the sandstorm!");
+                            break;
+                        case "hail":
+                            toAppendBuilder.append(attacker + " is buffeted by the hail!");
+                            break;
+                        case "baddreams":
+                            toAppendBuilder.append(attacker + " is tormented!");
+                            break;
+                        case "nightmare":
+                            toAppendBuilder.append(attacker + " is locked in a nightmare!");
+                            break;
+                        case "confusion":
+                            toAppendBuilder.append("It hurt itself in its confusion!");
+                            break;
+                        case "leechseed":
+                            toAppendBuilder.append(attacker + "'s health is sapped by Leech Seed!");
+                            break;
+                        case "flameburst":
+                            toAppendBuilder.append("The bursting flame hit " + attacker + "!");
+                            break;
+                        case "firepledge":
+                            toAppendBuilder.append(attacker + " is hurt by the sea of fire!");
+                            break;
+                        case "jumpkick":
+                        case "highjumpkick":
+                            toAppendBuilder.append(attacker + " kept going and crashed!");
+                            break;
+                        default:
+                            if(ofSource != null) {
+                                toAppendBuilder.append(attacker + " is hurt by " + ofSource + "'s " + fromEffect + "!");
+                            } else if (fromEffect.contains("item:") || fromEffect.contains("ability:")) {
+                                toAppendBuilder.append(attacker + " is hurt by its " + fromEffect + "!");
+                            } else {
+                                toAppendBuilder.append(attacker + " lost some HP because of " + fromEffect + "!");
+                            }
+                            break;
+                    }
+                }
+                else {
+                    if (messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing ");
+                    }
+                    toAppendBuilder.append(attacker + " lost ");
+                    toAppendBuilder.append(lostHP + "% of its health!");
+                }
+
                 if (messageDetails.startsWith("p2")) {
                     mPlayer2Team.put(attacker, intAmount);
                 } else {
@@ -599,8 +662,12 @@ public class BattleLogDialog extends DialogFragment {
                 if (attacker.indexOf("|") != -1) {
                     attacker = attacker.substring(0, attacker.indexOf("|"));
                 }
-                toAppend = attacker + " is immuned";
-                toAppendSpannable = new SpannableString(toAppend);
+                toAppendBuilder.append("It doesn't affect ");
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("the opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
             case "-item":
                 attacker = messageDetails.substring(5, separator);
