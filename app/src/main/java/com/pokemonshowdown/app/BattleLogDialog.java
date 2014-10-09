@@ -596,8 +596,8 @@ public class BattleLogDialog extends DialogFragment {
                     case "frz":
                         toAppendBuilder.append(" was frozen solid!");
                         break;
-
                 }
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-curestatus":
                 attacker = messageDetails.substring(5, separator);
