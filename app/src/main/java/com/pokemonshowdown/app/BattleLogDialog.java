@@ -634,8 +634,10 @@ public class BattleLogDialog extends DialogFragment {
                     amount = amount.substring(0, amount.indexOf("|"));
                 }
                 intAmount = Integer.parseInt(amount);
-                if (intAmount >= 2) {
+                if (intAmount == 2) {
                     toAppendBuilder.append("sharply ");
+                } else  if (intAmount > 2) {
+                    toAppendBuilder.append("drastically ");
                 }
                 toAppendBuilder.append("rose!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
@@ -676,8 +678,10 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendBuilder.append("fell");
                 intAmount = Integer.parseInt(amount);
-                if (intAmount >= 2) {
+                if (intAmount == 2) {
                     toAppendBuilder.append(" hashly");
+                } else if (intAmount >= 3) {
+                    toAppendBuilder.append(" severely");
                 }
                 toAppendBuilder.append("!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
