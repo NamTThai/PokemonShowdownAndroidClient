@@ -453,8 +453,10 @@ public class BattleLogDialog extends DialogFragment {
                         default:
                             if (ofSource != null) {
                                 toAppendBuilder.append(attacker + " is hurt by " + ofSource + "'s " + fromEffect + "!");
-                            } else if (fromEffect.contains("item:") || fromEffect.contains("ability:")) {
-                                toAppendBuilder.append(attacker + " is hurt by its " + fromEffect + "!");
+                            } else if (fromEffect.contains("item:")) {
+                                toAppendBuilder.append(attacker + " is hurt by its" + fromEffect.substring(5) + "!");
+                            } else if (fromEffect.contains("ability:")) {
+                                toAppendBuilder.append(attacker + " is hurt by its" + fromEffect.substring(8) + "!");
                             } else {
                                 toAppendBuilder.append(attacker + " lost some HP because of " + fromEffect + "!");
                             }
@@ -530,7 +532,7 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                         case "item: Leftovers":
                         case "item: Shellbell":
-                            toAppendBuilder.append(attacker + " restored a little HP using its " + fromEffect + "!");
+                            toAppendBuilder.append(attacker + " restored a little HP using its " + fromEffect.substring(5) + "!");
                             break;
                         default:
                             toAppendBuilder.append(attacker + " restored HP using its " + fromEffect + "!");
@@ -559,14 +561,43 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" was inflicted with ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
+                switch (remaining) {
+                    case "brn":
+                        toAppendBuilder.append(" was burned");
+                        if (fromEffect != null) {
+                            toAppendBuilder.append(" by the " + fromEffect);
+                        }
+                        toAppendBuilder.append("!");
+                        break;
+                    case "tox":
+                        toAppendBuilder.append(" was badly poisoned");
+                        if (fromEffect != null) {
+                            toAppendBuilder.append(" by the " + fromEffect);
+                        }
+                        toAppendBuilder.append("!");
+                        break;
+
+                    case "psn":
+                        toAppendBuilder.append(" was poisoned!");
+                        break;
+
+                    case "slp":
+                        if (fromEffect.equals("rest")) {
+                            toAppendBuilder.append(" slept and became healthy!");
+                        } else {
+                            toAppendBuilder.append(" fell asleep!");
+                        }
+                        break;
+
+                    case "par":
+                        toAppendBuilder.append(" is paralyzed! It may be unable to move!");
+                        break;
+
+                    case "frz":
+                        toAppendBuilder.append(" was frozen solid!");
+                        break;
+
+                }
                 break;
             case "-curestatus":
                 attacker = messageDetails.substring(5, separator);
@@ -636,7 +667,7 @@ public class BattleLogDialog extends DialogFragment {
                 intAmount = Integer.parseInt(amount);
                 if (intAmount == 2) {
                     toAppendBuilder.append("sharply ");
-                } else  if (intAmount > 2) {
+                } else if (intAmount > 2) {
                     toAppendBuilder.append("drastically ");
                 }
                 toAppendBuilder.append("rose!");
@@ -818,6 +849,18 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-message":
                 toAppendSpannable = new SpannableString(messageDetails);
+                break;
+
+            case "-notarget":
+                toAppendSpannable = new SpannableString("But there was no target...");
+                break;
+
+            case "-ohko":
+                toAppendSpannable = new SpannableString("It's a one-hit KO!");
+                break;
+
+            case "-nothing":
+                toAppendSpannable = new SpannableString("But nothing happened! ");
                 break;
 
             default:
