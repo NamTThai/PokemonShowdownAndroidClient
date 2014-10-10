@@ -34,6 +34,8 @@ public class BattleLogDialog extends DialogFragment {
     private String mRoomId;
     private String mPlayer1;
     private String mPlayer2;
+    private boolean weatherExist;
+    private String currentWeather;
     private HashMap<String, Integer> mPlayer1Team = new HashMap<>();
     private HashMap<String, Integer> mPlayer2Team = new HashMap<>();
 
@@ -362,6 +364,8 @@ public class BattleLogDialog extends DialogFragment {
         }
 
         separator = messageDetails.indexOf('|');
+        String[] split = messageDetails.split("|");
+
         switch (command) {
             case "-miss":
                 String attacker = messageDetails.substring(5, separator);
@@ -422,28 +426,28 @@ public class BattleLogDialog extends DialogFragment {
                         case "recoil":
                             toAppendBuilder.append(attacker).append(" is damaged by recoil!");
                             break;
-                        case "sandstorm":
+                        case "Sandstorm":
                             toAppendBuilder.append(attacker).append(" is buffeted by the sandstorm!");
                             break;
-                        case "hail":
+                        case "Hail":
                             toAppendBuilder.append(attacker).append(" is buffeted by the hail!");
                             break;
-                        case "baddreams":
+                        case "Bad Dreams":
                             toAppendBuilder.append(attacker).append(" is tormented!");
                             break;
-                        case "nightmare":
+                        case "Nightmare":
                             toAppendBuilder.append(attacker).append(" is locked in a nightmare!");
                             break;
-                        case "confusion":
+                        case "Confusion":
                             toAppendBuilder.append("It hurt itself in its confusion!");
                             break;
-                        case "leechseed":
+                        case "Leech Seed":
                             toAppendBuilder.append(attacker).append("'s health is sapped by Leech Seed!");
                             break;
-                        case "flameburst":
+                        case "Flame Burst":
                             toAppendBuilder.append("The bursting flame hit ").append(attacker).append("!");
                             break;
-                        case "firepledge":
+                        case "Fire Pledge":
                             toAppendBuilder.append(attacker).append(" is hurt by the sea of fire!");
                             break;
                         case "jumpkick":
@@ -507,27 +511,27 @@ public class BattleLogDialog extends DialogFragment {
 
                 if (fromEffect != null) {
                     switch (fromEffect) {
-                        case "ingrain":
+                        case "Ingrain":
                             toAppendBuilder.append(attacker).append(" absorbed nutrients with its roots!");
                             break;
-                        case "aquaring":
+                        case "Aqua Ring":
                             toAppendBuilder.append("Aqua Ring restored ").append(attacker).append("'s HP");
                             break;
-                        case "raindish":
-                        case "dryskin":
-                        case "icebody":
+                        case "Rain Dish":
+                        case "Dry Skin":
+                        case "Ice Body":
                             toAppendBuilder.append(attacker).append("'s ").append(fromEffect).append(" heals it!");
                             break;
-                        case "healingwish":
+                        case "Healing Wish":
                             // TODO
                             break;
-                        case "lunardance":
+                        case "Lunar Dance":
                             // TODO
                             break;
-                        case "wish":
+                        case "Wish":
                             //TODO wish pass
                             break;
-                        case "drain":
+                        case "Drain":
                             toAppendBuilder.append(attacker).append(" had its energy drained!");
                             break;
                         case "item: Leftovers":
@@ -582,7 +586,7 @@ public class BattleLogDialog extends DialogFragment {
                         break;
 
                     case "slp":
-                        if (fromEffect.equals("rest")) {
+                        if (fromEffect != null && fromEffect.equals("rest")) {
                             toAppendBuilder.append(" slept and became healthy!");
                         } else {
                             toAppendBuilder.append(" fell asleep!");
@@ -718,8 +722,66 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-weather":
-                toAppend = "Weather changed to " + messageDetails;
-                toAppendSpannable = new SpannableString(toAppend);
+                String weather = split[0];
+                boolean upkeep = false;
+                if (split.length > 1) {
+                    upkeep = true;
+                }
+                switch (weather) {
+                    case "RainDance":
+                        if (upkeep) {
+                            toAppendBuilder.append("Rain continues to fall!");
+                        } else {
+                            toAppendBuilder.append("It started to rain!");
+                            weatherExist = true;
+                        }
+                        break;
+                    case "Sandstorm":
+                        if (upkeep) {
+                            toAppendBuilder.append("The sandstorm rages.");
+                        } else {
+                            toAppendBuilder.append("A sandstorm kicked up!");
+                            weatherExist = true;
+                        }
+                        break;
+                    case "SunnyDay":
+                        if (upkeep) {
+                            toAppendBuilder.append("The sunlight is strong!");
+                        } else {
+                            toAppendBuilder.append("The sunlight turned harsh!");
+                            weatherExist = true;
+                        }
+                        break;
+                    case "Hail":
+                        if (upkeep) {
+                            toAppendBuilder.append("The hail crashes down.");
+                        } else {
+                            toAppendBuilder.append("It started to hail!");
+                            weatherExist = true;
+                        }
+                        break;
+                    case "none":
+                        if (weatherExist) {
+                            switch (currentWeather) {
+                                case "RainDance":
+                                    toAppendBuilder.append("The rain stopped.");
+                                    break;
+                                case "SunnyDay":
+                                    toAppendBuilder.append("The sunlight faded.");
+                                    break;
+                                case "Sandstorm":
+                                    toAppendBuilder.append("The sandstorm subsided.");
+                                    break;
+                                case "Hail":
+                                    toAppendBuilder.append("The hail stopped.");
+                                    break;
+                            }
+                        }
+                        weatherExist = false;
+                        break;
+                }
+                currentWeather = weather;
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
             case "-crit":
                 toAppendSpannable = new SpannableString("It's a critical hit!");
