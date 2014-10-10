@@ -1,10 +1,11 @@
 package com.pokemonshowdown.app;
 
 import android.animation.Animator;
-import android.animation.ValueAnimator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.TypeEvaluator;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
@@ -17,11 +18,11 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,11 +32,15 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
+
+    private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
 
     private String mRoomId;
     private String mPlayer1;
@@ -747,9 +752,17 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         startAnimation(new Runnable() {
             @Override
             public void run() {
-                makeToast(message);
-                getView().findViewById(R.id.inactive).setVisibility(View.VISIBLE);
-                ((TextView) getView().findViewById(R.id.inactive)).setText(message);
+                if (mAnimatorSetQueue == null) {
+                    mAnimatorSetQueue = new ArrayDeque<>();
+                }
+
+                AnimatorSet animator = makeToast(message);
+
+                mAnimatorSetQueue.addLast(animator);
+
+                if (mAnimatorSetQueue.size() == 1) {
+                    animator.start();
+                }
             }
         });
     }
@@ -758,29 +771,65 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         getActivity().runOnUiThread(runnable);
     }
 
-    private void waitForToastToDisappear() {
+    private AnimatorSet makeToast(final Spannable message, final int duration) {
+        TextView textView = (TextView) getView().findViewById(R.id.toast);
+        
+        ObjectAnimator changeText = ObjectAnimator.ofObject(new AnimatedTextView(textView), "Text", new TypeEvaluator<Spannable>() {
+            @Override
+            public Spannable evaluate(float fraction, Spannable startValue, Spannable endValue) {
+                return endValue;
+            }
+        }, message);
+        changeText.setInterpolator(new DecelerateInterpolator());
+        changeText.setDuration(1000);
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartDelay(1000);
+
+        AnimatorSet animation = new AnimatorSet();
+        animation.play(changeText);
+        animation.play(fadeIn).after(changeText);
+        animation.play(fadeOut).after(fadeIn);
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mAnimatorSetQueue.pollFirst();
+                if (!mAnimatorSetQueue.isEmpty()) {
+                    mAnimatorSetQueue.pollFirst().start();
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        return animation;
     }
 
-    private void makeToast(final String message) {
-        makeToast(message, Toast.LENGTH_SHORT);
+    private AnimatorSet makeToast(final String message) {
+        return makeToast(message, Toast.LENGTH_SHORT);
     }
 
-    private void makeToast(final String message, final int duration) {
-        Toast toast = Toast.makeText(getActivity(), message, duration);
-        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-        toast.show();
-        waitForToastToDisappear();
+    private AnimatorSet makeToast(final String message, final int duration) {
+        return makeToast(new SpannableString(message), duration);
     }
 
-    private void makeToast(final Spannable message) {
-        makeToast(message, Toast.LENGTH_SHORT);
-    }
-
-    private void makeToast(final Spannable message, final int duration) {
-        Toast toast = Toast.makeText(getActivity(), message, duration);
-        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-        toast.show();
-        waitForToastToDisappear();
+    private AnimatorSet makeToast(final Spannable message) {
+        return makeToast(message, Toast.LENGTH_SHORT);
     }
 
     /**
@@ -867,6 +916,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
             default:
                 return 0;
+        }
+    }
+
+    private class AnimatedTextView {
+        TextView mTextView;
+
+        private AnimatedTextView(TextView textView) {
+            mTextView = textView;
+        }
+
+        public void setText(Spannable text) {
+            mTextView.setText(text);
+        }
+
+        public void setText(SpannableString text) {
+            mTextView.setText(text);
+        }
+
+        public void setText(SpannableStringBuilder text) {
+            mTextView.setText(text);
         }
     }
 
