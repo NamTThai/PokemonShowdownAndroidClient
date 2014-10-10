@@ -1,7 +1,10 @@
 package com.pokemonshowdown.app;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
@@ -18,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -267,8 +271,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((TextView) getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        ((TextView) getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
+                        (getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
+                        (getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
                 });
                 break;
@@ -659,17 +663,17 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
                 messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
-                if (messageDetails.indexOf("Stealth Rock") != -1) {
+                if (messageDetails.contains("Stealth Rock")) {
                     toAppendBuilder.append("Pointed stones float in the air around ");
-                } else if (messageDetails.indexOf("Toxic Spikes") != -1) {
+                } else if (messageDetails.contains("Toxic Spikes")) {
                     toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
-                } else if (messageDetails.indexOf("Spikes") != -1) {
+                } else if (messageDetails.contains("Spikes")) {
                     toAppendBuilder.append("Spikes were scattered all around the feet of ");
-                } else if (messageDetails.indexOf("Reflect") != -1) {
+                } else if (messageDetails.contains("Reflect")) {
                     toAppendBuilder.append("A protective veil augments the Defense of ");
-                } else if (messageDetails.indexOf("Light Screen") != -1) {
+                } else if (messageDetails.contains("Light Screen")) {
                     toAppendBuilder.append("A protective veil augments the Special Defense of ");
-                } else if (messageDetails.indexOf("Sticky Web") != -1) {
+                } else if (messageDetails.contains("Sticky Web")) {
                     toAppendBuilder.append("A sticky web spreads out beneath ");
                 }
 
@@ -744,6 +748,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             @Override
             public void run() {
                 makeToast(message);
+                getView().findViewById(R.id.inactive).setVisibility(View.VISIBLE);
+                ((TextView) getView().findViewById(R.id.inactive)).setText(message);
             }
         });
     }
@@ -753,11 +759,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private void waitForToastToDisappear() {
-        /*try {
-            //Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Log.d(BTAG, "Interrupted Exception");
-        }*/
     }
 
     private void makeToast(final String message) {
