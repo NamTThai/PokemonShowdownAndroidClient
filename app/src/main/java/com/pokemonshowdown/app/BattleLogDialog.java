@@ -539,6 +539,11 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attacker).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
                             break;
                         default:
+                            if(fromEffect.contains("item:")) {
+                                fromEffect = fromEffect.substring(5);
+                            } else if(fromEffect.contains("ability:")) {
+                                fromEffect = fromEffect.substring(8);
+                            }
                             toAppendBuilder.append(attacker).append(" restored HP using its ").append(fromEffect).append("!");
                             break;
                     }
