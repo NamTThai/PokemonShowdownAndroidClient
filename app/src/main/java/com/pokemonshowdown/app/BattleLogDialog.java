@@ -405,60 +405,60 @@ public class BattleLogDialog extends DialogFragment {
                 if (fromEffect != null) {
                     switch (fromEffect) {
                         case "Stealth Rock":
-                            toAppendBuilder.append("Pointed stones dug into " + attacker + "!");
+                            toAppendBuilder.append("Pointed stones dug into ").append(attacker).append("!");
                             break;
                         case "Spikes":
-                            toAppendBuilder.append(attacker + " is hurt by the spikes!");
+                            toAppendBuilder.append(attacker).append(" is hurt by the spikes!");
                             break;
                         case "brn":
-                            toAppendBuilder.append(attacker + " was hurt by its burn!");
+                            toAppendBuilder.append(attacker).append(" was hurt by its burn!");
                             break;
                         case "psn":
-                            toAppendBuilder.append(attacker + " was hurt by poison!");
+                            toAppendBuilder.append(attacker).append(" was hurt by poison!");
                             break;
                         case "item: Life Orb":
-                            toAppendBuilder.append(attacker + " lost some of its HP!");
+                            toAppendBuilder.append(attacker).append(" lost some of its HP!");
                             break;
                         case "recoil":
-                            toAppendBuilder.append(attacker + " is damaged by recoil!");
+                            toAppendBuilder.append(attacker).append(" is damaged by recoil!");
                             break;
                         case "sandstorm":
-                            toAppendBuilder.append(attacker + " is buffeted by the sandstorm!");
+                            toAppendBuilder.append(attacker).append(" is buffeted by the sandstorm!");
                             break;
                         case "hail":
-                            toAppendBuilder.append(attacker + " is buffeted by the hail!");
+                            toAppendBuilder.append(attacker).append(" is buffeted by the hail!");
                             break;
                         case "baddreams":
-                            toAppendBuilder.append(attacker + " is tormented!");
+                            toAppendBuilder.append(attacker).append(" is tormented!");
                             break;
                         case "nightmare":
-                            toAppendBuilder.append(attacker + " is locked in a nightmare!");
+                            toAppendBuilder.append(attacker).append(" is locked in a nightmare!");
                             break;
                         case "confusion":
                             toAppendBuilder.append("It hurt itself in its confusion!");
                             break;
                         case "leechseed":
-                            toAppendBuilder.append(attacker + "'s health is sapped by Leech Seed!");
+                            toAppendBuilder.append(attacker).append("'s health is sapped by Leech Seed!");
                             break;
                         case "flameburst":
-                            toAppendBuilder.append("The bursting flame hit " + attacker + "!");
+                            toAppendBuilder.append("The bursting flame hit ").append(attacker).append("!");
                             break;
                         case "firepledge":
-                            toAppendBuilder.append(attacker + " is hurt by the sea of fire!");
+                            toAppendBuilder.append(attacker).append(" is hurt by the sea of fire!");
                             break;
                         case "jumpkick":
                         case "highjumpkick":
-                            toAppendBuilder.append(attacker + " kept going and crashed!");
+                            toAppendBuilder.append(attacker).append(" kept going and crashed!");
                             break;
                         default:
                             if (ofSource != null) {
-                                toAppendBuilder.append(attacker + " is hurt by " + ofSource + "'s " + fromEffect + "!");
+                                toAppendBuilder.append(attacker).append(" is hurt by ").append(ofSource).append("'s ").append(fromEffect).append("!");
                             } else if (fromEffect.contains("item:")) {
-                                toAppendBuilder.append(attacker + " is hurt by its" + fromEffect.substring(5) + "!");
+                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(5)).append("!");
                             } else if (fromEffect.contains("ability:")) {
-                                toAppendBuilder.append(attacker + " is hurt by its" + fromEffect.substring(8) + "!");
+                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(8)).append("!");
                             } else {
-                                toAppendBuilder.append(attacker + " lost some HP because of " + fromEffect + "!");
+                                toAppendBuilder.append(attacker).append(" lost some HP because of ").append(fromEffect).append("!");
                             }
                             break;
                     }
@@ -466,8 +466,8 @@ public class BattleLogDialog extends DialogFragment {
                     if (messageDetails.startsWith("p2")) {
                         toAppendBuilder.append("The opposing ");
                     }
-                    toAppendBuilder.append(attacker + " lost ");
-                    toAppendBuilder.append(lostHP + "% of its health!");
+                    toAppendBuilder.append(attacker).append(" lost ");
+                    toAppendBuilder.append(lostHP).append("% of its health!");
                 }
 
                 if (messageDetails.startsWith("p2")) {
@@ -508,15 +508,15 @@ public class BattleLogDialog extends DialogFragment {
                 if (fromEffect != null) {
                     switch (fromEffect) {
                         case "ingrain":
-                            toAppendBuilder.append(attacker + " absorbed nutrients with its roots!");
+                            toAppendBuilder.append(attacker).append(" absorbed nutrients with its roots!");
                             break;
                         case "aquaring":
-                            toAppendBuilder.append("Aqua Ring restored " + attacker + "'s HP");
+                            toAppendBuilder.append("Aqua Ring restored ").append(attacker).append("'s HP");
                             break;
                         case "raindish":
                         case "dryskin":
                         case "icebody":
-                            toAppendBuilder.append(attacker + "'s " + fromEffect + " heals it!");
+                            toAppendBuilder.append(attacker).append("'s ").append(fromEffect).append(" heals it!");
                             break;
                         case "healingwish":
                             // TODO
@@ -528,14 +528,14 @@ public class BattleLogDialog extends DialogFragment {
                             //TODO wish pass
                             break;
                         case "drain":
-                            toAppendBuilder.append(attacker + " had its energy drained!");
+                            toAppendBuilder.append(attacker).append(" had its energy drained!");
                             break;
                         case "item: Leftovers":
                         case "item: Shellbell":
-                            toAppendBuilder.append(attacker + " restored a little HP using its " + fromEffect.substring(5) + "!");
+                            toAppendBuilder.append(attacker).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
                             break;
                         default:
-                            toAppendBuilder.append(attacker + " restored HP using its " + fromEffect + "!");
+                            toAppendBuilder.append(attacker).append(" restored HP using its ").append(fromEffect).append("!");
                             break;
                     }
                 } else {
@@ -544,7 +544,7 @@ public class BattleLogDialog extends DialogFragment {
                     }
 
                     toAppendBuilder.append(attacker);
-                    toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
+                    toAppendBuilder.append(" healed ").append(lostHP).append("% of it's health!");
                 }
                 if (messageDetails.startsWith("p2")) {
                     mPlayer2Team.put(attacker, intAmount);
@@ -565,14 +565,14 @@ public class BattleLogDialog extends DialogFragment {
                     case "brn":
                         toAppendBuilder.append(" was burned");
                         if (fromEffect != null) {
-                            toAppendBuilder.append(" by the " + fromEffect);
+                            toAppendBuilder.append(" by the ").append(fromEffect);
                         }
                         toAppendBuilder.append("!");
                         break;
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
-                            toAppendBuilder.append(" by the " + fromEffect);
+                            toAppendBuilder.append(" by the ").append(fromEffect);
                         }
                         toAppendBuilder.append("!");
                         break;
@@ -657,11 +657,11 @@ public class BattleLogDialog extends DialogFragment {
                         toAppendBuilder.append("Speed ");
                         break;
                     default:
-                        toAppendBuilder.append(stat + " ");
+                        toAppendBuilder.append(stat).append(" ");
                         break;
                 }
                 String amount = remaining.substring(separator + 1);
-                if (amount.indexOf("|") != -1) {
+                if (amount.contains("|")) {
                     amount = amount.substring(0, amount.indexOf("|"));
                 }
                 intAmount = Integer.parseInt(amount);
@@ -700,11 +700,11 @@ public class BattleLogDialog extends DialogFragment {
                         toAppendBuilder.append("Speed ");
                         break;
                     default:
-                        toAppendBuilder.append(stat + " ");
+                        toAppendBuilder.append(stat).append(" ");
                         break;
                 }
                 amount = remaining.substring(separator + 1);
-                if (amount.indexOf("|") != -1) {
+                if (amount.contains("|")) {
                     amount = amount.substring(0, amount.indexOf("|"));
                 }
                 toAppendBuilder.append("fell");
@@ -732,7 +732,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "-immune":
                 attacker = messageDetails.substring(5);
-                if (attacker.indexOf("|") != -1) {
+                if (attacker.contains("|")) {
                     attacker = attacker.substring(0, attacker.indexOf("|"));
                 }
                 toAppendBuilder.append("It doesn't affect ");
@@ -779,19 +779,19 @@ public class BattleLogDialog extends DialogFragment {
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
                 messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
-                if (messageDetails.indexOf("Stealth Rock") != -1) {
+                if (messageDetails.contains("Stealth Rock")) {
                     toAppendBuilder.append("Pointed stones float in the air around ");
-                } else if (messageDetails.indexOf("Toxic Spikes") != -1) {
+                } else if (messageDetails.contains("Toxic Spikes")) {
                     toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
-                } else if (messageDetails.indexOf("Spikes") != -1) {
+                } else if (messageDetails.contains("Spikes")) {
                     toAppendBuilder.append("Spikes were scattered all around the feet of ");
-                } else if (messageDetails.indexOf("Reflect") != -1) {
+                } else if (messageDetails.contains("Reflect")) {
                     toAppendBuilder.append("A protective veil augments the Defense of ");
-                } else if (messageDetails.indexOf("Light Screen") != -1) {
+                } else if (messageDetails.contains("Light Screen")) {
                     toAppendBuilder.append("A protective veil augments the Special Defense of ");
-                } else if (messageDetails.indexOf("Sticky Web") != -1) {
+                } else if (messageDetails.contains("Sticky Web")) {
                     toAppendBuilder.append("A sticky web spreads out beneath ");
-                }
+                } 
 
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("the opposing team!");
