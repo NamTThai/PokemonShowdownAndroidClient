@@ -364,7 +364,7 @@ public class BattleLogDialog extends DialogFragment {
         }
 
         separator = messageDetails.indexOf('|');
-        String[] split = messageDetails.split("|");
+        String[] split = messageDetails.split("\\|");
 
         switch (command) {
             case "-miss":
