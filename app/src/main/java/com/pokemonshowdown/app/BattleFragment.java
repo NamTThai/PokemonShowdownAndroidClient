@@ -233,19 +233,18 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "inactive":
                 final String inactive;
                 final String player;
-                remaining = messageDetails.substring(0, messageDetails.indexOf(' '));
-                if (remaining.equals(mPlayer1)) {
+                if ((messageDetails.startsWith(mPlayer1)) || (messageDetails.startsWith("Player 1"))) {
                     player = "p1";
                 } else {
-                    if (remaining.equals(mPlayer2)) {
+                    if ((messageDetails.startsWith(mPlayer2)) || (messageDetails.startsWith("Player 2"))) {
                         player = "p2";
                     } else {
                         break;
                     }
                 }
-                if (messageDetails.contains("has")) {
-                    remaining = messageDetails.substring(messageDetails.indexOf("has ") + 4);
-                    inactive = remaining.substring(0, remaining.indexOf(' ')) + "s";
+                if (messageDetails.contains(" seconds left")) {
+                    remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
+                    inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
                 } else {
                     break;
                 }
@@ -274,14 +273,14 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 });
                 break;
             case "start":
-                /*getActivity().runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
                         frameLayout.removeAllViews();
                         getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_animation, frameLayout);
                     }
-                });*/
+                });
                 break;
             case "move":
                 String attacker = messageDetails.substring(5, separator);
@@ -297,7 +296,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 start = toAppend.indexOf(move);
                 toAppendSpannable = new SpannableString(toAppend);
                 toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
+                makeToast(toAppendSpannable);
                 break;
             case "switch":
             case "drag":
@@ -305,6 +304,9 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 separator = remaining.indexOf(',');
+                if(separator == -1) {
+                    separator = remaining.indexOf('|');
+                }
                 String species = remaining.substring(0, separator);
                 attacker = (!attacker.equals(species)) ? attacker + " (" + species + ")" : attacker;
                 if (messageDetails.startsWith("p1")) {
@@ -312,7 +314,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 } else {
                     toAppendBuilder.append(mPlayer2).append(" sent out ").append(attacker).append("!");
                 }
-                appendServerMessage(new SpannableStringBuilder(toAppendBuilder));
+                makeToast(new SpannableStringBuilder(toAppendBuilder));
                 break;
             case "detailschange":
                 break;
@@ -346,6 +348,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
+
     private void processMinorAction(String command, String messageDetails) {
         if (messageDetails.contains("[silent]")) {
             return;
@@ -353,10 +356,13 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
         int separator;
         int start;
+        Integer oldHP;
+        int lostHP;
+        int intAmount;
         String remaining;
         String toAppend;
         StringBuilder toAppendBuilder = new StringBuilder();
-        Spannable toAppendSpannable;
+        Spannable toAppendSpannable = new SpannableString("");
         String move;
 
         String fromEffect;
@@ -393,36 +399,77 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 toAppendSpannable = new SpannableString(toAppend);
                 break;
             case "-damage":
-                attacker = messageDetails.substring(5, separator);
+                /*attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
+                    oldHP = mPlayer2Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer2Team.put(attacker, 100);
+                        oldHP = mPlayer2Team.get(attacker);
+                    }
+                } else {
+                    oldHP = mPlayer1Team.get(attacker);
+                    if (oldHP == null) {
+                        mPlayer1Team.put(attacker, 100);
+                        oldHP = mPlayer1Team.get(attacker);
+                    }
+
                 }
-                toAppendBuilder.append(attacker);
+                toAppendBuilder.append(attacker + " lost ");
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has lost ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
+                separator = remaining.indexOf("/");
+                if (separator == -1) { // fainted
+                    intAmount = 0;
+                } else {
                     String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
+                    intAmount = Integer.parseInt(hp);
+                }
+                lostHP = oldHP - intAmount;
+                toAppendBuilder.append(lostHP + "% of its health!");
+                if (messageDetails.startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
                 break;
             case "-heal":
-                attacker = messageDetails.substring(5, separator);
+                /*attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
+                    oldHP = mPlayer2Team.get(attacker);
+                    if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
+                        mPlayer2Team.put(attacker, 100);
+                        oldHP = mPlayer2Team.get(attacker);
+                    }
+                } else {
+                    oldHP = mPlayer1Team.get(attacker);
+                    if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
+                        mPlayer1Team.put(attacker, 100);
+                        oldHP = mPlayer1Team.get(attacker);
+                    }
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" healed ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
+                separator = remaining.indexOf("/");
+                if (separator == -1) {
+                    intAmount = 0; // shouldnt happen sicne we're healing
+                } else {
                     String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
+                    intAmount = Integer.parseInt(hp);
+                }
+                lostHP = intAmount - oldHP;
+                toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
+                if (messageDetails.startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
                 break;
             case "-status":
                 attacker = messageDetails.substring(5, separator);
@@ -478,11 +525,38 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has boosted ");
+                toAppendBuilder.append("'s ");
                 separator = remaining.indexOf('|');
                 String stat = remaining.substring(0, separator);
+                switch (stat) {
+                    case "atk":
+                        toAppendBuilder.append("Attack ");
+                        break;
+                    case "def":
+                        toAppendBuilder.append("Defense ");
+                        break;
+                    case "spa":
+                        toAppendBuilder.append("Special Attack ");
+                        break;
+                    case "spd":
+                        toAppendBuilder.append("Special Defense ");
+                        break;
+                    case "spe":
+                        toAppendBuilder.append("Speed ");
+                        break;
+                    default:
+                        toAppendBuilder.append(stat + " ");
+                        break;
+                }
                 String amount = remaining.substring(separator + 1);
-                toAppendBuilder.append(stat).append(" by ").append(amount);
+                if (amount.indexOf("|") != -1) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                intAmount = Integer.parseInt(amount);
+                if (intAmount >= 2) {
+                    toAppendBuilder.append("sharply ");
+                }
+                toAppendBuilder.append("rose!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-unboost":
@@ -492,11 +566,39 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
                 toAppendBuilder.append(attacker);
                 remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" has reduced ");
+                toAppendBuilder.append("'s ");
                 separator = remaining.indexOf('|');
                 stat = remaining.substring(0, separator);
+                switch (stat) {
+                    case "atk":
+                        toAppendBuilder.append("Attack ");
+                        break;
+                    case "def":
+                        toAppendBuilder.append("Defense ");
+                        break;
+                    case "spa":
+                        toAppendBuilder.append("Special Attack ");
+                        break;
+                    case "spd":
+                        toAppendBuilder.append("Special Defense ");
+                        break;
+                    case "spe":
+                        toAppendBuilder.append("Speed ");
+                        break;
+                    default:
+                        toAppendBuilder.append(stat + " ");
+                        break;
+                }
                 amount = remaining.substring(separator + 1);
-                toAppendBuilder.append(stat).append(" by ").append(amount);
+                if (amount.indexOf("|") != -1) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                toAppendBuilder.append("fell");
+                intAmount = Integer.parseInt(amount);
+                if (intAmount >= 2) {
+                    toAppendBuilder.append(" hashly");
+                }
+                toAppendBuilder.append("!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-weather":
@@ -510,10 +612,13 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 toAppendSpannable = new SpannableString("It's super effective!");
                 break;
             case "-resisted":
-                toAppendSpannable = new SpannableString("It's not very effective");
+                toAppendSpannable = new SpannableString("It's not very effective...");
                 break;
             case "-immune":
                 attacker = messageDetails.substring(5);
+                if (attacker.indexOf("|") != -1) {
+                    attacker = attacker.substring(0, attacker.indexOf("|"));
+                }
                 toAppend = attacker + " is immuned";
                 toAppendSpannable = new SpannableString(toAppend);
                 break;
@@ -553,23 +658,21 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "-sidestart":
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
-                if (messageDetails.indexOf("move:") != -1) {
-                    move = messageDetails.substring(messageDetails.indexOf("move:") + 5);
-
-                    if (move.indexOf("Stealth Rock") != -1) {
-                        toAppendBuilder.append("Pointed stones float in the air around ");
-                    } else if (move.indexOf("Toxic Spikes") != -1) {
-                        toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
-                    } else if (move.indexOf("Spikes") != -1) {
-                        toAppendBuilder.append("Spikes were scattered all around the feet of ");
-                    } else if (move.indexOf("Reflect") != -1) {
-                        toAppendBuilder.append("A protective veil augments the Defense of ");
-                    } else if (move.indexOf("Light Screen") != -1) {
-                        toAppendBuilder.append("A protective veil augments the Special Defense of ");
-                    } else if (move.indexOf("Sticky Web") != -1) {
-                        toAppendBuilder.append("A sticky web spreads out beneath ");
-                    }
+                messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
+                if (messageDetails.indexOf("Stealth Rock") != -1) {
+                    toAppendBuilder.append("Pointed stones float in the air around ");
+                } else if (messageDetails.indexOf("Toxic Spikes") != -1) {
+                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
+                } else if (messageDetails.indexOf("Spikes") != -1) {
+                    toAppendBuilder.append("Spikes were scattered all around the feet of ");
+                } else if (messageDetails.indexOf("Reflect") != -1) {
+                    toAppendBuilder.append("A protective veil augments the Defense of ");
+                } else if (messageDetails.indexOf("Light Screen") != -1) {
+                    toAppendBuilder.append("A protective veil augments the Special Defense of ");
+                } else if (messageDetails.indexOf("Sticky Web") != -1) {
+                    toAppendBuilder.append("A sticky web spreads out beneath ");
                 }
+
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("the opposing team!");
                 } else {
@@ -577,14 +680,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-sideend":
                 // todo
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
             case "-hitcount":
-                //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                try {
+                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf(separator) + 1);
+                    int hitCount = Integer.parseInt(hitCountS);
+                    toAppendBuilder.append("Hit " + hitCount + "time");
+                    if (hitCount > 1) {
+                        toAppendBuilder.append("s");
+                    }
+                    toAppendBuilder.append("!");
+                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                } catch (NumberFormatException e) {
+                    // todo handle
+                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                }
                 break;
 
             case "-singleturn":
@@ -597,6 +712,25 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
+            case "-fieldend":
+                //todo (trick room, maybe more)
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-start":
+                //todo substitute,yawn,taunt,flashfire
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-end":
+                //todo substitute,yawn,taunt
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
+            case "-message":
+                toAppendSpannable = new SpannableString(messageDetails);
+                break;
+
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
@@ -606,7 +740,24 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private void appendServerMessage(final Spannable message) {
+        startAnimation(new Runnable() {
+            @Override
+            public void run() {
+                makeToast(message);
+            }
+        });
+    }
 
+    private void startAnimation(Runnable runnable) {
+        getActivity().runOnUiThread(runnable);
+    }
+
+    private void waitForToastToDisappear() {
+        /*try {
+            //Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Log.d(BTAG, "Interrupted Exception");
+        }*/
     }
 
     private void makeToast(final String message) {
@@ -614,14 +765,21 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private void makeToast(final String message, final int duration) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast toast = Toast.makeText(getActivity(), message, duration);
-                toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
-            }
-        });
+        Toast toast = Toast.makeText(getActivity(), message, duration);
+        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
+        waitForToastToDisappear();
+    }
+
+    private void makeToast(final Spannable message) {
+        makeToast(message, Toast.LENGTH_SHORT);
+    }
+
+    private void makeToast(final Spannable message, final int duration) {
+        Toast toast = Toast.makeText(getActivity(), message, duration);
+        toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
+        waitForToastToDisappear();
     }
 
     /**

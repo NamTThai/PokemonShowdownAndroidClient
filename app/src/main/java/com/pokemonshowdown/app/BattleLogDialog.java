@@ -229,14 +229,14 @@ public class BattleLogDialog extends DialogFragment {
             case "teampreview":
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(mPlayer1).append("'s Team: ");
-                String[] p1Team = (String[]) mPlayer1Team.keySet().toArray();
+                String[] p1Team = mPlayer1Team.keySet().toArray(new String[mPlayer1Team.size()]);
                 for (int i = 0; i < p1Team.length - 1; i++) {
                     toAppendBuilder.append(p1Team[i]).append("/");
                 }
                 toAppendBuilder.append(p1Team[p1Team.length - 1]);
 
                 toAppendBuilder.append("\n").append(mPlayer2).append("'s Team: ");
-                String[] p2Team = (String[]) mPlayer1Team.keySet().toArray();
+                String[] p2Team = mPlayer1Team.keySet().toArray(new String[mPlayer2Team.size()]);
                 for (int i = 0; i < p2Team.length - 1; i++) {
                     toAppendBuilder.append(p2Team[i]).append("/");
                 }
@@ -319,7 +319,7 @@ public class BattleLogDialog extends DialogFragment {
                 //todo (cant attack bec frozen/para etc)
                 break;
             default:
-               // appendServerMessage(new SpannableString(message));
+                appendServerMessage(new SpannableString(message));
                 break;
         }
     }
