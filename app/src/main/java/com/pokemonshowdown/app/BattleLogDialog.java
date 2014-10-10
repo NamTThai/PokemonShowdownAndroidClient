@@ -778,26 +778,46 @@ public class BattleLogDialog extends DialogFragment {
             case "-sidestart":
                 //reflect, rocks, spikes, light screen, toxic spikes
                 // TODO check leech seed maybe?
+                String side;
+                if (messageDetails.startsWith("p2")) {
+                    side = "the opposing team";
+                } else {
+                    side = "your team";
+                }
+
+
                 messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
                 if (messageDetails.contains("Stealth Rock")) {
-                    toAppendBuilder.append("Pointed stones float in the air around ");
+                    toAppendBuilder.append("Pointed stones float in the air around ").append(side).append("!");
                 } else if (messageDetails.contains("Toxic Spikes")) {
-                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
+                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ").append(side).append("!");
                 } else if (messageDetails.contains("Spikes")) {
-                    toAppendBuilder.append("Spikes were scattered all around the feet of ");
+                    toAppendBuilder.append("Spikes were scattered all around the feet of ").append(side).append("!");
                 } else if (messageDetails.contains("Reflect")) {
-                    toAppendBuilder.append("A protective veil augments the Defense of ");
+                    toAppendBuilder.append("Reflect raised ").append(side).append("'s Defense!");
                 } else if (messageDetails.contains("Light Screen")) {
-                    toAppendBuilder.append("A protective veil augments the Special Defense of ");
+                    toAppendBuilder.append("Light Screen raised ").append(side).append("'s Special Defense!");
                 } else if (messageDetails.contains("Sticky Web")) {
-                    toAppendBuilder.append("A sticky web spreads out beneath ");
-                } 
-
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("the opposing team!");
+                    toAppendBuilder.append("A sticky web spreads out beneath ").append(side).append("'s feet!");
+                } else if (messageDetails.contains("Tailwind")) {
+                    toAppendBuilder.append("The tailwind blew from behind ").append(side).append("!");
+                } else if (messageDetails.contains("Safeguard")) {
+                    toAppendBuilder.append(side).append(" became cloaked in a mystical veil!");
+                } else if (messageDetails.contains("Mist")) {
+                    toAppendBuilder.append(side).append(" became shrouded in mist!");
+                } else if (messageDetails.contains("Lucky Chant")) {
+                    toAppendBuilder.append("The Lucky Chant shielded ").append(side).append(" from critical hits!");
+                } else if (messageDetails.contains("Fire Pledge")) {
+                    toAppendBuilder.append("A sea of fire enveloped ").append(side).append("!");
+                } else if (messageDetails.contains("Water Pledge")) {
+                    toAppendBuilder.append("A rainbow appeared in the sky on ").append(side).append("'s side!");
+                } else if (messageDetails.contains("Grass Pledge")) {
+                    toAppendBuilder.append("A swamp enveloped ").append(side).append("!");
                 } else {
-                    toAppendBuilder.append("your team!");
+                    toAppendBuilder.append(messageDetails).append(" started!");
                 }
+
+
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
