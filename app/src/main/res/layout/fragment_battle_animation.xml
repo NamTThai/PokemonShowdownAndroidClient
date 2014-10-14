@@ -72,7 +72,6 @@
             android:id="@+id/p1a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
 
@@ -136,7 +135,6 @@
             android:id="@+id/p1b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1b_hp_layout"/>
 
@@ -200,7 +198,6 @@
             android:id="@+id/p1c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1c_hp_layout"/>
 
@@ -265,7 +262,6 @@
             android:id="@+id/p2c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2c_hp_layout"/>
 
@@ -330,7 +326,6 @@
             android:id="@+id/p2b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2b_hp_layout"/>
 
@@ -394,7 +389,6 @@
             android:id="@+id/p2a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2a_hp_layout"/>
 
