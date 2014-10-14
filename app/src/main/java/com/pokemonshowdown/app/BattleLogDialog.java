@@ -349,54 +349,53 @@ public class BattleLogDialog extends DialogFragment {
         String move;
 
         String fromEffect = null;
+        String trimmedFromEffect = null;
         String ofSource = null;
+        String trimmedOfEffect = null;
+
         int from = messageDetails.indexOf("[from]");
         if (from != -1) {
             remaining = messageDetails.substring(from + 7);
             separator = remaining.indexOf('|');
             fromEffect = (separator == -1) ? remaining : remaining.substring(0, separator);
+            //trim
+            trimmedFromEffect = fromEffect;
+            trimmedFromEffect = trimmedFromEffect.toLowerCase();
+            trimmedFromEffect = trimmedFromEffect.replaceAll("\\s+", "");
         }
         int of = messageDetails.indexOf("[of]");
         if (of != -1) {
             remaining = messageDetails.substring(of + 5);
             separator = remaining.indexOf('|');
             ofSource = (separator == -1) ? remaining : remaining.substring(remaining.indexOf(':'), separator);
+
+            trimmedOfEffect = ofSource;
+            trimmedOfEffect = trimmedOfEffect.toLowerCase();
+            trimmedOfEffect = trimmedOfEffect.replaceAll("\\s+", "");
         }
 
         separator = messageDetails.indexOf('|');
         String[] split = messageDetails.split("\\|");
 
         switch (command) {
-            case "-miss":
-                String attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendBuilder.append(" missed the target");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-            case "-fail":
-                toAppend = "But it failed!";
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
             case "-damage":
-                attacker = messageDetails.substring(5, separator);
+                String attacker = split[0].substring(5);
+
                 if (messageDetails.startsWith("p2")) {
                     oldHP = mPlayer2Team.get(attacker);
                     if (oldHP == null) {
-                        mPlayer2Team.put(attacker, 100);
-                        oldHP = mPlayer2Team.get(attacker);
+                        oldHP = 100;
+                        mPlayer2Team.put(attacker, oldHP);
                     }
                 } else {
                     oldHP = mPlayer1Team.get(attacker);
                     if (oldHP == null) {
-                        mPlayer1Team.put(attacker, 100);
-                        oldHP = mPlayer1Team.get(attacker);
+                        oldHP = 100;
+                        mPlayer1Team.put(attacker, oldHP);
                     }
                 }
 
-                remaining = messageDetails.substring(separator + 1);
+                remaining = split[1];
                 separator = remaining.indexOf("/");
                 if (separator == -1) { // fainted
                     intAmount = 0;
@@ -406,12 +405,12 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 lostHP = oldHP - intAmount;
 
-                if (fromEffect != null) {
-                    switch (fromEffect) {
-                        case "Stealth Rock":
+                if (trimmedFromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "stealthrock":
                             toAppendBuilder.append("Pointed stones dug into ").append(attacker).append("!");
                             break;
-                        case "Spikes":
+                        case "spikes":
                             toAppendBuilder.append(attacker).append(" is hurt by the spikes!");
                             break;
                         case "brn":
@@ -420,34 +419,34 @@ public class BattleLogDialog extends DialogFragment {
                         case "psn":
                             toAppendBuilder.append(attacker).append(" was hurt by poison!");
                             break;
-                        case "item: Life Orb":
+                        case "item:lifeorb":
                             toAppendBuilder.append(attacker).append(" lost some of its HP!");
                             break;
                         case "recoil":
                             toAppendBuilder.append(attacker).append(" is damaged by recoil!");
                             break;
-                        case "Sandstorm":
+                        case "sandstorm":
                             toAppendBuilder.append(attacker).append(" is buffeted by the sandstorm!");
                             break;
-                        case "Hail":
+                        case "hail":
                             toAppendBuilder.append(attacker).append(" is buffeted by the hail!");
                             break;
-                        case "Bad Dreams":
+                        case "baddreams":
                             toAppendBuilder.append(attacker).append(" is tormented!");
                             break;
-                        case "Nightmare":
+                        case "nightmare":
                             toAppendBuilder.append(attacker).append(" is locked in a nightmare!");
                             break;
-                        case "Confusion":
+                        case "confusion":
                             toAppendBuilder.append("It hurt itself in its confusion!");
                             break;
-                        case "Leech Seed":
+                        case "leechseed":
                             toAppendBuilder.append(attacker).append("'s health is sapped by Leech Seed!");
                             break;
-                        case "Flame Burst":
+                        case "flameburst":
                             toAppendBuilder.append("The bursting flame hit ").append(attacker).append("!");
                             break;
-                        case "Fire Pledge":
+                        case "firepledge":
                             toAppendBuilder.append(attacker).append(" is hurt by the sea of fire!");
                             break;
                         case "jumpkick":
@@ -482,6 +481,7 @@ public class BattleLogDialog extends DialogFragment {
 
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-heal":
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
@@ -509,39 +509,39 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 lostHP = intAmount - oldHP;
 
-                if (fromEffect != null) {
-                    switch (fromEffect) {
-                        case "Ingrain":
+                if (trimmedFromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "ingrain":
                             toAppendBuilder.append(attacker).append(" absorbed nutrients with its roots!");
                             break;
-                        case "Aqua Ring":
+                        case "aquaring":
                             toAppendBuilder.append("Aqua Ring restored ").append(attacker).append("'s HP");
                             break;
-                        case "Rain Dish":
-                        case "Dry Skin":
-                        case "Ice Body":
+                        case "raindish":
+                        case "dryskin":
+                        case "icebody":
                             toAppendBuilder.append(attacker).append("'s ").append(fromEffect).append(" heals it!");
                             break;
-                        case "Healing Wish":
+                        case "healingwish":
                             // TODO
                             break;
-                        case "Lunar Dance":
+                        case "lunardance":
                             // TODO
                             break;
-                        case "Wish":
+                        case "wish":
                             //TODO wish pass
                             break;
-                        case "Drain":
+                        case "drain":
                             toAppendBuilder.append(attacker).append(" had its energy drained!");
                             break;
-                        case "item: Leftovers":
-                        case "item: Shellbell":
+                        case "item:leftovers":
+                        case "item:shellbell":
                             toAppendBuilder.append(attacker).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
                             break;
                         default:
-                            if(fromEffect.contains("item:")) {
+                            if (fromEffect.contains("item:")) {
                                 fromEffect = fromEffect.substring(5);
-                            } else if(fromEffect.contains("ability:")) {
+                            } else if (fromEffect.contains("ability:")) {
                                 fromEffect = fromEffect.substring(8);
                             }
                             toAppendBuilder.append(attacker).append(" restored HP using its ").append(fromEffect).append("!");
@@ -563,81 +563,9 @@ public class BattleLogDialog extends DialogFragment {
 
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
-            case "-status":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                switch (remaining) {
-                    case "brn":
-                        toAppendBuilder.append(" was burned");
-                        if (fromEffect != null) {
-                            toAppendBuilder.append(" by the ").append(fromEffect);
-                        }
-                        toAppendBuilder.append("!");
-                        break;
-                    case "tox":
-                        toAppendBuilder.append(" was badly poisoned");
-                        if (fromEffect != null) {
-                            toAppendBuilder.append(" by the ").append(fromEffect);
-                        }
-                        toAppendBuilder.append("!");
-                        break;
-
-                    case "psn":
-                        toAppendBuilder.append(" was poisoned!");
-                        break;
-
-                    case "slp":
-                        if (fromEffect != null && fromEffect.equals("rest")) {
-                            toAppendBuilder.append(" slept and became healthy!");
-                        } else {
-                            toAppendBuilder.append(" fell asleep!");
-                        }
-                        break;
-
-                    case "par":
-                        toAppendBuilder.append(" is paralyzed! It may be unable to move!");
-                        break;
-
-                    case "frz":
-                        toAppendBuilder.append(" was frozen solid!");
-                        break;
-                }
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-            case "-curestatus":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" was cured from ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
-                break;
-            case "-cureteam":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendBuilder.append(" cured the whole team from bad status");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
+            case "-sethp":
+                // TODO
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
             case "-boost":
                 attacker = messageDetails.substring(5, separator);
@@ -726,6 +654,89 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendBuilder.append("!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+            case "-setboost":
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+            case "-miss":
+                if (split[0].startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                attacker = split[0].substring(5);
+                toAppendBuilder.append(attacker);
+                toAppendBuilder.append(" missed the target");
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
+            case "-fail":
+                toAppend = "But it failed!";
+                toAppendSpannable = new SpannableString(toAppend);
+                break;
+            case "-status":
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                remaining = messageDetails.substring(separator + 1);
+                switch (remaining) {
+                    case "brn":
+                        toAppendBuilder.append(" was burned");
+                        if (fromEffect != null) {
+                            toAppendBuilder.append(" by the ").append(fromEffect);
+                        }
+                        toAppendBuilder.append("!");
+                        break;
+                    case "tox":
+                        toAppendBuilder.append(" was badly poisoned");
+                        if (fromEffect != null) {
+                            toAppendBuilder.append(" by the ").append(fromEffect);
+                        }
+                        toAppendBuilder.append("!");
+                        break;
+
+                    case "psn":
+                        toAppendBuilder.append(" was poisoned!");
+                        break;
+
+                    case "slp":
+                        if (fromEffect != null && trimmedFromEffect.equals("move:rest")) {
+                            toAppendBuilder.append(" slept and became healthy!");
+                        } else {
+                            toAppendBuilder.append(" fell asleep!");
+                        }
+                        break;
+
+                    case "par":
+                        toAppendBuilder.append(" is paralyzed! It may be unable to move!");
+                        break;
+
+                    case "frz":
+                        toAppendBuilder.append(" was frozen solid!");
+                        break;
+                }
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
+            case "-curestatus":
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                remaining = messageDetails.substring(separator + 1);
+                toAppendBuilder.append(" was cured from ").append(remaining);
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
+
+            case "-cureteam":
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                toAppendBuilder.append(" cured the whole team from bad status");
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
+
+
             case "-weather":
                 String weather = split[0];
                 boolean upkeep = false;
