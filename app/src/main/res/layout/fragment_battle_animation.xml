@@ -3,7 +3,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-    
+
+    <TextView
+        android:id="@+id/toast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/editable_frame_grey"
+        android:alpha="0"
+        android:padding="2dp"
+        android:layout_margin="4dp"/>
+
     <RelativeLayout
         android:id="@+id/p1a"
         android:layout_width="wrap_content"
