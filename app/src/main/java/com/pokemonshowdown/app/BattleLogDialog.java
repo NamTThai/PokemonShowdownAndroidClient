@@ -654,9 +654,44 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendBuilder.append("!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-setboost":
+                // TODO
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
+
+            case "-swapboost":
+                // TODO
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+
+            case "-restoreboost":
+                //nothign here
+                toAppendSpannable = new SpannableStringBuilder("");
+                break;
+
+            case "-copyboost":
+                // TODO
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+
+            case "-clearboost":
+                // TODO
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+
+            case "-invertboost":
+                // TODO
+                attacker = split[0].substring(5);
+                toAppendBuilder.append(attacker).append("'s stat changes were inverted!");
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+
+            case "-clearallboost":
+                toAppendSpannable = new SpannableStringBuilder("All stat changes were eliminated!");
+                break;
+
+
             case "-miss":
                 if (split[0].startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
@@ -716,6 +751,7 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-curestatus":
+                // TODO effects
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
@@ -727,6 +763,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-cureteam":
+                // TODO effects
                 attacker = messageDetails.substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
@@ -960,6 +997,9 @@ public class BattleLogDialog extends DialogFragment {
             case "-nothing":
                 toAppendSpannable = new SpannableString("But nothing happened! ");
                 break;
+
+
+            // TODO -prepare,-combine,-waiting
 
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
