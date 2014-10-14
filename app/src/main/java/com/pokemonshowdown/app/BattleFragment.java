@@ -32,6 +32,8 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -39,6 +41,8 @@ import java.util.PriorityQueue;
 public class BattleFragment extends android.support.v4.app.Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
+    public final static int ANIMATION_SHORT = 500;
+    public final static int ANIMATION_LONG = 1000;
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
 
@@ -353,7 +357,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 //todo (cant attack bec frozen/para etc)
                 break;
             default:
-                appendServerMessage(new SpannableString(message));
+                AnimatorSet toast = makeToast(message, ANIMATION_LONG);
+                startAnimation(toast);
         }
     }
 
@@ -749,14 +754,79 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private void appendServerMessage(final Spannable message) {
-        startAnimation(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (mAnimatorSetQueue == null) {
                     mAnimatorSetQueue = new ArrayDeque<>();
                 }
 
-                AnimatorSet animator = makeToast(message);
+                AnimatorSet toast = makeToast(message);
+
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimatorSetQueue.pollFirst();
+                        Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
+                        if (nextOnQueue != null) {
+                            nextOnQueue.start();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+                mAnimatorSetQueue.addLast(toast);
+
+                if (mAnimatorSetQueue.size() == 1) {
+                    toast.start();
+                }
+            }
+        });
+    }
+
+    private void startAnimation(final AnimatorSet animator) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimatorSetQueue.pollFirst();
+                        Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
+                        if (nextOnQueue != null) {
+                            nextOnQueue.start();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
 
                 mAnimatorSetQueue.addLast(animator);
 
@@ -767,44 +837,30 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    private void startAnimation(Runnable runnable) {
-        getActivity().runOnUiThread(runnable);
-    }
-
     private AnimatorSet makeToast(final Spannable message, final int duration) {
         TextView textView = (TextView) getView().findViewById(R.id.toast);
-        
-        ObjectAnimator changeText = ObjectAnimator.ofObject(new AnimatedTextView(textView), "Text", new TypeEvaluator<Spannable>() {
-            @Override
-            public Spannable evaluate(float fraction, Spannable startValue, Spannable endValue) {
-                return endValue;
-            }
-        }, message);
-        changeText.setInterpolator(new DecelerateInterpolator());
-        changeText.setDuration(1000);
 
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f);
         fadeIn.setInterpolator(new DecelerateInterpolator());
 
         ObjectAnimator fadeOut = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setStartDelay(1000);
+        fadeOut.setStartDelay(duration);
 
         AnimatorSet animation = new AnimatorSet();
-        animation.play(changeText);
-        animation.play(fadeIn).after(changeText);
+        animation.play(fadeIn);
         animation.play(fadeOut).after(fadeIn);
         animation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                TextView toast = (TextView) getView().findViewById(R.id.toast);
+                if (toast != null) {
+                    toast.setText(message);
+                }
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mAnimatorSetQueue.pollFirst();
-                if (!mAnimatorSetQueue.isEmpty()) {
-                    mAnimatorSetQueue.pollFirst().start();
-                }
             }
 
             @Override
@@ -821,7 +877,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private AnimatorSet makeToast(final String message) {
-        return makeToast(message, Toast.LENGTH_SHORT);
+        return makeToast(message, ANIMATION_LONG);
     }
 
     private AnimatorSet makeToast(final String message, final int duration) {
@@ -829,7 +885,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private AnimatorSet makeToast(final Spannable message) {
-        return makeToast(message, Toast.LENGTH_SHORT);
+        return makeToast(message, ANIMATION_LONG);
     }
 
     /**
@@ -916,26 +972,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
             default:
                 return 0;
-        }
-    }
-
-    private class AnimatedTextView {
-        TextView mTextView;
-
-        private AnimatedTextView(TextView textView) {
-            mTextView = textView;
-        }
-
-        public void setText(Spannable text) {
-            mTextView.setText(text);
-        }
-
-        public void setText(SpannableString text) {
-            mTextView.setText(text);
-        }
-
-        public void setText(SpannableStringBuilder text) {
-            mTextView.setText(text);
         }
     }
 
