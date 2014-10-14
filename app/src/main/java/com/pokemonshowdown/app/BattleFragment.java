@@ -23,11 +23,14 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -348,12 +351,38 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 toAppendBuilder = new StringBuilder();
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
+                String species, level, gender = "";
                 separator = remaining.indexOf(',');
                 if (separator == -1) {
-                    //for genderless
+                    level = "L100";
                     separator = remaining.indexOf('|');
+                    species = remaining.substring(0, separator);
+                } else {
+                    species = remaining.substring(0, separator);
+                    remaining = remaining.substring(separator + 2);
+                    separator = remaining.indexOf(',');
+                    if (separator == -1) {
+                        level = remaining.substring(0, remaining.indexOf('|'));
+                    } else {
+                        level = remaining.substring(0, separator);
+                        gender = remaining.substring(separator + 2, separator + 3);
+                    }
                 }
-                String species = remaining.substring(0, separator);
+                
+                remaining = remaining.substring(remaining.indexOf('|') + 1);
+                separator = remaining.indexOf(' ');
+                final int hpInt;
+                final String hpString;
+                final String status;
+                if (separator == -1) {
+                    hpInt = processHpFraction(remaining);
+                    status = "";
+                } else {
+                    hpInt = processHpFraction(remaining.substring(0, separator));
+                    status = remaining.substring(separator + 1);
+                }
+                hpString = Integer.toString(hpInt);
+                
                 String speciesId = MyApplication.toId(species);
                 String oldSpeciesId;
 
@@ -362,6 +391,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                 // Switching sprites and icons
                 attacker = (!attacker.equals(species)) ? attacker + " (" + species + ")" : attacker;
+                final String levelFinal = attacker + " " + level;
+                final String genderFinal = gender;
                 if (messageDetails.startsWith("p1")) {
                     if (mPlayer1Team == null) {
                         mPlayer1Team = new ArrayList<>();
@@ -390,6 +421,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                                 return;
                             }
 
+                            displayPokemon(messageDetails.substring(0, 3));
+
                             ImageView sprites = (ImageView) getView().findViewById(getSpriteId(messageDetails.substring(0, 3)));
                             if (sprites != null) {
                                 sprites.setImageResource(spriteId);
@@ -401,6 +434,35 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                             }
                             if (iconLeader != null) {
                                 iconLeader.setImageResource(iconId);
+                            }
+
+                            TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
+                            if (pkmName != null) {
+                                pkmName.setText(levelFinal);
+                            }
+                            
+                            ImageView gender = (ImageView) getView().findViewById(getGenderId(messageDetails.substring(0, 3)));
+                            if (gender != null) {
+                                if (genderFinal.equals("M")) {
+                                    gender.setImageResource(R.drawable.ic_gender_male);
+                                } else {
+                                    if (genderFinal.equals("F")) {
+                                        gender.setImageResource(R.drawable.ic_gender_female);
+                                    }
+                                }
+                            }
+                            
+                            TextView hpText = (TextView) getView().findViewById(getHpId(messageDetails.substring(0, 3)));
+                            ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails.substring(0, 3)));
+                            if (hpText != null) {
+                                hpText.setText(hpString);
+                            }
+                            if (hpBar != null) {
+                                hpBar.setProgress(hpInt);
+                            }
+
+                            if (!status.equals("")) {
+                                setStatus(messageDetails.substring(0, 3), status.toUpperCase());
                             }
                         }
 
@@ -447,6 +509,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                                 return;
                             }
 
+                            displayPokemon(messageDetails.substring(0, 3));
+
                             ImageView sprites = (ImageView) getView().findViewById(getSpriteId(messageDetails.substring(0, 3)));
                             if (sprites != null) {
                                 sprites.setImageResource(spriteId);
@@ -458,6 +522,33 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                             }
                             if (iconLeader != null) {
                                 iconLeader.setImageResource(iconId);
+                            }
+
+                            TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
+                            if (pkmName != null) {
+                                pkmName.setText(levelFinal);
+                            }
+
+                            ImageView gender = (ImageView) getView().findViewById(getGenderId(messageDetails.substring(0, 3)));
+                            if (gender != null) {
+                                if (genderFinal.equals("M")) {
+                                    gender.setImageResource(R.drawable.ic_gender_male);
+                                } else if (genderFinal.equals("F")) {
+                                    gender.setImageResource(R.drawable.ic_gender_female);
+                                }
+                            }
+
+                            TextView hpText = (TextView) getView().findViewById(getHpId(messageDetails.substring(0, 3)));
+                            ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails.substring(0, 3)));
+                            if (hpText != null) {
+                                hpText.setText(hpString);
+                            }
+                            if (hpBar != null) {
+                                hpBar.setProgress(hpInt);
+                            }
+
+                            if (!status.equals("")) {
+                                setStatus(messageDetails.substring(0, 3), status.toUpperCase());
                             }
                         }
 
@@ -1114,6 +1205,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 return 0;
         }
     }
+    
+    private int getSpriteNameid(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_pkm;
+            case "p1b":
+                return R.id.p1b_pkm;
+            case "p1c":
+                return R.id.p1c_pkm;
+            case "p2a":
+                return R.id.p2a_pkm;
+            case "p2b":
+                return R.id.p2b_pkm;
+            case "p2c":
+                return R.id.p2c_pkm;
+            default:
+                return 0;
+        }
+    }
 
     private int getIconId(String player, int id) {
         String p = player.substring(0, 2);
@@ -1154,6 +1265,155 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
             default:
                 return 0;
+        }
+    }
+    
+    private int getGenderId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_gender;
+            case "p1b":
+                return R.id.p1b_gender;
+            case "p1c":
+                return R.id.p1c_gender;
+            case "p2a":
+                return R.id.p2a_gender;
+            case "p2b":
+                return R.id.p2b_gender;
+            case "p2c":
+                return R.id.p2c_gender;
+            default:
+                return 0;
+        }
+    }
+    
+    private int getHpId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_hp;
+            case "p1b":
+                return R.id.p1b_hp;
+            case "p1c":
+                return R.id.p1c_hp;
+            case "p2a":
+                return R.id.p2a_hp;
+            case "p2b":
+                return R.id.p2b_hp;
+            case "p2c":
+                return R.id.p2c_hp;
+            default:
+                return 0;
+        }
+    }
+    
+    private int getHpBarId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_bar_hp;
+            case "p1b":
+                return R.id.p1b_bar_hp;
+            case "p1c":
+                return R.id.p1c_bar_hp;
+            case "p2a":
+                return R.id.p2a_bar_hp;
+            case "p2b":
+                return R.id.p2b_bar_hp;
+            case "p2c":
+                return R.id.p2c_bar_hp;
+            default:
+                return 0;
+        }
+    }
+    
+    private int getStatusId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_status;
+            case "p1b":
+                return R.id.p1b_status;
+            case "p1c":
+                return R.id.p1c_status;
+            case "p2a":
+                return R.id.p2a_status;
+            case "p2b":
+                return R.id.p2b_status;
+            case "p2c":
+                return R.id.p2c_status;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Available statuses: slp, psn, brn, par, frz
+     */
+    private void setStatus(String tag, String status) {
+        int id = getStatusId(tag);
+        if (getView() == null) {
+            return;
+        }
+        TextView stt = (TextView) getView().findViewById(id);
+        if (stt != null) {
+            stt.setText(status);
+            switch (status) {
+                case "slp":
+                    stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
+                    break;
+                case "psn":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
+                    break;
+                case "brn":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_red);
+                    break;
+                case "par":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_orange);
+                    break;
+                case "frz":
+                    stt.setBackgroundResource(R.drawable.editable_frame);
+            }
+        }
+    }
+
+    private void displayPokemon(String tag) {
+        if (getView() == null) {
+            return;
+        }
+
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                getView().findViewById(R.id.p1a).setVisibility(View.VISIBLE);
+                return;
+            case "p1b":
+                getView().findViewById(R.id.p1b).setVisibility(View.VISIBLE);
+                return;
+            case "p1c":
+                getView().findViewById(R.id.p1c).setVisibility(View.VISIBLE);
+                return;
+            case "p2a":
+                getView().findViewById(R.id.p2a).setVisibility(View.VISIBLE);
+                return;
+            case "p2b":
+                getView().findViewById(R.id.p2b).setVisibility(View.VISIBLE);
+                return;
+            case "p2c":
+                getView().findViewById(R.id.p2c).setVisibility(View.VISIBLE);
+                return;
+        }
+    }
+
+    private int processHpFraction(String hpFraction) {
+        int fraction = hpFraction.indexOf('/');
+        if (fraction == -1) {
+            return 0;
+        } else {
+            int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
+            int total = Integer.parseInt(hpFraction.substring(fraction + 1));
+            return (int) (((float) remaining / (float) total) * 100);
         }
     }
 
