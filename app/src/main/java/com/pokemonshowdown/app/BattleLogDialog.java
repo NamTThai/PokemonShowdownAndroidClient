@@ -353,6 +353,8 @@ public class BattleLogDialog extends DialogFragment {
         String ofSource = null;
         String trimmedOfEffect = null;
 
+        String attacker, defender;
+
         int from = messageDetails.indexOf("[from]");
         if (from != -1) {
             remaining = messageDetails.substring(from + 7);
@@ -379,7 +381,7 @@ public class BattleLogDialog extends DialogFragment {
 
         switch (command) {
             case "-damage":
-                String attacker = split[0].substring(5);
+                attacker = split[0].substring(5);
 
                 if (messageDetails.startsWith("p2")) {
                     oldHP = mPlayer2Team.get(attacker);
@@ -564,8 +566,13 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-sethp":
-                // TODO
-                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                switch (trimmedFromEffect) {
+                    case "painsplit":
+                        toAppendBuilder.append("The battlers shared their pain!");
+                        break;
+                }
+                // todo actually switch hps
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-boost":
                 attacker = messageDetails.substring(5, separator);
@@ -656,12 +663,38 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-setboost":
-                // TODO
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "bellydrum":
+                            toAppendBuilder.append(attacker + " cut its own HP and maximized its Attack!");
+                            break;
+
+                        case "angerpoint":
+                            toAppendBuilder.append(attacker + " maxed its Attack!");
+                            break;
+                    }
+                }
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-swapboost":
-                // TODO
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "guardswap":
+                            toAppendBuilder.append(attacker + " switched all changes to its Defense and Sp. Def with the target!");
+                            break;
+
+                        case "heartswap":
+                            toAppendBuilder.append(attacker + " switched stat changes with the target!");
+                            break;
+
+                        case "powerswap":
+                            toAppendBuilder.append(attacker + " switched all changes to its Attack and Sp. Atk with the target!");
+                            break;
+                    }
+                }
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
@@ -671,26 +704,28 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-copyboost":
-                // TODO
-                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                attacker = split[0].substring(5);
+                defender = split[1].substring(5);
+                toAppendBuilder.append(attacker).append(" copied ").append(defender).append("'s stat changes!");
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
             case "-clearboost":
-                // TODO
+                attacker = split[0].substring(5);
+                toAppendBuilder.append(attacker).append("'s stat changes were removed!");
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-invertboost":
-                // TODO
                 attacker = split[0].substring(5);
                 toAppendBuilder.append(attacker).append("'s stat changes were inverted!");
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-clearallboost":
-                toAppendSpannable = new SpannableStringBuilder("All stat changes were eliminated!");
+                toAppendBuilder.append("All stat changes were eliminated!");
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
-
 
             case "-miss":
                 if (split[0].startsWith("p2")) {
