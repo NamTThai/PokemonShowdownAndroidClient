@@ -726,27 +726,53 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendBuilder.append("All stat changes were eliminated!");
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
+            case "-crit":
+                toAppendSpannable = new SpannableString("It's a critical hit!");
+                break;
+            case "-supereffective":
+                toAppendSpannable = new SpannableString("It's super effective!");
+                break;
+            case "-resisted":
+                toAppendSpannable = new SpannableString("It's not very effective...");
+                break;
+            case "-immune":
+                attacker = messageDetails.substring(5);
+                if (attacker.contains("|")) {
+                    attacker = attacker.substring(0, attacker.indexOf("|"));
+                }
+                toAppendBuilder.append("It doesn't affect ");
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("the opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                toAppendSpannable = new SpannableString(toAppendBuilder);
+                break;
 
             case "-miss":
-                if (split[0].startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
+                if(split.length > 1) {
+                    // there was a target
+                    defender = split[1].substring(5);
+                    toAppendBuilder.append(defender).append(" avoided the attack!");
+                } else {
+                    attacker = split[0].substring(5);
+                    toAppendBuilder.append(attacker).append("'s attack missed!");
                 }
-                attacker = split[0].substring(5);
-                toAppendBuilder.append(attacker);
                 toAppendBuilder.append(" missed the target");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-fail":
+                // todo
                 toAppend = "But it failed!";
                 toAppendSpannable = new SpannableString(toAppend);
                 break;
             case "-status":
-                attacker = messageDetails.substring(5, separator);
+                attacker = split[0].substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
                 }
                 toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
+                remaining = split[1];
                 switch (remaining) {
                     case "brn":
                         toAppendBuilder.append(" was burned");
@@ -755,6 +781,7 @@ public class BattleLogDialog extends DialogFragment {
                         }
                         toAppendBuilder.append("!");
                         break;
+
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
@@ -871,27 +898,7 @@ public class BattleLogDialog extends DialogFragment {
                 currentWeather = weather;
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
-            case "-crit":
-                toAppendSpannable = new SpannableString("It's a critical hit!");
-                break;
-            case "-supereffective":
-                toAppendSpannable = new SpannableString("It's super effective!");
-                break;
-            case "-resisted":
-                toAppendSpannable = new SpannableString("It's not very effective...");
-                break;
-            case "-immune":
-                attacker = messageDetails.substring(5);
-                if (attacker.contains("|")) {
-                    attacker = attacker.substring(0, attacker.indexOf("|"));
-                }
-                toAppendBuilder.append("It doesn't affect ");
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("the opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendSpannable = new SpannableString(toAppendBuilder);
-                break;
+
             case "-item":
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
