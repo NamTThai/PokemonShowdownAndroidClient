@@ -805,6 +805,49 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
+            case "-notarget":
+                toAppendSpannable = new SpannableString("But there was no target...");
+                break;
+
+            case "-ohko":
+                toAppendSpannable = new SpannableString("It's a one-hit KO!");
+                break;
+
+            case "-hitcount":
+                try {
+                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf("|") + 1);
+                    int hitCount = Integer.parseInt(hitCountS);
+                    toAppendBuilder.append("Hit " + hitCount + " time");
+                    if (hitCount > 1) {
+                        toAppendBuilder.append("s");
+                    }
+                    toAppendBuilder.append("!");
+                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                } catch (NumberFormatException e) {
+                    // todo handle
+                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                }
+                break;
+
+            case "-nothing":
+                toAppendSpannable = new SpannableString("But nothing happened! ");
+                break;
+
+            case "-waiting":
+                attacker = split[0].substring(5);
+                defender = split[1].substring(5);
+                toAppendBuilder.append(attacker).append(" is waiting for ").append(defender).append("'s move...");
+                toAppendSpannable = new SpannableString(toAppendBuilder);
+                break;
+
+            case "-combine":
+                toAppendSpannable = new SpannableString("The two moves are joined! It's a combined move!");
+                break;
+
+            case "-prepare":
+                // todo
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
 
             case "-status":
                 attacker = split[0].substring(5, separator);
@@ -1023,21 +1066,7 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
-            case "-hitcount":
-                try {
-                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf("|") + 1);
-                    int hitCount = Integer.parseInt(hitCountS);
-                    toAppendBuilder.append("Hit " + hitCount + " time");
-                    if (hitCount > 1) {
-                        toAppendBuilder.append("s");
-                    }
-                    toAppendBuilder.append("!");
-                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                } catch (NumberFormatException e) {
-                    // todo handle
-                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                }
-                break;
+
 
             case "-singleturn":
                 //todo proctect apparently
@@ -1067,21 +1096,6 @@ public class BattleLogDialog extends DialogFragment {
             case "-message":
                 toAppendSpannable = new SpannableString(messageDetails);
                 break;
-
-            case "-notarget":
-                toAppendSpannable = new SpannableString("But there was no target...");
-                break;
-
-            case "-ohko":
-                toAppendSpannable = new SpannableString("It's a one-hit KO!");
-                break;
-
-            case "-nothing":
-                toAppendSpannable = new SpannableString("But nothing happened! ");
-                break;
-
-
-            // TODO -prepare,-combine,-waiting
 
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
