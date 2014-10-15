@@ -749,7 +749,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-miss":
-                if(split.length > 1) {
+                if (split.length > 1) {
                     // there was a target
                     defender = split[1].substring(5);
                     toAppendBuilder.append(defender).append(" avoided the attack!");
@@ -763,9 +763,49 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-fail":
                 // todo
-                toAppend = "But it failed!";
-                toAppendSpannable = new SpannableString(toAppend);
+                attacker = split[0].substring(5);
+                remaining = split[1];
+
+                switch (remaining) {
+                    case "brn":
+                        toAppendBuilder.append(attacker).append(" is already burned.");
+                        break;
+                    case "tox":
+                    case "psn":
+                        toAppendBuilder.append(attacker).append(" is already poisoned.");
+                        break;
+                    case "slp":
+                        //todo try uproar
+                        toAppendBuilder.append(attacker).append(" is already asleep.");
+                        break;
+                    case "par":
+                        toAppendBuilder.append(attacker).append(" is already paralyzed.");
+                        break;
+                    case "frz":
+                        toAppendBuilder.append(attacker).append(" is already frozen.");
+                        break;
+                    case "substitute":
+                        // TODO try while having a sub up
+                        toAppendBuilder.append(attacker).append(" cant create a substitute!");
+                        break;
+                    case "skydrop":
+                        // TODO try
+                        toAppendBuilder.append("But it failed!");
+                        break;
+                    case "unboost":
+                        toAppendBuilder.append(attacker).append("'s stats were not lowered!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append("But it failed!");
+                        break;
+                }
+
+
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
+
+
             case "-status":
                 attacker = split[0].substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
