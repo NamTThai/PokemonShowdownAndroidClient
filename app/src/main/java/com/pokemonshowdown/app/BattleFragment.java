@@ -3,7 +3,9 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -19,6 +21,7 @@ import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -114,13 +117,17 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         int separator = messageDetails.indexOf('|');
+        String[] split = messageDetails.split("\\|");
+
+        final String position, attacker;
         int start;
         String remaining;
-        String toAppend;
+        final String toAppend;
         StringBuilder toAppendBuilder;
         Spannable toAppendSpannable;
         AnimatorSet toast;
         AnimatorSet animatorSet;
+        Animator animator;
         switch (command) {
             case "init":
             case "title":
@@ -323,7 +330,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 });
                 break;
             case "move":
-                String attacker = messageDetails.substring(5, separator);
+                attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 toAppendBuilder = new StringBuilder();
                 if (remaining.startsWith("p2")) {
@@ -354,7 +361,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 String species, level, gender = "";
                 separator = remaining.indexOf(',');
                 if (separator == -1) {
-                    level = "L100";
+                    level = "";
                     separator = remaining.indexOf('|');
                     species = remaining.substring(0, separator);
                 } else {
@@ -363,6 +370,10 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     separator = remaining.indexOf(',');
                     if (separator == -1) {
                         level = remaining.substring(0, remaining.indexOf('|'));
+                        if (level.length() == 1) {
+                            gender = level;
+                            level = "";
+                        }
                     } else {
                         level = remaining.substring(0, separator);
                         gender = remaining.substring(separator + 2, separator + 3);
@@ -384,216 +395,225 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 hpString = Integer.toString(hpInt);
                 
                 String speciesId = MyApplication.toId(species);
-                String oldSpeciesId;
 
                 spriteId = Pokemon.getPokemonSprite(getActivity(), speciesId, false);
                 iconId = Pokemon.getPokemonIcon(getActivity(), speciesId, false);
 
                 // Switching sprites and icons
-                attacker = (!attacker.equals(species)) ? attacker + " (" + species + ")" : attacker;
                 final String levelFinal = attacker + " " + level;
                 final String genderFinal = gender;
-                if (messageDetails.startsWith("p1")) {
-                    if (mPlayer1Team == null) {
-                        mPlayer1Team = new ArrayList<>();
-                    }
+                ArrayList<String> playerTeam = getTeam(messageDetails);
+                if (playerTeam == null) {
+                    playerTeam = new ArrayList<>();
+                }
 
-                    if (mPlayer1Team.isEmpty()) {
-                        oldIconId = R.drawable.pokeball_available;
-                    } else {
-                        oldSpeciesId = MyApplication.toId(mPlayer1Team.get(0));
-                        oldIconId = Pokemon.getPokemonIcon(getActivity(), oldSpeciesId, false);
-                    }
-
-                    if (mPlayer1Team.indexOf(species) == -1) {
-                        mPlayer1Team.add(species);
-                        toBeSwapped = mPlayer1Team.size() - 1;
-                    } else {
-                        toBeSwapped = mPlayer1Team.indexOf(species);
-                    }
-                    Collections.swap(mPlayer1Team, 0, toBeSwapped);
-                    toAppendBuilder.append("Go! ").append(attacker).append('!');
-                    toast = makeToast(new SpannableStringBuilder(toAppendBuilder));
-                    toast.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            if (getView() == null) {
-                                return;
-                            }
-
-                            displayPokemon(messageDetails.substring(0, 3));
-
-                            ImageView sprites = (ImageView) getView().findViewById(getSpriteId(messageDetails.substring(0, 3)));
-                            if (sprites != null) {
-                                sprites.setImageResource(spriteId);
-                            }
-                            ImageView iconLeader = (ImageView) getView().findViewById(getIconId("p1", 0));
-                            ImageView iconTrailer = (ImageView) getView().findViewById(getIconId("p1", toBeSwapped));
-                            if (iconTrailer != null) {
-                                iconTrailer.setImageResource(oldIconId);
-                            }
-                            if (iconLeader != null) {
-                                iconLeader.setImageResource(iconId);
-                            }
-
-                            TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
-                            if (pkmName != null) {
-                                pkmName.setText(levelFinal);
-                            }
-                            
-                            ImageView gender = (ImageView) getView().findViewById(getGenderId(messageDetails.substring(0, 3)));
-                            if (gender != null) {
-                                if (genderFinal.equals("M")) {
-                                    gender.setImageResource(R.drawable.ic_gender_male);
-                                } else {
-                                    if (genderFinal.equals("F")) {
-                                        gender.setImageResource(R.drawable.ic_gender_female);
-                                    }
-                                }
-                            }
-                            
-                            TextView hpText = (TextView) getView().findViewById(getHpId(messageDetails.substring(0, 3)));
-                            ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails.substring(0, 3)));
-                            if (hpText != null) {
-                                hpText.setText(hpString);
-                            }
-                            if (hpBar != null) {
-                                hpBar.setProgress(hpInt);
-                            }
-
-                            if (!status.equals("")) {
-                                setStatus(messageDetails.substring(0, 3), status.toUpperCase());
-                            }
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    });
+                if (playerTeam.indexOf(species) == -1) {
+                    playerTeam.add(species);
+                    toBeSwapped = playerTeam.size() - 1;
                 } else {
-                    if (mPlayer2Team == null) {
-                        mPlayer2Team = new ArrayList<>();
-                    }
-
-                    if (mPlayer2Team.isEmpty()) {
-                        oldIconId = R.drawable.pokeball_available;
-                    } else {
-                        oldSpeciesId = MyApplication.toId(mPlayer2Team.get(0));
-                        oldIconId = Pokemon.getPokemonIcon(getActivity(), oldSpeciesId, false);
-                    }
-
-                    if (mPlayer2Team.indexOf(species) == -1) {
-                        mPlayer2Team.add(species);
-                        toBeSwapped = mPlayer2Team.size() - 1;
-                    } else {
-                        toBeSwapped = mPlayer2Team.indexOf(species);
-                    }
-                    Collections.swap(mPlayer2Team, 0, toBeSwapped);
+                    toBeSwapped = playerTeam.indexOf(species);
+                }
+                Collections.swap(playerTeam, getTeamSlot(messageDetails), toBeSwapped);
+                if (messageDetails.startsWith("p1")) {
+                    toAppendBuilder.append("Go! ").append(attacker).append('!');
+                } else {
                     toAppendBuilder.append(mPlayer2).append(" sent out ").append(attacker).append("!");
-                    toast = makeToast(new SpannableStringBuilder(toAppendBuilder));
-                    toast.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            if (getView() == null) {
-                                return;
-                            }
+                }
 
-                            displayPokemon(messageDetails.substring(0, 3));
+                setTeam(messageDetails, playerTeam);
 
-                            ImageView sprites = (ImageView) getView().findViewById(getSpriteId(messageDetails.substring(0, 3)));
-                            if (sprites != null) {
-                                sprites.setImageResource(spriteId);
-                            }
-                            ImageView iconLeader = (ImageView) getView().findViewById(getIconId("p2", 0));
-                            ImageView iconTrailer = (ImageView) getView().findViewById(getIconId("p2", toBeSwapped));
-                            if (iconTrailer != null) {
-                                iconTrailer.setImageResource(oldIconId);
-                            }
-                            if (iconLeader != null) {
-                                iconLeader.setImageResource(iconId);
-                            }
+                toast = makeToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
 
-                            TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
-                            if (pkmName != null) {
-                                pkmName.setText(levelFinal);
-                            }
+                        displayPokemon(messageDetails.substring(0, 3));
 
-                            ImageView gender = (ImageView) getView().findViewById(getGenderId(messageDetails.substring(0, 3)));
-                            if (gender != null) {
-                                if (genderFinal.equals("M")) {
-                                    gender.setImageResource(R.drawable.ic_gender_male);
-                                } else if (genderFinal.equals("F")) {
+                        ImageView sprites = (ImageView) getView().findViewById(getSpriteId(messageDetails.substring(0, 3)));
+                        if (sprites != null) {
+                            sprites.setImageResource(spriteId);
+                        }
+                        ImageView iconLeader = (ImageView) getView().findViewById(getIconId(messageDetails, getTeamSlot(messageDetails)));
+                        Drawable leader = iconLeader.getDrawable();
+                        ImageView iconTrailer = (ImageView) getView().findViewById(getIconId(messageDetails, toBeSwapped));
+                        iconTrailer.setImageDrawable(leader);
+                        iconLeader.setImageResource(iconId);
+
+                        TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
+                        if (pkmName != null) {
+                            pkmName.setText(levelFinal);
+                        }
+
+                        ImageView gender = (ImageView) getView().findViewById(getGenderId(messageDetails.substring(0, 3)));
+                        if (gender != null) {
+                            if (genderFinal.equals("M")) {
+                                gender.setImageResource(R.drawable.ic_gender_male);
+                            } else {
+                                if (genderFinal.equals("F")) {
                                     gender.setImageResource(R.drawable.ic_gender_female);
                                 }
                             }
-
-                            TextView hpText = (TextView) getView().findViewById(getHpId(messageDetails.substring(0, 3)));
-                            ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails.substring(0, 3)));
-                            if (hpText != null) {
-                                hpText.setText(hpString);
-                            }
-                            if (hpBar != null) {
-                                hpBar.setProgress(hpInt);
-                            }
-
-                            if (!status.equals("")) {
-                                setStatus(messageDetails.substring(0, 3), status.toUpperCase());
-                            }
                         }
 
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
+                        TextView hpText = (TextView) getView().findViewById(getHpId(messageDetails.substring(0, 3)));
+                        ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails.substring(0, 3)));
+                        if (hpText != null) {
+                            hpText.setText(hpString);
+                        }
+                        if (hpBar != null) {
+                            hpBar.setProgress(hpInt);
                         }
 
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
+                        if (!status.equals("")) {
+                            setStatus(messageDetails.substring(0, 3), status.toUpperCase());
                         }
+                    }
 
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
 
-                        }
-                    });
-                }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
 
                 startAnimation(toast);
                 break;
             case "detailschange":
+                final String forme = (split[1].indexOf(',') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(','));
+                position = split[0].substring(0, 3);
+                species = split[0].substring(5);
+
+                replacePokemon(position, species, forme);
+
+                toast = makeToast("Transforming", ANIMATION_SHORT);
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+
+                        ImageView sprite = (ImageView) getView().findViewById(getSpriteId(position));
+                        sprite.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(forme), false));
+                        TextView name = (TextView) getView().findViewById(getSpriteNameid(position));
+                        name.setText(forme);
+                        ImageView icon = (ImageView) getView().findViewById(getIconId(position));
+                        icon.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(forme), false));
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+                startAnimation(toast);
                 break;
             case "faint":
-                attacker = messageDetails.substring(5);
+                position = split[0];
+                attacker = split[0].substring(5);
                 toAppendBuilder = new StringBuilder();
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
                 }
                 toAppendBuilder.append(attacker).append(" fainted!");
-                appendServerMessage(new SpannableStringBuilder(toAppendBuilder));
+                toast = makeToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+
+                        hidePokemon(position);
+                        ImageView fainted = (ImageView) getView().findViewById(getIconId(position));
+                        Drawable temp = fainted.getDrawable();
+                        temp.setAlpha(150);
+                        fainted.setImageDrawable(temp);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                
+                startAnimation(toast);
                 break;
             case "turn":
+                if (getView() == null) {
+                    return;
+                }
+                TextView turn = (TextView) getView().findViewById(R.id.turn);
+                animator = ObjectAnimator.ofFloat(turn, "alpha", 0f, 1f);
                 toAppend = "TURN " + messageDetails;
-                toAppendSpannable = new SpannableString(toAppend.toUpperCase());
-                toAppendSpannable.setSpan(new UnderlineSpan(), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                toAppendSpannable.setSpan(new RelativeSizeSpan(1.25f), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                appendServerMessage(toAppendSpannable);
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
+                        ((TextView) getView().findViewById(R.id.turn)).setText(toAppend);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animator.setDuration(ANIMATION_SHORT);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animatorSet = new AnimatorSet();
+                animatorSet.play(animator);
+                startAnimation(animatorSet);
                 break;
             case "win":
                 toAppend = messageDetails + " has won the battle!";
-                appendServerMessage(new SpannableString(toAppend));
+                toast = makeToast(new SpannableString(toAppend));
+                startAnimation(toast);
                 break;
             case "cant":
                 //todo (cant attack bec frozen/para etc)
@@ -1226,6 +1246,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private int getIconId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.icon1;
+            case "p1b":
+                return R.id.icon2;
+            case "p1c":
+                return R.id.icon3;
+            case "p2a":
+                return R.id.icon1_o;
+            case "p2b":
+                return R.id.icon2_o;
+            case "p2c":
+                return R.id.icon3_o;
+            default:
+                return 0;
+        }
+    }
+
     private int getIconId(String player, int id) {
         String p = player.substring(0, 2);
         switch (p) {
@@ -1348,9 +1388,20 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    /**
-     * Available statuses: slp, psn, brn, par, frz
-     */
+    private int getTeamSlot(String tag) {
+        tag = Character.toString(tag.charAt(2));
+        switch (tag) {
+            case "a":
+                return 0;
+            case "b":
+                return 1;
+            case "c":
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
     private void setStatus(String tag, String status) {
         int id = getStatusId(tag);
         if (getView() == null) {
@@ -1364,6 +1415,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
                     break;
                 case "psn":
+                case "tox":
                     stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
                     break;
                 case "brn":
@@ -1375,6 +1427,34 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 case "frz":
                     stt.setBackgroundResource(R.drawable.editable_frame);
             }
+        }
+    }
+    
+    private void hidePokemon(String tag) {
+        if (getView() == null) {
+            return;
+        }
+
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                getView().findViewById(R.id.p1a).setVisibility(View.GONE);
+                return;
+            case "p1b":
+                getView().findViewById(R.id.p1b).setVisibility(View.GONE);
+                return;
+            case "p1c":
+                getView().findViewById(R.id.p1c).setVisibility(View.GONE);
+                return;
+            case "p2a":
+                getView().findViewById(R.id.p2a).setVisibility(View.GONE);
+                return;
+            case "p2b":
+                getView().findViewById(R.id.p2b).setVisibility(View.GONE);
+                return;
+            case "p2c":
+                getView().findViewById(R.id.p2c).setVisibility(View.GONE);
+                return;
         }
     }
 
@@ -1414,6 +1494,36 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
             int total = Integer.parseInt(hpFraction.substring(fraction + 1));
             return (int) (((float) remaining / (float) total) * 100);
+        }
+    }
+
+    private void replacePokemon(String playerTag, String oldPkm, String newPkm) {
+        if (playerTag.startsWith("p1")) {
+            int index = mPlayer1Team.indexOf(oldPkm);
+            if (index != -1) {
+                mPlayer1Team.set(index, newPkm);
+            }
+        } else {
+            int index = mPlayer2Team.indexOf(oldPkm);
+            if (index != -1) {
+                mPlayer2Team.set(index, newPkm);
+            }
+        }
+    }
+    
+    private ArrayList<String> getTeam(String playerTag) {
+        if (playerTag.startsWith("p1")) {
+            return mPlayer1Team;
+        } else {
+            return mPlayer2Team;
+        }
+    }
+
+    private void setTeam(String playerTag, ArrayList<String> playerTeam) {
+        if (playerTag.startsWith("p1")) {
+            mPlayer1Team = playerTeam;
+        } else {
+            mPlayer2Team = playerTeam;
         }
     }
 
