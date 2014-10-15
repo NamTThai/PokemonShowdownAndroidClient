@@ -306,7 +306,7 @@ public class Pokemon implements Serializable {
         return null;
     }
 
-    public static int getPokemonIcon(Context appContext, String name, boolean withAppContext) {
+    public static int getPokemonSprite(Context appContext, String name, boolean withAppContext) {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
@@ -321,7 +321,7 @@ public class Pokemon implements Serializable {
         return 0;
     }
 
-    public static int getPokemonIconSmall(Context appContext, String name, boolean withAppContext) {
+    public static int getPokemonIcon(Context appContext, String name, boolean withAppContext) {
         try {
             JSONObject jsonObject;
             if (withAppContext) {

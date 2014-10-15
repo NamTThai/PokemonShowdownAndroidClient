@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -194,7 +193,7 @@ public class SearchableActivity extends ListActivity {
             String pokemonName = getItem(position);
             TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
             textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
-            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIconSmall(getApplicationContext(), pokemonName, true), 0, 0, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIcon(getApplicationContext(), pokemonName, true), 0, 0, 0);
             Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
             ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
             type1.setImageResource(typesIcon[0]);
