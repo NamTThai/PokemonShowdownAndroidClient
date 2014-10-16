@@ -353,6 +353,8 @@ public class BattleLogDialog extends DialogFragment {
         String ofSource = null;
         String trimmedOfEffect = null;
 
+        String attacker, defender;
+
         int from = messageDetails.indexOf("[from]");
         if (from != -1) {
             remaining = messageDetails.substring(from + 7);
@@ -379,7 +381,7 @@ public class BattleLogDialog extends DialogFragment {
 
         switch (command) {
             case "-damage":
-                String attacker = split[0].substring(5);
+                attacker = split[0].substring(5);
 
                 if (messageDetails.startsWith("p2")) {
                     oldHP = mPlayer2Team.get(attacker);
@@ -564,8 +566,13 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-sethp":
-                // TODO
-                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                switch (trimmedFromEffect) {
+                    case "painsplit":
+                        toAppendBuilder.append("The battlers shared their pain!");
+                        break;
+                }
+                // todo actually switch hps
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-boost":
                 attacker = messageDetails.substring(5, separator);
@@ -656,12 +663,38 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-setboost":
-                // TODO
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "bellydrum":
+                            toAppendBuilder.append(attacker + " cut its own HP and maximized its Attack!");
+                            break;
+
+                        case "angerpoint":
+                            toAppendBuilder.append(attacker + " maxed its Attack!");
+                            break;
+                    }
+                }
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-swapboost":
-                // TODO
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "guardswap":
+                            toAppendBuilder.append(attacker + " switched all changes to its Defense and Sp. Def with the target!");
+                            break;
+
+                        case "heartswap":
+                            toAppendBuilder.append(attacker + " switched stat changes with the target!");
+                            break;
+
+                        case "powerswap":
+                            toAppendBuilder.append(attacker + " switched all changes to its Attack and Sp. Atk with the target!");
+                            break;
+                    }
+                }
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
@@ -671,47 +704,158 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-copyboost":
-                // TODO
-                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                attacker = split[0].substring(5);
+                defender = split[1].substring(5);
+                toAppendBuilder.append(attacker).append(" copied ").append(defender).append("'s stat changes!");
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
             case "-clearboost":
-                // TODO
+                attacker = split[0].substring(5);
+                toAppendBuilder.append(attacker).append("'s stat changes were removed!");
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-invertboost":
-                // TODO
                 attacker = split[0].substring(5);
                 toAppendBuilder.append(attacker).append("'s stat changes were inverted!");
                 toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
 
             case "-clearallboost":
-                toAppendSpannable = new SpannableStringBuilder("All stat changes were eliminated!");
+                toAppendBuilder.append("All stat changes were eliminated!");
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
+                break;
+            case "-crit":
+                toAppendSpannable = new SpannableString("It's a critical hit!");
+                break;
+            case "-supereffective":
+                toAppendSpannable = new SpannableString("It's super effective!");
+                break;
+            case "-resisted":
+                toAppendSpannable = new SpannableString("It's not very effective...");
+                break;
+            case "-immune":
+                attacker = messageDetails.substring(5);
+                if (attacker.contains("|")) {
+                    attacker = attacker.substring(0, attacker.indexOf("|"));
+                }
+                toAppendBuilder.append("It doesn't affect ");
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("the opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
-
             case "-miss":
-                if (split[0].startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
+                if (split.length > 1) {
+                    // there was a target
+                    defender = split[1].substring(5);
+                    toAppendBuilder.append(defender).append(" avoided the attack!");
+                } else {
+                    attacker = split[0].substring(5);
+                    toAppendBuilder.append(attacker).append("'s attack missed!");
                 }
-                attacker = split[0].substring(5);
-                toAppendBuilder.append(attacker);
                 toAppendBuilder.append(" missed the target");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-fail":
-                toAppend = "But it failed!";
-                toAppendSpannable = new SpannableString(toAppend);
+                // todo
+                attacker = split[0].substring(5);
+                remaining = split[1];
+
+                switch (remaining) {
+                    case "brn":
+                        toAppendBuilder.append(attacker).append(" is already burned.");
+                        break;
+                    case "tox":
+                    case "psn":
+                        toAppendBuilder.append(attacker).append(" is already poisoned.");
+                        break;
+                    case "slp":
+                        //todo try uproar
+                        toAppendBuilder.append(attacker).append(" is already asleep.");
+                        break;
+                    case "par":
+                        toAppendBuilder.append(attacker).append(" is already paralyzed.");
+                        break;
+                    case "frz":
+                        toAppendBuilder.append(attacker).append(" is already frozen.");
+                        break;
+                    case "substitute":
+                        // TODO try while having a sub up
+                        toAppendBuilder.append(attacker).append(" cant create a substitute!");
+                        break;
+                    case "skydrop":
+                        // TODO try
+                        toAppendBuilder.append("But it failed!");
+                        break;
+                    case "unboost":
+                        toAppendBuilder.append(attacker).append("'s stats were not lowered!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append("But it failed!");
+                        break;
+                }
+
+
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
+
+            case "-notarget":
+                toAppendSpannable = new SpannableString("But there was no target...");
+                break;
+
+            case "-ohko":
+                toAppendSpannable = new SpannableString("It's a one-hit KO!");
+                break;
+
+            case "-hitcount":
+                try {
+                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf("|") + 1);
+                    int hitCount = Integer.parseInt(hitCountS);
+                    toAppendBuilder.append("Hit " + hitCount + " time");
+                    if (hitCount > 1) {
+                        toAppendBuilder.append("s");
+                    }
+                    toAppendBuilder.append("!");
+                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                } catch (NumberFormatException e) {
+                    // todo handle
+                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                }
+                break;
+
+            case "-nothing":
+                toAppendSpannable = new SpannableString("But nothing happened! ");
+                break;
+
+            case "-waiting":
+                attacker = split[0].substring(5);
+                defender = split[1].substring(5);
+                toAppendBuilder.append(attacker).append(" is waiting for ").append(defender).append("'s move...");
+                toAppendSpannable = new SpannableString(toAppendBuilder);
+                break;
+
+            case "-combine":
+                toAppendSpannable = new SpannableString("The two moves are joined! It's a combined move!");
+                break;
+
+            case "-prepare":
+                // todo
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                break;
+
             case "-status":
-                attacker = messageDetails.substring(5, separator);
+                attacker = split[0].substring(5, separator);
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing ");
                 }
                 toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
+                remaining = split[1];
                 switch (remaining) {
                     case "brn":
                         toAppendBuilder.append(" was burned");
@@ -720,6 +864,7 @@ public class BattleLogDialog extends DialogFragment {
                         }
                         toAppendBuilder.append("!");
                         break;
+
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
@@ -836,27 +981,7 @@ public class BattleLogDialog extends DialogFragment {
                 currentWeather = weather;
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
-            case "-crit":
-                toAppendSpannable = new SpannableString("It's a critical hit!");
-                break;
-            case "-supereffective":
-                toAppendSpannable = new SpannableString("It's super effective!");
-                break;
-            case "-resisted":
-                toAppendSpannable = new SpannableString("It's not very effective...");
-                break;
-            case "-immune":
-                attacker = messageDetails.substring(5);
-                if (attacker.contains("|")) {
-                    attacker = attacker.substring(0, attacker.indexOf("|"));
-                }
-                toAppendBuilder.append("It doesn't affect ");
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("the opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendSpannable = new SpannableString(toAppendBuilder);
-                break;
+
             case "-item":
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
@@ -941,21 +1066,7 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
-            case "-hitcount":
-                try {
-                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf("|") + 1);
-                    int hitCount = Integer.parseInt(hitCountS);
-                    toAppendBuilder.append("Hit " + hitCount + " time");
-                    if (hitCount > 1) {
-                        toAppendBuilder.append("s");
-                    }
-                    toAppendBuilder.append("!");
-                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                } catch (NumberFormatException e) {
-                    // todo handle
-                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                }
-                break;
+
 
             case "-singleturn":
                 //todo proctect apparently
@@ -985,21 +1096,6 @@ public class BattleLogDialog extends DialogFragment {
             case "-message":
                 toAppendSpannable = new SpannableString(messageDetails);
                 break;
-
-            case "-notarget":
-                toAppendSpannable = new SpannableString("But there was no target...");
-                break;
-
-            case "-ohko":
-                toAppendSpannable = new SpannableString("It's a one-hit KO!");
-                break;
-
-            case "-nothing":
-                toAppendSpannable = new SpannableString("But nothing happened! ");
-                break;
-
-
-            // TODO -prepare,-combine,-waiting
 
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
