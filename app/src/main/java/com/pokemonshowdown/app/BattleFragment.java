@@ -18,6 +18,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class BattleFragment extends android.support.v4.app.Fragment {
@@ -407,11 +409,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     playerTeam = new ArrayList<>();
                 }
 
-                if (playerTeam.indexOf(species) == -1) {
+                if (findPokemonInTeam(playerTeam, species) == -1) {
                     playerTeam.add(species);
                     toBeSwapped = playerTeam.size() - 1;
                 } else {
-                    toBeSwapped = playerTeam.indexOf(species);
+                    toBeSwapped = findPokemonInTeam(playerTeam, species);
                 }
                 Collections.swap(playerTeam, getTeamSlot(messageDetails), toBeSwapped);
                 if (messageDetails.startsWith("p1")) {
@@ -507,8 +509,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                         ImageView sprite = (ImageView) getView().findViewById(getSpriteId(position));
                         sprite.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(forme), false));
-                        TextView name = (TextView) getView().findViewById(getSpriteNameid(position));
-                        name.setText(forme);
                         ImageView icon = (ImageView) getView().findViewById(getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(forme), false));
                     }
@@ -549,9 +549,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                         hidePokemon(position);
                         ImageView fainted = (ImageView) getView().findViewById(getIconId(position));
-                        Drawable temp = fainted.getDrawable();
-                        temp.setAlpha(150);
-                        fainted.setImageDrawable(temp);
+                        fainted.setImageResource(R.drawable.pokeball_unavailable);
                     }
 
                     @Override
@@ -1499,12 +1497,12 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
     private void replacePokemon(String playerTag, String oldPkm, String newPkm) {
         if (playerTag.startsWith("p1")) {
-            int index = mPlayer1Team.indexOf(oldPkm);
+            int index = findPokemonInTeam(mPlayer1Team, oldPkm);
             if (index != -1) {
                 mPlayer1Team.set(index, newPkm);
             }
         } else {
-            int index = mPlayer2Team.indexOf(oldPkm);
+            int index = findPokemonInTeam(mPlayer2Team, oldPkm);
             if (index != -1) {
                 mPlayer2Team.set(index, newPkm);
             }
@@ -1525,6 +1523,15 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         } else {
             mPlayer2Team = playerTeam;
         }
+    }
+
+    private int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
+        for (int i = 0; i < playerTeam.size(); i++) {
+            if (playerTeam.get(i).contains(pkm)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }
