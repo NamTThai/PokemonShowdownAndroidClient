@@ -558,7 +558,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
             case "-sethp":
                 switch (trimmedFromEffect) {
-                    case "painsplit":
+                    case "move:painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
                         break;
                 }
@@ -657,11 +657,11 @@ public class BattleLogDialog extends DialogFragment {
                 attacker = split[0].substring(5);
                 if (fromEffect != null) {
                     switch (trimmedFromEffect) {
-                        case "bellydrum":
+                        case "move:bellydrum":
                             toAppendBuilder.append(attacker + " cut its own HP and maximized its Attack!");
                             break;
 
-                        case "angerpoint":
+                        case "move:angerpoint":
                             toAppendBuilder.append(attacker + " maxed its Attack!");
                             break;
                     }
