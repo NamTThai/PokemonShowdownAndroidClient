@@ -27,6 +27,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     public final static int ANIMATION_LONG = 1000;
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
+    private int[] progressBarHolder = new int[6];
 
     private String mRoomId;
     private String mPlayer1;
@@ -110,7 +112,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void processServerMessage(String message) {
+    public void processServerMessage(final String message) {
         BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
@@ -395,6 +397,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     hpInt = processHpFraction(remaining.substring(0, separator));
                     status = remaining.substring(separator + 1);
                 }
+                setOldHp(messageDetails, hpInt);
                 hpString = Integer.toString(hpInt);
                 
                 String speciesId = MyApplication.toId(species);
@@ -681,12 +684,10 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         switch (command) {
             case "-damage":
                 attacker = split[0].substring(5);
-
-                ProgressBar progressBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails));
-                oldHP = progressBar.getProgress();
-
+                oldHP = getOldHp(messageDetails);
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
                 intAmount = processHpFraction(remaining);
+                setOldHp(messageDetails, intAmount);
                 lostHP = oldHP - intAmount;
 
                 if (trimmedFromEffect != null) {
@@ -768,7 +769,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                             return;
                         }
                         TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
-                        damage.setText(lostHP + "%");
+                        damage.setText("-" + lostHP + "%");
                         damage.setBackgroundResource(R.drawable.editable_frame_light_red);
                         damage.setPadding(2, 2, 2, 2);
                         ((TextView) getView().findViewById(getHpId(messageDetails))).setText(Integer.toString(intAmount));
@@ -790,7 +791,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                ObjectAnimator flyingDamage = ObjectAnimator.ofInt(damage, "y", 20);
+                ObjectAnimator flyingDamage = ObjectAnimator.ofFloat(damage, "y", 2f);
                 flyingDamage.setDuration(ANIMATION_SHORT);
                 flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -818,32 +819,15 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 startAnimation(animator);
                 break;
 
-            case "-heal":/*
+            case "-heal":
                 attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    oldHP = mPlayer2Team.get(attacker);
-                    if (oldHP == null) {
-                        // in randbats , we dont get the pokemon list
-                        mPlayer2Team.put(attacker, 100);
-                        oldHP = mPlayer2Team.get(attacker);
-                    }
-                } else {
-                    oldHP = mPlayer1Team.get(attacker);
-                    if (oldHP == null) {
-                        // in randbats , we dont get the pokemon list
-                        mPlayer1Team.put(attacker, 100);
-                        oldHP = mPlayer1Team.get(attacker);
-                    }
-                }
-                remaining = messageDetails.substring(separator + 1);
-                separator = remaining.indexOf("/");
-                if (separator == -1) {
-                    intAmount = 0; // shouldnt happen sicne we're healing
-                } else {
-                    String hp = remaining.substring(0, separator);
-                    intAmount = Integer.parseInt(hp);
-                }
-                lostHP = intAmount - oldHP;
+
+                oldHP = getOldHp(messageDetails);
+
+                remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
+                intAmount = processHpFraction(remaining);
+                setOldHp(messageDetails, intAmount);
+                lostHP = oldHP - intAmount;
 
                 if (trimmedFromEffect != null) {
                     switch (trimmedFromEffect) {
@@ -891,13 +875,68 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     toAppendBuilder.append(attacker);
                     toAppendBuilder.append(" healed ").append(lostHP).append("% of it's health!");
                 }
-                if (messageDetails.startsWith("p2")) {
-                    mPlayer2Team.put(attacker, intAmount);
-                } else {
-                    mPlayer1Team.put(attacker, intAmount);
-                }
 
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+
+                damage = (TextView) getView().findViewById(getDmg(messageDetails));
+
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
+                        damage.setText(lostHP + "%");
+                        damage.setBackgroundResource(R.drawable.editable_frame_light_green);
+                        damage.setPadding(2, 2, 2, 2);
+                        ((TextView) getView().findViewById(getHpId(messageDetails))).setText(Integer.toString(intAmount));
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+                flyingDamage = ObjectAnimator.ofFloat(damage, "y", 2f);
+                flyingDamage.setDuration(ANIMATION_SHORT);
+                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                fadeIn = ObjectAnimator.ofFloat(damage, "alpha", 0f, 1f);
+                fadeIn.setInterpolator(new DecelerateInterpolator());
+                fadeIn.setDuration(ANIMATION_SHORT / 4);
+
+                fadeOut = ObjectAnimator.ofFloat(damage, "alpha", 1f, 0f);
+                fadeOut.setInterpolator(new AccelerateInterpolator());
+                fadeOut.setStartDelay(ANIMATION_SHORT / 2);
+                fadeOut.setDuration(ANIMATION_SHORT / 4);
+
+                hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails));
+                hpCountDownBar = ObjectAnimator.ofInt(hpBar, "progress", intAmount);
+                hpCountDownBar.setDuration(ANIMATION_SHORT);
+                hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                animator = new AnimatorSet();
+                animator.play(toast);
+                animator.play(hpCountDownBar).with(toast);
+                animator.play(fadeIn).with(toast);
+                animator.play(flyingDamage).with(toast);
+                animator.play(fadeOut).after(fadeIn);
+
+                startAnimation(animator);
                 break;
 
             default:
@@ -1264,21 +1303,21 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
     
-    private int getStatusId(String tag) {
+    private int getTempStatusId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
-                return R.id.p1a_status;
+                return R.id.p1a_temp_status;
             case "p1b":
-                return R.id.p1b_status;
+                return R.id.p1b_temp_status;
             case "p1c":
-                return R.id.p1c_status;
+                return R.id.p1c_temp_status;
             case "p2a":
-                return R.id.p2a_status;
+                return R.id.p2a_temp_status;
             case "p2b":
-                return R.id.p2b_status;
+                return R.id.p2b_temp_status;
             case "p2c":
-                return R.id.p2c_status;
+                return R.id.p2c_temp_status;
             default:
                 return 0;
         }
@@ -1303,6 +1342,50 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 return 0;
         }
     }
+    
+    private int getOldHp(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return progressBarHolder[0];
+            case "p1b":
+                return progressBarHolder[1];
+            case "p1c":
+                return progressBarHolder[2];
+            case "p2a":
+                return progressBarHolder[3];
+            case "p2b":
+                return progressBarHolder[4];
+            case "p2c":
+                return progressBarHolder[5];
+            default:
+                return 0;
+        }
+    }
+    
+    private void setOldHp(String tag, int hp) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                progressBarHolder[0] = hp;
+                break;
+            case "p1b":
+                progressBarHolder[1] = hp;
+                break;
+            case "p1c":
+                progressBarHolder[2] = hp;
+                break;
+            case "p2a":
+                progressBarHolder[3] = hp;
+                break;
+            case "p2b":
+                progressBarHolder[4] = hp;
+                break;
+            case "p2c":
+                progressBarHolder[5] = hp;
+                break;
+        }
+    }
 
     private int getTeamSlot(String tag) {
         tag = Character.toString(tag.charAt(2));
@@ -1319,31 +1402,36 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private void setStatus(String tag, String status) {
-        int id = getStatusId(tag);
+        int id = getTempStatusId(tag);
         if (getView() == null) {
             return;
         }
-        TextView stt = (TextView) getView().findViewById(id);
-        if (stt != null) {
-            stt.setText(status);
-            switch (status) {
-                case "slp":
-                    stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
-                    break;
-                case "psn":
-                case "tox":
-                    stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
-                    break;
-                case "brn":
-                    stt.setBackgroundResource(R.drawable.editable_frame_light_red);
-                    break;
-                case "par":
-                    stt.setBackgroundResource(R.drawable.editable_frame_light_orange);
-                    break;
-                case "frz":
-                    stt.setBackgroundResource(R.drawable.editable_frame);
-            }
+        LinearLayout statusBar = (LinearLayout) getView().findViewById(id);
+
+        TextView stt = new TextView(getActivity());
+        stt.setText(status);
+        switch (status) {
+            case "slp":
+                stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
+                break;
+            case "psn":
+            case "tox":
+                stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
+                break;
+            case "brn":
+                stt.setBackgroundResource(R.drawable.editable_frame_light_red);
+                break;
+            case "par":
+                stt.setBackgroundResource(R.drawable.editable_frame_light_orange);
+                break;
+            case "frz":
+                stt.setBackgroundResource(R.drawable.editable_frame);
         }
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(4, 0, 0, 0);
+
+        statusBar.addView(stt, 0);
+
     }
     
     private void hidePokemon(String tag) {
@@ -1383,21 +1471,27 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         switch (tag) {
             case "p1a":
                 getView().findViewById(R.id.p1a).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
                 return;
             case "p1b":
                 getView().findViewById(R.id.p1b).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
                 return;
             case "p1c":
                 getView().findViewById(R.id.p1c).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
                 return;
             case "p2a":
                 getView().findViewById(R.id.p2a).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
                 return;
             case "p2b":
                 getView().findViewById(R.id.p2b).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
                 return;
             case "p2c":
                 getView().findViewById(R.id.p2c).setVisibility(View.VISIBLE);
+                ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
                 return;
         }
     }

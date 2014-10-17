@@ -46,6 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1a_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -65,13 +66,17 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1a_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
-
         </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/p1a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p1a_hp_layout"
+            android:layout_alignLeft="@id/p1a_hp_layout">
+            
+            </LinearLayout>
 
         <ImageView
             android:id="@+id/p1a_icon"
@@ -122,6 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1b_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -141,11 +147,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1b_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p1b_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p1b_hp_layout"
+            android:layout_alignLeft="@id/p1b_hp_layout">
 
         </LinearLayout>
 
@@ -198,6 +208,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1c_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -217,11 +228,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1c_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p1c_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p1c_hp_layout"
+            android:layout_alignLeft="@id/p1c_hp_layout">
 
         </LinearLayout>
 
@@ -275,6 +290,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2c_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -294,11 +310,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2c_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2c_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p2c_hp_layout"
+            android:layout_alignLeft="@id/p2c_hp_layout">
 
         </LinearLayout>
 
@@ -352,6 +372,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2b_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -371,11 +392,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2b_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2b_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p2b_hp_layout"
+            android:layout_alignLeft="@id/p2b_hp_layout">
 
         </LinearLayout>
 
@@ -429,6 +454,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2a_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -448,11 +474,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2a_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/p2a_hp_layout"
+            android:layout_alignLeft="@id/p2a_hp_layout">
 
         </LinearLayout>
 
