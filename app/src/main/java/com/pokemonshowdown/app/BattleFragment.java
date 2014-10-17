@@ -17,6 +17,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -681,7 +682,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         final String[] split = messageDetails.split("\\|");
 
         AnimatorSet toast;
-        AnimatorSet animator;
+        AnimatorSet animatorSet;
+        Animator animator;
 
         if (getView() == null) {
             return;
@@ -829,14 +831,14 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 hpCountDownBar.setDuration(ANIMATION_SHORT);
                 hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
 
-                animator = new AnimatorSet();
-                animator.play(toast);
-                animator.play(hpCountDownBar).with(toast);
-                animator.play(fadeIn).with(toast);
-                animator.play(flyingDamage).after(fadeIn);
-                animator.play(fadeOut).after(fadeIn);
+                animatorSet = new AnimatorSet();
+                animatorSet.play(toast);
+                animatorSet.play(hpCountDownBar).with(toast);
+                animatorSet.play(fadeIn).with(toast);
+                animatorSet.play(flyingDamage).after(fadeIn);
+                animatorSet.play(fadeOut).after(fadeIn);
 
-                startAnimation(animator);
+                startAnimation(animatorSet);
                 break;
 
             case "-heal":
@@ -961,14 +963,14 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 hpCountDownBar.setDuration(ANIMATION_SHORT);
                 hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
 
-                animator = new AnimatorSet();
-                animator.play(toast);
-                animator.play(hpCountDownBar).with(toast);
-                animator.play(fadeIn).with(toast);
-                animator.play(flyingDamage).after(fadeIn);
-                animator.play(fadeOut).after(fadeIn);
+                animatorSet = new AnimatorSet();
+                animatorSet.play(toast);
+                animatorSet.play(hpCountDownBar).with(toast);
+                animatorSet.play(fadeIn).with(toast);
+                animatorSet.play(flyingDamage).after(fadeIn);
+                animatorSet.play(fadeOut).after(fadeIn);
 
-                startAnimation(animator);
+                startAnimation(animatorSet);
                 break;
             case "-sethp":
                 switch (trimmedFromEffect) {
@@ -1016,8 +1018,90 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         startAnimation(toast);
                         break;
                 }
-                // todo actually switch hps
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
+            case "-boost":
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                remaining = messageDetails.substring(separator + 1);
+                toAppendBuilder.append("'s ");
+                separator = remaining.indexOf('|');
+                final String stat = remaining.substring(0, separator);
+                String amount = remaining.substring(separator + 1);
+                if (amount.contains("|")) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                intAmount = Integer.parseInt(amount);
+                animator = ObjectAnimator.ofInt(0);
+                animator.setDuration(10);
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        processBoost(messageDetails, stat, intAmount);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animatorSet = new AnimatorSet();
+                animatorSet.play(animator);
+                startAnimation(animatorSet);
+                break;
+            case "-unboost":
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    toAppendBuilder.append("The opposing ");
+                }
+                toAppendBuilder.append(attacker);
+                remaining = messageDetails.substring(separator + 1);
+                toAppendBuilder.append("'s ");
+                separator = remaining.indexOf('|');
+                final String unStat = remaining.substring(0, separator);
+                amount = remaining.substring(separator + 1);
+                if (amount.contains("|")) {
+                    amount = amount.substring(0, amount.indexOf("|"));
+                }
+                intAmount = Integer.parseInt(amount) * -1;
+                animator = ObjectAnimator.ofInt(0);
+                animator.setDuration(10);
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        processBoost(messageDetails, unStat, intAmount);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                animatorSet = new AnimatorSet();
+                animatorSet.play(animator);
+                startAnimation(animatorSet);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
@@ -1427,26 +1511,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 return 0;
         }
     }
-
-    private int getDmg(String tag) {
-        tag = tag.substring(0, 3);
-        switch (tag) {
-            case "p1a":
-                return R.id.p1a_dmg;
-            case "p1b":
-                return R.id.p1b_dmg;
-            case "p1c":
-                return R.id.p1c_dmg;
-            case "p2a":
-                return R.id.p2a_dmg;
-            case "p2b":
-                return R.id.p2b_dmg;
-            case "p2c":
-                return R.id.p2c_dmg;
-            default:
-                return 0;
-        }
-    }
     
     private int getOldHp(String tag) {
         tag = tag.substring(0, 3);
@@ -1653,6 +1717,42 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             }
             return -1;
         }
+    }
+
+    private void processBoost(String playerTag, String stat, int boost) {
+        if (getView() == null) {
+            return;
+        }
+        LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
+        TextView statBoost;
+        int currentBoost;
+        int index;
+        if (tempStat.findViewWithTag(stat) == null) {
+            statBoost = new TextView(getActivity());
+            statBoost.setTag(stat);
+            statBoost.setTextSize(10);
+            LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            statBoost.setLayoutParams(layoutParams);
+            currentBoost = boost;
+            index = tempStat.getChildCount();
+        } else {
+            statBoost = (TextView) tempStat.findViewWithTag(stat);
+            index = tempStat.indexOfChild(statBoost);
+            tempStat.removeView(statBoost);
+            String boostDetail = statBoost.getText().toString();
+            currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" "))) + boost;
+        }
+        if (currentBoost == 0) {
+            return;
+        } else {
+            if (currentBoost > 0) {
+                statBoost.setBackgroundResource(R.drawable.editable_frame);
+            } else {
+                statBoost.setBackgroundResource(R.drawable.editable_frame_light_orange);
+            }
+        }
+        statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
+        tempStat.addView(statBoost, index);
     }
 
 }

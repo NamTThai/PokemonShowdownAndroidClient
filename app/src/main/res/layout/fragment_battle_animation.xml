@@ -72,7 +72,7 @@
             android:id="@+id/p1a_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p1a_hp_layout"
             android:layout_alignLeft="@id/p1a_hp_layout">
             
@@ -85,15 +85,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
-
-        <TextView
-            android:id="@+id/p1a_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p1a_icon"
-            android:layout_alignLeft="@id/p1a_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -153,7 +144,7 @@
             android:id="@+id/p1b_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p1b_hp_layout"
             android:layout_alignLeft="@id/p1b_hp_layout">
 
@@ -166,15 +157,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1b_hp_layout"/>
-        
-        <TextView
-            android:id="@+id/p1b_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p1b_icon"
-            android:layout_alignLeft="@id/p1b_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -234,7 +216,7 @@
             android:id="@+id/p1c_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p1c_hp_layout"
             android:layout_alignLeft="@id/p1c_hp_layout">
 
@@ -247,15 +229,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1c_hp_layout"/>
-
-        <TextView
-            android:id="@+id/p1c_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p1c_icon"
-            android:layout_alignLeft="@id/p1c_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -316,7 +289,7 @@
             android:id="@+id/p2c_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p2c_hp_layout"
             android:layout_alignLeft="@id/p2c_hp_layout">
 
@@ -329,15 +302,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2c_hp_layout"/>
-
-        <TextView
-            android:id="@+id/p2c_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p2c_icon"
-            android:layout_alignLeft="@id/p2c_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -398,7 +362,7 @@
             android:id="@+id/p2b_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p2b_hp_layout"
             android:layout_alignLeft="@id/p2b_hp_layout">
 
@@ -411,15 +375,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2b_hp_layout"/>
-
-        <TextView
-            android:id="@+id/p2b_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p2b_icon"
-            android:layout_alignLeft="@id/p2b_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -480,7 +435,7 @@
             android:id="@+id/p2a_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_below="@id/p2a_hp_layout"
             android:layout_alignLeft="@id/p2a_hp_layout">
 
@@ -493,15 +448,6 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2a_hp_layout"/>
-
-        <TextView
-            android:id="@+id/p2a_dmg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="30dp"
-            android:layout_alignTop="@id/p2a_icon"
-            android:layout_alignLeft="@id/p2a_icon"
-            android:alpha="0"/>
 
     </RelativeLayout>
 
