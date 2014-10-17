@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/animation_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -22,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="4dp"
         android:layout_marginBottom="36dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1a_pkm"
@@ -76,8 +77,18 @@
             android:id="@+id/p1a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
+
+        <TextView
+            android:id="@+id/p1a_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p1a_icon"
+            android:layout_alignLeft="@id/p1a_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -88,7 +99,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="120dp"
         android:layout_marginBottom="20dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1b_pkm"
@@ -142,8 +153,18 @@
             android:id="@+id/p1b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1b_hp_layout"/>
+        
+        <TextView
+            android:id="@+id/p1b_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p1b_icon"
+            android:layout_alignLeft="@id/p1b_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -154,7 +175,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="236dp"
         android:layout_marginBottom="4dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1c_pkm"
@@ -208,8 +229,18 @@
             android:id="@+id/p1c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1c_hp_layout"/>
+
+        <TextView
+            android:id="@+id/p1c_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p1c_icon"
+            android:layout_alignLeft="@id/p1c_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -221,7 +252,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="236dp"
         android:layout_marginTop="4dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2c_pkm"
@@ -275,8 +306,18 @@
             android:id="@+id/p2c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2c_hp_layout"/>
+
+        <TextView
+            android:id="@+id/p2c_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p2c_icon"
+            android:layout_alignLeft="@id/p2c_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -288,7 +329,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="120dp"
         android:layout_marginTop="20dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2b_pkm"
@@ -342,8 +383,18 @@
             android:id="@+id/p2b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2b_hp_layout"/>
+
+        <TextView
+            android:id="@+id/p2b_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p2b_icon"
+            android:layout_alignLeft="@id/p2b_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 
@@ -355,7 +406,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="4dp"
         android:layout_marginTop="36dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2a_pkm"
@@ -409,8 +460,18 @@
             android:id="@+id/p2a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2a_hp_layout"/>
+
+        <TextView
+            android:id="@+id/p2a_dmg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:layout_alignTop="@id/p2a_icon"
+            android:layout_alignLeft="@id/p2a_icon"
+            android:alpha="0"/>
 
     </RelativeLayout>
 

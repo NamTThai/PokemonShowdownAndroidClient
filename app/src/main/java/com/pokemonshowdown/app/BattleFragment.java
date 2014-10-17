@@ -28,6 +28,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
@@ -623,7 +624,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
 
-    private void processMinorAction(String command, String messageDetails) {
+    private void processMinorAction(String command, final String messageDetails) {
         if (messageDetails.contains("[silent]")) {
             return;
         }
@@ -631,411 +632,151 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         int separator;
         int start;
         Integer oldHP;
-        int lostHP;
-        int intAmount;
+        final int lostHP;
+        final int intAmount;
         String remaining;
         String toAppend;
         StringBuilder toAppendBuilder = new StringBuilder();
-        Spannable toAppendSpannable = new SpannableString("");
+        Spannable toAppendSpannable = null;
         String move;
 
-        String fromEffect;
-        String ofSource;
+        String fromEffect = null;
+        String trimmedFromEffect = null;
+        String ofSource = null;
+        String trimmedOfEffect = null;
+
+        String attacker, defender;
+
         int from = messageDetails.indexOf("[from]");
         if (from != -1) {
             remaining = messageDetails.substring(from + 7);
             separator = remaining.indexOf('|');
             fromEffect = (separator == -1) ? remaining : remaining.substring(0, separator);
+            //trim
+            trimmedFromEffect = fromEffect;
+            trimmedFromEffect = trimmedFromEffect.toLowerCase();
+            trimmedFromEffect = trimmedFromEffect.replaceAll("\\s+", "");
         }
         int of = messageDetails.indexOf("[of]");
         if (of != -1) {
             remaining = messageDetails.substring(of + 5);
             separator = remaining.indexOf('|');
-            ofSource = (separator == -1) ? remaining : remaining.substring(0, separator);
+            ofSource = (separator == -1) ? remaining : remaining.substring(remaining.indexOf(':'), separator);
+
+            trimmedOfEffect = ofSource;
+            trimmedOfEffect = trimmedOfEffect.toLowerCase();
+            trimmedOfEffect = trimmedOfEffect.replaceAll("\\s+", "");
         }
 
         separator = messageDetails.indexOf('|');
-        switch (command) {
-            case "message":
-                toAppendSpannable = new SpannableString(messageDetails);
-                break;
-            case "-miss":
-                String attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendBuilder.append(" missed the target");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-            case "-fail":
-                toAppend = "But it failed!";
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-damage":
-                /*attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                    oldHP = mPlayer2Team.get(attacker);
-                    if (oldHP == null) {
-                        mPlayer2Team.put(attacker, 100);
-                        oldHP = mPlayer2Team.get(attacker);
-                    }
-                } else {
-                    oldHP = mPlayer1Team.get(attacker);
-                    if (oldHP == null) {
-                        mPlayer1Team.put(attacker, 100);
-                        oldHP = mPlayer1Team.get(attacker);
-                    }
+        String[] split = messageDetails.split("\\|");
 
-                }
-                toAppendBuilder.append(attacker + " lost ");
-                remaining = messageDetails.substring(separator + 1);
-                separator = remaining.indexOf("/");
-                if (separator == -1) { // fainted
-                    intAmount = 0;
-                } else {
-                    String hp = remaining.substring(0, separator);
-                    intAmount = Integer.parseInt(hp);
-                }
-                lostHP = oldHP - intAmount;
-                toAppendBuilder.append(lostHP + "% of its health!");
-                if (messageDetails.startsWith("p2")) {
-                    mPlayer2Team.put(attacker, intAmount);
-                } else {
-                    mPlayer1Team.put(attacker, intAmount);
-                }
+        AnimatorSet toast;
+        AnimatorSet animator;
 
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
-                break;
-            case "-heal":
-                /*attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                    oldHP = mPlayer2Team.get(attacker);
-                    if (oldHP == null) {
-                        // in randbats , we dont get the pokemon list
-                        mPlayer2Team.put(attacker, 100);
-                        oldHP = mPlayer2Team.get(attacker);
-                    }
-                } else {
-                    oldHP = mPlayer1Team.get(attacker);
-                    if (oldHP == null) {
-                        // in randbats , we dont get the pokemon list
-                        mPlayer1Team.put(attacker, 100);
-                        oldHP = mPlayer1Team.get(attacker);
-                    }
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                separator = remaining.indexOf("/");
-                if (separator == -1) {
-                    intAmount = 0; // shouldnt happen sicne we're healing
-                } else {
-                    String hp = remaining.substring(0, separator);
-                    intAmount = Integer.parseInt(hp);
-                }
-                lostHP = intAmount - oldHP;
-                toAppendBuilder.append(" healed " + lostHP + "% of it's health!");
-                if (messageDetails.startsWith("p2")) {
-                    mPlayer2Team.put(attacker, intAmount);
-                } else {
-                    mPlayer1Team.put(attacker, intAmount);
-                }
-
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
-                break;
-            case "-status":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" was inflicted with ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
-                break;
-            case "-curestatus":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append(" was cured from ").append(remaining);
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
-                break;
-            case "-cureteam":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                toAppendBuilder.append(" cured the whole team from bad status");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                    /*
-                    separator = remaining.indexOf(" ");
-                    String hp = remaining.substring(0, separator);
-                    if (hp.equals("0")) {
-                        toAppendBuilder.append("has fainted!");
-                    }*/
-                break;
-            case "-boost":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append("'s ");
-                separator = remaining.indexOf('|');
-                String stat = remaining.substring(0, separator);
-                switch (stat) {
-                    case "atk":
-                        toAppendBuilder.append("Attack ");
-                        break;
-                    case "def":
-                        toAppendBuilder.append("Defense ");
-                        break;
-                    case "spa":
-                        toAppendBuilder.append("Special Attack ");
-                        break;
-                    case "spd":
-                        toAppendBuilder.append("Special Defense ");
-                        break;
-                    case "spe":
-                        toAppendBuilder.append("Speed ");
-                        break;
-                    default:
-                        toAppendBuilder.append(stat + " ");
-                        break;
-                }
-                String amount = remaining.substring(separator + 1);
-                if (amount.indexOf("|") != -1) {
-                    amount = amount.substring(0, amount.indexOf("|"));
-                }
-                intAmount = Integer.parseInt(amount);
-                if (intAmount >= 2) {
-                    toAppendBuilder.append("sharply ");
-                }
-                toAppendBuilder.append("rose!");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-            case "-unboost":
-                attacker = messageDetails.substring(5, separator);
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("The opposing ");
-                }
-                toAppendBuilder.append(attacker);
-                remaining = messageDetails.substring(separator + 1);
-                toAppendBuilder.append("'s ");
-                separator = remaining.indexOf('|');
-                stat = remaining.substring(0, separator);
-                switch (stat) {
-                    case "atk":
-                        toAppendBuilder.append("Attack ");
-                        break;
-                    case "def":
-                        toAppendBuilder.append("Defense ");
-                        break;
-                    case "spa":
-                        toAppendBuilder.append("Special Attack ");
-                        break;
-                    case "spd":
-                        toAppendBuilder.append("Special Defense ");
-                        break;
-                    case "spe":
-                        toAppendBuilder.append("Speed ");
-                        break;
-                    default:
-                        toAppendBuilder.append(stat + " ");
-                        break;
-                }
-                amount = remaining.substring(separator + 1);
-                if (amount.indexOf("|") != -1) {
-                    amount = amount.substring(0, amount.indexOf("|"));
-                }
-                toAppendBuilder.append("fell");
-                intAmount = Integer.parseInt(amount);
-                if (intAmount >= 2) {
-                    toAppendBuilder.append(" hashly");
-                }
-                toAppendBuilder.append("!");
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-            case "-weather":
-                toAppend = "Weather changed to " + messageDetails;
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-crit":
-                toAppendSpannable = new SpannableString("It's a critical hit!");
-                break;
-            case "-supereffective":
-                toAppendSpannable = new SpannableString("It's super effective!");
-                break;
-            case "-resisted":
-                toAppendSpannable = new SpannableString("It's not very effective...");
-                break;
-            case "-immune":
-                attacker = messageDetails.substring(5);
-                if (attacker.indexOf("|") != -1) {
-                    attacker = attacker.substring(0, attacker.indexOf("|"));
-                }
-                toAppend = attacker + " is immuned";
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-item":
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                toAppend = attacker + " revealed its " + remaining;
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-enditem":
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                toAppend = attacker + " has lost its " + remaining;
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-ability":
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                toAppend = attacker + " revealed its ability " + remaining;
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-endability":
-                attacker = messageDetails.substring(5);
-                toAppend = attacker + " lost its ability";
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-transform":
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                toAppend = attacker + " transformed into " + remaining;
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-activate":
-                toAppend = messageDetails + " has activated";
-                toAppendSpannable = new SpannableString(toAppend);
-                break;
-            case "-sidestart":
-                //reflect, rocks, spikes, light screen, toxic spikes
-                // TODO check leech seed maybe?
-                messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
-                if (messageDetails.contains("Stealth Rock")) {
-                    toAppendBuilder.append("Pointed stones float in the air around ");
-                } else if (messageDetails.contains("Toxic Spikes")) {
-                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ");
-                } else if (messageDetails.contains("Spikes")) {
-                    toAppendBuilder.append("Spikes were scattered all around the feet of ");
-                } else if (messageDetails.contains("Reflect")) {
-                    toAppendBuilder.append("A protective veil augments the Defense of ");
-                } else if (messageDetails.contains("Light Screen")) {
-                    toAppendBuilder.append("A protective veil augments the Special Defense of ");
-                } else if (messageDetails.contains("Sticky Web")) {
-                    toAppendBuilder.append("A sticky web spreads out beneath ");
-                }
-
-                if (messageDetails.startsWith("p2")) {
-                    toAppendBuilder.append("the opposing team!");
-                } else {
-                    toAppendBuilder.append("your team!");
-                }
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                break;
-
-            case "-sideend":
-                // todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-hitcount":
-                try {
-                    String hitCountS = messageDetails.substring(messageDetails.lastIndexOf(separator) + 1);
-                    int hitCount = Integer.parseInt(hitCountS);
-                    toAppendBuilder.append("Hit " + hitCount + "time");
-                    if (hitCount > 1) {
-                        toAppendBuilder.append("s");
-                    }
-                    toAppendBuilder.append("!");
-                    toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-                } catch (NumberFormatException e) {
-                    // todo handle
-                    toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                }
-                break;
-
-            case "-singleturn":
-                //todo proctect apparently
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-fieldstart":
-                //todo (trick room, maybe more)
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-fieldend":
-                //todo (trick room, maybe more)
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-start":
-                //todo substitute,yawn,taunt,flashfire
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-end":
-                //todo substitute,yawn,taunt
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
-
-            case "-message":
-                toAppendSpannable = new SpannableString(messageDetails);
-                break;
-
-            default:
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
-                break;
+        if (getView() == null) {
+            return;
         }
-        toAppendSpannable.setSpan(new RelativeSizeSpan(0.8f), 0, toAppendSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        appendServerMessage(toAppendSpannable);
-    }
 
-    private void appendServerMessage(final Spannable message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mAnimatorSetQueue == null) {
-                    mAnimatorSetQueue = new ArrayDeque<>();
+        switch (command) {
+            case "-damage":
+                attacker = split[0].substring(5);
+
+                ProgressBar progressBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails));
+                oldHP = progressBar.getProgress();
+
+                remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
+                intAmount = processHpFraction(remaining);
+                lostHP = oldHP - intAmount;
+
+                if (trimmedFromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "stealthrock":
+                            toAppendBuilder.append("Pointed stones dug into ").append(attacker).append("!");
+                            break;
+                        case "spikes":
+                            toAppendBuilder.append(attacker).append(" is hurt by the spikes!");
+                            break;
+                        case "brn":
+                            toAppendBuilder.append(attacker).append(" was hurt by its burn!");
+                            break;
+                        case "psn":
+                            toAppendBuilder.append(attacker).append(" was hurt by poison!");
+                            break;
+                        case "item:lifeorb":
+                            toAppendBuilder.append(attacker).append(" lost some of its HP!");
+                            break;
+                        case "recoil":
+                            toAppendBuilder.append(attacker).append(" is damaged by recoil!");
+                            break;
+                        case "sandstorm":
+                            toAppendBuilder.append(attacker).append(" is buffeted by the sandstorm!");
+                            break;
+                        case "hail":
+                            toAppendBuilder.append(attacker).append(" is buffeted by the hail!");
+                            break;
+                        case "baddreams":
+                            toAppendBuilder.append(attacker).append(" is tormented!");
+                            break;
+                        case "nightmare":
+                            toAppendBuilder.append(attacker).append(" is locked in a nightmare!");
+                            break;
+                        case "confusion":
+                            toAppendBuilder.append("It hurt itself in its confusion!");
+                            break;
+                        case "leechseed":
+                            toAppendBuilder.append(attacker).append("'s health is sapped by Leech Seed!");
+                            break;
+                        case "flameburst":
+                            toAppendBuilder.append("The bursting flame hit ").append(attacker).append("!");
+                            break;
+                        case "firepledge":
+                            toAppendBuilder.append(attacker).append(" is hurt by the sea of fire!");
+                            break;
+                        case "jumpkick":
+                        case "highjumpkick":
+                            toAppendBuilder.append(attacker).append(" kept going and crashed!");
+                            break;
+                        default:
+                            if (ofSource != null) {
+                                toAppendBuilder.append(attacker).append(" is hurt by ").append(ofSource).append("'s ").append(fromEffect).append("!");
+                            } else if (fromEffect.contains("item:")) {
+                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(5)).append("!");
+                            } else if (fromEffect.contains("ability:")) {
+                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(8)).append("!");
+                            } else {
+                                toAppendBuilder.append(attacker).append(" lost some HP because of ").append(fromEffect).append("!");
+                            }
+                            break;
+                    }
+                } else {
+                    if (messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing ");
+                    }
+                    toAppendBuilder.append(attacker).append(" lost ");
+                    toAppendBuilder.append(lostHP).append("% of its health!");
                 }
 
-                AnimatorSet toast = makeToast(message);
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+
+                TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
 
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-
+                        if (getView() == null) {
+                            return;
+                        }
+                        TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
+                        damage.setText(lostHP + "%");
+                        damage.setBackgroundResource(R.drawable.editable_frame_light_red);
+                        damage.setPadding(2, 2, 2, 2);
+                        ((TextView) getView().findViewById(getHpId(messageDetails))).setText(Integer.toString(intAmount));
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mAnimatorSetQueue.pollFirst();
-                        Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
-                        if (nextOnQueue != null) {
-                            nextOnQueue.start();
-                        }
+
                     }
 
                     @Override
@@ -1049,13 +790,123 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                mAnimatorSetQueue.addLast(toast);
+                ObjectAnimator flyingDamage = ObjectAnimator.ofInt(damage, "y", 20);
+                flyingDamage.setDuration(ANIMATION_SHORT);
+                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
 
-                if (mAnimatorSetQueue.size() == 1) {
-                    toast.start();
+                ObjectAnimator fadeIn = ObjectAnimator.ofFloat(damage, "alpha", 0f, 1f);
+                fadeIn.setInterpolator(new DecelerateInterpolator());
+                fadeIn.setDuration(ANIMATION_SHORT / 4);
+
+                ObjectAnimator fadeOut = ObjectAnimator.ofFloat(damage, "alpha", 1f, 0f);
+                fadeOut.setInterpolator(new AccelerateInterpolator());
+                fadeOut.setStartDelay(ANIMATION_SHORT / 2);
+                fadeOut.setDuration(ANIMATION_SHORT / 4);
+
+                ProgressBar hpBar = (ProgressBar) getView().findViewById(getHpBarId(messageDetails));
+                ObjectAnimator hpCountDownBar = ObjectAnimator.ofInt(hpBar, "progress", intAmount);
+                hpCountDownBar.setDuration(ANIMATION_SHORT);
+                hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                animator = new AnimatorSet();
+                animator.play(toast);
+                animator.play(hpCountDownBar).with(toast);
+                animator.play(fadeIn).with(toast);
+                animator.play(flyingDamage).with(toast);
+                animator.play(fadeOut).after(fadeIn);
+
+                startAnimation(animator);
+                break;
+
+            case "-heal":/*
+                attacker = messageDetails.substring(5, separator);
+                if (messageDetails.startsWith("p2")) {
+                    oldHP = mPlayer2Team.get(attacker);
+                    if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
+                        mPlayer2Team.put(attacker, 100);
+                        oldHP = mPlayer2Team.get(attacker);
+                    }
+                } else {
+                    oldHP = mPlayer1Team.get(attacker);
+                    if (oldHP == null) {
+                        // in randbats , we dont get the pokemon list
+                        mPlayer1Team.put(attacker, 100);
+                        oldHP = mPlayer1Team.get(attacker);
+                    }
                 }
-            }
-        });
+                remaining = messageDetails.substring(separator + 1);
+                separator = remaining.indexOf("/");
+                if (separator == -1) {
+                    intAmount = 0; // shouldnt happen sicne we're healing
+                } else {
+                    String hp = remaining.substring(0, separator);
+                    intAmount = Integer.parseInt(hp);
+                }
+                lostHP = intAmount - oldHP;
+
+                if (trimmedFromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "ingrain":
+                            toAppendBuilder.append(attacker).append(" absorbed nutrients with its roots!");
+                            break;
+                        case "aquaring":
+                            toAppendBuilder.append("Aqua Ring restored ").append(attacker).append("'s HP");
+                            break;
+                        case "raindish":
+                        case "dryskin":
+                        case "icebody":
+                            toAppendBuilder.append(attacker).append("'s ").append(fromEffect).append(" heals it!");
+                            break;
+                        case "healingwish":
+                            // TODO
+                            break;
+                        case "lunardance":
+                            // TODO
+                            break;
+                        case "wish":
+                            //TODO wish pass
+                            break;
+                        case "drain":
+                            toAppendBuilder.append(attacker).append(" had its energy drained!");
+                            break;
+                        case "item:leftovers":
+                        case "item:shellbell":
+                            toAppendBuilder.append(attacker).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
+                            break;
+                        default:
+                            if (fromEffect.contains("item:")) {
+                                fromEffect = fromEffect.substring(5);
+                            } else if (fromEffect.contains("ability:")) {
+                                fromEffect = fromEffect.substring(8);
+                            }
+                            toAppendBuilder.append(attacker).append(" restored HP using its ").append(fromEffect).append("!");
+                            break;
+                    }
+                } else {
+                    if (messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append("The opposing ");
+                    }
+
+                    toAppendBuilder.append(attacker);
+                    toAppendBuilder.append(" healed ").append(lostHP).append("% of it's health!");
+                }
+                if (messageDetails.startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);*/
+                break;
+
+            default:
+                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                toast = makeMinorToast(toAppendSpannable);
+                startAnimation(toast);
+                break;
+        }
+
     }
 
     private void startAnimation(final AnimatorSet animator) {
@@ -1099,6 +950,53 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 }
             }
         });
+    }
+
+    private AnimatorSet makeMinorToast(final Spannable message) {
+        message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if (getView() == null) {
+            return null;
+        }
+        TextView textView = (TextView) getView().findViewById(R.id.toast);
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartDelay(ANIMATION_SHORT);
+
+        AnimatorSet animation = new AnimatorSet();
+        animation.play(fadeIn);
+        animation.play(fadeOut).after(fadeIn);
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (getView() == null) {
+                    return;
+                }
+                TextView toast = (TextView) getView().findViewById(R.id.toast);
+                if (toast != null) {
+                    toast.setText(message);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        return animation;
     }
 
     private AnimatorSet makeToast(final Spannable message, final int duration) {
@@ -1386,6 +1284,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private int getDmg(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a_dmg;
+            case "p1b":
+                return R.id.p1b_dmg;
+            case "p1c":
+                return R.id.p1c_dmg;
+            case "p2a":
+                return R.id.p2a_dmg;
+            case "p2b":
+                return R.id.p2b_dmg;
+            case "p2c":
+                return R.id.p2c_dmg;
+            default:
+                return 0;
+        }
+    }
+
     private int getTeamSlot(String tag) {
         tag = Character.toString(tag.charAt(2));
         switch (tag) {
@@ -1436,22 +1354,22 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
-                getView().findViewById(R.id.p1a).setVisibility(View.GONE);
+                getView().findViewById(R.id.p1a).setVisibility(View.INVISIBLE);
                 return;
             case "p1b":
-                getView().findViewById(R.id.p1b).setVisibility(View.GONE);
+                getView().findViewById(R.id.p1b).setVisibility(View.INVISIBLE);
                 return;
             case "p1c":
-                getView().findViewById(R.id.p1c).setVisibility(View.GONE);
+                getView().findViewById(R.id.p1c).setVisibility(View.INVISIBLE);
                 return;
             case "p2a":
-                getView().findViewById(R.id.p2a).setVisibility(View.GONE);
+                getView().findViewById(R.id.p2a).setVisibility(View.INVISIBLE);
                 return;
             case "p2b":
-                getView().findViewById(R.id.p2b).setVisibility(View.GONE);
+                getView().findViewById(R.id.p2b).setVisibility(View.INVISIBLE);
                 return;
             case "p2c":
-                getView().findViewById(R.id.p2c).setVisibility(View.GONE);
+                getView().findViewById(R.id.p2c).setVisibility(View.INVISIBLE);
                 return;
         }
     }
@@ -1526,12 +1444,16 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
-        for (int i = 0; i < playerTeam.size(); i++) {
-            if (playerTeam.get(i).contains(pkm)) {
-                return i;
+        if (!pkm.contains("Arceus")) {
+            return playerTeam.indexOf(pkm);
+        } else {
+            for (int i = 0; i < playerTeam.size(); i++) {
+                if (playerTeam.get(i).contains("Arceus")) {
+                    return i;
+                }
             }
+            return -1;
         }
-        return -1;
     }
 
 }
