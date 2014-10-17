@@ -1103,6 +1103,64 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animatorSet.play(animator);
                 startAnimation(animatorSet);
                 break;
+            case "-setboost":
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "move:bellydrum":
+                            toast = makeMinorToast(new SpannableString(attacker + " cut its own HP and maximized its Attack!"));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    processBoost(split[0], "atk", 6);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
+                            break;
+
+                        case "ability:angerpoint":
+                            toast = makeMinorToast(new SpannableString(attacker + " maxed its Attack!"));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    processBoost(split[0], "atk", 6);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
+                            break;
+                    }
+                }
+                break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 toast = makeMinorToast(toAppendSpannable);
