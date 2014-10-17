@@ -4,25 +4,16 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
+import android.text.*;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 
@@ -764,41 +755,45 @@ public class BattleLogDialog extends DialogFragment {
             case "-fail":
                 // todo
                 attacker = split[0].substring(5);
-                remaining = split[1];
+                if (split.length > 1) {
+                    remaining = split[1];
 
-                switch (remaining) {
-                    case "brn":
-                        toAppendBuilder.append(attacker).append(" is already burned.");
-                        break;
-                    case "tox":
-                    case "psn":
-                        toAppendBuilder.append(attacker).append(" is already poisoned.");
-                        break;
-                    case "slp":
-                        //todo try uproar
-                        toAppendBuilder.append(attacker).append(" is already asleep.");
-                        break;
-                    case "par":
-                        toAppendBuilder.append(attacker).append(" is already paralyzed.");
-                        break;
-                    case "frz":
-                        toAppendBuilder.append(attacker).append(" is already frozen.");
-                        break;
-                    case "substitute":
-                        // TODO try while having a sub up
-                        toAppendBuilder.append(attacker).append(" cant create a substitute!");
-                        break;
-                    case "skydrop":
-                        // TODO try
-                        toAppendBuilder.append("But it failed!");
-                        break;
-                    case "unboost":
-                        toAppendBuilder.append(attacker).append("'s stats were not lowered!");
-                        break;
+                    switch (remaining) {
+                        case "brn":
+                            toAppendBuilder.append(attacker).append(" is already burned.");
+                            break;
+                        case "tox":
+                        case "psn":
+                            toAppendBuilder.append(attacker).append(" is already poisoned.");
+                            break;
+                        case "slp":
+                            //todo try uproar
+                            toAppendBuilder.append(attacker).append(" is already asleep.");
+                            break;
+                        case "par":
+                            toAppendBuilder.append(attacker).append(" is already paralyzed.");
+                            break;
+                        case "frz":
+                            toAppendBuilder.append(attacker).append(" is already frozen.");
+                            break;
+                        case "substitute":
+                            // TODO try while having a sub up
+                            toAppendBuilder.append(attacker).append(" cant create a substitute!");
+                            break;
+                        case "skydrop":
+                            // TODO try
+                            toAppendBuilder.append("But it failed!");
+                            break;
+                        case "unboost":
+                            toAppendBuilder.append(attacker).append("'s stats were not lowered!");
+                            break;
 
-                    default:
-                        toAppendBuilder.append("But it failed!");
-                        break;
+                        default:
+                            toAppendBuilder.append("But it failed!");
+                            break;
+                    }
+                } else {
+                    toAppendBuilder.append("But it failed!");
                 }
 
 
@@ -1065,7 +1060,6 @@ public class BattleLogDialog extends DialogFragment {
                 // todo
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
-
 
 
             case "-singleturn":
