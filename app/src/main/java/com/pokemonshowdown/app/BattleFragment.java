@@ -442,11 +442,17 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         if (sprites != null) {
                             sprites.setImageResource(spriteId);
                         }
-                        ImageView iconLeader = (ImageView) getView().findViewById(getIconId(messageDetails, getTeamSlot(messageDetails)));
-                        Drawable leader = iconLeader.getDrawable();
-                        ImageView iconTrailer = (ImageView) getView().findViewById(getIconId(messageDetails, toBeSwapped));
-                        iconTrailer.setImageDrawable(leader);
-                        iconLeader.setImageResource(iconId);
+                        try {
+                            ImageView iconLeader = (ImageView) getView().findViewById(getIconId(messageDetails, getTeamSlot(messageDetails)));
+                            Drawable leader = iconLeader.getDrawable();
+                            ImageView iconTrailer = (ImageView) getView().findViewById(getIconId(messageDetails, toBeSwapped));
+                            iconTrailer.setImageDrawable(leader);
+                            iconLeader.setImageResource(iconId);
+                        } catch (NullPointerException e) {
+                            Log.d(BTAG, mPlayer1Team.toString());
+                            Log.d(BTAG, mPlayer2Team.toString());
+                            throw new NullPointerException(e.toString());
+                        }
 
                         TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
                         if (pkmName != null) {
@@ -672,7 +678,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
 
         separator = messageDetails.indexOf('|');
-        String[] split = messageDetails.split("\\|");
+        final String[] split = messageDetails.split("\\|");
 
         AnimatorSet toast;
         AnimatorSet animator;
@@ -688,7 +694,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
                 intAmount = processHpFraction(remaining);
                 setOldHp(messageDetails, intAmount);
-                lostHP = oldHP - intAmount;
+                lostHP = intAmount - oldHP;
 
                 if (trimmedFromEffect != null) {
                     switch (trimmedFromEffect) {
@@ -760,7 +766,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                 toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
 
-                TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
+                final TextView damage = new TextView(getActivity());
+                damage.setText(lostHP + "%");
+                damage.setBackgroundResource(R.drawable.editable_frame_light_red);
+                damage.setPadding(2, 2, 2, 2);
+                damage.setAlpha(0f);
 
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
@@ -768,16 +778,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         if (getView() == null) {
                             return;
                         }
-                        TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
-                        damage.setText("-" + lostHP + "%");
-                        damage.setBackgroundResource(R.drawable.editable_frame_light_red);
-                        damage.setPadding(2, 2, 2, 2);
                         ((TextView) getView().findViewById(getHpId(messageDetails))).setText(Integer.toString(intAmount));
+
+                        ImageView imageView = (ImageView) getView().findViewById(getSpriteId(messageDetails));
+
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(messageDetails));
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(messageDetails));
+                        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(messageDetails));
+                        layoutParams.setMargins((int) (imageView.getWidth() * 0.5f), (int) (imageView.getHeight() * 0.5f), 0, 0);
+                        relativeLayout.addView(damage, layoutParams);
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
 
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(messageDetails));
+                        relativeLayout.removeView(damage);
                     }
 
                     @Override
@@ -813,7 +833,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animator.play(toast);
                 animator.play(hpCountDownBar).with(toast);
                 animator.play(fadeIn).with(toast);
-                animator.play(flyingDamage).with(toast);
+                animator.play(flyingDamage).after(fadeIn);
                 animator.play(fadeOut).after(fadeIn);
 
                 startAnimation(animator);
@@ -827,7 +847,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
                 intAmount = processHpFraction(remaining);
                 setOldHp(messageDetails, intAmount);
-                lostHP = oldHP - intAmount;
+                lostHP = intAmount - oldHP;
 
                 if (trimmedFromEffect != null) {
                     switch (trimmedFromEffect) {
@@ -876,11 +896,13 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     toAppendBuilder.append(" healed ").append(lostHP).append("% of it's health!");
                 }
 
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
-
                 toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
 
-                damage = (TextView) getView().findViewById(getDmg(messageDetails));
+                final TextView heal = new TextView(getActivity());
+                heal.setText(lostHP + "%");
+                heal.setBackgroundResource(R.drawable.editable_frame_light_green);
+                heal.setPadding(2, 2, 2, 2);
+                heal.setAlpha(0f);
 
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
@@ -888,16 +910,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         if (getView() == null) {
                             return;
                         }
-                        TextView damage = (TextView) getView().findViewById(getDmg(messageDetails));
-                        damage.setText(lostHP + "%");
-                        damage.setBackgroundResource(R.drawable.editable_frame_light_green);
-                        damage.setPadding(2, 2, 2, 2);
                         ((TextView) getView().findViewById(getHpId(messageDetails))).setText(Integer.toString(intAmount));
+
+                        ImageView imageView = (ImageView) getView().findViewById(getSpriteId(messageDetails));
+
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(messageDetails));
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(messageDetails));
+                        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(messageDetails));
+                        layoutParams.setMargins((int) (imageView.getWidth() * 0.5f), (int) (imageView.getHeight() * 0.5f), 0, 0);
+                        relativeLayout.addView(heal, layoutParams);
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
 
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(messageDetails));
+                        relativeLayout.removeView(heal);
                     }
 
                     @Override
@@ -911,15 +943,15 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                flyingDamage = ObjectAnimator.ofFloat(damage, "y", 2f);
+                flyingDamage = ObjectAnimator.ofFloat(heal, "y", 2f);
                 flyingDamage.setDuration(ANIMATION_SHORT);
                 flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
 
-                fadeIn = ObjectAnimator.ofFloat(damage, "alpha", 0f, 1f);
+                fadeIn = ObjectAnimator.ofFloat(heal, "alpha", 0f, 1f);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
                 fadeIn.setDuration(ANIMATION_SHORT / 4);
 
-                fadeOut = ObjectAnimator.ofFloat(damage, "alpha", 1f, 0f);
+                fadeOut = ObjectAnimator.ofFloat(heal, "alpha", 1f, 0f);
                 fadeOut.setInterpolator(new AccelerateInterpolator());
                 fadeOut.setStartDelay(ANIMATION_SHORT / 2);
                 fadeOut.setDuration(ANIMATION_SHORT / 4);
@@ -933,12 +965,60 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animator.play(toast);
                 animator.play(hpCountDownBar).with(toast);
                 animator.play(fadeIn).with(toast);
-                animator.play(flyingDamage).with(toast);
+                animator.play(flyingDamage).after(fadeIn);
                 animator.play(fadeOut).after(fadeIn);
 
                 startAnimation(animator);
                 break;
+            case "-sethp":
+                switch (trimmedFromEffect) {
+                    case "move:painsplit":
+                        toast = makeMinorToast(new SpannableString("The battlers shared their pain!"));
+                        toast.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int pkmAHp = processHpFraction(split[1]);
+                                int pkmBHp = processHpFraction(split[3]);
 
+                                ((TextView) getView().findViewById(getHpId(split[0]))).setText(Integer.toString(pkmAHp));
+                                ((TextView) getView().findViewById(getHpId(split[2]))).setText(Integer.toString(pkmBHp));
+
+                                ProgressBar pkmAHpBar = (ProgressBar) getView().findViewById(getHpBarId(split[0]));
+                                ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
+                                pkmACountDown.setDuration(ANIMATION_SHORT);
+                                pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+                                ProgressBar pkmBHpBar = (ProgressBar) getView().findViewById(getHpBarId(split[2]));
+                                ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
+                                pkmBCountDown.setDuration(ANIMATION_SHORT);
+                                pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+                                pkmACountDown.start();
+                                pkmBCountDown.start();
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
+                        startAnimation(toast);
+                        break;
+                }
+                // todo actually switch hps
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 toast = makeMinorToast(toAppendSpannable);
@@ -1139,7 +1219,26 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 return 0;
         }
     }
-
+    
+    private int getPkmLayoutId(String tag) {
+        tag = tag.substring(0, 3);
+        switch (tag) {
+            case "p1a":
+                return R.id.p1a;
+            case "p1b":
+                return R.id.p1b;
+            case "p1c":
+                return R.id.p1c;
+            case "p2a":
+                return R.id.p2a;
+            case "p2b":
+                return R.id.p2b;
+            case "p2c":
+                return R.id.p2c;
+            default:
+                return 0;
+        }
+    }
 
     private int getSpriteId(String tag) {
         tag = tag.substring(0, 3);
@@ -1219,7 +1318,9 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     case 5:
                         return R.id.icon6;
                     default:
-                        return 0;
+                        Log.d(BTAG, mPlayer1Team.toString());
+                        Log.d(BTAG, mPlayer2Team.toString());
+                        return R.id.icon1;
                 }
             case "p2":
                 switch (id) {
@@ -1236,10 +1337,14 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     case 5:
                         return R.id.icon6_o;
                     default:
-                        return 0;
+                        Log.d(BTAG, mPlayer1Team.toString());
+                        Log.d(BTAG, mPlayer2Team.toString());
+                        return R.id.icon1_o;
                 }
             default:
-                return 0;
+                Log.d(BTAG, mPlayer1Team.toString());
+                Log.d(BTAG, mPlayer2Team.toString());
+                return R.id.icon1;
         }
     }
     
