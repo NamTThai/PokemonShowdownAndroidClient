@@ -4,16 +4,25 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.*;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 
@@ -448,11 +457,15 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                         default:
                             if (ofSource != null) {
+                                if (ofSource.contains(":")) {
+                                    ofSource = ofSource.substring(ofSource.indexOf(':') + 1);
+                                }
+                                if (fromEffect.contains(":")) {
+                                    fromEffect = fromEffect.substring(fromEffect.indexOf(':') + 1);
+                                }
                                 toAppendBuilder.append(attacker).append(" is hurt by ").append(ofSource).append("'s ").append(fromEffect).append("!");
-                            } else if (fromEffect.contains("item:")) {
-                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(5)).append("!");
-                            } else if (fromEffect.contains("ability:")) {
-                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(8)).append("!");
+                            } else if (fromEffect.contains(":")) {
+                                toAppendBuilder.append(attacker).append(" is hurt by its").append(fromEffect.substring(fromEffect.indexOf(':') + 1)).append("!");
                             } else {
                                 toAppendBuilder.append(attacker).append(" lost some HP because of ").append(fromEffect).append("!");
                             }
@@ -525,8 +538,16 @@ public class BattleLogDialog extends DialogFragment {
                             //TODO wish pass
                             break;
                         case "drain":
-                            toAppendBuilder.append(attacker).append(" had its energy drained!");
+                            if (trimmedOfEffect != null) {
+                                if (trimmedOfEffect.contains(":")) {
+                                    toAppendBuilder.append(trimmedOfEffect.indexOf(":") + 1).append(" had its energy drained!");
+                                    break;
+                                }
+                            }
+                            // we should never enter here
+                            toAppendBuilder.append(attacker).append(" drained health!");
                             break;
+
                         case "item:leftovers":
                         case "item:shellbell":
                             toAppendBuilder.append(attacker).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
@@ -658,11 +679,11 @@ public class BattleLogDialog extends DialogFragment {
                 if (fromEffect != null) {
                     switch (trimmedFromEffect) {
                         case "move:bellydrum":
-                            toAppendBuilder.append(attacker + " cut its own HP and maximized its Attack!");
+                            toAppendBuilder.append(attacker).append(" cut its own HP and maximized its Attack!");
                             break;
 
                         case "move:angerpoint":
-                            toAppendBuilder.append(attacker + " maxed its Attack!");
+                            toAppendBuilder.append(attacker).append(" maxed its Attack!");
                             break;
                     }
                 }
