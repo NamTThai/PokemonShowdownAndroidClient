@@ -769,7 +769,6 @@ public class BattleLogDialog extends DialogFragment {
                     attacker = split[0].substring(5);
                     toAppendBuilder.append(attacker).append("'s attack missed!");
                 }
-                toAppendBuilder.append(" missed the target");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
