@@ -1116,7 +1116,7 @@ public class BattleLogDialog extends DialogFragment {
                                     move.substring(0, move.indexOf("|"));
                                 }
                             }
-                            toAppendBuilder.append("The ").append(item).append(" strengthened ").append(move).append("'s power !");
+                            toAppendBuilder.append("The ").append(item).append(" strengthened ").append(move).append("'s power!");
                             break;
 
                         case "incinerate":
@@ -1173,7 +1173,7 @@ public class BattleLogDialog extends DialogFragment {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "trace":
                             defenderOutputName = getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" traced ").append(defenderOutputName).append("'s ").append(getPrintable(ability)).append("!");
