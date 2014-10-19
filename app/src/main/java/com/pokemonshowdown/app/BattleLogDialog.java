@@ -358,6 +358,10 @@ public class BattleLogDialog extends DialogFragment {
         return split.substring(separator + 1).trim();
     }
 
+    private String toId(String str) {
+        return str.toLowerCase().replaceAll("\\s+", "");
+    }
+
 
     private void processMinorAction(String command, String messageDetails) {
         if (messageDetails.contains("[silent]")) {
@@ -391,9 +395,7 @@ public class BattleLogDialog extends DialogFragment {
             separator = remaining.indexOf('|');
             fromEffect = (separator == -1) ? remaining : remaining.substring(0, separator);
             //trim
-            trimmedFromEffect = fromEffect;
-            trimmedFromEffect = trimmedFromEffect.toLowerCase();
-            trimmedFromEffect = trimmedFromEffect.replaceAll("\\s+", "");
+            trimmedFromEffect = toId(fromEffect);
         }
         int of = messageDetails.indexOf("[of]");
         if (of != -1) {
@@ -401,9 +403,7 @@ public class BattleLogDialog extends DialogFragment {
             separator = remaining.indexOf('|');
             ofSource = (separator == -1) ? remaining : remaining.substring(remaining.indexOf(':'), separator);
 
-            trimmedOfEffect = ofSource;
-            trimmedOfEffect = trimmedOfEffect.toLowerCase();
-            trimmedOfEffect = trimmedOfEffect.replaceAll("\\s+", "");
+            trimmedOfEffect = toId(ofSource);
         }
 
         separator = messageDetails.indexOf('|');
@@ -570,11 +570,9 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                         case "drain":
                             if (trimmedOfEffect != null) {
-                                if (trimmedOfEffect.contains(":")) {
-                                    trimmedOfEffect = getOutputPokemonSide(ofSource);
-                                    toAppendBuilder.append(trimmedOfEffect).append(" had its energy drained!");
-                                    break;
-                                }
+                                trimmedOfEffect = getOutputPokemonSide(ofSource);
+                                toAppendBuilder.append(trimmedOfEffect).append(" had its energy drained!");
+                                break;
                             }
                             // we should never enter here
                             toAppendBuilder.append(attackerOutputName).append(" drained health!");
@@ -1070,9 +1068,90 @@ public class BattleLogDialog extends DialogFragment {
                 weaken = messageDetails.contains("[weaken]");
                 attacker = getId(split[0]);
                 attackerOutputName = getOutputPokemonSide(split[0]);
-                item = split[1];
-                toAppend = attacker + " has lost its " + item;
-                toAppendSpannable = new SpannableString(toAppend);
+                item = split[1].trim();
+
+                if (eat) {
+                    toAppendBuilder.append(attackerOutputName).append(" ate its ").append(item).append("!");
+                } else if (weaken) {
+                    toAppendBuilder.append(attackerOutputName).append(" weakened the damage to ").append(item).append("!");
+                } else if (fromEffect != null) {
+                    trimmedFromEffect = getId(trimmedFromEffect);
+                    switch (trimmedFromEffect) {
+                        case "fling":
+                            toAppendBuilder.append(attackerOutputName).append(" flung its ").append(item).append("!");
+                            break;
+
+                        case "knockoff":
+                            defenderOutputName = getOutputPokemonSide(ofSource);
+                            attackerOutputName = getOutputPokemonSide(split[0], false);
+
+                            toAppendBuilder.append(defenderOutputName).append(" knocked off ").append(attackerOutputName).append("'s").append(item).append("!");
+                            break;
+
+                        case "stealeat":
+                            defenderOutputName = getOutputPokemonSide(ofSource);
+                            toAppendBuilder.append(defenderOutputName).append(" stole and ate its target's ").append(item).append("!");
+                            break;
+
+                        case "gem":
+                            separator = messageDetails.indexOf("[move]");
+                            move = "";
+                            if (separator != -1) {
+                                move = messageDetails.substring(separator + 6);
+                                if (move.contains("|")) {
+                                    move.substring(0, move.indexOf("|"));
+                                }
+                            }
+                            toAppendBuilder.append("The ").append(item).append(" strengthened ").append(move).append("'s power !");
+                            break;
+
+                        case "incinerate":
+                            toAppendBuilder.append(attackerOutputName).append("'s ").append(item).append(" was burnt up!");
+                            break;
+
+                        default:
+                            toAppendBuilder.append(attackerOutputName).append(" lost its").append(item).append("!");
+                            break;
+                    }
+                } else {
+                    String itemId = toId(item);
+                    switch (itemId) {
+                        case "airballoon":
+                            toAppendBuilder.append(attackerOutputName).append("'s Air Balloon popped!");
+                            break;
+
+                        case "focussash":
+                            toAppendBuilder.append(attackerOutputName).append(" hung on using its Focus Sash!");
+                            break;
+
+                        case "focusband":
+                            toAppendBuilder.append(attackerOutputName).append(" hung on using its Focus Band!");
+                            break;
+
+                        case "mentalherb":
+                            toAppendBuilder.append(attackerOutputName).append(" used its Mental Herb to come back to its senses!");
+                            break;
+
+                        case "whiteherb":
+                            toAppendBuilder.append(attackerOutputName).append("restored its status using its White Herb!");
+                            break;
+
+                        case "ejectbutton":
+                            toAppendBuilder.append(attackerOutputName).append(" is switched out with the Eject Button!");
+                            break;
+
+                        case "redcard":
+                            defenderOutputName = getOutputPokemonSide(ofSource, false);
+                            toAppendBuilder.append(attackerOutputName).append(" held up its Red Card against ").append(defenderOutputName).append("!");
+                            break;
+
+                        default:
+                            toAppendBuilder.append(attackerOutputName).append("'s ").append(item).append(" activated!");
+                            break;
+                    }
+                }
+
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-ability":
