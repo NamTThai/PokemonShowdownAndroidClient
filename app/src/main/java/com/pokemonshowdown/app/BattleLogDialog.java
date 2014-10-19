@@ -569,7 +569,7 @@ public class BattleLogDialog extends DialogFragment {
                         case "drain":
                             if (trimmedOfEffect != null) {
                                 if (trimmedOfEffect.contains(":")) {
-                                    trimmedOfEffect = getOutputPokemonSide(trimmedOfEffect);
+                                    trimmedOfEffect = getOutputPokemonSide(ofSource);
                                     toAppendBuilder.append(trimmedOfEffect).append(" had its energy drained!");
                                     break;
                                 }
