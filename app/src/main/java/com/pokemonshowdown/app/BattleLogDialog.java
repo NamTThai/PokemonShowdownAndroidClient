@@ -434,6 +434,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = oldHP - intAmount;
 
                 if (trimmedFromEffect != null) {
+                    trimmedFromEffect = trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect;
                     switch (trimmedFromEffect) {
                         case "stealthrock":
                             attackerOutputName = getOutputPokemonSide(split[0], false);
@@ -448,7 +449,7 @@ public class BattleLogDialog extends DialogFragment {
                         case "psn":
                             toAppendBuilder.append(attackerOutputName).append(" was hurt by poison!");
                             break;
-                        case "item:lifeorb":
+                        case "lifeorb":
                             toAppendBuilder.append(attackerOutputName).append(" lost some of its HP!");
                             break;
                         case "recoil":
@@ -542,6 +543,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = intAmount - oldHP;
 
                 if (trimmedFromEffect != null) {
+                    trimmedFromEffect = trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect;
                     switch (trimmedFromEffect) {
                         case "ingrain":
                             toAppendBuilder.append(attackerOutputName).append(" absorbed nutrients with its roots!");
@@ -576,15 +578,15 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attackerOutputName).append(" drained health!");
                             break;
 
-                        case "item:leftovers":
-                        case "item:shellbell":
+                        case "leftovers":
+                        case "shellbell":
                             toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(fromEffect.substring(5)).append("!");
                             break;
                         default:
                             if (fromEffect.contains("item:")) {
-                                fromEffect = fromEffect.substring(5);
+                                fromEffect = fromEffect.substring(6);
                             } else if (fromEffect.contains("ability:")) {
-                                fromEffect = fromEffect.substring(8);
+                                fromEffect = fromEffect.substring(9);
                             }
                             toAppendBuilder.append(attackerOutputName).append(" restored HP using its ").append(fromEffect).append("!");
                             break;
@@ -601,6 +603,7 @@ public class BattleLogDialog extends DialogFragment {
 
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-sethp":
                 switch (trimmedFromEffect) {
                     case "move:painsplit":
@@ -610,8 +613,8 @@ public class BattleLogDialog extends DialogFragment {
                 // todo actually switch hps
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-boost":
-                attacker = split[0].substring(5);
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName);
                 remaining = messageDetails.substring(separator + 1);
@@ -651,8 +654,8 @@ public class BattleLogDialog extends DialogFragment {
                 toAppendBuilder.append("rose!");
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-unboost":
-                attacker = split[0].substring(5);
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName);
                 remaining = messageDetails.substring(separator + 1);
@@ -921,8 +924,8 @@ public class BattleLogDialog extends DialogFragment {
                 }
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-curestatus":
-                // TODO effects
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 flag = false;
                 if (trimmedFromEffect != null) {
@@ -941,8 +944,7 @@ public class BattleLogDialog extends DialogFragment {
                 }
 
                 if (!flag) {
-                    // TODO
-                    //split1 is curred status
+                    //split1 is cured status
                     switch (split[1]) {
                         case "brn":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
@@ -1024,10 +1026,54 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-item":
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                toAppend = attacker + " revealed its " + remaining;
-                toAppendSpannable = new SpannableString(toAppend);
+                attackerOutputName = getOutputPokemonSide(split[0]);
+                String item = split[1];
+                if (fromEffect != null) {
+                    // not to deal with item: or ability: or move:
+                    trimmedFromEffect = (trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect);
+                    switch (trimmedFromEffect) {
+                        case "recycle":
+                        case "pickup":
+                            toAppendBuilder.append(attackerOutputName).append(" found one ").append(item).append("!");
+                            break;
+
+                        case "frisk":
+                            toAppendBuilder.append(attackerOutputName).append(" frisked its target and found one ").append(item).append("!");
+                            break;
+
+                        case "thief":
+                        case "covet":
+                            defenderOutputName = getOutputPokemonSide(ofSource, false);
+                            toAppendBuilder.append(attackerOutputName).append("  stole  ").append(defenderOutputName).append("'s ").append(item).append("!");
+                            break;
+
+                        case "harvest":
+                            toAppendBuilder.append(attackerOutputName).append(" harvested one ").append(item).append("!");
+                            break;
+
+                        case "bestow":
+                            defenderOutputName = getOutputPokemonSide(ofSource, false);
+                            toAppendBuilder.append(attackerOutputName).append(" received ").append(item).append(" from ").append(defenderOutputName).append("!");
+                            break;
+
+                        default:
+                            toAppendBuilder.append(attackerOutputName).append(" obtained one ").append(item).append(".");
+                            break;
+                    }
+                } else {
+                    switch (item) {
+                        case "airballoon":
+                            toAppendBuilder.append(attackerOutputName).append(" floats in the air with its Air Balloon!");
+                            break;
+
+                        default:
+                            toAppendBuilder.append(attackerOutputName).append("has ").append(item).append("!");
+                            break;
+                    }
+                }
+
+
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-enditem":
@@ -1139,8 +1185,6 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
 
-
-
             case "-weather":
                 String weather = split[0];
                 boolean upkeep = false;
@@ -1203,8 +1247,6 @@ public class BattleLogDialog extends DialogFragment {
                 currentWeather = weather;
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
-
-
 
 
             case "-fieldstart":
