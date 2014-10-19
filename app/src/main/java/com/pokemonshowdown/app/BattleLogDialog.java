@@ -348,8 +348,8 @@ public class BattleLogDialog extends DialogFragment {
             }
         }
 
-        sb.append(split.substring(5));
-
+        int separator = split.indexOf(':');
+        sb.append(split.substring(separator + 2));
         return sb.toString();
     }
 
