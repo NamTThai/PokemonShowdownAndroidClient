@@ -385,7 +385,7 @@ public class BattleLogDialog extends DialogFragment {
         String ofSource = null;
         String trimmedOfEffect = null;
 
-        String attacker, defender, side;
+        String attacker, defender, side, stat, statAmount;
         String attackerOutputName;
         String defenderOutputName;
 
@@ -609,74 +609,92 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-boost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
-                toAppendBuilder.append(attackerOutputName);
-                toAppendBuilder.append("'s ");
-                String stat = split[1];
+                stat = split[1];
+                statAmount = "";
                 switch (stat) {
                     case "atk":
-                        toAppendBuilder.append("Attack ");
+                        stat = "Attack";
                         break;
                     case "def":
-                        toAppendBuilder.append("Defense ");
+                        stat = "Defense";
                         break;
                     case "spa":
-                        toAppendBuilder.append("Special Attack ");
+                        stat = "Special Attack";
                         break;
                     case "spd":
-                        toAppendBuilder.append("Special Defense ");
+                        stat = "Special Defense";
                         break;
                     case "spe":
-                        toAppendBuilder.append("Speed ");
+                        stat = "Speed";
                         break;
                     default:
-                        toAppendBuilder.append(stat).append(" ");
                         break;
                 }
                 String amount = split[2];
                 intAmount = Integer.parseInt(amount);
                 if (intAmount == 2) {
-                    toAppendBuilder.append("sharply ");
+                    statAmount = " sharply";
                 } else if (intAmount > 2) {
-                    toAppendBuilder.append("drastically ");
+                    statAmount = " drastically";
                 }
-                toAppendBuilder.append("rose!");
+
+                if (fromEffect != null) {
+                    if (fromEffect.contains("item:")) {
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("The ").append(getPrintable(fromEffect)).append(statAmount).append(" raised ").append(attackerOutputName).append("'s ").append(stat).append("!");
+                    } else {
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(statAmount).append(" raised its ").append(stat).append("!");
+                    }
+                } else {
+                    toAppendBuilder.append(attackerOutputName).append("'s ").append(stat).append(statAmount).append(" rose!");
+                }
+
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
             case "-unboost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
-                toAppendBuilder.append(attackerOutputName);
-                toAppendBuilder.append("'s ");
                 stat = split[1];
+                statAmount = "";
+
                 switch (stat) {
                     case "atk":
-                        toAppendBuilder.append("Attack ");
+                        stat = "Attack";
                         break;
                     case "def":
-                        toAppendBuilder.append("Defense ");
+                        stat = "Defense";
                         break;
                     case "spa":
-                        toAppendBuilder.append("Special Attack ");
+                        stat = "Special Attack";
                         break;
                     case "spd":
-                        toAppendBuilder.append("Special Defense ");
+                        stat = "Special Defense";
                         break;
                     case "spe":
-                        toAppendBuilder.append("Speed ");
+                        stat = "Speed";
                         break;
                     default:
-                        toAppendBuilder.append(stat).append(" ");
                         break;
                 }
                 amount = split[2];
-                toAppendBuilder.append("fell");
                 intAmount = Integer.parseInt(amount);
                 if (intAmount == 2) {
-                    toAppendBuilder.append(" hashly");
+                    statAmount = " harshly";
                 } else if (intAmount >= 3) {
-                    toAppendBuilder.append(" severely");
+                    statAmount = " severely";
                 }
-                toAppendBuilder.append("!");
+
+                if (fromEffect != null) {
+                    if (fromEffect.contains("item:")) {
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("The ").append(getPrintable(fromEffect)).append(statAmount).append(" lowered ").append(attackerOutputName).append("'s ").append(stat).append("!");
+                    } else {
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(statAmount).append(" lowered its ").append(stat).append("!");
+                    }
+                } else {
+                    toAppendBuilder.append(attackerOutputName).append("'s ").append(stat).append(statAmount).append(" fell!");
+                }
+
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
