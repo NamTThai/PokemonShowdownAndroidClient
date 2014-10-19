@@ -890,6 +890,9 @@ public class BattleLogDialog extends DialogFragment {
                     case "brn":
                         toAppendBuilder.append(" was burned");
                         if (fromEffect != null) {
+                            if (fromEffect.contains(":")) {
+                                fromEffect = fromEffect.substring(fromEffect.indexOf(':') + 1);
+                            }
                             toAppendBuilder.append(" by the ").append(fromEffect);
                         }
                         toAppendBuilder.append("!");
@@ -898,6 +901,9 @@ public class BattleLogDialog extends DialogFragment {
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
+                            if (fromEffect.contains(":")) {
+                                fromEffect = fromEffect.substring(fromEffect.indexOf(':') + 1);
+                            }
                             toAppendBuilder.append(" by the ").append(fromEffect);
                         }
                         toAppendBuilder.append("!");
