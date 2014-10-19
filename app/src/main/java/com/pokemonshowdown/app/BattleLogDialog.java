@@ -1062,7 +1062,7 @@ public class BattleLogDialog extends DialogFragment {
                     }
                 } else {
                     switch (item) {
-                        case "airballoon":
+                        case "Air Balloon":
                             toAppendBuilder.append(attackerOutputName).append(" floats in the air with its Air Balloon!");
                             break;
 
