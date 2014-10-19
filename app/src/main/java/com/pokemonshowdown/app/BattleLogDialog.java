@@ -774,6 +774,7 @@ public class BattleLogDialog extends DialogFragment {
                 attackerOutputName = getOutputPokemonSide(split[0], false);
                 toAppendBuilder.append("It doesn't affect ");
                 toAppendBuilder.append(attackerOutputName);
+                toAppendBuilder.append(".");
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
@@ -1135,8 +1136,6 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-sidestart":
-                //reflect, rocks, spikes, light screen, toxic spikes
-                // TODO check leech seed maybe?
                 String side;
                 if (messageDetails.startsWith("p2")) {
                     side = "the opposing team";
@@ -1144,43 +1143,152 @@ public class BattleLogDialog extends DialogFragment {
                     side = "your team";
                 }
 
-                messageDetails = messageDetails.substring(messageDetails.indexOf('|'));
-                if (messageDetails.contains("Stealth Rock")) {
-                    toAppendBuilder.append("Pointed stones float in the air around ").append(side).append("!");
-                } else if (messageDetails.contains("Toxic Spikes")) {
-                    toAppendBuilder.append("Toxic spikes were scattered all around the feet of ").append(side).append("!");
-                } else if (messageDetails.contains("Spikes")) {
-                    toAppendBuilder.append("Spikes were scattered all around the feet of ").append(side).append("!");
-                } else if (messageDetails.contains("Reflect")) {
-                    toAppendBuilder.append("Reflect raised ").append(side).append("'s Defense!");
-                } else if (messageDetails.contains("Light Screen")) {
-                    toAppendBuilder.append("Light Screen raised ").append(side).append("'s Special Defense!");
-                } else if (messageDetails.contains("Sticky Web")) {
-                    toAppendBuilder.append("A sticky web spreads out beneath ").append(side).append("'s feet!");
-                } else if (messageDetails.contains("Tailwind")) {
-                    toAppendBuilder.append("The tailwind blew from behind ").append(side).append("!");
-                } else if (messageDetails.contains("Safeguard")) {
-                    toAppendBuilder.append(side).append(" became cloaked in a mystical veil!");
-                } else if (messageDetails.contains("Mist")) {
-                    toAppendBuilder.append(side).append(" became shrouded in mist!");
-                } else if (messageDetails.contains("Lucky Chant")) {
-                    toAppendBuilder.append("The Lucky Chant shielded ").append(side).append(" from critical hits!");
-                } else if (messageDetails.contains("Fire Pledge")) {
-                    toAppendBuilder.append("A sea of fire enveloped ").append(side).append("!");
-                } else if (messageDetails.contains("Water Pledge")) {
-                    toAppendBuilder.append("A rainbow appeared in the sky on ").append(side).append("'s side!");
-                } else if (messageDetails.contains("Grass Pledge")) {
-                    toAppendBuilder.append("A swamp enveloped ").append(side).append("!");
-                } else {
-                    toAppendBuilder.append(messageDetails).append(" started!");
-                }
+                fromEffect = split[1];
+                trimmedFromEffect = fromEffect;
+                trimmedFromEffect = trimmedFromEffect.toLowerCase();
+                trimmedFromEffect = trimmedFromEffect.replaceAll("\\s+", "");
+                trimmedFromEffect = (trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect);
+                switch(trimmedFromEffect) {
+                    case "stealthrock":
+                        toAppendBuilder.append("Pointed stones float in the air around ").append(side).append("!");
+                        break;
 
+                    case "spikes":
+                        toAppendBuilder.append("Spikes were scattered all around the feet of ").append(side).append("!");
+                        break;
+
+                    case "toxicspikes":
+                        toAppendBuilder.append("Toxic spikes were scattered all around the feet of ").append(side).append("!");
+                        break;
+
+                    case "stickyweb":
+                        toAppendBuilder.append("A sticky web spreads out beneath ").append(side).append("'s feet!");
+                        break;
+
+                    case "tailwind":
+                        toAppendBuilder.append("The tailwind blew from behind ").append(side).append("!");
+                        break;
+
+                    case "reflect":
+                        toAppendBuilder.append("Reflect raised ").append(side).append("'s Defense!");
+                        break;
+
+                    case "lightscreen":
+                        toAppendBuilder.append("Light Screen raised ").append(side).append("'s Special Defense!");
+                        break;
+
+                    case "safeguard":
+                        toAppendBuilder.append(side).append(" became cloaked in a mystical veil!");
+                        break;
+
+                    case "mist":
+                        toAppendBuilder.append(side).append(" became shrouded in mist!");
+                        break;
+
+                    case "luckychant":
+                        toAppendBuilder.append("The Lucky Chant shielded ").append(side).append(" from critical hits!");
+                        break;
+
+                    case "firepledge":
+                        toAppendBuilder.append("A sea of fire enveloped ").append(side).append("!");
+                        break;
+
+                    case "waterpledge":
+                        toAppendBuilder.append("A rainbow appeared in the sky on ").append(side).append("'s side!");
+                        break;
+
+                    case "grasspledge":
+                        toAppendBuilder.append("A swamp enveloped ").append(side).append("!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(fromEffect).append(" started!");
+                        break;
+                }
 
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
             case "-sideend":
-                // todo
+                if (messageDetails.startsWith("p2")) {
+                    side = "the opposing team";
+                } else {
+                    side = "your team";
+                }
+
+                fromEffect = split[1];
+                trimmedFromEffect = fromEffect;
+                trimmedFromEffect = trimmedFromEffect.toLowerCase();
+                trimmedFromEffect = trimmedFromEffect.replaceAll("\\s+", "");
+                trimmedFromEffect = (trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect);
+
+                switch(trimmedFromEffect) {
+                    case "stealthrock":
+                        toAppendBuilder.append("The pointed stones disappeared from around ").append(side).append("!");
+                        break;
+
+                    case "spikes":
+                        toAppendBuilder.append("The spikes disappeared from around ").append(side).append("!");
+                        break;
+
+                    case "toxicspikes":
+                        toAppendBuilder.append("The poison spikes disappeared from around ").append(side).append("!");
+                        break;
+
+                    case "stickyweb":
+                        toAppendBuilder.append("The sticky web has disappeared from beneath ").append(side).append("'s feet!");
+                        break;
+
+                    case "tailwind":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append("'s tailwind petered out!");
+                        break;
+
+                    case "reflect":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append("'s Reflect wore off!");
+                        break;
+
+                    case "lightscreen":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append("'s Reflect wore off!");
+                        break;
+
+                    case "safeguard":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append(" is no longer protected by Safeguard!");
+                        break;
+
+                    case "mist":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append(" is no longer protected by mist!");
+                        break;
+
+                    case "luckychant":
+                        side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
+                        toAppendBuilder.append(side).append("'s Lucky Chant wore off!");
+                        break;
+
+                    case "firepledge":
+                        toAppendBuilder.append("The sea of fire around ").append(side).append(" disappeared!");
+                        break;
+
+                    case "waterpledge":
+                        toAppendBuilder.append("The rainbow on ").append(side).append("'s side disappeared!");
+                        break;
+
+                    case "grasspledge":
+                        toAppendBuilder.append("The swamp around ").append(side).append(" disappeared!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(fromEffect).append(" ended!");
+                        break;
+                }
+
+
+
+
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
 
