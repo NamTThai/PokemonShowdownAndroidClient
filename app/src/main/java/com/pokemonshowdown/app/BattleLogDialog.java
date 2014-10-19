@@ -364,10 +364,6 @@ public class BattleLogDialog extends DialogFragment {
 
 
     private void processMinorAction(String command, String messageDetails) {
-        if (messageDetails.contains("[silent]")) {
-            return;
-        }
-
         int separator;
         int start;
         Integer oldHP;
@@ -930,6 +926,11 @@ public class BattleLogDialog extends DialogFragment {
                 if (fromEffectId != null) {
                     fromEffectId = getPrintable(fromEffectId);
                     switch (getPrintable(fromEffectId)) {
+                        // seems like this doenst happen at this time
+                        // |move|p2a: Sigilyph|Psycho Shift|p1a: Chansey
+                        // |-status|p1a: Chansey|tox
+                        //  |-curestatus|p2a: Sigilyph|tox
+                        // todo buffer last move?
                         case "psychoshift":
                             //ofeffect should always be !null at that time
                             defenderOutputName = getPrintableOutputPokemonSide(ofSource, false);
@@ -1535,6 +1536,10 @@ public class BattleLogDialog extends DialogFragment {
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 break;
+        }
+
+        if (messageDetails.contains("[silent]")) {
+            return;
         }
         toAppendSpannable.setSpan(new RelativeSizeSpan(0.8f), 0, toAppendSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         appendServerMessage(toAppendSpannable);
