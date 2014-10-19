@@ -353,7 +353,7 @@ public class BattleLogDialog extends DialogFragment {
         return sb.toString();
     }
 
-    private String getId(String split) {
+    private String getPrintable(String split) {
         int separator = split.indexOf(':');
         return split.substring(separator + 1).trim();
     }
@@ -411,7 +411,7 @@ public class BattleLogDialog extends DialogFragment {
 
         switch (command) {
             case "-damage":
-                attacker = getId(split[0]);
+                attacker = getPrintable(split[0]);
                 attackerOutputName = getOutputPokemonSide(split[0]);
 
                 if (messageDetails.startsWith("p2")) {
@@ -439,7 +439,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = oldHP - intAmount;
 
                 if (trimmedFromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "stealthrock":
                             attackerOutputName = getOutputPokemonSide(split[0], false);
@@ -491,14 +491,11 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                         default:
                             if (ofSource != null) {
-                                ofSource = getId(ofSource);
-                                fromEffect = getId(fromEffect);
-
-                                toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(ofSource).append("'s ").append(fromEffect).append("!");
+                                toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(getPrintable(ofSource)).append("'s ").append(getPrintable(fromEffect)).append("!");
                             } else if (trimmedFromEffect.contains(":")) {
-                                toAppendBuilder.append(attackerOutputName).append(" is hurt by its").append(fromEffect).append("!");
+                                toAppendBuilder.append(attackerOutputName).append(" is hurt by its").append(getPrintable(fromEffect)).append("!");
                             } else {
-                                toAppendBuilder.append(attackerOutputName).append(" lost some HP because of ").append(fromEffect).append("!");
+                                toAppendBuilder.append(attackerOutputName).append(" lost some HP because of ").append(getPrintable(fromEffect)).append("!");
                             }
                             break;
                     }
@@ -517,7 +514,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-heal":
-                attacker = getId(split[0]);
+                attacker = getPrintable(split[0]);
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 if (messageDetails.startsWith("p2")) {
                     oldHP = mPlayer2Team.get(attacker);
@@ -545,7 +542,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = intAmount - oldHP;
 
                 if (trimmedFromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "ingrain":
                             toAppendBuilder.append(attackerOutputName).append(" absorbed nutrients with its roots!");
@@ -557,7 +554,7 @@ public class BattleLogDialog extends DialogFragment {
                         case "raindish":
                         case "dryskin":
                         case "icebody":
-                            toAppendBuilder.append(attackerOutputName).append("'s ").append(fromEffect).append(" heals it!");
+                            toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" heals it!");
                             break;
                         case "healingwish":
                             // TODO
@@ -580,11 +577,10 @@ public class BattleLogDialog extends DialogFragment {
 
                         case "leftovers":
                         case "shellbell":
-                            toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(getId(fromEffect)).append("!");
+                            toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(getPrintable(fromEffect)).append("!");
                             break;
                         default:
-                            fromEffect = getId(fromEffect);
-                            toAppendBuilder.append(attackerOutputName).append(" restored HP using its ").append(fromEffect).append("!");
+                            toAppendBuilder.append(attackerOutputName).append(" restored HP using its ").append(getPrintable(fromEffect)).append("!");
                             break;
                     }
                 } else {
@@ -601,7 +597,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-sethp":
-                trimmedFromEffect = getId(trimmedFromEffect);
+                trimmedFromEffect = getPrintable(trimmedFromEffect);
                 switch (trimmedFromEffect) {
                     case "painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
@@ -687,7 +683,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-setboost":
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
@@ -704,7 +700,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-swapboost":
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
@@ -879,7 +875,7 @@ public class BattleLogDialog extends DialogFragment {
                     case "brn":
                         toAppendBuilder.append(" was burned");
                         if (fromEffect != null) {
-                            toAppendBuilder.append(" by the ").append(fromEffect);
+                            toAppendBuilder.append(" by the ").append(getPrintable(fromEffect));
                         }
                         toAppendBuilder.append("!");
                         break;
@@ -887,7 +883,7 @@ public class BattleLogDialog extends DialogFragment {
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
-                            toAppendBuilder.append(" by the ").append(fromEffect);
+                            toAppendBuilder.append(" by the ").append(getPrintable(fromEffect));
                         }
                         toAppendBuilder.append("!");
                         break;
@@ -919,7 +915,7 @@ public class BattleLogDialog extends DialogFragment {
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 flag = false;
                 if (trimmedFromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "psychoshift":
                             //ofeffect should always be !null at that time
@@ -929,7 +925,7 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                     }
                     if (trimmedFromEffect.contains("ability:")) {
-                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" heals its status!");
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" heals its status!");
                         flag = true;
                     }
                 }
@@ -939,7 +935,7 @@ public class BattleLogDialog extends DialogFragment {
                     switch (split[1]) {
                         case "brn":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
-                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" healed its burn!");
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" healed its burn!");
                                 break;
                             }
                             if (split[0].startsWith("p2")) {
@@ -952,7 +948,7 @@ public class BattleLogDialog extends DialogFragment {
                         case "tox":
                         case "psn":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
-                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" cured its poison!");
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" cured its poison!");
                                 break;
                             }
                             toAppendBuilder.append(attackerOutputName).append(" was cured of its poisoning.");
@@ -960,7 +956,7 @@ public class BattleLogDialog extends DialogFragment {
 
                         case "slp":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
-                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" woke it up!");
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" woke it up!");
                                 break;
                             }
                             toAppendBuilder.append(attackerOutputName).append(" woke up!");
@@ -968,7 +964,7 @@ public class BattleLogDialog extends DialogFragment {
 
                         case "par":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
-                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" cured its paralysis!");
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" cured its paralysis!");
                                 break;
                             }
                             toAppendBuilder.append(attackerOutputName).append(" was cured of paralysis.");
@@ -977,7 +973,7 @@ public class BattleLogDialog extends DialogFragment {
 
                         case "frz":
                             if (trimmedFromEffect != null && trimmedFromEffect.contains("item:")) {
-                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getId(fromEffect)).append(" defrosted it!");
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" defrosted it!");
                                 break;
                             }
                             toAppendBuilder.append(attackerOutputName).append(" thawed out!");
@@ -994,7 +990,7 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-cureteam":
                 if (trimmedFromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "aromatherapy":
                             toAppendBuilder.append("A soothing aroma wafted through the area!");
@@ -1014,10 +1010,10 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-item":
                 attackerOutputName = getOutputPokemonSide(split[0]);
-                String item = getId(split[1]);
+                String item = getPrintable(split[1]);
                 if (fromEffect != null) {
                     // not to deal with item: or ability: or move:
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "recycle":
                         case "pickup":
@@ -1066,7 +1062,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-enditem":
                 eat = messageDetails.contains("[eat]");
                 weaken = messageDetails.contains("[weaken]");
-                attacker = getId(split[0]);
+                attacker = getPrintable(split[0]);
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 item = split[1].trim();
 
@@ -1075,7 +1071,7 @@ public class BattleLogDialog extends DialogFragment {
                 } else if (weaken) {
                     toAppendBuilder.append(attackerOutputName).append(" weakened the damage to ").append(item).append("!");
                 } else if (fromEffect != null) {
-                    trimmedFromEffect = getId(trimmedFromEffect);
+                    trimmedFromEffect = getPrintable(trimmedFromEffect);
                     switch (trimmedFromEffect) {
                         case "fling":
                             toAppendBuilder.append(attackerOutputName).append(" flung its ").append(item).append("!");
@@ -1085,7 +1081,7 @@ public class BattleLogDialog extends DialogFragment {
                             defenderOutputName = getOutputPokemonSide(ofSource);
                             attackerOutputName = getOutputPokemonSide(split[0], false);
 
-                            toAppendBuilder.append(defenderOutputName).append(" knocked off ").append(attackerOutputName).append("'s").append(item).append("!");
+                            toAppendBuilder.append(defenderOutputName).append(" knocked off ").append(attackerOutputName).append("'s ").append(item).append("!");
                             break;
 
                         case "stealeat":
@@ -1272,7 +1268,7 @@ public class BattleLogDialog extends DialogFragment {
                         break;
 
                     default:
-                        toAppendBuilder.append(fromEffect).append(" started!");
+                        toAppendBuilder.append(getPrintable(fromEffect)).append(" started!");
                         break;
                 }
 
@@ -1352,7 +1348,7 @@ public class BattleLogDialog extends DialogFragment {
                         break;
 
                     default:
-                        toAppendBuilder.append(fromEffect).append(" ended!");
+                        toAppendBuilder.append(getPrintable(fromEffect)).append(" ended!");
                         break;
                 }
 
