@@ -700,12 +700,13 @@ public class BattleLogDialog extends DialogFragment {
             case "-setboost":
                 attackerOutputName = getOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
+                    trimmedFromEffect = trimmedFromEffect.contains(":") ? trimmedFromEffect.substring(trimmedFromEffect.indexOf(":") + 1) : trimmedFromEffect;
                     switch (trimmedFromEffect) {
-                        case "move:bellydrum":
+                        case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             break;
 
-                        case "move:angerpoint":
+                        case "angerpoint":
                             toAppendBuilder.append(attackerOutputName).append(" maxed its Attack!");
                             break;
                     }
