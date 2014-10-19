@@ -328,7 +328,7 @@ public class BattleLogDialog extends DialogFragment {
                 //todo (cant attack bec frozen/para etc)
                 break;
             default:
-                // appendServerMessage(new SpannableString(message));
+                appendServerMessage(new SpannableString(message));
                 break;
         }
     }
@@ -439,8 +439,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = oldHP - intAmount;
 
                 if (fromEffectId != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "stealthrock":
                             attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("Pointed stones dug into ").append(attackerOutputName).append("!");
@@ -542,8 +541,7 @@ public class BattleLogDialog extends DialogFragment {
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "ingrain":
                             toAppendBuilder.append(attackerOutputName).append(" absorbed nutrients with its roots!");
                             break;
@@ -597,8 +595,7 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-sethp":
-                fromEffectId = getPrintable(fromEffectId);
-                switch (fromEffectId) {
+                switch (getPrintable(fromEffectId)) {
                     case "painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
                         break;
@@ -701,8 +698,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-setboost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             break;
@@ -718,8 +714,7 @@ public class BattleLogDialog extends DialogFragment {
             case "-swapboost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
                             break;
@@ -934,7 +929,7 @@ public class BattleLogDialog extends DialogFragment {
                 flag = false;
                 if (fromEffectId != null) {
                     fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "psychoshift":
                             //ofeffect should always be !null at that time
                             defenderOutputName = getPrintableOutputPokemonSide(ofSource, false);
@@ -1008,8 +1003,7 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-cureteam":
                 if (fromEffectId != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "aromatherapy":
                             toAppendBuilder.append("A soothing aroma wafted through the area!");
                             break;
@@ -1031,8 +1025,7 @@ public class BattleLogDialog extends DialogFragment {
                 String item = getPrintable(split[1]);
                 if (fromEffect != null) {
                     // not to deal with item: or ability: or move:
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "recycle":
                         case "pickup":
                             toAppendBuilder.append(attackerOutputName).append(" found one ").append(item).append("!");
@@ -1089,8 +1082,7 @@ public class BattleLogDialog extends DialogFragment {
                 } else if (weaken) {
                     toAppendBuilder.append(attackerOutputName).append(" weakened the damage to ").append(item).append("!");
                 } else if (fromEffect != null) {
-                    fromEffectId = getPrintable(fromEffectId);
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "fling":
                             toAppendBuilder.append(attackerOutputName).append(" flung its ").append(item).append("!");
                             break;
@@ -1249,7 +1241,7 @@ public class BattleLogDialog extends DialogFragment {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (fromEffectId) {
+                    switch (getPrintable(fromEffectId)) {
                         case "mummy":
                             attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("(").append(attackerOutputName).append("'s Ability was previously ").append(getPrintable(ability)).append(")");
