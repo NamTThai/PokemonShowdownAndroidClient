@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
+import android.support.v4.app.Fragment;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -44,11 +45,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class BattleFragment extends android.support.v4.app.Fragment {
+public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
+    private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private int[] progressBarHolder = new int[6];
@@ -142,6 +144,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         AnimatorSet toast;
         AnimatorSet animatorSet;
         Animator animator;
+
+        Spannable logMessage = new SpannableString(messageDetails);
         switch (command) {
             case "init":
             case "title":
@@ -481,7 +485,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         }
 
                         if (!status.equals("")) {
-                            setStatus(messageDetails.substring(0, 3), status.toUpperCase());
+                            setStatus(messageDetails.substring(0, 3), status.toLowerCase());
                         }
                     }
 
@@ -630,6 +634,18 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             default:
                 toast = makeToast(message, ANIMATION_LONG);
                 startAnimation(toast);
+                logMessage = new SpannableString(message);
+        }
+
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (roomData != null && roomData.isMessageListener()) {
+            roomData.addServerMessageOnHold(logMessage);
+        } else {
+            BattleLogDialog battleLogDialog =
+                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
+            if (battleLogDialog != null) {
+                battleLogDialog.processServerMessage(logMessage);
+            }
         }
     }
 
@@ -648,6 +664,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         String toAppend;
         StringBuilder toAppendBuilder = new StringBuilder();
         Spannable toAppendSpannable;
+        Spannable logMessage = new SpannableString(messageDetails);
         String move, ability;
         boolean flag, eat, weaken;
 
@@ -810,10 +827,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                ObjectAnimator flyingDamage = ObjectAnimator.ofFloat(damage, "y", 0.5f);
-                flyingDamage.setDuration(ANIMATION_SHORT);
-                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
-
                 ObjectAnimator fadeIn = ObjectAnimator.ofFloat(damage, "alpha", 0f, 1f);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
                 fadeIn.setDuration(ANIMATION_SHORT / 4);
@@ -832,7 +845,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animatorSet.play(toast);
                 animatorSet.play(hpCountDownBar).with(toast);
                 animatorSet.play(fadeIn).with(toast);
-                animatorSet.play(flyingDamage).after(fadeIn);
                 animatorSet.play(fadeOut).after(fadeIn);
 
                 startAnimation(animatorSet);
@@ -942,10 +954,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                flyingDamage = ObjectAnimator.ofFloat(heal, "y", 0.5f);
-                flyingDamage.setDuration(ANIMATION_SHORT);
-                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
-
                 fadeIn = ObjectAnimator.ofFloat(heal, "alpha", 0f, 1f);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
                 fadeIn.setDuration(ANIMATION_SHORT / 4);
@@ -964,7 +972,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animatorSet.play(toast);
                 animatorSet.play(hpCountDownBar).with(toast);
                 animatorSet.play(fadeIn).with(toast);
-                animatorSet.play(flyingDamage).after(fadeIn);
                 animatorSet.play(fadeOut).after(fadeIn);
 
                 startAnimation(animatorSet);
@@ -1111,7 +1118,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         break;
                 }
                 amount = split[2];
-                intAmount = Integer.parseInt(amount);
+                intAmount = -1 * Integer.parseInt(amount);
                 if (intAmount == 2) {
                     statAmount = " harshly";
                 } else if (intAmount >= 3) {
@@ -1151,9 +1158,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                     }
                 });
-                animatorSet = new AnimatorSet();
-                animatorSet.play(toast);
-                startAnimation(animatorSet);
+                startAnimation(toast);
                 break;
             case "-setboost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
@@ -1219,26 +1224,277 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     switch (getPrintable(fromEffectId)) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], "def", "spd");
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
 
                         case "heartswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched stat changes with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], stats);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
 
                         case "powerswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Attack and Sp. Atk with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], "atk", "spa");
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
                     }
                 }
+                break;
+            case "-copyboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                defenderOutputName = getPrintableOutputPokemonSide(split[1], false);
+                toAppendBuilder.append(attackerOutputName).append(" copied ").append(defenderOutputName).append("'s stat changes!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        copyBoost(split[0], split[1]);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-clearboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attackerOutputName).append("'s stat changes were removed!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        LinearLayout linearLayout = (LinearLayout) getView().findViewById(getTempStatusId(split[0]));
+                        for (String stat : stats) {
+                            TextView v = (TextView) linearLayout.findViewWithTag(stat);
+                            linearLayout.removeView(v);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-invertboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attackerOutputName).append("'s stat changes were inverted!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        swapBoost(split[0], split[1], stats);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-clearallboost":
+                toAppendBuilder.append("All stat changes were eliminated!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        String[] layouts = {"p1a", "p1b", "p1c", "p2a", "p2b", "p2c"};
+                        for (String layout : layouts) {
+                            LinearLayout linearLayout = (LinearLayout) getView().findViewById(getTempStatusId(layout));
+                            for (String stat : stats) {
+                                TextView v = (TextView) linearLayout.findViewWithTag(stat);
+                                linearLayout.removeView(v);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-crit":
+                toAppendSpannable = new SpannableString("It's a critical hit!");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-supereffective":
+                toAppendSpannable = new SpannableString("It's super effective!");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-resisted":
+                toAppendSpannable = new SpannableString("It's not very effective...");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-immune":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                toAppendBuilder.append("It doesn't affect ");
+                toAppendBuilder.append(attackerOutputName);
+                toAppendBuilder.append(".");
+                toAppendSpannable = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-miss":
+                if (split.length > 1) {
+                    // there was a target
+                    defenderOutputName = getPrintableOutputPokemonSide(split[1]);
+                    toAppendBuilder.append(defenderOutputName).append(" avoided the attack!");
+                } else {
+                    attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                    toAppendBuilder.append(attackerOutputName).append("'s attack missed!");
+                }
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 toast = makeMinorToast(toAppendSpannable);
                 startAnimation(toast);
+                logMessage = new SpannableString(command + ":" + messageDetails);
                 break;
         }
 
+        if (messageDetails.contains("[silent]")) {
+            return;
+        }
+
+        logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (roomData != null && roomData.isMessageListener()) {
+            roomData.addServerMessageOnHold(logMessage);
+        } else {
+            BattleLogDialog battleLogDialog =
+                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
+            if (battleLogDialog != null) {
+                battleLogDialog.processServerMessage(logMessage);
+            }
+        }
     }
 
     private void startAnimation(final AnimatorSet animator) {
@@ -1725,8 +1981,9 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "frz":
                 stt.setBackgroundResource(R.drawable.editable_frame);
         }
+        stt.setPadding(2, 2, 2, 2);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(4, 0, 0, 0);
+        stt.setLayoutParams(layoutParams);
 
         statusBar.addView(stt, 0);
 
@@ -1921,6 +2178,123 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
         statBoost.setPadding(2, 2, 2, 2);
         tempStat.addView(statBoost, index);
+    }
+
+    private void swapBoost(String org, String dest, String... stats) {
+        org = org.substring(0, 3);
+        dest = dest.substring(0, 3);
+        if (getView() == null) {
+            return;
+        }
+
+        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+
+        for(String stat : stats) {
+            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+            int orgIndex = orgTempStat.indexOfChild(orgStat);
+            TextView destStat = (TextView) destTempStat.findViewWithTag(stat);
+            int destIndex = destTempStat.indexOfChild(destStat);
+            orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount(): orgIndex;
+            orgTempStat.removeView(orgStat);
+            destIndex = (destIndex == -1) ? destTempStat.getChildCount(): destIndex;
+            destTempStat.removeView(destStat);
+
+            if (destStat != null) {
+                orgTempStat.addView(destStat, orgIndex);
+            }
+            if (orgStat != null) {
+                destTempStat.addView(orgStat, destIndex);
+            }
+        }
+    }
+
+    private void copyBoost(String org, String dest) {
+        org = org.substring(0, 3);
+        dest = dest.substring(0, 3);
+        if (getView() == null) {
+            return;
+        }
+
+        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+
+        for(String stat : stats) {
+            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+            if (orgStat != null) {
+                destTempStat.addView(orgStat);
+            }
+        }
+    }
+
+    private AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
+        if (getView() == null) {
+            return null;
+        }
+        message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final TextView flyingMessage = new TextView(getActivity());
+        flyingMessage.setText(message);
+        flyingMessage.setBackgroundResource(R.drawable.editable_frame);
+        flyingMessage.setPadding(2, 2, 2, 2);
+        flyingMessage.setAlpha(0f);
+
+        toast.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (getView() == null) {
+                    return;
+                }
+                ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
+
+                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
+                layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
+                layoutParams.setMargins(0, (int) (imageView.getHeight() * 0.5f), 0, 0);
+                relativeLayout.addView(flyingMessage, layoutParams);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (getView() == null) {
+                    return;
+                }
+
+                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                relativeLayout.removeView(flyingMessage);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", 0.5f);
+        flyingObject.setDuration(ANIMATION_SHORT);
+        flyingObject.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(flyingMessage, "alpha", 0f, 1f);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(ANIMATION_SHORT / 4);
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(flyingMessage, "alpha", 1f, 0f);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartDelay(ANIMATION_SHORT / 2);
+        fadeOut.setDuration(ANIMATION_SHORT / 4);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(toast);
+        animatorSet.play(fadeIn).with(toast);
+        animatorSet.play(flyingObject).after(fadeIn);
+        animatorSet.play(fadeOut).after(fadeIn);
+
+        return animatorSet;
     }
 
 }
