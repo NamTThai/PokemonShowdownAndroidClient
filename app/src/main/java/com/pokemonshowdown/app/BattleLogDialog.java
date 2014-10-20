@@ -799,8 +799,12 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attackerOutputName).append(" is already poisoned.");
                             break;
                         case "slp":
-                            //todo try uproar
-                            toAppendBuilder.append(attackerOutputName).append(" is already asleep.");
+                            if (fromEffect != null && getPrintable(fromEffectId).equals("uproar")) {
+                                attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                                toAppendBuilder.append("But the uproar kept ").append(attackerOutputName).append(" awake!");
+                            } else {
+                                toAppendBuilder.append(attackerOutputName).append(" is already asleep.");
+                            }
                             break;
                         case "par":
                             toAppendBuilder.append(attackerOutputName).append(" is already paralyzed.");
@@ -810,11 +814,19 @@ public class BattleLogDialog extends DialogFragment {
                             break;
                         case "substitute":
                             // TODO try while having a sub up
-                            toAppendBuilder.append(attackerOutputName).append(" cant create a substitute!");
+                            if (messageDetails.contains("[weak]")) {
+                                toAppendBuilder.append(attackerOutputName).append("It was too weak to make a substitute!");
+                            } else {
+                                toAppendBuilder.append(attackerOutputName).append(" already has a substitute!");
+                            }
                             break;
                         case "skydrop":
                             // TODO try
-                            toAppendBuilder.append("But it failed!");
+                            if (messageDetails.contains("[heavy]")) {
+                                toAppendBuilder.append(attackerOutputName).append(" is too heavy to be lifted!");
+                            } else {
+                                toAppendBuilder.append("But it failed!");
+                            }
                             break;
                         case "unboost":
                             toAppendBuilder.append(attackerOutputName).append("'s stats were not lowered!");
