@@ -421,6 +421,7 @@ public class BattleFragment extends Fragment {
                 startAnimation(toast);
                 logMessage = new SpannableString(toAppendBuilder);
                 break;
+
             case "switch":
             case "drag":
             case "replace":
@@ -564,6 +565,7 @@ public class BattleFragment extends Fragment {
                 logMessage = new SpannableString(toAppendBuilder);
                 startAnimation(toast);
                 break;
+
             case "detailschange":
                 final String forme = (split[1].indexOf(',') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(','));
                 position = split[0].substring(0, 3);
@@ -602,6 +604,7 @@ public class BattleFragment extends Fragment {
                 });
                 startAnimation(toast);
                 break;
+
             case "faint":
                 position = split[0];
                 attacker = split[0].substring(5);
@@ -642,6 +645,7 @@ public class BattleFragment extends Fragment {
                 startAnimation(toast);
                 logMessage = new SpannableString(toAppendBuilder);
                 break;
+
             case "turn":
                 if (getView() == null) {
                     return;
@@ -686,19 +690,94 @@ public class BattleFragment extends Fragment {
                 toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
+
             case "win":
                 toAppend = messageDetails + " has won the battle!";
                 toast = makeToast(new SpannableString(toAppend));
                 startAnimation(toast);
                 logMessage = new SpannableString(toAppend);
                 break;
+
             case "cant":
-                //todo (cant attack bec frozen/para etc)
+                String attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder = new StringBuilder();
+                switch (getPrintable(toId(split[1]))) {
+                    case "taunt":
+                        toAppendBuilder.append(attackerOutputName).append(" can't use ").append(getPrintable(split[2])).append(" after the taunt!");
+                        break;
+
+                    case "gravity":
+                        toAppendBuilder.append(attackerOutputName).append(" can't use ").append(getPrintable(split[2])).append(" because of gravity!");
+                        break;
+
+                    case "healblock":
+                        toAppendBuilder.append(attackerOutputName).append(" can't use ").append(getPrintable(split[2])).append(" because of Heal Block!");
+                        break;
+
+                    case "imprison":
+                        toAppendBuilder.append(attackerOutputName).append(" can't use the sealed ").append(getPrintable(split[2])).append("!");
+                        break;
+
+                    case "par":
+                        toAppendBuilder.append(attackerOutputName).append(" is paralyzed! It can't move!");
+                        break;
+
+                    case "frz":
+                        toAppendBuilder.append(attackerOutputName).append(" is frozen solid!'");
+                        break;
+
+                    case "slp":
+                        toAppendBuilder.append(attackerOutputName).append(" is fast asleep.");
+                        break;
+
+                    case "skydrop":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("Sky Drop won't let ").append(attackerOutputName).append(" is paralyzed! It can't move!");
+                        break;
+
+                    case "truant":
+                        toAppendBuilder.append(attackerOutputName).append(" is loafing around!");
+                        break;
+
+                    case "recharge":
+                        toAppendBuilder.append(attackerOutputName).append(" must recharge!");
+                        break;
+
+                    case "focuspunch":
+                        toAppendBuilder.append(attackerOutputName).append(" lost its focus and couldn't move!");
+                        break;
+
+                    case "flinch":
+                        toAppendBuilder.append(attackerOutputName).append(" flinched and couldn't move!");
+                        break;
+
+                    case "attract":
+                        toAppendBuilder.append(attackerOutputName).append(" is immobilized by love!");
+                        break;
+
+                    case "nopp":
+                        toAppendBuilder.append(attackerOutputName).append(" used ").append(getPrintable(split[2]));
+                        toAppendBuilder.append("\nBut there was no PP left for the move!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(attackerOutputName);
+                        if(split.length > 2) {
+                            toAppendBuilder.append(" can't use ").append(getPrintable(split[2]));
+                        } else {
+                            toAppendBuilder.append(" can't move");
+                        }
+                        toAppendBuilder.append("!");
+                        break;
+                }
+                logMessage = new SpannableString(toAppendBuilder);
                 break;
+
             default:
                 toast = makeToast(message, ANIMATION_LONG);
                 startAnimation(toast);
                 logMessage = new SpannableString(message);
+                break;
         }
 
         addToLog(logMessage);
@@ -1980,7 +2059,7 @@ public class BattleFragment extends Fragment {
                             break;
 
                         case "whiteherb":
-                            toAppendBuilder.append(attackerOutputName).append("restored its status using its White Herb!");
+                            toAppendBuilder.append(attackerOutputName).append(" restored its status using its White Herb!");
                             break;
 
                         case "ejectbutton":
