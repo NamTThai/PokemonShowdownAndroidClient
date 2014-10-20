@@ -47,6 +47,7 @@ public class BattleFragment extends Fragment {
     public final static int ANIMATION_LONG = 1000;
     private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     private final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
+    private final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private int[] progressBarHolder = new int[6];
@@ -771,6 +772,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Failed!"));
+                startAnimation(animatorSet);
                 break;
 
             default:
@@ -1812,6 +1816,7 @@ public class BattleFragment extends Fragment {
 
                     }
                 });
+                startAnimation(toast);
                 break;
 
             case "-curestatus":
@@ -1938,7 +1943,39 @@ public class BattleFragment extends Fragment {
                     toAppendBuilder.append(" 's team was cured");
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        String[] teammate;
+                        if (split[0].startsWith("p1")) {
+                            teammate = teammates[0];
+                        } else {
+                            teammate = teammates[1];
+                        }
+                        for (String mate : teammate) {
+                            for (String stt : sttus) {
+                                removeStatus(mate, stt);
+                            }
+                        }
+                    }
 
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
                 break;
 
             case "-item":
@@ -3617,7 +3654,9 @@ public class BattleFragment extends Fragment {
         LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
 
         TextView stt = new TextView(getActivity());
-        stt.setText(status);
+        stt.setTag(status);
+        stt.setText(status.toUpperCase());
+        stt.setTextSize(10);
         switch (status) {
             case "slp":
                 stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
