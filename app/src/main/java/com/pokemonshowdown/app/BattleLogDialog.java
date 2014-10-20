@@ -1651,9 +1651,254 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-activate":
-                //TODO
-                toAppend = messageDetails + " has activated";
-                toAppendSpannable = new SpannableString(toAppend);
+                attacker = split[0];
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "confusion":
+                        toAppendBuilder.append(attackerOutputName).append(" is confused!");
+                        break;
+
+                    case "destinybond":
+                        toAppendBuilder.append(attackerOutputName).append(" took its attacker down with it!");
+                        break;
+
+                    case "snatch":
+                        toAppendBuilder.append(attackerOutputName).append(" snatched ").append(getPrintable(ofSource)).append("'s move!");
+                        break;
+
+                    case "grudge":
+                        toAppendBuilder.append(attackerOutputName).append("'s").append(getPrintable(split[2])).append(" lost all its PP due to the grudge!");
+                        break;
+
+                    case "quickguard":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("Quick Guard protected ").append(attackerOutputName).append("!");
+                        break;
+
+                    case "wideguard":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("Wide Guard protected ").append(attackerOutputName).append("!");
+                        break;
+
+                    case "protect":
+                        toAppendBuilder.append(attackerOutputName).append(" protected itself!");
+                        break;
+
+                    case "substitute":
+                        if (messageDetails.contains("[damage]")) {
+                            attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                            toAppendBuilder.append("The substitute took damage for ").append(attackerOutputName).append(" protected itself!");
+                        } else if (messageDetails.contains("[block]")) {
+                            toAppendBuilder.append(attackerOutputName).append("'s Substitute blocked").append(getPrintable(split[2])).append("!");
+                        }
+                        break;
+
+                    case "attract":
+                        toAppendBuilder.append(attackerOutputName).append(" is in love with ").append(getPrintable(ofSource)).append("!");
+                        break;
+
+                    case "bide":
+                        toAppendBuilder.append(attackerOutputName).append(" is storing energy!");
+                        break;
+
+                    case "mist":
+                        toAppendBuilder.append(attackerOutputName).append(" is protected by the mist!");
+                        break;
+
+                    case "trapped":
+                        toAppendBuilder.append(attackerOutputName).append(" can no longer escape!");
+                        break;
+
+                    case "stickyweb":
+                        toAppendBuilder.append(attackerOutputName).append(" was caught in a sticky web!");
+                        break;
+
+                    case "happyhour":
+                        toAppendBuilder.append("Everyone is caught up in the happy atmosphere!");
+                        break;
+
+                    case "celebrate":
+                        if (attacker.startsWith("p2")) {
+                            side = mPlayer2;
+                        } else {
+                            side = mPlayer1;
+                        }
+                        toAppendBuilder.append("Congratulations, ").append(side).append("!");
+
+                        break;
+
+                    case "trick":
+                    case "switcheroo":
+                        toAppendBuilder.append(attackerOutputName).append(" switched items with its target!");
+                        break;
+
+                    case "brickbreak":
+                        if (toId(ofSource).startsWith("p2")) {
+                            side = "the opposing team";
+                        } else {
+                            side = "your team";
+                        }
+                        toAppendBuilder.append(attackerOutputName).append(" shattered ").append(side).append(" protections!");
+                        break;
+
+                    case "pursuit":
+                        toAppendBuilder.append(attackerOutputName).append(" is being sent back!");
+                        break;
+
+                    case "feint":
+                        toAppendBuilder.append(attackerOutputName).append(" fell for the feint!");
+                        break;
+
+                    case "spite":
+                        toAppendBuilder.append("It reduced the PP of ").append(attackerOutputName).append("'s ").append(getPrintable(split[2])).append(" by ").append(getPrintable(split[3])).append("!");
+                        break;
+
+                    case "gravity":
+                        toAppendBuilder.append(attackerOutputName).append(" couldn't stay airborne because of gravity!");
+                        break;
+
+                    case "magnitude":
+                        toAppendBuilder.append("Magnitude ").append(getPrintable(split[2])).append("!");
+                        break;
+
+                    case "sketch":
+                        toAppendBuilder.append(attackerOutputName).append(" sketched ").append(getPrintable(split[2])).append("!");
+                        break;
+
+                    case "skillswap":
+                        toAppendBuilder.append(attackerOutputName).append(" swapped Abilities with its target!");
+                        if (ofSource != null) {
+                            toAppendBuilder.append("\n").append(attackerOutputName).append(" acquired ").append(getPrintable(split[2])).append("!");
+                            toAppendBuilder.append("\n").append(getPrintable(ofSource)).append(" acquired ").append(getPrintable(split[3])).append("!");
+                        }
+                        break;
+
+                    case "charge":
+                        toAppendBuilder.append(attackerOutputName).append(" began charging power!");
+                        break;
+
+                    case "struggle":
+                        toAppendBuilder.append(attackerOutputName).append(" has no moves left!");
+                        break;
+
+                    case "bind":
+                        toAppendBuilder.append(attackerOutputName).append(" was squeezed by ").append(getPrintable(ofSource)).append("!");
+                        break;
+
+                    case "wrap":
+                        toAppendBuilder.append(attackerOutputName).append(" was wrapped by ").append(getPrintable(ofSource)).append("!");
+                        break;
+
+                    case "clamp":
+                        toAppendBuilder.append(getPrintable(ofSource)).append(" clamped ").append(attackerOutputName).append("!");
+                        break;
+
+                    case "whirlpool":
+                        toAppendBuilder.append(attackerOutputName).append(" became trapped in the vortex!");
+                        break;
+
+                    case "firespin":
+                        toAppendBuilder.append(attackerOutputName).append(" became trapped in the fiery vortex!");
+                        break;
+
+                    case "magmastorm":
+                        toAppendBuilder.append(attackerOutputName).append(" became trapped by swirling magma!");
+                        break;
+
+                    case "sandtomb":
+                        toAppendBuilder.append(attackerOutputName).append(" became trapped by Sand Tomb!");
+                        break;
+
+                    case "infestation":
+                        toAppendBuilder.append(attackerOutputName).append(" has been afflicted with an infestation by ").append(getPrintable(ofSource)).append("!");
+                        break;
+
+                    case "afteryou":
+                        toAppendBuilder.append(attackerOutputName).append(" took the kind offer!");
+                        break;
+
+                    case "quash":
+                        toAppendBuilder.append(attackerOutputName).append("'s move was postponed!");
+                        break;
+
+                    case "powersplit":
+                        toAppendBuilder.append(attackerOutputName).append(" shared its power with the target!");
+                        break;
+
+                    case "guardsplit":
+                        toAppendBuilder.append(attackerOutputName).append(" shared its guard with the target!");
+                        break;
+
+                    case "ingrain":
+                        toAppendBuilder.append(attackerOutputName).append(" anchored itself with its roots!");
+                        break;
+
+                    case "matblock":
+                        toAppendBuilder.append(getPrintable(split[2])).append(" was blocked by the kicked-up mat!");
+                        break;
+
+                    case "powder":
+                        toAppendBuilder.append("When the flame touched the powder on the Pokémon, it exploded!");
+                        break;
+
+                    case "fairylock":
+                        toAppendBuilder.append("No one will be able to run away during the next turn!");
+                        break;
+
+                    //abilities
+                    case "sturdy":
+                        toAppendBuilder.append(attackerOutputName).append(" held on thanks to Sturdy!");
+                        break;
+
+                    case "magicbounce":
+                    case "magiccoat":
+                    case "rebound":
+                        break;
+
+                    case "wonderguard":
+                        toAppendBuilder.append(attackerOutputName).append("'s Wonder Guard evades the attack!");
+                        break;
+
+                    case "speedboost":
+                        toAppendBuilder.append(attackerOutputName).append("'s' Speed Boost increases its speed!");
+                        break;
+
+                    case "forewarn":
+                        toAppendBuilder.append(attackerOutputName).append("'s Forewarn alerted it to ").append(getPrintable(split[2])).append("!");
+                        break;
+
+                    case "anticipation":
+                        toAppendBuilder.append(attackerOutputName).append(" shuddered!");
+                        break;
+
+                    case "telepathy":
+                        toAppendBuilder.append(attackerOutputName).append(" avoids attacks by its ally Pok&#xE9;mon!");
+                        break;
+
+                    case "suctioncups":
+                        toAppendBuilder.append(attackerOutputName).append(" anchors itself!");
+                        break;
+
+                    case "symbiosis":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append(getPrintable(ofSource)).append(" shared its ").append(getPrintable(split[2])).append(" with ").append(attackerOutputName);
+                        break;
+
+                    //items
+                    case "custapberry":
+                    case "quickclaw":
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(split[1])).append(" let it move first!");
+                        break;
+
+                    case "leppaberry":
+                        toAppendBuilder.append(attackerOutputName).append(" restored ").append(getPrintable(split[2])).append("'s PP using its Leppa Berry!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(" activated!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-sidestart":
