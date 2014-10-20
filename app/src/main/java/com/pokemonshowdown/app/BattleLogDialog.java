@@ -1585,8 +1585,56 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-singleturn":
-                //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "roost":
+                        toAppendBuilder.append(attackerOutputName).append(" landed on the ground!");
+                        break;
+
+                    case "quickguard":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("Quick Guard protected ").append(attackerOutputName).append(" landed on the ground!");
+                        break;
+
+                    case "wideguard":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("Wide Guard protected ").append(attackerOutputName).append(" landed on the ground!");
+                        break;
+
+                    case "protect":
+                        toAppendBuilder.append(attackerOutputName).append(" protected itself!");
+                        break;
+
+                    case "endure":
+                        toAppendBuilder.append(attackerOutputName).append(" braced itself!");
+                        break;
+
+                    case "helpinghand":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append(getPrintableOutputPokemonSide(ofSource)).append(" is ready to help ").append(attackerOutputName).append("!");
+                        break;
+
+                    case "focuspunch":
+                        toAppendBuilder.append(attackerOutputName).append(" is tightening its focus!");
+                        break;
+
+                    case "snatch":
+                        toAppendBuilder.append(attackerOutputName).append("  waits for a target to make a move!");
+                        break;
+
+                    case "magiccoat":
+                        toAppendBuilder.append(attackerOutputName).append(" shrouded itself with Magic Coat!'");
+                        break;
+
+                    case "matblock":
+                        toAppendBuilder.append(attackerOutputName).append(" intends to flip up a mat and block incoming attacks!");
+                        break;
+
+                    case "electrify":
+                        toAppendBuilder.append(attackerOutputName).append("'s moves have been electrified!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-singlemove":
