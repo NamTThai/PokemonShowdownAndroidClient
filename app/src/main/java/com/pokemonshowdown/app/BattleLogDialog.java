@@ -601,12 +601,37 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-sethp":
+                // |-sethp|p2a: Latios|46/100|p1a: Rotom-Wash|137/262|[from] move: Pain Split
                 switch (getPrintable(fromEffectId)) {
                     case "painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
                         break;
                 }
                 // todo actually switch hps
+
+                defender = getPrintable(split[0]);
+                separator = split[1].indexOf("/");
+                intAmount = Integer.parseInt(split[1].substring(0, separator));
+                if (split[0].startsWith("p2")) {
+                    mPlayer2Team.put(defender, intAmount);
+                } else {
+                    mPlayer1Team.put(defender, intAmount);
+                }
+
+                int currentHp, totalHp;
+                attacker = getPrintable(split[2]);
+                separator = split[3].indexOf("/");
+                currentHp = Integer.parseInt(split[3].substring(0, separator));
+                totalHp = Integer.parseInt(split[3].substring(separator + 1));
+                intAmount = ((currentHp * 100) / totalHp);
+
+                if (split[2].startsWith("p2")) {
+                    mPlayer2Team.put(attacker, intAmount);
+                } else {
+                    mPlayer1Team.put(attacker, intAmount);
+                }
+
+
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
