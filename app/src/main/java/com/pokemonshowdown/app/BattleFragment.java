@@ -46,6 +46,7 @@ public class BattleFragment extends Fragment {
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
     private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
+    private final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private int[] progressBarHolder = new int[6];
@@ -165,7 +166,6 @@ public class BattleFragment extends Fragment {
                 toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(user)), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
-
             case "raw":
                 toast = makeToast(Html.fromHtml(messageDetails).toString());
                 startAnimation(toast);
@@ -701,20 +701,7 @@ public class BattleFragment extends Fragment {
                 logMessage = new SpannableString(message);
         }
 
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (roomData != null && roomData.isMessageListener()) {
-            if (logMessage.length() > 0) {
-                roomData.addServerMessageOnHold(logMessage);
-            }
-        } else {
-            BattleLogDialog battleLogDialog =
-                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
-            if (battleLogDialog != null) {
-                if (logMessage.length() > 0) {
-                    battleLogDialog.processServerMessage(logMessage);
-                }
-            }
-        }
+        addToLog(logMessage);
     }
 
 
@@ -1460,7 +1447,7 @@ public class BattleFragment extends Fragment {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        swapBoost(split[0], split[1], stats);
+                        invertBoost(split[0], stats);
                     }
 
                     @Override
@@ -1618,17 +1605,23 @@ public class BattleFragment extends Fragment {
                 } else {
                     toAppendBuilder.append("But it failed!");
                 }
-
+                toast = makeMinorToast(new SpannableString(toAppendBuilder));
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("But it failed!"));
+                startAnimation(animatorSet);
 
                 logMessage = new SpannableString(toAppendBuilder);
                 break;
 
             case "-notarget":
                 logMessage = new SpannableString("But there was no target...");
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-ohko":
                 logMessage = new SpannableString("It's a one-hit KO!");
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-hitcount":
@@ -1642,13 +1635,16 @@ public class BattleFragment extends Fragment {
                     toAppendBuilder.append("!");
                     logMessage = new SpannableStringBuilder(toAppendBuilder);
                 } catch (NumberFormatException e) {
-                    // todo handle
                     logMessage = new SpannableString(command + ":" + messageDetails);
                 }
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-nothing":
                 logMessage = new SpannableString("But nothing happened! ");
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-waiting":
@@ -1656,10 +1652,14 @@ public class BattleFragment extends Fragment {
                 defenderOutputName = getPrintableOutputPokemonSide(split[1], false);
                 toAppendBuilder.append(attackerOutputName).append(" is waiting for ").append(defenderOutputName).append("'s move...");
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-combine":
                 logMessage = new SpannableString("The two moves are joined! It's a combined move!");
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-prepare":
@@ -1709,6 +1709,30 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                final String status;
+                status = remaining;
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        setStatus(split[0], status);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
                 break;
 
             case "-curestatus":
@@ -1791,6 +1815,31 @@ public class BattleFragment extends Fragment {
                     }
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                if (!flag) {
+                    toast.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            removeStatus(split[0], split[1]);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                }
+                startAnimation(toast);
                 break;
 
             case "-cureteam":
@@ -1810,6 +1859,7 @@ public class BattleFragment extends Fragment {
                     toAppendBuilder.append(" 's team was cured");
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
+
                 break;
 
             case "-item":
@@ -3003,20 +3053,7 @@ public class BattleFragment extends Fragment {
         }
 
         logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (roomData != null && roomData.isMessageListener()) {
-            if (logMessage.length() > 0) {
-                roomData.addServerMessageOnHold(logMessage);
-            }
-        } else {
-            BattleLogDialog battleLogDialog =
-                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
-            if (battleLogDialog != null) {
-                if (logMessage.length() > 0) {
-                    battleLogDialog.processServerMessage(logMessage);
-                }
-            }
-        }
+        addToLog(logMessage);
     }
 
     private void startAnimation(final AnimatorSet animator) {
@@ -3164,6 +3201,23 @@ public class BattleFragment extends Fragment {
 
     private AnimatorSet makeToast(final Spannable message) {
         return makeToast(message, ANIMATION_LONG);
+    }
+
+    private void addToLog(Spannable logMessage) {
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (roomData != null && roomData.isMessageListener()) {
+            if (logMessage.length() > 0) {
+                roomData.addServerMessageOnHold(logMessage);
+            }
+        } else {
+            BattleLogDialog battleLogDialog =
+                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
+            if (battleLogDialog != null) {
+                if (logMessage.length() > 0) {
+                    battleLogDialog.processServerMessage(logMessage);
+                }
+            }
+        }
     }
 
     /**
@@ -3478,11 +3532,10 @@ public class BattleFragment extends Fragment {
     }
 
     private void setStatus(String tag, String status) {
-        int id = getTempStatusId(tag);
         if (getView() == null) {
             return;
         }
-        LinearLayout statusBar = (LinearLayout) getView().findViewById(id);
+        LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
 
         TextView stt = new TextView(getActivity());
         stt.setText(status);
@@ -3509,6 +3562,18 @@ public class BattleFragment extends Fragment {
 
         statusBar.addView(stt, 0);
 
+    }
+
+    private void removeStatus(String tag, String status) {
+        if (getView() == null) {
+            return;
+        }
+        LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
+
+        TextView stt = (TextView) statusBar.findViewWithTag(status);
+        if (stt != null) {
+            statusBar.removeView(stt);
+        }
     }
 
     private void hidePokemon(String tag) {
@@ -3702,6 +3767,21 @@ public class BattleFragment extends Fragment {
         statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
         statBoost.setPadding(2, 2, 2, 2);
         tempStat.addView(statBoost, index);
+    }
+
+    private void invertBoost(String playerTag, String[] stats) {
+        if (getView() == null) {
+            return;
+        }
+        LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
+        for (String stat : stats) {
+            TextView statBoost = (TextView) tempStat.findViewWithTag(stat);
+            if (statBoost != null) {
+                String boostDetail = statBoost.getText().toString();
+                int currentBoost = -1 * Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" ")));
+                statBoost.setText(Integer.toString(currentBoost) + boostDetail.substring(boostDetail.indexOf(" ")));
+            }
+        }
     }
 
     private void swapBoost(String org, String dest, String... stats) {
