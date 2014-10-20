@@ -2197,6 +2197,9 @@ public class BattleFragment extends Fragment {
     }
 
     private AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
+        if (getView() == null) {
+            return null;
+        }
         message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         final TextView flyingMessage = new TextView(getActivity());
         flyingMessage.setText(message);
