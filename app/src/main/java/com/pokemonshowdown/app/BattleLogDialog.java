@@ -1489,7 +1489,99 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-end":
                 //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attacker = split[0];
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "powertrick":
+                        toAppendBuilder.append(attackerOutputName).append(" switched its Attack and Defense!");
+                        break;
+
+                    case "telekinesis":
+                        toAppendBuilder.append(attackerOutputName).append(" was freed from the telekinesis!");
+                        break;
+
+                    case "confusion":
+                        if (fromEffect.contains("item:")) {
+                            toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" snapped out of its confusion!");
+                        } else {
+                            if (attacker.startsWith("p2")) {
+                                toAppendBuilder.append(attackerOutputName).append(" snapped out of confusion!");
+                            } else {
+                                toAppendBuilder.append(attackerOutputName).append(" snapped out of its confusion.");
+                            }
+                        }
+                        break;
+
+                    case "leechseed":
+                        if (fromEffect != null && fromEffectId.equals("rapidspin")) {
+                            toAppendBuilder.append(attackerOutputName).append(" was freed from Leech Seed!");
+                        }
+                        break;
+
+                    case "healblock":
+                        toAppendBuilder.append(attackerOutputName).append("'s Heal Block wore off!");
+                        break;
+
+                    case "taunt":
+                        toAppendBuilder.append(attackerOutputName).append("'s taunt wore off!");
+                        break;
+
+                    case "disable":
+                        toAppendBuilder.append(attackerOutputName).append(" is no longer disabled!");
+                        break;
+
+                    case "embargo":
+                        toAppendBuilder.append(attackerOutputName).append(" can use items again!");
+                        break;
+
+                    case "torment":
+                        toAppendBuilder.append(attackerOutputName).append("'s torment wore off!");
+                        break;
+
+                    case "encore":
+                        toAppendBuilder.append(attackerOutputName).append("'s encore ended!");
+                        break;
+
+                    case "bide":
+                        toAppendBuilder.append(attackerOutputName).append(" unleashed energy!");
+                        break;
+
+                    case "magnetrise":
+                        if (attacker.startsWith("p2")) {
+                            toAppendBuilder.append("The electromagnetism of ").append(attackerOutputName).append(" wore off!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append("s electromagnetism wore off!");
+                        }
+                        break;
+
+                    case "perishsong":
+                        break;
+
+                    case "substitute":
+                        toAppendBuilder.append(attackerOutputName).append("'s substitute faded!");
+                        break;
+
+                    case "uproar":
+                        toAppendBuilder.append(attackerOutputName).append(" calmed down.");
+                        break;
+
+                    case "stockpile":
+                        toAppendBuilder.append(attackerOutputName).append("'s stockpiled effect wore off!");
+                        break;
+
+                    case "infestation":
+                        toAppendBuilder.append(attackerOutputName).append(" was freed from Infestation!");
+                        break;
+
+                    default:
+                        if (split[1].contains("move:")) {
+                            toAppendBuilder.append(attackerOutputName).append(" took the ").append(getPrintable(split[1])).append(" attack!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(split[1])).append(" ended!");
+                        }
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-singleturn":
