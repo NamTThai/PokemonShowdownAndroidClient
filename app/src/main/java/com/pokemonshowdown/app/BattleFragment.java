@@ -2052,6 +2052,8 @@ public class BattleFragment extends Fragment {
     }
 
     private int processHpFraction(String hpFraction) {
+        int status = hpFraction.indexOf(' ');
+        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
         int fraction = hpFraction.indexOf('/');
         if (fraction == -1) {
             return 0;
