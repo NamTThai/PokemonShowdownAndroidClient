@@ -113,7 +113,15 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void processServerMessage(final String message) {
+    public void processServerMessage(String message) {
+        try {
+            processMajorAction(message);
+        } catch (Exception e) {
+            Log.d(BTAG, "error is in " + message);
+        }
+    }
+
+    public void processMajorAction(final String message) {
         BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
@@ -339,7 +347,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 toAppendBuilder = new StringBuilder();
-                if (remaining.startsWith("p2")) {
+                if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing's ");
                 }
                 toAppendBuilder.append(attacker).append(" used ");
@@ -355,10 +363,8 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "switch":
             case "drag":
             case "replace":
-                animatorSet = new AnimatorSet();
                 final int toBeSwapped;
                 final int spriteId;
-                final int oldIconId;
 
                 //TODO need to handle roar & cie
                 toAppendBuilder = new StringBuilder();
@@ -443,17 +449,11 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         if (sprites != null) {
                             sprites.setImageResource(spriteId);
                         }
-                        try {
-                            ImageView iconLeader = (ImageView) getView().findViewById(getIconId(messageDetails, getTeamSlot(messageDetails)));
-                            Drawable leader = iconLeader.getDrawable();
-                            ImageView iconTrailer = (ImageView) getView().findViewById(getIconId(messageDetails, toBeSwapped));
-                            iconTrailer.setImageDrawable(leader);
-                            iconLeader.setImageResource(iconId);
-                        } catch (NullPointerException e) {
-                            Log.d(BTAG, mPlayer1Team.toString());
-                            Log.d(BTAG, mPlayer2Team.toString());
-                            throw new NullPointerException(e.toString());
-                        }
+                        ImageView iconLeader = (ImageView) getView().findViewById(getIconId(messageDetails, getTeamSlot(messageDetails)));
+                        Drawable leader = iconLeader.getDrawable();
+                        ImageView iconTrailer = (ImageView) getView().findViewById(getIconId(messageDetails, toBeSwapped));
+                        iconTrailer.setImageDrawable(leader);
+                        iconLeader.setImageResource(iconId);
 
                         TextView pkmName = (TextView) getView().findViewById(getSpriteNameid(messageDetails.substring(0, 3)));
                         if (pkmName != null) {
@@ -813,7 +813,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                ObjectAnimator flyingDamage = ObjectAnimator.ofFloat(damage, "y", 2f);
+                ObjectAnimator flyingDamage = ObjectAnimator.ofFloat(damage, "y", 0.5f);
                 flyingDamage.setDuration(ANIMATION_SHORT);
                 flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -945,7 +945,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                flyingDamage = ObjectAnimator.ofFloat(heal, "y", 2f);
+                flyingDamage = ObjectAnimator.ofFloat(heal, "y", 0.5f);
                 flyingDamage.setDuration(ANIMATION_SHORT);
                 flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -1160,6 +1160,27 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                             break;
                     }
                 }
+                break;
+            case "-swapboost":
+                attacker = split[0].substring(5);
+                if (fromEffect != null) {
+                    switch (trimmedFromEffect) {
+                        case "move:guardswap":
+                            toast = makeMinorToast(new SpannableString(attacker + " switched all changes to its Defense and Sp. Def with the target!"));
+                            break;
+
+                        case "move:heartswap":
+                            toast = makeMinorToast(new SpannableString(attacker + " switched stat changes with the target!"));
+                            break;
+
+                        case "move:powerswap":
+                            toast = makeMinorToast(new SpannableString(attacker + " switched all changes to its Attack and Sp. Atk with the target!"));
+                            break;
+                        default:
+                            toast = makeMinorToast(new SpannableString(messageDetails));
+                    }
+                }
+                toAppendSpannable = new SpannableStringBuilder(command + ":" + messageDetails);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
@@ -1765,11 +1786,21 @@ public class BattleFragment extends android.support.v4.app.Fragment {
     }
 
     private int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
-        if (!pkm.contains("Arceus")) {
+        String[] specialPkm = {"Arceus", "Gourgeist"};
+        boolean special = false;
+        String species = "";
+        for (String sp : specialPkm) {
+            if (pkm.contains(sp)) {
+                special = true;
+                species = sp;
+                break;
+            }
+        }
+        if (!special) {
             return playerTeam.indexOf(pkm);
         } else {
             for (int i = 0; i < playerTeam.size(); i++) {
-                if (playerTeam.get(i).contains("Arceus")) {
+                if (playerTeam.get(i).contains(species)) {
                     return i;
                 }
             }
@@ -1810,6 +1841,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             }
         }
         statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
+        statBoost.setPadding(2, 2, 2, 2);
         tempStat.addView(statBoost, index);
     }
 
