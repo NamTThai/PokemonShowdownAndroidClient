@@ -1590,8 +1590,16 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-singlemove":
-                //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "grudge":
+                        toAppendBuilder.append(attackerOutputName).append(" wants its target to bear a grudge!");
+                        break;
+                    case "destinybond":
+                        toAppendBuilder.append(attackerOutputName).append(" is trying to take its foe down with it!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-activate":
