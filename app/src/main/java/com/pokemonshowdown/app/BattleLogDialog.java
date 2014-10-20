@@ -551,18 +551,28 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" heals it!");
                             break;
                         case "healingwish":
-                            // TODO
+                            attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                            toAppendBuilder.append("The healing wish came true for ").append(attackerOutputName);
                             break;
                         case "lunardance":
-                            // TODO
+                            toAppendBuilder.append(attackerOutputName).append(" became cloaked in mystical moonlight!");
                             break;
                         case "wish":
-                            //TODO wish pass
+                            //TODO TRY
+                            String wisher;
+                            if (messageDetails.contains("[wish]")) {
+                                separator = messageDetails.substring(messageDetails.indexOf("[wish]")).indexOf("|");
+                                if (separator != -1) {
+                                    wisher = messageDetails.substring(messageDetails.indexOf("[wish]") + 5, separator);
+                                } else {
+                                    wisher = messageDetails.substring(messageDetails.indexOf("[wish]") + 5);
+                                }
+                                toAppendBuilder.append(getPrintableOutputPokemonSide(wisher)).append("'s wish came true!");
+                            }
                             break;
                         case "drain":
                             if (trimmedOfEffect != null) {
-                                trimmedOfEffect = getPrintableOutputPokemonSide(ofSource);
-                                toAppendBuilder.append(trimmedOfEffect).append(" had its energy drained!");
+                                toAppendBuilder.append(getPrintableOutputPokemonSide(ofSource)).append(" had its energy drained!");
                                 break;
                             }
                             // we should never enter here
@@ -1279,7 +1289,6 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-start":
-                //todo
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
                 switch (getPrintable(toId(split[1]))) {
                     case "typechange":
@@ -1488,7 +1497,6 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-end":
-                //todo
                 attacker = split[0];
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
                 switch (getPrintable(toId(split[1]))) {
