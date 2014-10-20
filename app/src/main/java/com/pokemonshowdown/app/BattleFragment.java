@@ -50,6 +50,7 @@ public class BattleFragment extends Fragment {
     public final static String ROOM_ID = "Room Id";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
+    private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private int[] progressBarHolder = new int[6];
@@ -1239,7 +1240,7 @@ public class BattleFragment extends Fragment {
                             toast.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    swapBoost(split[0], split[1], "atk", "def", "spa", "spd", "spe");
+                                    swapBoost(split[0], split[1], stats);
                                 }
 
                                 @Override
@@ -1288,6 +1289,72 @@ public class BattleFragment extends Fragment {
                             break;
                     }
                 }
+                break;
+            case "-copyboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                defenderOutputName = getPrintableOutputPokemonSide(split[1], false);
+                toAppendBuilder.append(attackerOutputName).append(" copied ").append(defenderOutputName).append("'s stat changes!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        copyBoost(split[0], split[1]);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-clearboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attackerOutputName).append("'s stat changes were removed!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        LinearLayout linearLayout = (LinearLayout) getView().findViewById(getTempStatusId(split[0]));
+                        for (String stat : stats) {
+                            Log.d(BTAG, "Removeing " + stat);
+                            TextView v = (TextView) linearLayout.findViewWithTag(stat);
+                            if (v != null) {
+                                Log.d(BTAG, "Found " + stat);
+                            }
+                            linearLayout.removeView(v);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
@@ -1992,13 +2059,12 @@ public class BattleFragment extends Fragment {
         LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
 
         for(String stat : stats) {
-            Log.d(BTAG, "Processing" + stat);
             TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
             int orgIndex = orgTempStat.indexOfChild(orgStat);
-            orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount(): orgIndex;
-            orgTempStat.removeView(orgStat);
             TextView destStat = (TextView) destTempStat.findViewWithTag(stat);
             int destIndex = destTempStat.indexOfChild(destStat);
+            orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount(): orgIndex;
+            orgTempStat.removeView(orgStat);
             destIndex = (destIndex == -1) ? destTempStat.getChildCount(): destIndex;
             destTempStat.removeView(destStat);
 
@@ -2007,6 +2073,24 @@ public class BattleFragment extends Fragment {
             }
             if (orgStat != null) {
                 destTempStat.addView(orgStat, destIndex);
+            }
+        }
+    }
+
+    private void copyBoost(String org, String dest) {
+        org = org.substring(0, 3);
+        dest = dest.substring(0, 3);
+        if (getView() == null) {
+            return;
+        }
+
+        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+
+        for(String stat : stats) {
+            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+            if (orgStat != null) {
+                destTempStat.addView(orgStat);
             }
         }
     }
