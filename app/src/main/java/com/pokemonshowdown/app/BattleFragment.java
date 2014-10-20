@@ -144,6 +144,8 @@ public class BattleFragment extends Fragment {
         AnimatorSet toast;
         AnimatorSet animatorSet;
         Animator animator;
+
+        Spannable logMessage = new SpannableString(messageDetails);
         switch (command) {
             case "init":
             case "title":
@@ -632,6 +634,18 @@ public class BattleFragment extends Fragment {
             default:
                 toast = makeToast(message, ANIMATION_LONG);
                 startAnimation(toast);
+                logMessage = new SpannableString(message);
+        }
+
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (roomData != null && roomData.isMessageListener()) {
+            roomData.addServerMessageOnHold(logMessage);
+        } else {
+            BattleLogDialog battleLogDialog =
+                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
+            if (battleLogDialog != null) {
+                battleLogDialog.processServerMessage(logMessage);
+            }
         }
     }
 
@@ -650,6 +664,7 @@ public class BattleFragment extends Fragment {
         String toAppend;
         StringBuilder toAppendBuilder = new StringBuilder();
         Spannable toAppendSpannable;
+        Spannable logMessage = new SpannableString(messageDetails);
         String move, ability;
         boolean flag, eat, weaken;
 
@@ -1461,9 +1476,25 @@ public class BattleFragment extends Fragment {
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
                 toast = makeMinorToast(toAppendSpannable);
                 startAnimation(toast);
+                logMessage = new SpannableString(command + ":" + messageDetails);
                 break;
         }
 
+        if (messageDetails.contains("[silent]")) {
+            return;
+        }
+
+        logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (roomData != null && roomData.isMessageListener()) {
+            roomData.addServerMessageOnHold(logMessage);
+        } else {
+            BattleLogDialog battleLogDialog =
+                    (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
+            if (battleLogDialog != null) {
+                battleLogDialog.processServerMessage(logMessage);
+            }
+        }
     }
 
     private void startAnimation(final AnimatorSet animator) {

@@ -99,13 +99,13 @@ public class BattleLogDialog extends DialogFragment {
                 }
             });
 
-            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
-            for (String message : pendingMessages) {
+            ArrayList<Spannable> pendingMessages = roomData.getServerMessageOnHold();
+            for (Spannable message : pendingMessages) {
                 processServerMessage(message);
             }
 
             roomData.setMessageListener(false);
-            roomData.setServerMessageOnHold(new ArrayList<String>());
+            roomData.setServerMessageOnHold(new ArrayList<Spannable>());
         }
     }
 
@@ -120,7 +120,11 @@ public class BattleLogDialog extends DialogFragment {
         super.onPause();
     }
 
-    public void processServerMessage(String message) {
+    public void processServerMessage(Spannable message) {
+        appendServerMessage(message);
+    }
+
+    public void processMajorAction(String message) {
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
