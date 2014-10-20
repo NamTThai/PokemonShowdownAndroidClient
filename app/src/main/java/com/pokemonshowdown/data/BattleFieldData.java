@@ -3,6 +3,7 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Spannable;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.widget.TextView;
@@ -207,7 +208,7 @@ public class BattleFieldData {
         private String mRoomId;
         private CharSequence mChatBox;
         private boolean mMessageListener;
-        private ArrayList<String> mServerMessageOnHold;
+        private ArrayList<Spannable> mServerMessageOnHold;
 
         private String mPlayer1;
         private String mPlayer2;
@@ -235,15 +236,15 @@ public class BattleFieldData {
             mChatBox = chatBox;
         }
 
-        public ArrayList<String> getServerMessageOnHold() {
+        public ArrayList<Spannable> getServerMessageOnHold() {
             return mServerMessageOnHold;
         }
 
-        public void setServerMessageOnHold(ArrayList<String> serverMessageOnHold) {
+        public void setServerMessageOnHold(ArrayList<Spannable> serverMessageOnHold) {
             mServerMessageOnHold = serverMessageOnHold;
         }
 
-        public void addServerMessageOnHold(String serverMessageOnHold) {
+        public void addServerMessageOnHold(Spannable serverMessageOnHold) {
             mServerMessageOnHold.add(serverMessageOnHold);
         }
 
