@@ -1330,11 +1330,7 @@ public class BattleFragment extends Fragment {
                         }
                         LinearLayout linearLayout = (LinearLayout) getView().findViewById(getTempStatusId(split[0]));
                         for (String stat : stats) {
-                            Log.d(BTAG, "Removeing " + stat);
                             TextView v = (TextView) linearLayout.findViewWithTag(stat);
-                            if (v != null) {
-                                Log.d(BTAG, "Found " + stat);
-                            }
                             linearLayout.removeView(v);
                         }
                     }
@@ -1355,6 +1351,111 @@ public class BattleFragment extends Fragment {
                     }
                 });
                 startAnimation(toast);
+                break;
+            case "-invertboost":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attackerOutputName).append("'s stat changes were inverted!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        swapBoost(split[0], split[1], stats);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-clearallboost":
+                toAppendBuilder.append("All stat changes were eliminated!");
+                toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        String[] layouts = {"p1a", "p1b", "p1c", "p2a", "p2b", "p2c"};
+                        for (String layout : layouts) {
+                            LinearLayout linearLayout = (LinearLayout) getView().findViewById(getTempStatusId(layout));
+                            for (String stat : stats) {
+                                TextView v = (TextView) linearLayout.findViewWithTag(stat);
+                                linearLayout.removeView(v);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
+                break;
+            case "-crit":
+                toAppendSpannable = new SpannableString("It's a critical hit!");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-supereffective":
+                toAppendSpannable = new SpannableString("It's super effective!");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-resisted":
+                toAppendSpannable = new SpannableString("It's not very effective...");
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-immune":
+                attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                toAppendBuilder.append("It doesn't affect ");
+                toAppendBuilder.append(attackerOutputName);
+                toAppendBuilder.append(".");
+                toAppendSpannable = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
+                break;
+            case "-miss":
+                if (split.length > 1) {
+                    // there was a target
+                    defenderOutputName = getPrintableOutputPokemonSide(split[1]);
+                    toAppendBuilder.append(defenderOutputName).append(" avoided the attack!");
+                } else {
+                    attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                    toAppendBuilder.append(attackerOutputName).append("'s attack missed!");
+                }
+                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                startAnimation(animatorSet);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
@@ -2093,6 +2194,73 @@ public class BattleFragment extends Fragment {
                 destTempStat.addView(orgStat);
             }
         }
+    }
+
+    private AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
+        message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final TextView flyingMessage = new TextView(getActivity());
+        flyingMessage.setText(message);
+        flyingMessage.setBackgroundResource(R.drawable.editable_frame);
+        flyingMessage.setPadding(2, 2, 2, 2);
+        flyingMessage.setAlpha(0f);
+
+        toast.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (getView() == null) {
+                    return;
+                }
+                ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
+
+                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
+                layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
+                layoutParams.setMargins(0, (int) (imageView.getHeight() * 0.5f), 0, 0);
+                relativeLayout.addView(flyingMessage, layoutParams);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (getView() == null) {
+                    return;
+                }
+
+                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                relativeLayout.removeView(flyingMessage);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", 0.5f);
+        flyingObject.setDuration(ANIMATION_SHORT);
+        flyingObject.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(flyingMessage, "alpha", 0f, 1f);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(ANIMATION_SHORT / 4);
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(flyingMessage, "alpha", 1f, 0f);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartDelay(ANIMATION_SHORT / 2);
+        fadeOut.setDuration(ANIMATION_SHORT / 4);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(toast);
+        animatorSet.play(fadeIn).with(toast);
+        animatorSet.play(flyingObject).after(fadeIn);
+        animatorSet.play(fadeOut).after(fadeIn);
+
+        return animatorSet;
     }
 
 }
