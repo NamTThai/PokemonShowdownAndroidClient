@@ -813,7 +813,6 @@ public class BattleLogDialog extends DialogFragment {
                             toAppendBuilder.append(attackerOutputName).append(" is already frozen.");
                             break;
                         case "substitute":
-                            // TODO try while having a sub up
                             if (messageDetails.contains("[weak]")) {
                                 toAppendBuilder.append(attackerOutputName).append("It was too weak to make a substitute!");
                             } else {
@@ -821,7 +820,6 @@ public class BattleLogDialog extends DialogFragment {
                             }
                             break;
                         case "skydrop":
-                            // TODO try
                             if (messageDetails.contains("[heavy]")) {
                                 toAppendBuilder.append(attackerOutputName).append(" is too heavy to be lifted!");
                             } else {
@@ -1282,7 +1280,211 @@ public class BattleLogDialog extends DialogFragment {
 
             case "-start":
                 //todo
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "typechange":
+                        if (fromEffect != null) {
+                            if (getPrintable(fromEffectId).equals("reflecttype")) {
+                                toAppendBuilder.append(attackerOutputName).append("'s type changed to match ").append(getPrintable(ofSource)).append("'s!");
+                            } else {
+                                toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(fromEffect)).append(" made it the ").append(getPrintable(split[2])).append(" type!");
+                            }
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append(" transformed into the ").append(getPrintable(split[2])).append(" type!");
+                        }
+                        break;
+
+                    case "typeadd":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append(getPrintable(split[2])).append(" type was added to ").append(attackerOutputName).append(" type!");
+                        break;
+
+                    case "powertrick":
+                        toAppendBuilder.append(attackerOutputName).append(" switched its Attack and Defense!");
+                        break;
+
+                    case "foresight":
+                    case "miracleeye":
+                        toAppendBuilder.append(attackerOutputName).append(" was identified!");
+                        break;
+
+                    case "telekinesis":
+                        toAppendBuilder.append(attackerOutputName).append(" was hurled into the air!");
+                        break;
+
+                    case "confusion":
+                        if (messageDetails.contains("[already]")) {
+                            toAppendBuilder.append(attackerOutputName).append(" is already confused!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append(" became confused!");
+                        }
+                        break;
+
+                    case "leechseed":
+                        toAppendBuilder.append(attackerOutputName).append(" was seeded!");
+                        break;
+
+                    case "mudsport":
+                        toAppendBuilder.append("Electricity's power was weakened!");
+                        break;
+
+                    case "watersport":
+                        toAppendBuilder.append("Fire's power was weakened!");
+                        break;
+
+                    case "yawn":
+                        toAppendBuilder.append(attackerOutputName).append(" grew drowsy!");
+                        break;
+
+                    case "flashfire":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append("The power of ").append(attackerOutputName).append("'s Fire-type moves rose!");
+                        break;
+
+                    case "taunt":
+                        toAppendBuilder.append(attackerOutputName).append(" fell for the taunt!");
+                        break;
+
+                    case "imprison":
+                        toAppendBuilder.append(attackerOutputName).append(" sealed the opponent's move(s)!");
+                        break;
+
+                    case "disable":
+                        toAppendBuilder.append(attackerOutputName).append("'s").append(getPrintable(split[2])).append(" was disabled!");
+                        break;
+
+                    case "embargo":
+                        toAppendBuilder.append(attackerOutputName).append(" can't use items anymore!");
+                        break;
+
+                    case "ingrain":
+                        toAppendBuilder.append(attackerOutputName).append(" planted its roots!");
+                        break;
+
+                    case "aquaring":
+                        toAppendBuilder.append(attackerOutputName).append(" surrounded itself with a veil of water!");
+                        break;
+
+                    case "stockpile1":
+                        toAppendBuilder.append(attackerOutputName).append(" stockpiled 1!");
+                        break;
+
+                    case "stockpile2":
+                        toAppendBuilder.append(attackerOutputName).append(" stockpiled 2!");
+                        break;
+
+                    case "stockpile3":
+                        toAppendBuilder.append(attackerOutputName).append(" stockpiled 3!");
+                        break;
+
+                    case "perish0":
+                        toAppendBuilder.append(attackerOutputName).append("'s perish count fell to 0.");
+                        break;
+
+                    case "perish1":
+                        toAppendBuilder.append(attackerOutputName).append("'s perish count fell to 1.");
+                        break;
+
+                    case "perish2":
+                        toAppendBuilder.append(attackerOutputName).append("'s perish count fell to 2.");
+                        break;
+
+                    case "perish3":
+                        toAppendBuilder.append(attackerOutputName).append("'s perish count fell to 3.");
+                        break;
+
+                    case "encore":
+                        toAppendBuilder.append(attackerOutputName).append(" received an encore!");
+                        break;
+
+                    case "bide":
+                        toAppendBuilder.append(attackerOutputName).append(" is storing energy!");
+                        break;
+
+                    case "slowstart":
+                        toAppendBuilder.append(attackerOutputName).append(" can't get it going because of its Slow Start!");
+                        break;
+
+                    case "attract":
+                        if (fromEffect != null) {
+                            toAppendBuilder.append(attackerOutputName).append(" fell in love from the ").append(getPrintable(fromEffect)).append("!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append(" fell in love!");
+                        }
+                        break;
+
+                    case "autotomize":
+                        toAppendBuilder.append(attackerOutputName).append(" became nimble!");
+                        break;
+
+                    case "focusenergy":
+                        toAppendBuilder.append(attackerOutputName).append(" is getting pumped!");
+                        break;
+
+                    case "curse":
+                        attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                        toAppendBuilder.append(getPrintableOutputPokemonSide(ofSource)).append(" cut its own HP and laid a curse on ").append(attackerOutputName).append("!");
+                        break;
+
+                    case "nightmare":
+                        toAppendBuilder.append(attackerOutputName).append(" began having a nightmare!");
+                        break;
+
+                    case "magnetrise":
+                        toAppendBuilder.append(attackerOutputName).append(" levitated with electromagnetism!");
+                        break;
+
+                    case "smackdown":
+                        toAppendBuilder.append(attackerOutputName).append(" fell straight down!");
+                        break;
+
+                    case "substitute":
+                        if (messageDetails.contains("[damage]")) {
+                            attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
+                            toAppendBuilder.append("The substitute took damage for ").append(attackerOutputName).append("!");
+                        } else if (messageDetails.contains("[block]")) {
+                            toAppendBuilder.append("But it failed!");
+                        } else if (messageDetails.contains("[already]")) {
+                            toAppendBuilder.append(attackerOutputName).append(" already has a substitute!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append(" put in a substitute!");
+                        }
+                        break;
+
+                    case "uproar":
+                        if (messageDetails.contains("[upkeep]")) {
+                            toAppendBuilder.append(attackerOutputName).append(" is making an uproar!");
+                        } else {
+                            toAppendBuilder.append(attackerOutputName).append(" caused an uproar!");
+                        }
+                        break;
+
+                    case "doomdesire":
+                        toAppendBuilder.append(attackerOutputName).append(" chose Doom Desire as its destiny!");
+                        break;
+
+                    case "futuresight":
+                        toAppendBuilder.append(attackerOutputName).append(" foresaw an attack!");
+                        break;
+
+                    case "mimic":
+                        toAppendBuilder.append(attackerOutputName).append(" learned ").append(getPrintable(split[2])).append("!");
+                        break;
+
+                    case "followme":
+                    case "ragepowder":
+                        toAppendBuilder.append(attackerOutputName).append(" became the center of attention!");
+                        break;
+
+                    case "powder":
+                        toAppendBuilder.append(attackerOutputName).append(" is covered in powder!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(attackerOutputName).append("'s ").append(getPrintable(split[1])).append(" started!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-end":
