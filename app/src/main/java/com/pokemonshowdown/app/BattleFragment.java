@@ -544,7 +544,7 @@ public class BattleFragment extends Fragment {
                         }
 
                         if (!status.equals("")) {
-                            setStatus(messageDetails.substring(0, 3), status.toLowerCase());
+                            setAddonStatus(messageDetails.substring(0, 3), status.toLowerCase());
                         }
                     }
 
@@ -1798,7 +1798,7 @@ public class BattleFragment extends Fragment {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        setStatus(split[0], status);
+                        setAddonStatus(split[0], status);
                     }
 
                     @Override
@@ -1904,7 +1904,7 @@ public class BattleFragment extends Fragment {
                     toast.addListener(new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
-                            removeStatus(split[0], split[1]);
+                            removeAddonStatus(split[0], split[1]);
                         }
 
                         @Override
@@ -1955,7 +1955,7 @@ public class BattleFragment extends Fragment {
                         }
                         for (String mate : teammate) {
                             for (String stt : sttus) {
-                                removeStatus(mate, stt);
+                                removeAddonStatus(mate, stt);
                             }
                         }
                     }
@@ -1980,7 +1980,8 @@ public class BattleFragment extends Fragment {
 
             case "-item":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
-                String item = getPrintable(split[1]);
+                final String item;
+                item = getPrintable(split[1]);
                 if (fromEffect != null) {
                     // not to deal with item: or ability: or move:
                     switch (getPrintable(fromEffectId)) {
@@ -2012,6 +2013,10 @@ public class BattleFragment extends Fragment {
                             toAppendBuilder.append(attackerOutputName).append(" obtained one ").append(item).append(".");
                             break;
                     }
+                    logMessage = new SpannableString(toAppendBuilder);
+                    toast = makeMinorToast(logMessage);
+                    animatorSet = createFlyingMessage(split[0], toast, new SpannableString(item));
+                    startAnimation(animatorSet);
                 } else {
                     switch (item) {
                         case "Air Balloon":
@@ -2022,10 +2027,31 @@ public class BattleFragment extends Fragment {
                             toAppendBuilder.append(attackerOutputName).append("has ").append(item).append("!");
                             break;
                     }
+                    logMessage = new SpannableString(toAppendBuilder);
+                    toast = makeMinorToast(logMessage);
+                    toast.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            setAddonStatus(split[0], item);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    startAnimation(toast);
                 }
-
-
-                logMessage = new SpannableString(toAppendBuilder);
                 break;
 
             case "-enditem":
@@ -2115,6 +2141,30 @@ public class BattleFragment extends Fragment {
                 }
 
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString(item));
+                animatorSet.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        removeAddonStatus(split[0], item);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(animatorSet);
                 break;
 
             case "-ability":
@@ -3647,7 +3697,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setStatus(String tag, String status) {
+    private void setAddonStatus(String tag, String status) {
         if (getView() == null) {
             return;
         }
@@ -3673,6 +3723,9 @@ public class BattleFragment extends Fragment {
                 break;
             case "frz":
                 stt.setBackgroundResource(R.drawable.editable_frame);
+                break;
+            default:
+                stt.setBackgroundResource(R.drawable.editable_frame);
         }
         stt.setPadding(2, 2, 2, 2);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -3682,7 +3735,7 @@ public class BattleFragment extends Fragment {
 
     }
 
-    private void removeStatus(String tag, String status) {
+    private void removeAddonStatus(String tag, String status) {
         if (getView() == null) {
             return;
         }
