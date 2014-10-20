@@ -1872,13 +1872,71 @@ public class BattleLogDialog extends DialogFragment {
 
 
             case "-fieldstart":
-                //todo (trick room, maybe more)
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "trickroom":
+                        toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
+                        break;
+
+                    case "wonderroom":
+                        toAppendBuilder.append("It created a bizarre area in which the Defense and Sp. Def stats are swapped!");
+                        break;
+
+                    case "magicroom":
+                        toAppendBuilder.append("It created a bizarre area in which Pok&#xE9;mon's held items lose their effects!");
+                        break;
+
+                    case "gravity":
+                        toAppendBuilder.append("Gravity intensified!");
+                        break;
+
+                    case "mudsport":
+                        toAppendBuilder.append("Electric's power was weakened!");
+                        break;
+
+                    case "watersport":
+                        toAppendBuilder.append("Fire's power was weakened!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(getPrintable(split[1])).append(" started!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-fieldend":
-                //todo (trick room, maybe more)
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "trickroom":
+                        toAppendBuilder.append("The twisted dimensions returned to normal!");
+                        break;
+
+                    case "wonderroom":
+                        toAppendBuilder.append("'Wonder Room wore off, and the Defense and Sp. Def stats returned to normal!");
+                        break;
+
+                    case "magicroom":
+                        toAppendBuilder.append("Magic Room wore off, and the held items' effects returned to normal!");
+                        break;
+
+                    case "gravity":
+                        toAppendBuilder.append("Gravity returned to normal!");
+                        break;
+
+                    case "mudsport":
+                        toAppendBuilder.append("The effects of Mud Sport have faded.");
+                        break;
+
+                    case "watersport":
+                        toAppendBuilder.append("The effects of Water Sport have faded.");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(getPrintable(split[1])).append(" ended!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
             case "-fieldactivate":
