@@ -1930,7 +1930,7 @@ public class BattleFragment extends Fragment {
                             break;
 
                         case "whiteherb":
-                            toAppendBuilder.append(attackerOutputName).append("restored its status using its White Herb!");
+                            toAppendBuilder.append(attackerOutputName).append(" restored its status using its White Herb!");
                             break;
 
                         case "ejectbutton":
