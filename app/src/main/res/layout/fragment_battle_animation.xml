@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/animation_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -22,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="4dp"
         android:layout_marginBottom="36dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1a_pkm"
@@ -45,6 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1a_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -64,18 +66,23 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1a_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
-
         </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/p1a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p1a_hp_layout"
+            android:layout_alignLeft="@id/p1a_hp_layout">
+            
+            </LinearLayout>
 
         <ImageView
             android:id="@+id/p1a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
 
@@ -88,7 +95,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="120dp"
         android:layout_marginBottom="20dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1b_pkm"
@@ -111,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1b_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -130,11 +138,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1b_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p1b_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p1b_hp_layout"
+            android:layout_alignLeft="@id/p1b_hp_layout">
 
         </LinearLayout>
 
@@ -142,6 +154,7 @@
             android:id="@+id/p1b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1b_hp_layout"/>
 
@@ -154,7 +167,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="236dp"
         android:layout_marginBottom="4dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p1c_pkm"
@@ -177,6 +190,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p1c_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -196,11 +210,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p1c_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p1c_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p1c_hp_layout"
+            android:layout_alignLeft="@id/p1c_hp_layout">
 
         </LinearLayout>
 
@@ -208,6 +226,7 @@
             android:id="@+id/p1c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1c_hp_layout"/>
 
@@ -221,7 +240,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="236dp"
         android:layout_marginTop="4dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2c_pkm"
@@ -244,6 +263,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2c_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -263,11 +283,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2c_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2c_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p2c_hp_layout"
+            android:layout_alignLeft="@id/p2c_hp_layout">
 
         </LinearLayout>
 
@@ -275,6 +299,7 @@
             android:id="@+id/p2c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2c_hp_layout"/>
 
@@ -288,7 +313,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="120dp"
         android:layout_marginTop="20dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2b_pkm"
@@ -311,6 +336,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2b_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -330,11 +356,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2b_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2b_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p2b_hp_layout"
+            android:layout_alignLeft="@id/p2b_hp_layout">
 
         </LinearLayout>
 
@@ -342,6 +372,7 @@
             android:id="@+id/p2b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2b_hp_layout"/>
 
@@ -355,7 +386,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="4dp"
         android:layout_marginTop="36dp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/p2a_pkm"
@@ -378,6 +409,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/p2a_pkm"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/editable_frame_grey">
 
             <TextView
@@ -397,11 +429,15 @@
                 android:max="100"
                 />
 
-            <TextView
-                android:id="@+id/p2a_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/p2a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p2a_hp_layout"
+            android:layout_alignLeft="@id/p2a_hp_layout">
 
         </LinearLayout>
 
@@ -409,6 +445,7 @@
             android:id="@+id/p2a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p2a_hp_layout"/>
 
