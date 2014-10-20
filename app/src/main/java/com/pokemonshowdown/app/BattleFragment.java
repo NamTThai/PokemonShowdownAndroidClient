@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
+import android.support.v4.app.Fragment;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class BattleFragment extends android.support.v4.app.Fragment {
+public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
     public final static int ANIMATION_SHORT = 500;
@@ -481,7 +482,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         }
 
                         if (!status.equals("")) {
-                            setStatus(messageDetails.substring(0, 3), status.toUpperCase());
+                            setStatus(messageDetails.substring(0, 3), status.toLowerCase());
                         }
                     }
 
@@ -810,10 +811,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                ObjectAnimator flyingDamage = ObjectAnimator.ofFloat(damage, "y", 0.5f);
-                flyingDamage.setDuration(ANIMATION_SHORT);
-                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
-
                 ObjectAnimator fadeIn = ObjectAnimator.ofFloat(damage, "alpha", 0f, 1f);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
                 fadeIn.setDuration(ANIMATION_SHORT / 4);
@@ -832,7 +829,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animatorSet.play(toast);
                 animatorSet.play(hpCountDownBar).with(toast);
                 animatorSet.play(fadeIn).with(toast);
-                animatorSet.play(flyingDamage).after(fadeIn);
                 animatorSet.play(fadeOut).after(fadeIn);
 
                 startAnimation(animatorSet);
@@ -942,10 +938,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     }
                 });
 
-                flyingDamage = ObjectAnimator.ofFloat(heal, "y", 0.5f);
-                flyingDamage.setDuration(ANIMATION_SHORT);
-                flyingDamage.setInterpolator(new AccelerateDecelerateInterpolator());
-
                 fadeIn = ObjectAnimator.ofFloat(heal, "alpha", 0f, 1f);
                 fadeIn.setInterpolator(new DecelerateInterpolator());
                 fadeIn.setDuration(ANIMATION_SHORT / 4);
@@ -964,7 +956,6 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                 animatorSet.play(toast);
                 animatorSet.play(hpCountDownBar).with(toast);
                 animatorSet.play(fadeIn).with(toast);
-                animatorSet.play(flyingDamage).after(fadeIn);
                 animatorSet.play(fadeOut).after(fadeIn);
 
                 startAnimation(animatorSet);
@@ -1111,7 +1102,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                         break;
                 }
                 amount = split[2];
-                intAmount = Integer.parseInt(amount);
+                intAmount = -1 * Integer.parseInt(amount);
                 if (intAmount == 2) {
                     statAmount = " harshly";
                 } else if (intAmount >= 3) {
@@ -1151,9 +1142,7 @@ public class BattleFragment extends android.support.v4.app.Fragment {
 
                     }
                 });
-                animatorSet = new AnimatorSet();
-                animatorSet.play(toast);
-                startAnimation(animatorSet);
+                startAnimation(toast);
                 break;
             case "-setboost":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
@@ -1219,18 +1208,86 @@ public class BattleFragment extends android.support.v4.app.Fragment {
                     switch (getPrintable(fromEffectId)) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], "def", "spd");
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
 
                         case "heartswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched stat changes with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], "atk", "def", "spa", "spd", "spe");
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
 
                         case "powerswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Attack and Sp. Atk with the target!");
+                            toast = makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                            toast.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    swapBoost(split[0], split[1], "atk", "spa");
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                            startAnimation(toast);
                             break;
                     }
                 }
-                toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 break;
             default:
                 toAppendSpannable = new SpannableString(command + ":" + messageDetails);
@@ -1725,8 +1782,9 @@ public class BattleFragment extends android.support.v4.app.Fragment {
             case "frz":
                 stt.setBackgroundResource(R.drawable.editable_frame);
         }
+        stt.setPadding(2, 2, 2, 2);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(4, 0, 0, 0);
+        stt.setLayoutParams(layoutParams);
 
         statusBar.addView(stt, 0);
 
@@ -1921,6 +1979,36 @@ public class BattleFragment extends android.support.v4.app.Fragment {
         statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
         statBoost.setPadding(2, 2, 2, 2);
         tempStat.addView(statBoost, index);
+    }
+
+    private void swapBoost(String org, String dest, String... stats) {
+        org = org.substring(0, 3);
+        dest = dest.substring(0, 3);
+        if (getView() == null) {
+            return;
+        }
+
+        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+
+        for(String stat : stats) {
+            Log.d(BTAG, "Processing" + stat);
+            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+            int orgIndex = orgTempStat.indexOfChild(orgStat);
+            orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount(): orgIndex;
+            orgTempStat.removeView(orgStat);
+            TextView destStat = (TextView) destTempStat.findViewWithTag(stat);
+            int destIndex = destTempStat.indexOfChild(destStat);
+            destIndex = (destIndex == -1) ? destTempStat.getChildCount(): destIndex;
+            destTempStat.removeView(destStat);
+
+            if (destStat != null) {
+                orgTempStat.addView(destStat, orgIndex);
+            }
+            if (orgStat != null) {
+                destTempStat.addView(orgStat, destIndex);
+            }
+        }
     }
 
 }
