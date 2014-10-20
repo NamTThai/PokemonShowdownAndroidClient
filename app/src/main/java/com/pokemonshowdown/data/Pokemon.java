@@ -222,6 +222,8 @@ public class Pokemon implements Serializable {
             initializePokemon(appContext, jsonObject);
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            Log.e(PTAG, "Can't find pokemon " + name + " with error log " + e.toString());
         }
     }
 
@@ -286,8 +288,6 @@ public class Pokemon implements Serializable {
             setMove4("--");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
-        } catch (java.lang.NullPointerException e) {
-            Log.e(PTAG, e.toString());
         }
     }
 
@@ -302,8 +302,10 @@ public class Pokemon implements Serializable {
             return jsonObject.getString("species");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            return "???";
         }
-        return null;
+        return "???";
     }
 
     public static int getPokemonSprite(Context appContext, String name, boolean withAppContext) {
@@ -314,11 +316,14 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
-            return appContext.getResources().getIdentifier("sprites_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+            int toReturn = appContext.getResources().getIdentifier("sprites_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+            return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            return R.drawable.sprites_0;
         }
-        return 0;
+        return R.drawable.sprites_0;
     }
 
     public static int getPokemonIcon(Context appContext, String name, boolean withAppContext) {
@@ -329,11 +334,14 @@ public class Pokemon implements Serializable {
             } else {
                 jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
             }
-            return appContext.getResources().getIdentifier("smallicons_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+            int toReturn = appContext.getResources().getIdentifier("smallicons_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
+            return (toReturn == 0) ? R.drawable.smallicons_0 : toReturn;
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+            return R.drawable.smallicons_0;
+        } catch (NullPointerException e) {
+            return R.drawable.smallicons_0;
         }
-        return 0;
     }
 
     public static Integer[] getPokemonBaseStats(Context appContext, String name, boolean withAppContext) {
@@ -355,6 +363,8 @@ public class Pokemon implements Serializable {
             return baseStatsInteger;
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            return null;
         }
         return null;
     }
@@ -377,6 +387,8 @@ public class Pokemon implements Serializable {
             return typesIcon;
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            return null;
         }
         return null;
     }
