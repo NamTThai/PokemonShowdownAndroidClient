@@ -19,10 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;

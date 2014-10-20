@@ -67,16 +67,6 @@
                 />
 
         </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/p1a_temp_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@id/p1a_hp_layout"
-            android:layout_alignLeft="@id/p1a_hp_layout">
-            
-            </LinearLayout>
 
         <ImageView
             android:id="@+id/p1a_icon"
@@ -85,6 +75,16 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
+
+        <LinearLayout
+            android:id="@+id/p1a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p1a_hp_layout"
+            android:layout_alignLeft="@id/p1a_hp_layout">
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -140,6 +140,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p1b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1b_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p1b_temp_status"
             android:layout_width="wrap_content"
@@ -149,14 +157,6 @@
             android:layout_alignLeft="@id/p1b_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p1b_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1b_hp_layout"/>
 
     </RelativeLayout>
 
@@ -212,6 +212,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p1c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1c_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p1c_temp_status"
             android:layout_width="wrap_content"
@@ -221,14 +229,6 @@
             android:layout_alignLeft="@id/p1c_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p1c_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1c_hp_layout"/>
 
     </RelativeLayout>
 
@@ -285,6 +285,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2c_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2c_temp_status"
             android:layout_width="wrap_content"
@@ -294,14 +302,6 @@
             android:layout_alignLeft="@id/p2c_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p2c_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2c_hp_layout"/>
 
     </RelativeLayout>
 
@@ -358,6 +358,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2b_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2b_temp_status"
             android:layout_width="wrap_content"
@@ -367,14 +375,6 @@
             android:layout_alignLeft="@id/p2b_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p2b_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2b_hp_layout"/>
 
     </RelativeLayout>
 
@@ -431,6 +431,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2a_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2a_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2a_temp_status"
             android:layout_width="wrap_content"
@@ -440,14 +448,6 @@
             android:layout_alignLeft="@id/p2a_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p2a_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2a_hp_layout"/>
 
     </RelativeLayout>
 

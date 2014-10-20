@@ -333,17 +333,6 @@ public class BattleFieldActivity extends FragmentActivity {
                 }
             }
         } else { // channel == 0
-            BattleFieldData.RoomData roomData = BattleFieldData.get(this).getRoomInstance(roomId);
-            if (roomData != null && roomData.isMessageListener()) {
-                roomData.addServerMessageOnHold(message);
-            } else {
-                BattleLogDialog battleLogDialog =
-                        (BattleLogDialog) getSupportFragmentManager().findFragmentByTag(roomId);
-                if (battleLogDialog != null) {
-                    battleLogDialog.processServerMessage(message);
-                }
-            }
-
             BattleFieldData.AnimationData animationData = BattleFieldData.get(this).getAnimationInstance(roomId);
             if (animationData != null && animationData.isMessageListener()) {
                 animationData.addServerMessageOnHold(message);
