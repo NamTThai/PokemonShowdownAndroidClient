@@ -1940,8 +1940,25 @@ public class BattleLogDialog extends DialogFragment {
                 break;
 
             case "-fieldactivate":
-                //todo (trick room, maybe more)
-                toAppendSpannable = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                switch (getPrintable(toId(split[1]))) {
+                    case "perishsong":
+                        toAppendBuilder.append("All Pok&#xE9;mon hearing the song will faint in three turns!");
+                        break;
+
+                    case "payday":
+                        toAppendBuilder.append("Coins were scattered everywhere!");
+                        break;
+
+                    case "iondeluge":
+                        toAppendBuilder.append("A deluge of ions showers the battlefield!");
+                        break;
+
+                    default:
+                        toAppendBuilder.append(getPrintable(split[1])).append(" hit!");
+                        break;
+                }
+                toAppendSpannable = new SpannableString(toAppendBuilder);
                 break;
 
 
