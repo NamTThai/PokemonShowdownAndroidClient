@@ -2835,8 +2835,41 @@ public class BattleFragment extends Fragment {
                         } else if (messageDetails.contains("[already]")) {
                             toAppendBuilder.append(attackerOutputName).append(" already has a substitute!");
                         } else {
-                            // TODO: setup substitute
                             toAppendBuilder.append(attackerOutputName).append(" put in a substitute!");
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    ImageView imageView = (ImageView) getView().findViewById(getSpriteId(split[0]));
+                                    imageView.setAlpha(0.2f);
+                                    ImageView substitute = new ImageView(getActivity());
+                                    substitute.setImageResource(getSubstitute(split[0]));
+                                    substitute.setTag("Substitute");
+
+                                    RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(split[0]));
+                                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                                    layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(split[0]));
+                                    layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(split[0]));
+                                    relativeLayout.addView(substitute, layoutParams);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
 
@@ -3014,8 +3047,37 @@ public class BattleFragment extends Fragment {
                         break;
 
                     case "substitute":
-                        // TODO destroy this substitute
                         toAppendBuilder.append(attackerOutputName).append("'s substitute faded!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(split[0]));
+                                View v = relativeLayout.findViewWithTag("Substitute");
+                                if (v != null) {
+                                    relativeLayout.removeView(v);
+                                }
+                                ImageView imageView = (ImageView) getView().findViewById(getSpriteId(split[0]));
+                                imageView.setAlpha(1f);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "uproar":
@@ -4211,32 +4273,54 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    private int getSubstitute(String tag) {
+        if (getView() == null) {
+            return R.drawable.sprites_substitute;
+        }
+
+        tag = tag.substring(0, 2);
+        switch (tag) {
+            case "p1":
+                return R.drawable.sprites_substitute_back;
+            default:
+                return R.drawable.sprites_substitute;
+        }
+    }
+
     private void hidePokemon(String tag) {
         if (getView() == null) {
             return;
         }
 
+        RelativeLayout relativeLayout;
+        int layoutId;
+
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
-                getView().findViewById(R.id.p1a).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p1a;
+                break;
             case "p1b":
-                getView().findViewById(R.id.p1b).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p1b;
+                break;
             case "p1c":
-                getView().findViewById(R.id.p1c).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p1c;
+                break;
             case "p2a":
-                getView().findViewById(R.id.p2a).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p2a;
+                break;
             case "p2b":
-                getView().findViewById(R.id.p2b).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p2b;
+                break;
             case "p2c":
-                getView().findViewById(R.id.p2c).setVisibility(View.INVISIBLE);
-                return;
+                layoutId = R.id.p2c;
+                break;
+            default:
+                layoutId = R.id.p2c;
         }
+
+        relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
+        relativeLayout.setVisibility(View.INVISIBLE);
     }
 
     private void displayPokemon(String tag) {
@@ -4244,32 +4328,41 @@ public class BattleFragment extends Fragment {
             return;
         }
 
+        RelativeLayout relativeLayout;
+        int layoutId;
+
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
-                getView().findViewById(R.id.p1a).setVisibility(View.VISIBLE);
+                layoutId = R.id.p1a;
                 ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
-                return;
+                break;
             case "p1b":
-                getView().findViewById(R.id.p1b).setVisibility(View.VISIBLE);
+                layoutId = R.id.p1b;
                 ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
-                return;
+                break;
             case "p1c":
-                getView().findViewById(R.id.p1c).setVisibility(View.VISIBLE);
+                layoutId = R.id.p1c;
                 ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
-                return;
+                break;
             case "p2a":
-                getView().findViewById(R.id.p2a).setVisibility(View.VISIBLE);
+                layoutId = R.id.p2a;
                 ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
-                return;
+                break;
             case "p2b":
-                getView().findViewById(R.id.p2b).setVisibility(View.VISIBLE);
+                layoutId = R.id.p2b;
                 ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
-                return;
-            case "p2c":
-                getView().findViewById(R.id.p2c).setVisibility(View.VISIBLE);
+                break;
+            default:
+                layoutId = R.id.p2c;
                 ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
-                return;
+        }
+        relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
+        relativeLayout.setVisibility(View.VISIBLE);
+        getView().findViewById(getSpriteId(tag)).setAlpha(1f);
+        ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
+        if (sub != null) {
+            relativeLayout.removeView(sub);
         }
     }
 
@@ -4317,7 +4410,7 @@ public class BattleFragment extends Fragment {
     }
 
     private int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
-        String[] specialPkm = {"Arceus", "Gourgeist"};
+        String[] specialPkm = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
         boolean special = false;
         String species = "";
         for (String sp : specialPkm) {
