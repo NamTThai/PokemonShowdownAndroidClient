@@ -405,6 +405,7 @@ public class BattleFragment extends Fragment {
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
             case "move":
+                // todo useMove line 2747 battle.js
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
                 toAppendBuilder = new StringBuilder();
@@ -490,13 +491,22 @@ public class BattleFragment extends Fragment {
                     toBeSwapped = findPokemonInTeam(playerTeam, species);
                 }
                 Collections.swap(playerTeam, getTeamSlot(messageDetails), toBeSwapped);
-                if (messageDetails.startsWith("p1")) {
-                    toAppendBuilder.append("Go! ").append(attacker).append('!');
-                } else {
-                    toAppendBuilder.append(mPlayer2).append(" sent out ").append(attacker).append("!");
-                }
 
                 setTeam(messageDetails, playerTeam);
+
+                if(command.equals("switch")) {
+                    //TODO need to buffer batonpass/uturn/voltswitch for switching out message
+                    //then we switch in
+                    if(messageDetails.startsWith("p2")) {
+                        toAppendBuilder.append(mPlayer2).append(" sent out ").append(species).append("!");
+                    } else {
+                        toAppendBuilder.append("Go! ").append(species).append("!");
+                    }
+                } else if (command.equals("drag")) {
+                    toAppendBuilder.append(species).append(" was dragged out!");
+                } else { //replace, no text here (illusion mons)
+                }
+
 
                 toast = makeToast(new SpannableStringBuilder(toAppendBuilder));
                 toast.addListener(new Animator.AnimatorListener() {
