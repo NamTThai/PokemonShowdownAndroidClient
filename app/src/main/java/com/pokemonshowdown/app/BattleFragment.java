@@ -1018,12 +1018,12 @@ public class BattleFragment extends Fragment {
                         case "wish":
                             //TODO TRY
                             String wisher;
-                            if (messageDetails.contains("[wish]")) {
-                                separator = messageDetails.substring(messageDetails.indexOf("[wish]")).indexOf("|");
+                            if (messageDetails.contains("[wisher]")) {
+                                separator = messageDetails.substring(messageDetails.indexOf("[wisher]")).indexOf("|");
                                 if (separator != -1) {
-                                    wisher = messageDetails.substring(messageDetails.indexOf("[wish]") + 5, separator);
+                                    wisher = messageDetails.substring(messageDetails.indexOf("[wisher]") + 8, separator);
                                 } else {
-                                    wisher = messageDetails.substring(messageDetails.indexOf("[wish]") + 5);
+                                    wisher = messageDetails.substring(messageDetails.indexOf("[wisher]") + 8);
                                 }
                                 toAppendBuilder.append(getPrintableOutputPokemonSide(wisher)).append("'s wish came true!");
                             }
