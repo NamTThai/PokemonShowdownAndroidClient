@@ -3842,7 +3842,6 @@ public class BattleFragment extends Fragment {
                 startAnimation(animatorSet);
                 break;
 
-
             case "-weather":
                 String weather = split[0];
                 boolean upkeep = false;
