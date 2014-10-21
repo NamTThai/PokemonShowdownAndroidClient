@@ -1591,21 +1591,21 @@ public class BattleFragment extends Fragment {
             case "-crit":
                 toAppendSpannable = new SpannableString("It's a critical hit!");
                 toast = makeMinorToast(toAppendSpannable);
-                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Critical!"));
                 startAnimation(animatorSet);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-supereffective":
                 toAppendSpannable = new SpannableString("It's super effective!");
                 toast = makeMinorToast(toAppendSpannable);
-                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Booya!"));
                 startAnimation(animatorSet);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-resisted":
                 toAppendSpannable = new SpannableString("It's not very effective...");
                 toast = makeMinorToast(toAppendSpannable);
-                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Resisted!"));
                 startAnimation(animatorSet);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
@@ -1616,7 +1616,7 @@ public class BattleFragment extends Fragment {
                 toAppendBuilder.append(".");
                 toAppendSpannable = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(toAppendSpannable);
-                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Immuned!"));
                 startAnimation(animatorSet);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
@@ -1631,7 +1631,7 @@ public class BattleFragment extends Fragment {
                 }
                 toAppendSpannable = new SpannableStringBuilder(toAppendBuilder);
                 toast = makeMinorToast(toAppendSpannable);
-                animatorSet = createFlyingMessage(split[0], toast, toAppendSpannable);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString("Missed!"));
                 startAnimation(animatorSet);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
@@ -2241,6 +2241,8 @@ public class BattleFragment extends Fragment {
                     }
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-endability":
@@ -2260,6 +2262,8 @@ public class BattleFragment extends Fragment {
                     }
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-transform":
@@ -2267,6 +2271,35 @@ public class BattleFragment extends Fragment {
                 defender = getPrintable(split[1]);
                 toAppend = attacker + " transformed into " + defender + "!";
                 logMessage = new SpannableString(toAppend);
+                toast = makeMinorToast(logMessage);
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        ImageView orgn = (ImageView) getView().findViewById(getSpriteId(split[0]));
+                        ImageView dest = (ImageView) getView().findViewById(getSpriteId(split[1]));
+                        orgn.setImageDrawable(dest.getDrawable());
+                        copyBoost(split[1], split[0]);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                startAnimation(toast);
                 break;
 
             case "-formechange":
@@ -2276,6 +2309,9 @@ public class BattleFragment extends Fragment {
 
             case "-start":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                animatorSet = new AnimatorSet();
+                final String newEffect;
+                newEffect = getPrintable(split[1]);
                 switch (getPrintable(toId(split[1]))) {
                     case "typechange":
                         if (fromEffect != null) {
@@ -2312,11 +2348,53 @@ public class BattleFragment extends Fragment {
                             toAppendBuilder.append(attackerOutputName).append(" is already confused!");
                         } else {
                             toAppendBuilder.append(attackerOutputName).append(" became confused!");
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    setAddonStatus(split[0], newEffect);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
 
                     case "leechseed":
                         toAppendBuilder.append(attackerOutputName).append(" was seeded!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "mudsport":
@@ -2329,23 +2407,128 @@ public class BattleFragment extends Fragment {
 
                     case "yawn":
                         toAppendBuilder.append(attackerOutputName).append(" grew drowsy!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "flashfire":
                         attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
                         toAppendBuilder.append("The power of ").append(attackerOutputName).append("'s Fire-type moves rose!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "taunt":
                         toAppendBuilder.append(attackerOutputName).append(" fell for the taunt!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "imprison":
                         toAppendBuilder.append(attackerOutputName).append(" sealed the opponent's move(s)!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "disable":
                         toAppendBuilder.append(attackerOutputName).append("'s").append(getPrintable(split[2])).append(" was disabled!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "embargo":
@@ -2354,10 +2537,52 @@ public class BattleFragment extends Fragment {
 
                     case "ingrain":
                         toAppendBuilder.append(attackerOutputName).append(" planted its roots!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "aquaring":
                         toAppendBuilder.append(attackerOutputName).append(" surrounded itself with a veil of water!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "stockpile1":
@@ -2390,6 +2615,27 @@ public class BattleFragment extends Fragment {
 
                     case "encore":
                         toAppendBuilder.append(attackerOutputName).append(" received an encore!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "bide":
@@ -2398,6 +2644,27 @@ public class BattleFragment extends Fragment {
 
                     case "slowstart":
                         toAppendBuilder.append(attackerOutputName).append(" can't get it going because of its Slow Start!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "attract":
@@ -2406,10 +2673,52 @@ public class BattleFragment extends Fragment {
                         } else {
                             toAppendBuilder.append(attackerOutputName).append(" fell in love!");
                         }
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "autotomize":
                         toAppendBuilder.append(attackerOutputName).append(" became nimble!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "focusenergy":
@@ -2419,18 +2728,102 @@ public class BattleFragment extends Fragment {
                     case "curse":
                         attackerOutputName = getPrintableOutputPokemonSide(split[0], false);
                         toAppendBuilder.append(getPrintableOutputPokemonSide(ofSource)).append(" cut its own HP and laid a curse on ").append(attackerOutputName).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "nightmare":
                         toAppendBuilder.append(attackerOutputName).append(" began having a nightmare!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "magnetrise":
                         toAppendBuilder.append(attackerOutputName).append(" levitated with electromagnetism!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "smackdown":
                         toAppendBuilder.append(attackerOutputName).append(" fell straight down!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "substitute":
@@ -2442,6 +2835,7 @@ public class BattleFragment extends Fragment {
                         } else if (messageDetails.contains("[already]")) {
                             toAppendBuilder.append(attackerOutputName).append(" already has a substitute!");
                         } else {
+                            // TODO: setup substitute
                             toAppendBuilder.append(attackerOutputName).append(" put in a substitute!");
                         }
                         break;
@@ -2456,10 +2850,52 @@ public class BattleFragment extends Fragment {
 
                     case "doomdesire":
                         toAppendBuilder.append(attackerOutputName).append(" chose Doom Desire as its destiny!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "futuresight":
                         toAppendBuilder.append(attackerOutputName).append(" foresaw an attack!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                setAddonStatus(split[0], newEffect);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "mimic":
@@ -2480,11 +2916,37 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
             case "-end":
                 attacker = split[0];
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                animatorSet = new AnimatorSet();
+                newEffect = getPrintable(split[1]);
+                animatorSet.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        removeAddonStatus(split[0], newEffect);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
                 switch (getPrintable(toId(split[1]))) {
                     case "powertrick":
                         toAppendBuilder.append(attackerOutputName).append(" switched its Attack and Defense!");
@@ -2552,6 +3014,7 @@ public class BattleFragment extends Fragment {
                         break;
 
                     case "substitute":
+                        // TODO destroy this substitute
                         toAppendBuilder.append(attackerOutputName).append("'s substitute faded!");
                         break;
 
@@ -2576,6 +3039,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
             case "-singleturn":
@@ -3266,8 +3732,6 @@ public class BattleFragment extends Fragment {
     }
 
     private AnimatorSet makeMinorToast(final Spannable message) {
-        message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         if (getView() == null) {
             return null;
         }
@@ -3997,7 +4461,15 @@ public class BattleFragment extends Fragment {
         for (String stat : stats) {
             TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
             if (orgStat != null) {
-                destTempStat.addView(orgStat);
+                TextView destStat = new TextView(getActivity());
+                destStat.setTag(stat);
+                destStat.setPadding(2, 2, 2, 2);
+                destStat.setTextSize(10);
+                destStat.setText(orgStat.getText());
+                destStat.setBackground(orgStat.getBackground());
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                destStat.setLayoutParams(layoutParams);
+                destTempStat.addView(destStat);
             }
         }
     }
@@ -4025,7 +4497,7 @@ public class BattleFragment extends Fragment {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
                 layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
-                layoutParams.setMargins(0, (int) (imageView.getHeight() * 0.5f), 0, 0);
+                layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
                 relativeLayout.addView(flyingMessage, layoutParams);
             }
 
