@@ -119,7 +119,7 @@ public class BattleFragment extends Fragment {
         try {
             processMajorAction(message);
         } catch (Exception e) {
-            Log.d(BTAG, "error is in " + message);
+            Log.d(BTAG, "error is in " + message + " " + e.toString());
         }
     }
 
@@ -1825,13 +1825,7 @@ public class BattleFragment extends Fragment {
                 if (fromEffectId != null) {
                     fromEffectId = getPrintable(fromEffectId);
                     switch (getPrintable(fromEffectId)) {
-                        // seems like this doenst happen at this time
-                        // |move|p2a: Sigilyph|Psycho Shift|p1a: Chansey
-                        // |-status|p1a: Chansey|tox
-                        //  |-curestatus|p2a: Sigilyph|tox
-                        // todo buffer last move?
                         case "psychoshift":
-                            //ofeffect should always be !null at that time
                             defenderOutputName = getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" moved its status onto ").append(defenderOutputName);
                             flag = true;
@@ -3157,6 +3151,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString(getPrintable(split[1])));
+                startAnimation(animatorSet);
                 break;
 
             case "-singlemove":
@@ -3170,6 +3167,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString(getPrintable(split[1])));
+                startAnimation(animatorSet);
                 break;
 
             case "-activate":
@@ -3421,6 +3421,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet = createFlyingMessage(split[0], toast, new SpannableString(getPrintable(split[1])));
+                startAnimation(animatorSet);
                 break;
 
             case "-sidestart":
@@ -3432,17 +3435,91 @@ public class BattleFragment extends Fragment {
 
                 fromEffect = split[1];
                 fromEffectId = getPrintable(toId(fromEffect));
+                animatorSet = new AnimatorSet();
                 switch (fromEffectId) {
                     case "stealthrock":
                         toAppendBuilder.append("Pointed stones float in the air around ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
+                                getView().findViewById(id).setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "spikes":
                         toAppendBuilder.append("Spikes were scattered all around the feet of ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                getView().findViewById(getLastVisibleSpike(messageDetails, true)).setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "toxicspikes":
                         toAppendBuilder.append("Toxic spikes were scattered all around the feet of ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                getView().findViewById(getLastVisibleTSpike(messageDetails, true)).setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "stickyweb":
@@ -3455,10 +3532,60 @@ public class BattleFragment extends Fragment {
 
                     case "reflect":
                         toAppendBuilder.append("Reflect raised ").append(side).append("'s Defense!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
+                                getView().findViewById(id).setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "lightscreen":
                         toAppendBuilder.append("Light Screen raised ").append(side).append("'s Special Defense!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
+                                getView().findViewById(id).setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "safeguard":
@@ -3493,6 +3620,9 @@ public class BattleFragment extends Fragment {
                 }
 
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
             case "-sideend":
@@ -3505,17 +3635,94 @@ public class BattleFragment extends Fragment {
                 fromEffect = split[1];
                 fromEffectId = getPrintable(toId(fromEffect));
 
+                animatorSet = new AnimatorSet();
                 switch (fromEffectId) {
                     case "stealthrock":
                         toAppendBuilder.append("The pointed stones disappeared from around ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
+                                getView().findViewById(id).setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "spikes":
                         toAppendBuilder.append("The spikes disappeared from around ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                getView().findViewById(getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                getView().findViewById(getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                getView().findViewById(getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "toxicspikes":
                         toAppendBuilder.append("The poison spikes disappeared from around ").append(side).append("!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                getView().findViewById(getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                getView().findViewById(getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "stickyweb":
@@ -3530,11 +3737,61 @@ public class BattleFragment extends Fragment {
                     case "reflect":
                         side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
                         toAppendBuilder.append(side).append("'s Reflect wore off!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
+                                getView().findViewById(id).setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "lightscreen":
                         side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
                         toAppendBuilder.append(side).append("'s Reflect wore off!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
+                                getView().findViewById(id).setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "safeguard":
@@ -3569,8 +3826,10 @@ public class BattleFragment extends Fragment {
                         break;
                 }
 
-
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
 
@@ -3728,6 +3987,8 @@ public class BattleFragment extends Fragment {
 
             case "-message":
                 logMessage = new SpannableString(messageDetails);
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-anim":
@@ -4284,6 +4545,108 @@ public class BattleFragment extends Fragment {
                 return R.drawable.sprites_substitute_back;
             default:
                 return R.drawable.sprites_substitute;
+        }
+    }
+
+    private int getLastVisibleSpike(String tag, boolean nextInvisible) {
+        if (getView() == null) {
+            return R.id.field_spikes1;
+        }
+
+        tag = tag.substring(0, 2);
+        switch (tag) {
+            case "p1":
+                View layer1 = getView().findViewById(R.id.field_spikes1);
+                if (layer1.getVisibility() == View.INVISIBLE) {
+                    return R.id.field_spikes1;
+                } else {
+                    View layer2 = getView().findViewById(R.id.field_spikes2);
+                    if (layer2.getVisibility() == View.INVISIBLE) {
+                        if (nextInvisible) {
+                            return R.id.field_spikes2;
+                        } else {
+                            return R.id.field_spikes1;
+                        }
+                    } else {
+                        View layer3 = getView().findViewById(R.id.field_spikes3);
+                        if (layer3.getVisibility() == View.INVISIBLE) {
+                            if (nextInvisible) {
+                                return R.id.field_spikes3;
+                            } else {
+                                return R.id.field_spikes2;
+                            }
+                        } else {
+                            return R.id.field_spikes3;
+                        }
+                    }
+                }
+            default:
+                layer1 = getView().findViewById(R.id.field_spikes1_o);
+                if (layer1.getVisibility() == View.INVISIBLE) {
+                    return R.id.field_spikes1_o;
+                } else {
+                    View layer2 = getView().findViewById(R.id.field_spikes2_o);
+                    if (layer2.getVisibility() == View.INVISIBLE) {
+                        if (nextInvisible) {
+                            return R.id.field_spikes2_o;
+                        } else {
+                            return R.id.field_spikes1_o;
+                        }
+                    } else {
+                        View layer3 = getView().findViewById(R.id.field_spikes3_o);
+                        if (layer3.getVisibility() == View.INVISIBLE) {
+                            if (nextInvisible) {
+                                return R.id.field_spikes3_o;
+                            } else {
+                                return R.id.field_spikes2_o;
+                            }
+                        } else {
+                            return R.id.field_spikes3_o;
+                        }
+                    }
+                }
+        }
+    }
+
+    private int getLastVisibleTSpike(String tag, boolean nextInvisible) {
+        if (getView() == null) {
+            return R.id.field_tspikes1;
+        }
+
+        tag = tag.substring(0, 2);
+        switch (tag) {
+            case "p1":
+                View layer1 = getView().findViewById(R.id.field_tspikes1);
+                if (layer1.getVisibility() == View.INVISIBLE) {
+                    return R.id.field_tspikes1;
+                } else {
+                    View layer2 = getView().findViewById(R.id.field_tspikes2);
+                    if (layer2.getVisibility() == View.INVISIBLE) {
+                        if (nextInvisible) {
+                            return R.id.field_tspikes2;
+                        } else {
+                            return R.id.field_tspikes1;
+                        }
+                    } else {
+                        return R.id.field_tspikes2;
+                    }
+                }
+            default:
+                layer1 = getView().findViewById(R.id.field_tspikes1_o);
+                if (layer1.getVisibility() == View.INVISIBLE) {
+                    return R.id.field_tspikes1_o;
+                } else {
+                    View layer2 = getView().findViewById(R.id.field_tspikes2_o);
+                    if (layer2.getVisibility() == View.INVISIBLE) {
+                        if (nextInvisible) {
+                            return R.id.field_tspikes2_o;
+                        } else {
+                            return R.id.field_tspikes1_o;
+                        }
+                    } else {
+                        return R.id.field_tspikes2_o;
+                    }
+                }
         }
     }
 
