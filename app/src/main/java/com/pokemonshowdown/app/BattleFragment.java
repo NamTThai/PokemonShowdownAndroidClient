@@ -464,6 +464,8 @@ public class BattleFragment extends Fragment {
 
                 remaining = remaining.substring(remaining.indexOf('|') + 1);
                 separator = remaining.indexOf(' ');
+                // TODO: Get Female sprite
+                // TODO: Get Shiny sprite
                 final int hpInt;
                 final String hpString;
                 final String status;
@@ -680,6 +682,8 @@ public class BattleFragment extends Fragment {
                         }
                         getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) getView().findViewById(R.id.turn)).setText(toAppend);
+                        (getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
+                        (getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
 
                     @Override
@@ -4043,9 +4047,9 @@ public class BattleFragment extends Fragment {
 
 
             case "-fieldstart":
-                attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                attackerOutputName = ofSource;
                 animatorSet = new AnimatorSet();
-                switch (getPrintable(toId(split[1]))) {
+                switch (getPrintable(toId(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
                         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -4100,13 +4104,13 @@ public class BattleFragment extends Fragment {
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(logMessage);
-                animatorSet.play(toast)
+                animatorSet.play(toast);
                 startAnimation(animatorSet);
                 break;
 
             case "-fieldend":
                 animatorSet = new AnimatorSet();
-                switch (getPrintable(toId(split[1]))) {
+                switch (getPrintable(toId(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append("The twisted dimensions returned to normal!");
                         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -4116,7 +4120,7 @@ public class BattleFragment extends Fragment {
                                     return;
                                 }
                                 int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
-                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(id);
+                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(BACKGROUND_LIBRARY[id]);
                             }
 
                             @Override
@@ -4162,12 +4166,12 @@ public class BattleFragment extends Fragment {
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(logMessage);
-                animatorSet.play(toast)
+                animatorSet.play(toast);
                 startAnimation(animatorSet);
                 break;
 
             case "-fieldactivate":
-                switch (getPrintable(toId(split[1]))) {
+                switch (getPrintable(toId(split[0]))) {
                     case "perishsong":
                         toAppendBuilder.append("All Pok&#xE9;mon hearing the song will faint in three turns!");
                         break;

@@ -2,12 +2,6 @@
 <pre-dex-items>
 
     <item
-        dex="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/app/build/pre-dexed/debug/jackson-databind-2.3.1-f846c431100e634cee9b19a5b3525c7c6c282cd4.jar"
-        jar="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/app/libs/jackson-databind-2.3.1.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="c4096a8323bbbcbeda072e3def123a9b66783361"/>
-    <item
         dex="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/app/build/pre-dexed/debug/classes-cab8a27d5c6abf8624fff214be146a6a62ae0f5e.jar"
         jar="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/build/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
         jumboMode="false"
@@ -31,5 +25,11 @@
         jumboMode="false"
         revision="20.0.0"
         sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+    <item
+        dex="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/app/build/pre-dexed/debug/jackson-databind-2.3.1-f846c431100e634cee9b19a5b3525c7c6c282cd4.jar"
+        jar="/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/app/libs/jackson-databind-2.3.1.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="c4096a8323bbbcbeda072e3def123a9b66783361"/>
 
 </pre-dex-items>
