@@ -39,12 +39,14 @@ import com.pokemonshowdown.data.Pokemon;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
+    public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_dampcave, R.drawable.bg_deepsea, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_mountain, R.drawable.bg_river, R.drawable.bg_route, R.drawable.bg_thunderplains, R.drawable.bg_volcanocave};
     private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     private final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
     private final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
@@ -88,6 +90,9 @@ public class BattleFragment extends Fragment {
             mRoomId = getArguments().getString(ROOM_ID);
         }
 
+        int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
+        ((ImageView) view.findViewById(R.id.battle_background)).setImageResource(BACKGROUND_LIBRARY[id]);
+
         view.findViewById(R.id.battlelog).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +124,7 @@ public class BattleFragment extends Fragment {
         try {
             processMajorAction(message);
         } catch (Exception e) {
-            Log.d(BTAG, "error is in " + message + " " + e.toString());
+            Log.d(BTAG, "error is in " + message, e);
         }
     }
 
@@ -502,9 +507,11 @@ public class BattleFragment extends Fragment {
                     } else {
                         toAppendBuilder.append("Go! ").append(species).append("!");
                     }
-                } else if (command.equals("drag")) {
-                    toAppendBuilder.append(species).append(" was dragged out!");
-                } else { //replace, no text here (illusion mons)
+                } else {
+                    if (command.equals("drag")) {
+                        toAppendBuilder.append(species).append(" was dragged out!");
+                    } else { //replace, no text here (illusion mons)
+                    }
                 }
 
 
@@ -837,12 +844,10 @@ public class BattleFragment extends Fragment {
             trimmedOfEffect = toId(ofSource);
         }
 
-        separator = messageDetails.indexOf('|');
         final String[] split = messageDetails.split("\\|");
 
         AnimatorSet toast;
         AnimatorSet animatorSet;
-        Animator animator;
 
         if (getView() == null) {
             return;
@@ -3843,11 +3848,12 @@ public class BattleFragment extends Fragment {
                 break;
 
             case "-weather":
-                String weather = split[0];
+                final String weather = split[0];
                 boolean upkeep = false;
                 if (split.length > 1) {
                     upkeep = true;
                 }
+                animatorSet = new AnimatorSet();
                 switch (weather) {
                     case "RainDance":
                         if (upkeep) {
@@ -3855,6 +3861,31 @@ public class BattleFragment extends Fragment {
                         } else {
                             toAppendBuilder.append("It started to rain!");
                             weatherExist = true;
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_raindance);
+                                    ((TextView) getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
                     case "Sandstorm":
@@ -3863,6 +3894,31 @@ public class BattleFragment extends Fragment {
                         } else {
                             toAppendBuilder.append("A sandstorm kicked up!");
                             weatherExist = true;
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_sandstorm);
+                                    ((TextView) getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
                     case "SunnyDay":
@@ -3871,6 +3927,31 @@ public class BattleFragment extends Fragment {
                         } else {
                             toAppendBuilder.append("The sunlight turned harsh!");
                             weatherExist = true;
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_sunnyday);
+                                    ((TextView) getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
                     case "Hail":
@@ -3879,6 +3960,31 @@ public class BattleFragment extends Fragment {
                         } else {
                             toAppendBuilder.append("It started to hail!");
                             weatherExist = true;
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_hail);
+                                    ((TextView) getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         break;
                     case "none":
@@ -3897,20 +4003,75 @@ public class BattleFragment extends Fragment {
                                     toAppendBuilder.append("The hail stopped.");
                                     break;
                             }
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (getView() == null) {
+                                        return;
+                                    }
+                                    int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
+                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(id);
+                                    ((TextView) getView().findViewById(R.id.weather)).setText(null);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
                         }
                         weatherExist = false;
                         break;
                 }
                 currentWeather = weather;
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
 
             case "-fieldstart":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                animatorSet = new AnimatorSet();
                 switch (getPrintable(toId(split[1]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
+                                ((TextView) getView().findViewById(R.id.weather)).setText(getPrintable(split[1]));
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "wonderroom":
@@ -3938,6 +4099,9 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                animatorSet.play(toast);
+                startAnimation(animatorSet);
                 break;
 
             case "-fieldend":
@@ -4002,6 +4166,8 @@ public class BattleFragment extends Fragment {
 
             case "-anim":
                 logMessage = new SpannableString(command + ":" + messageDetails);
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             default:
@@ -4819,13 +4985,14 @@ public class BattleFragment extends Fragment {
         }
 
         int separator = split.indexOf(':');
-        sb.append(split.substring(separator + 1).trim());
+        String toAppend = (separator == -1) ? split.trim() : split.substring(separator + 1).trim();
+        sb.append(toAppend);
         return sb.toString();
     }
 
     private String getPrintable(String split) {
         int separator = split.indexOf(':');
-        return split.substring(separator + 1).trim();
+        return (separator == -1) ? split.trim() : split.substring(separator + 1).trim();
     }
 
     private String toId(String str) {

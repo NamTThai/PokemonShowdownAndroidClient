@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/bg_beach"
         android:adjustViewBounds="true"
         android:contentDescription="@string/background"/>
 
@@ -238,7 +237,6 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textStyle="italic"
-        android:visibility="gone"
         style="@style/text_shadow_white"
         android:layout_marginLeft="12dp"
         android:layout_alignLeft="@id/battle_interface"
