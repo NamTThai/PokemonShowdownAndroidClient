@@ -5,13 +5,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/field_reflect"
+        android:layout_width="192dp"
+        android:layout_height="72dp"
+        android:src="@drawable/field_reflect"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="48dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_reflect"/>
+
+    <ImageView
+        android:id="@+id/field_lightscreen"
+        android:layout_width="192dp"
+        android:layout_height="72dp"
+        android:src="@drawable/field_lightscreen"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="56dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_lightscreen"/>
+
     <TextView
         android:id="@+id/toast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/editable_frame_grey"
+        android:background="@drawable/editable_frame_blackwhite"
         android:alpha="0"
         android:padding="2dp"
         android:layout_margin="4dp"/>
@@ -67,16 +88,6 @@
                 />
 
         </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/p1a_temp_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@id/p1a_hp_layout"
-            android:layout_alignLeft="@id/p1a_hp_layout">
-            
-            </LinearLayout>
 
         <ImageView
             android:id="@+id/p1a_icon"
@@ -85,6 +96,16 @@
             android:src="@drawable/sprites_abomasnow"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/p1a_hp_layout"/>
+
+        <LinearLayout
+            android:id="@+id/p1a_temp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/p1a_hp_layout"
+            android:layout_alignLeft="@id/p1a_hp_layout">
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -140,6 +161,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p1b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1b_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p1b_temp_status"
             android:layout_width="wrap_content"
@@ -149,14 +178,6 @@
             android:layout_alignLeft="@id/p1b_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p1b_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1b_hp_layout"/>
 
     </RelativeLayout>
 
@@ -212,6 +233,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p1c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p1c_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p1c_temp_status"
             android:layout_width="wrap_content"
@@ -221,14 +250,6 @@
             android:layout_alignLeft="@id/p1c_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p1c_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1c_hp_layout"/>
 
     </RelativeLayout>
 
@@ -285,6 +306,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2c_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2c_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2c_temp_status"
             android:layout_width="wrap_content"
@@ -294,14 +323,6 @@
             android:layout_alignLeft="@id/p2c_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p2c_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2c_hp_layout"/>
 
     </RelativeLayout>
 
@@ -358,6 +379,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2b_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2b_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2b_temp_status"
             android:layout_width="wrap_content"
@@ -367,14 +396,6 @@
             android:layout_alignLeft="@id/p2b_hp_layout">
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/p2b_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2b_hp_layout"/>
 
     </RelativeLayout>
 
@@ -431,6 +452,14 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/p2a_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sprites_abomasnow"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/p2a_hp_layout"/>
+
         <LinearLayout
             android:id="@+id/p2a_temp_status"
             android:layout_width="wrap_content"
@@ -441,14 +470,167 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/p2a_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2a_hp_layout"/>
-
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/field_rocks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_rocks"
+        android:alpha="0.6"
+        android:layout_alignRight="@id/p1a"
+        android:layout_alignBottom="@id/p1a"
+        android:layout_marginRight="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toRightOf="@id/p1a"
+        android:layout_alignBottom="@id/p1a"
+        android:layout_marginLeft="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toRightOf="@id/p1a"
+        android:layout_alignBottom="@id/p1a"
+        android:layout_marginBottom="16dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toLeftOf="@id/field_rocks"
+        android:layout_alignBottom="@id/field_rocks"
+        android:layout_marginRight="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_tspikes1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_tspikes"
+        android:alpha="0.6"
+        android:layout_toRightOf="@id/field_spikes1"
+        android:layout_alignBottom="@id/field_spikes1"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_tspikes2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_tspikes"
+        android:alpha="0.6"
+        android:layout_toRightOf="@id/field_spikes2"
+        android:layout_alignBottom="@id/field_spikes2"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_rocks_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_rocks"
+        android:alpha="0.6"
+        android:layout_alignLeft="@id/p2a"
+        android:layout_alignBottom="@id/p2a"
+        android:layout_marginLeft="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes1_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toLeftOf="@id/p2a"
+        android:layout_alignBottom="@id/p2a"
+        android:layout_marginRight="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes2_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toLeftOf="@id/p2a"
+        android:layout_alignBottom="@id/p2a"
+        android:layout_marginBottom="16dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_spikes3_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_spikes"
+        android:alpha="0.6"
+        android:layout_toRightOf="@id/field_rocks_o"
+        android:layout_alignBottom="@id/field_rocks_o"
+        android:layout_marginLeft="8dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_tspikes1_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_tspikes"
+        android:alpha="0.6"
+        android:layout_toLeftOf="@id/field_spikes1_o"
+        android:layout_alignBottom="@id/field_spikes1_o"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_tspikes2_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/field_tspikes"
+        android:alpha="0.6"
+        android:layout_toLeftOf="@id/field_spikes2_o"
+        android:layout_alignBottom="@id/field_spikes2_o"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_sr"/>
+
+    <ImageView
+        android:id="@+id/field_reflect_o"
+        android:layout_width="192dp"
+        android:layout_height="72dp"
+        android:src="@drawable/field_reflect"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="80dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_reflect"/>
+
+    <ImageView
+        android:id="@+id/field_lightscreen_o"
+        android:layout_width="192dp"
+        android:layout_height="72dp"
+        android:src="@drawable/field_lightscreen"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="88dp"
+        android:visibility="invisible"
+        android:contentDescription="@string/dmg_calc_field_lightscreen"/>
 
 </RelativeLayout>
