@@ -326,6 +326,37 @@ public class Pokemon implements Serializable {
         return R.drawable.sprites_0;
     }
 
+    public static int getPokemonSprite(Context appContext, String name, boolean withAppContext, boolean back, boolean female, boolean shiny) {
+        try {
+            JSONObject jsonObject;
+            if (withAppContext) {
+                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            } else {
+                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            }
+            String prefix = (shiny) ? "sprshiny_" : "sprites_";
+            String pkmName = jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "");
+            int toReturn;
+            if (female) {
+                String drawableName = prefix + pkmName + "_f";
+                toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+                if (toReturn == 0) {
+                    drawableName = prefix + pkmName;
+                    toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+                }
+            } else {
+                String drawableName = prefix + pkmName;
+                toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+            }
+            return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+            return R.drawable.sprites_0;
+        } catch (NullPointerException e) {
+            return R.drawable.sprites_0;
+        }
+    }
+
     public static int getPokemonIcon(Context appContext, String name, boolean withAppContext) {
         try {
             JSONObject jsonObject;

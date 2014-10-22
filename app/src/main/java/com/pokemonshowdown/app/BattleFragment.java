@@ -139,7 +139,7 @@ public class BattleFragment extends Fragment {
         }
 
         int separator = messageDetails.indexOf('|');
-        String[] split = messageDetails.split("\\|");
+        final String[] split = messageDetails.split("\\|");
 
         final String position, attacker;
         int start;
@@ -304,11 +304,11 @@ public class BattleFragment extends Fragment {
                         getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
                         for (int i = 0; i < mPlayer1Team.size(); i++) {
                             ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p1", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(mPlayer1Team.get(i)), false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(mPlayer1Team.get(i)), false, true, false, false));
                         }
                         for (int i = 0; i < mPlayer2Team.size(); i++) {
                             ImageView sprites = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p2", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(mPlayer2Team.get(i)), false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(mPlayer2Team.get(i)), false, false, false, false));
                         }
                     }
                 });
@@ -440,32 +440,39 @@ public class BattleFragment extends Fragment {
                 toAppendBuilder = new StringBuilder();
                 attacker = messageDetails.substring(5, separator);
                 remaining = messageDetails.substring(separator + 1);
+                final boolean shiny;
+                final boolean female;
+                final boolean back = messageDetails.startsWith("p1");
                 String species, level, gender = "";
                 separator = remaining.indexOf(',');
                 if (separator == -1) {
                     level = "";
+                    shiny = false;
+                    female = false;
                     separator = remaining.indexOf('|');
                     species = remaining.substring(0, separator);
                 } else {
                     species = remaining.substring(0, separator);
                     remaining = remaining.substring(separator + 2);
-                    separator = remaining.indexOf(',');
-                    if (separator == -1) {
-                        level = remaining.substring(0, remaining.indexOf('|'));
-                        if (level.length() == 1) {
-                            gender = level;
-                            level = "";
-                        }
+                    if (remaining.contains("M")) {
+                        gender = "M";
+                    }
+                    if (remaining.contains("F")) {
+                        gender = "F";
+                    }
+                    shiny = remaining.contains("shiny");
+                    female = remaining.contains("F");
+                    if (remaining.contains(", L")) {
+                        level = remaining.substring(remaining.indexOf(", L") + 2);
+                        separator = level.indexOf(",");
+                        level = (separator == -1) ? level.substring(0, level.indexOf('|')) : level.substring(0, separator);
                     } else {
-                        level = remaining.substring(0, separator);
-                        gender = remaining.substring(separator + 2, separator + 3);
+                        level = "";
                     }
                 }
 
                 remaining = remaining.substring(remaining.indexOf('|') + 1);
                 separator = remaining.indexOf(' ');
-                // TODO: Get Female sprite
-                // TODO: Get Shiny sprite
                 final int hpInt;
                 final String hpString;
                 final String status;
@@ -481,7 +488,7 @@ public class BattleFragment extends Fragment {
 
                 String speciesId = MyApplication.toId(species);
 
-                spriteId = Pokemon.getPokemonSprite(getActivity(), speciesId, false);
+                spriteId = Pokemon.getPokemonSprite(getActivity(), speciesId, false, back, female, shiny);
                 iconId = Pokemon.getPokemonIcon(getActivity(), speciesId, false);
 
                 // Switching sprites and icons
@@ -602,8 +609,9 @@ public class BattleFragment extends Fragment {
                             return;
                         }
 
+                        boolean back = split[0].startsWith("p1");
                         ImageView sprite = (ImageView) getView().findViewById(getSpriteId(position));
-                        sprite.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(forme), false));
+                        sprite.setImageResource(Pokemon.getPokemonSprite(getActivity(), MyApplication.toId(forme), false, back, false, false));
                         ImageView icon = (ImageView) getView().findViewById(getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(getActivity(), MyApplication.toId(forme), false));
                     }
