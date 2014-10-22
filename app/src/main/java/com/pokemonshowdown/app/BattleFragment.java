@@ -46,7 +46,7 @@ public class BattleFragment extends Fragment {
     public final static String ROOM_ID = "Room Id";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
-    public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_dampcave, R.drawable.bg_deepsea, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_mountain, R.drawable.bg_river, R.drawable.bg_route, R.drawable.bg_thunderplains, R.drawable.bg_volcanocave};
+    public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
     private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     private final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
     private final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
@@ -3868,7 +3868,7 @@ public class BattleFragment extends Fragment {
                                     if (getView() == null) {
                                         return;
                                     }
-                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_raindance);
+                                    ((ImageView) getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
                                     ((TextView) getView().findViewById(R.id.weather)).setText(weather);
                                 }
 
@@ -3901,7 +3901,7 @@ public class BattleFragment extends Fragment {
                                     if (getView() == null) {
                                         return;
                                     }
-                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_sandstorm);
+                                    ((ImageView) getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sandstorm);
                                     ((TextView) getView().findViewById(R.id.weather)).setText(weather);
                                 }
 
@@ -3934,7 +3934,7 @@ public class BattleFragment extends Fragment {
                                     if (getView() == null) {
                                         return;
                                     }
-                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_sunnyday);
+                                    ((ImageView) getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
                                     ((TextView) getView().findViewById(R.id.weather)).setText(weather);
                                 }
 
@@ -3950,6 +3950,7 @@ public class BattleFragment extends Fragment {
 
                                 @Override
                                 public void onAnimationRepeat(Animator animation) {
+
 
                                 }
                             });
@@ -3967,7 +3968,7 @@ public class BattleFragment extends Fragment {
                                     if (getView() == null) {
                                         return;
                                     }
-                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_hail);
+                                    ((ImageView) getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_hail);
                                     ((TextView) getView().findViewById(R.id.weather)).setText(weather);
                                 }
 
@@ -4010,8 +4011,7 @@ public class BattleFragment extends Fragment {
                                     if (getView() == null) {
                                         return;
                                     }
-                                    int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
-                                    ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(id);
+                                    ((ImageView) getView().findViewById(R.id.weather_background)).setImageResource(0);
                                     ((TextView) getView().findViewById(R.id.weather)).setText(null);
                                 }
 
@@ -4044,9 +4044,34 @@ public class BattleFragment extends Fragment {
 
             case "-fieldstart":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
+                animatorSet = new AnimatorSet();
                 switch (getPrintable(toId(split[1]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "wonderroom":
@@ -4075,7 +4100,8 @@ public class BattleFragment extends Fragment {
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(logMessage);
-                startAnimation(toast);
+                animatorSet.play(toast)
+                startAnimation(animatorSet);
                 break;
 
             case "-fieldend":
@@ -4083,6 +4109,31 @@ public class BattleFragment extends Fragment {
                 switch (getPrintable(toId(split[1]))) {
                     case "trickroom":
                         toAppendBuilder.append("The twisted dimensions returned to normal!");
+                        animatorSet.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
+                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(id);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
                         break;
 
                     case "wonderroom":
@@ -4111,7 +4162,8 @@ public class BattleFragment extends Fragment {
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(logMessage);
-                startAnimation(toast);
+                animatorSet.play(toast)
+                startAnimation(animatorSet);
                 break;
 
             case "-fieldactivate":
