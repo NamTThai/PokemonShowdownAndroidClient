@@ -121,11 +121,12 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(String message) {
-        try {
+        /*try {
             processMajorAction(message);
         } catch (Exception e) {
             Log.d(BTAG, "error is in " + message, e);
-        }
+        }*/
+        processMajorAction(message);
     }
 
     public void processMajorAction(final String message) {
@@ -4043,35 +4044,9 @@ public class BattleFragment extends Fragment {
 
             case "-fieldstart":
                 attackerOutputName = getPrintableOutputPokemonSide(split[0]);
-                animatorSet = new AnimatorSet();
                 switch (getPrintable(toId(split[1]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                                if (getView() == null) {
-                                    return;
-                                }
-                                ((ImageView) getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
-                                ((TextView) getView().findViewById(R.id.weather)).setText(getPrintable(split[1]));
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
-                            }
-                        });
                         break;
 
                     case "wonderroom":
@@ -4100,11 +4075,11 @@ public class BattleFragment extends Fragment {
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = makeMinorToast(logMessage);
-                animatorSet.play(toast);
-                startAnimation(animatorSet);
+                startAnimation(toast);
                 break;
 
             case "-fieldend":
+                animatorSet = new AnimatorSet();
                 switch (getPrintable(toId(split[1]))) {
                     case "trickroom":
                         toAppendBuilder.append("The twisted dimensions returned to normal!");
@@ -4135,6 +4110,8 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-fieldactivate":
@@ -4156,6 +4133,8 @@ public class BattleFragment extends Fragment {
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
+                toast = makeMinorToast(logMessage);
+                startAnimation(toast);
                 break;
 
             case "-message":
