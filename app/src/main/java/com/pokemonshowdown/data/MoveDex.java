@@ -18,6 +18,11 @@ import java.util.Iterator;
 public class MoveDex {
     private final static String MTAG = MoveDex.class.getName();
     private HashMap<String, String> mMoveDexEntries;
+    private HashMap<String, Integer> mMoveAnimationEntries;
+
+    public final static Integer CUSTOMIZED = -1;
+    public final static Integer SHAKE = 0;
+    public final static Integer DANCE = 1;
 
     private static MoveDex sMoveDex;
     private Context mAppContext;
@@ -25,6 +30,7 @@ public class MoveDex {
     private MoveDex(Context appContext) {
         mAppContext = appContext;
         mMoveDexEntries = readFile(appContext);
+        initializeAnimationEntries();
     }
 
     public static MoveDex get(Context c) {
@@ -39,6 +45,15 @@ public class MoveDex {
             sMoveDex = new MoveDex(appContext);
         }
         return sMoveDex;
+    }
+
+    public HashMap<String, Integer> getMoveAnimationEntries() {
+        return mMoveAnimationEntries;
+    }
+
+    public Integer getMoveAnimationTag(String move) {
+        Integer animation = getMoveAnimationEntries().get(move);
+        return (animation == null) ? SHAKE : animation;
     }
 
     public HashMap<String, String> getMoveDexEntries() {
@@ -118,5 +133,24 @@ public class MoveDex {
         }
 
         return MoveDexEntries;
+    }
+
+    private void initializeAnimationEntries() {
+        mMoveAnimationEntries = new HashMap<>();
+        String[] customizedEntries = {"dragonpulse"};
+        String[] shakeEntries = {"taunt", "swagger", "swordsdance", "quiverdance", "dragondance", "agility",
+                "doubleteam", "metronome", "teeterdance", "splash", "encore"};
+        String[] danceEntries = {"attract", "raindance", "sunnyday",
+                "hail", "sandstorm", "gravity", "trickroom", "magicroom", "wonderroom"};
+        for (String customized : customizedEntries) {
+            mMoveAnimationEntries.put(customized, CUSTOMIZED);
+        }
+        for (String shake : shakeEntries) {
+            mMoveAnimationEntries.put(shake, SHAKE);
+        }
+        for (String dance : danceEntries) {
+            mMoveAnimationEntries.put(dance, DANCE);
+        }
+
     }
 }

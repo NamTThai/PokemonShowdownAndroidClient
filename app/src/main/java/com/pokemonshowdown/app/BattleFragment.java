@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.BattleAnimation;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
@@ -47,21 +50,21 @@ public class BattleFragment extends Fragment {
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
     public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
-    private final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
-    private final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
-    private final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
+    public final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
+    public final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
+    public final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
 
-    private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
-    private int[] progressBarHolder = new int[6];
+    public ArrayDeque<AnimatorSet> mAnimatorSetQueue;
+    public int[] progressBarHolder = new int[6];
 
-    private String mRoomId;
-    private String mPlayer1;
-    private String mPlayer2;
-    private ArrayList<String> mPlayer1Team;
-    private ArrayList<String> mPlayer2Team;
+    public String mRoomId;
+    public String mPlayer1;
+    public String mPlayer2;
+    public ArrayList<String> mPlayer1Team;
+    public ArrayList<String> mPlayer2Team;
 
-    private String currentWeather;
-    private boolean weatherExist;
+    public String currentWeather;
+    public boolean weatherExist;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -413,21 +416,46 @@ public class BattleFragment extends Fragment {
             case "move":
                 // todo useMove line 2747 battle.js
                 attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
                 toAppendBuilder = new StringBuilder();
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing's ");
                 }
                 toAppendBuilder.append(attacker).append(" used ");
-                String move = remaining.substring(0, remaining.indexOf('|'));
+                final String move = split[1];
                 toAppendBuilder.append(move).append("!");
                 toAppend = toAppendBuilder.toString();
                 start = toAppend.indexOf(move);
                 toAppendSpannable = new SpannableString(toAppend);
                 toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                toast = makeToast(toAppendSpannable);
+                logMessage = toAppendSpannable;
+                toast = makeToast(logMessage);
+
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (getView() == null) {
+                            return;
+                        }
+                        AnimatorSet animatorSet = BattleAnimation.processMove(move, getView(), BattleFragment.this, split);
+                        animatorSet.start();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
                 startAnimation(toast);
-                logMessage = new SpannableString(toAppendBuilder);
                 break;
 
             case "switch":
@@ -818,7 +846,7 @@ public class BattleFragment extends Fragment {
     }
 
 
-    private void processMinorAction(String command, final String messageDetails) {
+    public void processMinorAction(String command, final String messageDetails) {
         int separator;
         Integer oldHP;
         final int lostHP;
@@ -4229,7 +4257,7 @@ public class BattleFragment extends Fragment {
         addToLog(logMessage);
     }
 
-    private void startAnimation(final AnimatorSet animator) {
+    public void startAnimation(final AnimatorSet animator) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -4272,7 +4300,7 @@ public class BattleFragment extends Fragment {
         });
     }
 
-    private AnimatorSet makeMinorToast(final Spannable message) {
+    public AnimatorSet makeMinorToast(final Spannable message) {
         if (getView() == null) {
             return null;
         }
@@ -4317,7 +4345,7 @@ public class BattleFragment extends Fragment {
         return animation;
     }
 
-    private AnimatorSet makeToast(final Spannable message, final int duration) {
+    public AnimatorSet makeToast(final Spannable message, final int duration) {
         if (getView() == null) {
             return null;
         }
@@ -4362,19 +4390,19 @@ public class BattleFragment extends Fragment {
         return animation;
     }
 
-    private AnimatorSet makeToast(final String message) {
+    public AnimatorSet makeToast(final String message) {
         return makeToast(message, ANIMATION_LONG);
     }
 
-    private AnimatorSet makeToast(final String message, final int duration) {
+    public AnimatorSet makeToast(final String message, final int duration) {
         return makeToast(new SpannableString(message), duration);
     }
 
-    private AnimatorSet makeToast(final Spannable message) {
+    public AnimatorSet makeToast(final Spannable message) {
         return makeToast(message, ANIMATION_LONG);
     }
 
-    private void addToLog(Spannable logMessage) {
+    public void addToLog(Spannable logMessage) {
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
         if (roomData != null && roomData.isMessageListener()) {
             if (logMessage.length() > 0) {
@@ -4394,7 +4422,7 @@ public class BattleFragment extends Fragment {
     /**
      * @param player can be p1 or p2
      */
-    private int getTeamPreviewSpriteId(String player, int id) {
+    public int getTeamPreviewSpriteId(String player, int id) {
         String p = player.substring(0, 2);
         switch (p) {
             case "p1":
@@ -4436,7 +4464,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getPkmLayoutId(String tag) {
+    public int getPkmLayoutId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4456,7 +4484,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getSpriteId(String tag) {
+    public int getSpriteId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4476,7 +4504,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getSpriteNameid(String tag) {
+    public int getSpriteNameid(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4496,7 +4524,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getIconId(String tag) {
+    public int getIconId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4516,7 +4544,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getIconId(String player, int id) {
+    public int getIconId(String player, int id) {
         String p = player.substring(0, 2);
         switch (p) {
             case "p1":
@@ -4564,7 +4592,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getGenderId(String tag) {
+    public int getGenderId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4584,7 +4612,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getHpId(String tag) {
+    public int getHpId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4604,7 +4632,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getHpBarId(String tag) {
+    public int getHpBarId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4624,7 +4652,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getTempStatusId(String tag) {
+    public int getTempStatusId(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4644,7 +4672,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getOldHp(String tag) {
+    public int getOldHp(String tag) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4664,7 +4692,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setOldHp(String tag, int hp) {
+    public void setOldHp(String tag, int hp) {
         tag = tag.substring(0, 3);
         switch (tag) {
             case "p1a":
@@ -4688,7 +4716,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getTeamSlot(String tag) {
+    public int getTeamSlot(String tag) {
         tag = Character.toString(tag.charAt(2));
         switch (tag) {
             case "a":
@@ -4702,7 +4730,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setAddonStatus(String tag, String status) {
+    public void setAddonStatus(String tag, String status) {
         if (getView() == null) {
             return;
         }
@@ -4740,7 +4768,7 @@ public class BattleFragment extends Fragment {
 
     }
 
-    private void removeAddonStatus(String tag, String status) {
+    public void removeAddonStatus(String tag, String status) {
         if (getView() == null) {
             return;
         }
@@ -4752,7 +4780,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getSubstitute(String tag) {
+    public int getSubstitute(String tag) {
         if (getView() == null) {
             return R.drawable.sprites_substitute;
         }
@@ -4766,7 +4794,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getLastVisibleSpike(String tag, boolean nextInvisible) {
+    public int getLastVisibleSpike(String tag, boolean nextInvisible) {
         if (getView() == null) {
             return R.id.field_spikes1;
         }
@@ -4826,7 +4854,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int getLastVisibleTSpike(String tag, boolean nextInvisible) {
+    public int getLastVisibleTSpike(String tag, boolean nextInvisible) {
         if (getView() == null) {
             return R.id.field_tspikes1;
         }
@@ -4868,7 +4896,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void hidePokemon(String tag) {
+    public void hidePokemon(String tag) {
         if (getView() == null) {
             return;
         }
@@ -4904,7 +4932,7 @@ public class BattleFragment extends Fragment {
         relativeLayout.setVisibility(View.INVISIBLE);
     }
 
-    private void displayPokemon(String tag) {
+    public void displayPokemon(String tag) {
         if (getView() == null) {
             return;
         }
@@ -4947,7 +4975,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int processHpFraction(String hpFraction) {
+    public int processHpFraction(String hpFraction) {
         int status = hpFraction.indexOf(' ');
         hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
         int fraction = hpFraction.indexOf('/');
@@ -4960,7 +4988,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void replacePokemon(String playerTag, String oldPkm, String newPkm) {
+    public void replacePokemon(String playerTag, String oldPkm, String newPkm) {
         if (playerTag.startsWith("p1")) {
             int index = findPokemonInTeam(mPlayer1Team, oldPkm);
             if (index != -1) {
@@ -4974,7 +5002,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private ArrayList<String> getTeam(String playerTag) {
+    public ArrayList<String> getTeam(String playerTag) {
         if (playerTag.startsWith("p1")) {
             return mPlayer1Team;
         } else {
@@ -4982,7 +5010,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setTeam(String playerTag, ArrayList<String> playerTeam) {
+    public void setTeam(String playerTag, ArrayList<String> playerTeam) {
         if (playerTag.startsWith("p1")) {
             mPlayer1Team = playerTeam;
         } else {
@@ -4990,7 +5018,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
+    public int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
         String[] specialPkm = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
         boolean special = false;
         String species = "";
@@ -5013,11 +5041,11 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private String getPrintableOutputPokemonSide(String split) {
+    public String getPrintableOutputPokemonSide(String split) {
         return getPrintableOutputPokemonSide(split, true);
     }
 
-    private String getPrintableOutputPokemonSide(String split, boolean start) {
+    public String getPrintableOutputPokemonSide(String split, boolean start) {
         StringBuilder sb = new StringBuilder();
         if (split.startsWith("p2")) {
             if (start) {
@@ -5033,16 +5061,16 @@ public class BattleFragment extends Fragment {
         return sb.toString();
     }
 
-    private String getPrintable(String split) {
+    public String getPrintable(String split) {
         int separator = split.indexOf(':');
         return (separator == -1) ? split.trim() : split.substring(separator + 1).trim();
     }
 
-    private String toId(String str) {
+    public String toId(String str) {
         return str.toLowerCase().replaceAll("\\s+", "");
     }
 
-    private void processBoost(String playerTag, String stat, int boost) {
+    public void processBoost(String playerTag, String stat, int boost) {
         if (getView() == null) {
             return;
         }
@@ -5079,7 +5107,7 @@ public class BattleFragment extends Fragment {
         tempStat.addView(statBoost, index);
     }
 
-    private void invertBoost(String playerTag, String[] stats) {
+    public void invertBoost(String playerTag, String[] stats) {
         if (getView() == null) {
             return;
         }
@@ -5094,7 +5122,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void swapBoost(String org, String dest, String... stats) {
+    public void swapBoost(String org, String dest, String... stats) {
         org = org.substring(0, 3);
         dest = dest.substring(0, 3);
         if (getView() == null) {
@@ -5123,7 +5151,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void copyBoost(String org, String dest) {
+    public void copyBoost(String org, String dest) {
         org = org.substring(0, 3);
         dest = dest.substring(0, 3);
         if (getView() == null) {
@@ -5149,7 +5177,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
+    public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
         if (getView() == null) {
             return null;
         }
@@ -5197,9 +5225,9 @@ public class BattleFragment extends Fragment {
             }
         });
 
-        ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", 0.5f);
+        ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", flyingMessage.getY());
         flyingObject.setDuration(ANIMATION_SHORT);
-        flyingObject.setInterpolator(new AccelerateDecelerateInterpolator());
+        flyingObject.setInterpolator(new AccelerateInterpolator());
 
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(flyingMessage, "alpha", 0f, 1f);
         fadeIn.setInterpolator(new DecelerateInterpolator());
