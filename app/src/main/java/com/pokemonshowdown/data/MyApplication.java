@@ -69,7 +69,6 @@ public class MyApplication extends Application {
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
-        PokemonTeam.loadPokemonTeams(appContext);
     }
 
     @Override
@@ -78,7 +77,6 @@ public class MyApplication extends Application {
         mBattleFieldData.leaveAllRooms();
         mCommunityLoungeData.leaveAllRooms();
         closeActiveConnection();
-        PokemonTeam.savePokemonTeams(getApplicationContext());
         super.onTerminate();
     }
 
