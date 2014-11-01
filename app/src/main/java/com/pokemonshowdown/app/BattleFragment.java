@@ -2265,7 +2265,7 @@ public class BattleFragment extends Fragment {
                             } else {
                                 side = "the opposing team";
                             }
-                            toAppendBuilder.append(attackerOutputName).append(" 's Unnerve makes ").append(side).append(" too nervous to eat Berries!");
+                            toAppendBuilder.append(attackerOutputName).append("'s Unnerve makes ").append(side).append(" too nervous to eat Berries!");
                             break;
 
                         case "aurabreak":
@@ -5084,14 +5084,14 @@ public class BattleFragment extends Fragment {
             statBoost.setTextSize(10);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             statBoost.setLayoutParams(layoutParams);
-            currentBoost = boost;
+            currentBoost = 1 + boost/2;
             index = tempStat.getChildCount();
         } else {
             statBoost = (TextView) tempStat.findViewWithTag(stat);
             index = tempStat.indexOfChild(statBoost);
             tempStat.removeView(statBoost);
             String boostDetail = statBoost.getText().toString();
-            currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" "))) + boost;
+            currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" "))) + boost/2;
         }
         if (currentBoost == 0) {
             return;
