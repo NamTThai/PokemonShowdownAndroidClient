@@ -30,9 +30,8 @@ import java.util.List;
 public class TeamBuildingActivity extends FragmentActivity {
     public static final String TAG = TeamBuildingActivity.class.getName();
     private Spinner pkmn_spinner;
-    private List<PokemonTeam> pokemonTeamList = PokemonTeam.getPokemonTeamList();
+    private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
-
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
     }
@@ -41,6 +40,9 @@ public class TeamBuildingActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_building);
+
+        PokemonTeam.loadPokemonTeams(getApplicationContext());
+        pokemonTeamList = PokemonTeam.getPokemonTeamList();
 
         // spinner
         pkmn_spinner = (Spinner) findViewById(R.id.pokemonteamlist_spinner);
@@ -65,6 +67,13 @@ public class TeamBuildingActivity extends FragmentActivity {
                 // TODO ?
             }
         });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PokemonTeam.savePokemonTeams(getApplicationContext());
     }
 
     @Override
