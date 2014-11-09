@@ -121,51 +121,5 @@ public class TeamBuildingActivity extends FragmentActivity {
 
     }
 
-    /**
-     * Class used to show the team list in the drawer (6 icons + nickname)
-     */
-    private class PokemonTeamListArrayAdapter extends ArrayAdapter<PokemonTeam> {
-        public PokemonTeamListArrayAdapter(Context getContext, List<PokemonTeam> userListData) {
-            super(getContext, R.layout.listwidget_teampreview, R.id.team_nickname, userListData);
-        }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.listwidget_teampreview, null);
-            }
-            PokemonTeam p = pokemonTeamList.get(position);
-
-            TextView teamName = (TextView) convertView.findViewById(R.id.team_nickname);
-            teamName.setText(p.getNickname());
-
-            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.pokemon_small_icon_list);
-            layout.removeAllViews();
-
-            for (Pokemon pokemon : p.getPokemons()) {
-                if (pokemon != null) {
-                    ImageView image = new ImageView(getContext());
-                    int smallIconId = pokemon.getIconSmall();
-                    Drawable d = getResources().getDrawable(smallIconId);
-                    image.setImageDrawable(d);
-                    layout.addView(image);
-                }
-            }
-
-            for (int i = 0; i < 6 - p.getPokemons().size(); i++) {
-                ImageView image = new ImageView(getContext());
-                Drawable d = getResources().getDrawable(R.drawable.smallicons_0);
-                image.setImageDrawable(d);
-                layout.addView(image);
-            }
-
-
-            return convertView;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getView(position, convertView, parent);
-        }
-    }
 }

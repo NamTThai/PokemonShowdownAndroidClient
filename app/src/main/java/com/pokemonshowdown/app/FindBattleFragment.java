@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.ArrayList;
 
@@ -43,6 +45,9 @@ public class FindBattleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setAvailableFormat();
+        Spinner spin = (Spinner) view.findViewById(R.id.teams_spinner);
+        PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
+        spin.setAdapter(pokemonTeamListArrayAdapter);
 
         TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
         findBattle.setOnClickListener(new View.OnClickListener() {
