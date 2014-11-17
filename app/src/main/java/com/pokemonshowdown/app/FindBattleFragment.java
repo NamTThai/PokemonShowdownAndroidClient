@@ -47,7 +47,7 @@ public class FindBattleFragment extends Fragment {
         setAvailableFormat();
         Spinner spin = (Spinner) view.findViewById(R.id.teams_spinner);
         PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
-        spin.setAdapter(pokemonTeamListArrayAdapter);
+        //spin.setAdapter(pokemonTeamListArrayAdapter);
 
         TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
         findBattle.setOnClickListener(new View.OnClickListener() {

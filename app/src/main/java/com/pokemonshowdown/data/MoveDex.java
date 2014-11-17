@@ -23,6 +23,12 @@ public class MoveDex {
     public final static Integer CUSTOMIZED = -1;
     public final static Integer SHAKE = 0;
     public final static Integer DANCE = 1;
+    public final static Integer FLIGHT = 2;
+    public final static Integer SPINATK = 3;
+    public final static Integer XATK = 4;
+    public final static Integer SELF = 5;
+    public final static Integer SELF_LIGHT = 6;
+    public final static Integer SELF_DARK = 7;
 
     private static MoveDex sMoveDex;
     private Context mAppContext;
@@ -137,11 +143,25 @@ public class MoveDex {
 
     private void initializeAnimationEntries() {
         mMoveAnimationEntries = new HashMap<>();
-        String[] customizedEntries = {"dragonpulse"};
+        String[] customizedEntries = {"dragonpulse","focusblast", "painsplit", "voltswitch", "thunderwave",
+                "bugbuzz", "explosion"};
         String[] shakeEntries = {"taunt", "swagger", "swordsdance", "quiverdance", "dragondance", "agility",
                 "doubleteam", "metronome", "teeterdance", "splash", "encore"};
         String[] danceEntries = {"attract", "raindance", "sunnyday",
                 "hail", "sandstorm", "gravity", "trickroom", "magicroom", "wonderroom"};
+        String[] flightEntries = {"aerialace", "bravebird", "acrobatics", "flyingpress"};
+        String[] xatkEntries = {"flail"};
+        String[] spinatkEntries = {"uturn", "rapidspin", "gyroball"};
+        String[] selfEntries = {"reflect", "safeguard", "lightscreen", "mist", "transform", "bellydrum",
+                "aromatherapy", "healbell", "magiccoat", "protect", "detect", "kingshield", "spikyshield",
+                "endure", "bide", "rockpolish", "harden", "irondefense", "rest", "howl", "acupressure",
+                "curse", "shiftgear", "autotomize", "bulkup", "workup", "honeclaws", "shellsmash","stockpile",
+                "ingrain", "aquaring", "coil", "refresh", "minimize", "doomdesire", "futuresight", "cottonguard",
+                "roost", "softboiled", "milkdrink", "slackoff", "acidarmor", "substitute", "batonpass", "growth",
+                };
+        String[] selfLightEntries = {"barrier", "amnesia", "synthesis", "moonlight", "morningsun", "cosmicpower",
+                "charge", "geomancy", "calmmind"};
+        String[] selfDarkEntries = {"nastyplot", "tailglow"};
         for (String customized : customizedEntries) {
             mMoveAnimationEntries.put(customized, CUSTOMIZED);
         }
@@ -150,6 +170,24 @@ public class MoveDex {
         }
         for (String dance : danceEntries) {
             mMoveAnimationEntries.put(dance, DANCE);
+        }
+        for (String flight : flightEntries) {
+            mMoveAnimationEntries.put(flight, FLIGHT);
+        }
+        for (String xatk : xatkEntries) {
+            mMoveAnimationEntries.put(xatk, XATK);
+        }
+        for (String spinatk : spinatkEntries) {
+            mMoveAnimationEntries.put(spinatk, SPINATK);
+        }
+        for (String self : selfEntries) {
+            mMoveAnimationEntries.put(self, SELF);
+        }
+        for (String selfLight : selfLightEntries) {
+            mMoveAnimationEntries.put(selfLight, SELF_LIGHT);
+        }
+        for (String selfDark : selfDarkEntries) {
+            mMoveAnimationEntries.put(selfDark, SELF_DARK);
         }
 
     }
