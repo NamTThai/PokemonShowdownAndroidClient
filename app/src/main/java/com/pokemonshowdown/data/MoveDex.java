@@ -29,6 +29,8 @@ public class MoveDex {
     public final static Integer SELF = 5;
     public final static Integer SELF_LIGHT = 6;
     public final static Integer SELF_DARK = 7;
+    public final static Integer TRICK = 8;
+    public final static Integer CHARGE = 9;
 
     private static MoveDex sMoveDex;
     private Context mAppContext;
@@ -143,7 +145,7 @@ public class MoveDex {
 
     private void initializeAnimationEntries() {
         mMoveAnimationEntries = new HashMap<>();
-        String[] customizedEntries = {"dragonpulse","focusblast", "painsplit", "voltswitch", "thunderwave",
+        String[] customizedEntries = {"dragonpulse","focusblast", "voltswitch", "thunderwave",
                 "bugbuzz", "explosion"};
         String[] shakeEntries = {"taunt", "swagger", "swordsdance", "quiverdance", "dragondance", "agility",
                 "doubleteam", "metronome", "teeterdance", "splash", "encore"};
@@ -158,10 +160,12 @@ public class MoveDex {
                 "curse", "shiftgear", "autotomize", "bulkup", "workup", "honeclaws", "shellsmash","stockpile",
                 "ingrain", "aquaring", "coil", "refresh", "minimize", "doomdesire", "futuresight", "cottonguard",
                 "roost", "softboiled", "milkdrink", "slackoff", "acidarmor", "substitute", "batonpass", "growth",
-                };
+                "painsplit"};
         String[] selfLightEntries = {"barrier", "amnesia", "synthesis", "moonlight", "morningsun", "cosmicpower",
-                "charge", "geomancy", "calmmind"};
+                "charge", "geomancy", "calmmind", "recover"};
         String[] selfDarkEntries = {"nastyplot", "tailglow"};
+        String[] trickEntries = {"trick", "switcheroo"};
+        String[] chargeEntries = {"shadowforce", "bounce", "dig", "dive", "fly", "skydrop", "skullbash", "skyattack"};
         for (String customized : customizedEntries) {
             mMoveAnimationEntries.put(customized, CUSTOMIZED);
         }
@@ -188,6 +192,12 @@ public class MoveDex {
         }
         for (String selfDark : selfDarkEntries) {
             mMoveAnimationEntries.put(selfDark, SELF_DARK);
+        }
+        for (String trick : trickEntries) {
+            mMoveAnimationEntries.put(trick, TRICK);
+        }
+        for (String charge : chargeEntries) {
+            mMoveAnimationEntries.put(charge, CHARGE);
         }
 
     }
