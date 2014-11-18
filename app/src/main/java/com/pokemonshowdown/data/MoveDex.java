@@ -31,6 +31,20 @@ public class MoveDex {
     public final static Integer SELF_DARK = 7;
     public final static Integer TRICK = 8;
     public final static Integer CHARGE = 9;
+    public final static Integer SPREAD_LIGHT = 10;
+    public final static Integer SPREAD_ENERGY = 11;
+    public final static Integer SPREAD_MIST = 12;
+    public final static Integer SPREAD_SHADOW = 13;
+    public final static Integer SPREAD_POISON = 14;
+    public final static Integer SPREAD_WAVE = 15;
+    public final static Integer CONTACT_ENERGY = 16;
+    public final static Integer CONTACT_CLAW = 17;
+    public final static Integer CONTACT_KICK = 18;
+    public final static Integer CONTACT_WAVE = 19;
+    public final static Integer CONTACT_BITE = 20;
+    public final static Integer CONTACT_POISON = 21;
+    public final static Integer CONTACT_PUNCH = 22;
+    public final static Integer DRAIN = 23;
 
     private static MoveDex sMoveDex;
     private Context mAppContext;
@@ -145,14 +159,14 @@ public class MoveDex {
 
     private void initializeAnimationEntries() {
         mMoveAnimationEntries = new HashMap<>();
-        String[] customizedEntries = {"dragonpulse","focusblast", "voltswitch", "thunderwave",
-                "bugbuzz", "explosion"};
+        String[] customizedEntries = {"voltswitch", "thunderwave", "explosion"};
         String[] shakeEntries = {"taunt", "swagger", "swordsdance", "quiverdance", "dragondance", "agility",
                 "doubleteam", "metronome", "teeterdance", "splash", "encore"};
         String[] danceEntries = {"attract", "raindance", "sunnyday",
                 "hail", "sandstorm", "gravity", "trickroom", "magicroom", "wonderroom"};
-        String[] flightEntries = {"aerialace", "bravebird", "acrobatics", "flyingpress"};
-        String[] xatkEntries = {"flail"};
+        String[] flightEntries = {"aerialace", "bravebird", "acrobatics", "flyingpress", "drillpeck"};
+        String[] xatkEntries = {"flail", "xscissor", "crosschop", "facade", "guillotine", "return", "frustration",
+                "leafblade"};
         String[] spinatkEntries = {"uturn", "rapidspin", "gyroball"};
         String[] selfEntries = {"reflect", "safeguard", "lightscreen", "mist", "transform", "bellydrum",
                 "aromatherapy", "healbell", "magiccoat", "protect", "detect", "kingshield", "spikyshield",
@@ -166,6 +180,22 @@ public class MoveDex {
         String[] selfDarkEntries = {"nastyplot", "tailglow"};
         String[] trickEntries = {"trick", "switcheroo"};
         String[] chargeEntries = {"shadowforce", "bounce", "dig", "dive", "fly", "skydrop", "skullbash", "skyattack"};
+        String[] spreadLightEntries = {"hiddenpower"};
+        String[] spreadEnergyEntries = {"bugbuzz", "seedflare"};
+        String[] spreadMistEntries = {"focusblast"};
+        String[] spreadShadowEntries = {"dragonpulse"};
+        String[] spreadPoisonEntries = {"storedpower"};
+        String[] spreadWaveEntries = {};
+        String[] contactEnergyEntries = {"powerwhip", "woodhammer"};
+        String[] contactClawEntries = {"dragonclaw", "nightslash", "sacredsword", "knockdown"};
+        String[] contactKickEntries = {"highjumpkick"};
+        String[] contactWaveEntries = {"seismictoss"};
+        String[] contactBiteEntries = {"bite", "superfang", "bugbite", "crunch", "pursuit"};
+        String[] contactPoisonEntries = {"ironhead", "doubleedge", "bodyslam", "dragontail", "reversal",
+                "punishment", "circlethrow", "knockoff", "endeavor", "strength"};
+        String[] contactPunchEntries = {"closecombat", "hammerarm", "brickbreak", "poisonjab", "shadowpunch", "drainpunch",
+                "focuspunch", "dynamicpunch", "cometpunch", "megapunch"};
+        String[] drainEntries = {"hornleech", "absorb", "megadrain", "gigadrain"};
         for (String customized : customizedEntries) {
             mMoveAnimationEntries.put(customized, CUSTOMIZED);
         }
@@ -199,6 +229,47 @@ public class MoveDex {
         for (String charge : chargeEntries) {
             mMoveAnimationEntries.put(charge, CHARGE);
         }
-
+        for (String spreadLight : spreadLightEntries) {
+            mMoveAnimationEntries.put(spreadLight, SPREAD_LIGHT);
+        }
+        for (String spreadEnergy : spreadEnergyEntries) {
+            mMoveAnimationEntries.put(spreadEnergy, SPREAD_ENERGY);
+        }
+        for (String spreadMist : spreadMistEntries) {
+            mMoveAnimationEntries.put(spreadMist, SPREAD_MIST);
+        }
+        for (String spreadShadow : spreadShadowEntries) {
+            mMoveAnimationEntries.put(spreadShadow, SPREAD_SHADOW);
+        }
+        for (String spreadPoison : spreadPoisonEntries) {
+            mMoveAnimationEntries.put(spreadPoison, SPREAD_POISON);
+        }
+        for (String spreadWave : spreadWaveEntries) {
+            mMoveAnimationEntries.put(spreadWave, SPREAD_WAVE);
+        }
+        for (String contactEnergy : contactEnergyEntries) {
+            mMoveAnimationEntries.put(contactEnergy, CONTACT_ENERGY);
+        }
+        for (String contactClaw : contactClawEntries) {
+            mMoveAnimationEntries.put(contactClaw, CONTACT_CLAW);
+        }
+        for (String contactKick : contactKickEntries) {
+            mMoveAnimationEntries.put(contactKick, CONTACT_KICK);
+        }
+        for (String contactWave : contactWaveEntries) {
+            mMoveAnimationEntries.put(contactWave, CONTACT_WAVE);
+        }
+        for (String contactBite : contactBiteEntries) {
+            mMoveAnimationEntries.put(contactBite, CONTACT_BITE);
+        }
+        for (String contactPoison : contactPoisonEntries) {
+            mMoveAnimationEntries.put(contactPoison, CONTACT_POISON);
+        }
+        for (String contactPunch : contactPunchEntries) {
+            mMoveAnimationEntries.put(contactPunch, CONTACT_PUNCH);
+        }
+        for (String drain : drainEntries) {
+            mMoveAnimationEntries.put(drain, DRAIN);
+        }
     }
 }
