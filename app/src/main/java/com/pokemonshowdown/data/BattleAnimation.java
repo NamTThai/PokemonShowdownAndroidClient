@@ -222,6 +222,50 @@ public class BattleAnimation {
         return animatorSet;
     }
 
+    public static AnimatorSet fast(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ImageView fast = new ImageView(context);
+        fast.setImageDrawable(atk.getDrawable());
+        fast.setX(atkC.getX() + atk.getX());
+        fast.setY(atkC.getY() + atk.getY());
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator disappear = ObjectAnimator.ofFloat(atk, "alpha", 0f);
+        disappear.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator attackX = ObjectAnimator.ofFloat(fast, "x", (defC.getX() + def.getX()));
+        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator attackY = ObjectAnimator.ofFloat(fast, "y", (defC.getY() + def.getY()));
+        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackY.setInterpolator(new AccelerateInterpolator());
+        attackX.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                wrapper.addView(fast, params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                wrapper.removeView(fast);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        ObjectAnimator appear = ObjectAnimator.ofFloat(atk, "alpha", 1f);
+        appear.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        animatorSet.play(disappear).before(attackX);
+        animatorSet.play(attackX).with(attackY);
+        animatorSet.play(appear).after(attackX);
+        return animatorSet;
+    }
+
     public static AnimatorSet flight(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
