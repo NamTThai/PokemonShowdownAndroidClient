@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.media.Image;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -81,36 +82,29 @@ public class BattleAnimation {
         }
     }
 
-    public static AnimatorSet contact(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contactType) {
+    public static AnimatorSet contact(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contactType) {
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", atkC.getWidth() - atk.getWidth());
-        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        flightLeft.setInterpolator(new AccelerateDecelerateInterpolator());
-        final ImageView contact = new ImageView(context);
-        contact.setMaxWidth(100);
-        contact.setMaxHeight(100);
-        contact.setImageResource(contactType);
-        final float endX = defC.getX() + def.getX() + def.getWidth() * 0.5f - 50;
-        final float endY = defC.getY() + def.getY() + def.getHeight() * 0.5f - 50;
+        final ImageView atkPkm = new ImageView(context);
+        atkPkm.setImageDrawable(atk.getDrawable());
+        atkPkm.setX(atkC.getX() + atk.getX());
+        atkPkm.setY(atkC.getY() + atk.getY());
         final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact, "scaleX", 1.5f);
-        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact, "scaleY", 1.5f);
-        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact, "alpha", 0f);
-        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        contactAlpha.setInterpolator(new AccelerateInterpolator());
-        contactScaleX.addListener(new Animator.AnimatorListener() {
+        ObjectAnimator attackX = ObjectAnimator.ofFloat(atkPkm, "x", (defC.getX() + def.getX()));
+        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator attackY = ObjectAnimator.ofFloat(atkPkm, "y", (defC.getY() + def.getY()));
+        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackY.setInterpolator(new AccelerateInterpolator());
+        attackX.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                defC.addView(contact, imageParams);
-                contact.setX(endX);
-                contact.setY(endY);
+                atk.setAlpha(0f);
+                wrapper.addView(atkPkm, imageParams);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                defC.removeView(contact);
+
             }
 
             @Override
@@ -123,13 +117,54 @@ public class BattleAnimation {
 
             }
         });
-        ObjectAnimator flightMiddle = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        flightMiddle.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        animatorSet.play(flightLeft);
-        animatorSet.play(flightLeft).before(contactScaleX);
+        final ImageView contact = new ImageView(context);
+        contact.setMaxWidth(100);
+        contact.setMaxHeight(100);
+        contact.setImageResource(contactType);
+        final float endX = defC.getX() + def.getX() + def.getWidth() * 0.5f - 50;
+        final float endY = defC.getY() + def.getY() + def.getHeight() * 0.5f - 50;
+        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact, "scaleX", 1.5f);
+        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact, "scaleY", 1.5f);
+        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact, "alpha", 0f);
+        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        contactAlpha.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator defendX = ObjectAnimator.ofFloat(atkPkm, "x", (atkC.getX() + atk.getX()));
+        defendX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator defendY = ObjectAnimator.ofFloat(atkPkm, "y", (atkC.getY() + atk.getY()));
+        defendY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        contactScaleX.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(contact, imageParams);
+                contact.setX(endX);
+                contact.setY(endY);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(contact);
+                wrapper.removeView(atkPkm);
+                atk.setAlpha(1f);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet.play(attackX).with(attackY);
+        animatorSet.play(attackX).before(contactScaleX);
         animatorSet.play(contactScaleX).with(contactScaleY);
         animatorSet.play(contactScaleX).with(contactAlpha);
-        animatorSet.play(flightMiddle).after(contactScaleX);
+        animatorSet.play(contactScaleX).with(defendX);
+        animatorSet.play(contactScaleX).with(defendY);
         return animatorSet;
     }
 
@@ -219,6 +254,29 @@ public class BattleAnimation {
         animatorSet.play(scaleX).with(scaleY);
         animatorSet.play(drainX).after(scaleX);
         animatorSet.play(drainX).with(drainY);
+        return animatorSet;
+    }
+
+    public static AnimatorSet earth(final RelativeLayout defC, final RelativeLayout def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator earth1 = ObjectAnimator.ofFloat(def, "x", 0f);
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator earth2 = ObjectAnimator.ofFloat(def, "x", defC.getWidth() - def.getWidth());
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator earth3 = ObjectAnimator.ofFloat(def, "x", 0f);
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator earth4 = ObjectAnimator.ofFloat(def, "x", defC.getWidth() - def.getWidth());
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator earth5 = ObjectAnimator.ofFloat(def, "x", 0f);
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator earth6 = ObjectAnimator.ofFloat(def, "x", def.getX());
+        earth1.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        animatorSet.play(earth1);
+        animatorSet.play(earth2).after(earth1);
+        animatorSet.play(earth3).after(earth2);
+        animatorSet.play(earth4).after(earth3);
+        animatorSet.play(earth5).after(earth4);
+        animatorSet.play(earth6).after(earth5);
         return animatorSet;
     }
 
@@ -321,6 +379,15 @@ public class BattleAnimation {
         animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
         return animatorSet;
     }
+    
+    public static AnimatorSet phaze(final RelativeLayout def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator spin = ObjectAnimator.ofFloat(def, "rotation", 1080f);
+        spin.setDuration(BattleFragment.ANIMATION_LONG);
+        spin.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.play(spin);
+        return animatorSet;
+    }
 
     public static AnimatorSet shake(RelativeLayout atkC, ImageView atk) {
         AnimatorSet animatorSet = new AnimatorSet();
@@ -336,74 +403,6 @@ public class BattleAnimation {
         animatorSet.play(shakeRightAll).after(shakeLeft);
         animatorSet.play(shakeLeftAll).after(shakeRightAll);
         animatorSet.play(shakeMiddle).after(shakeLeftAll);
-        return animatorSet;
-    }
-
-    public static AnimatorSet xatk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
-        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
-        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
-        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        final ImageView leftClaw = new ImageView(context);
-        leftClaw.setImageResource(R.drawable.battle_leftclaw);
-        final ImageView rightClaw = new ImageView(context);
-        rightClaw.setImageResource(R.drawable.battle_rightclaw);
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator flightClawRight = ObjectAnimator.ofFloat(leftClaw, "x", defC.getWidth());
-        flightClawRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawBottom = ObjectAnimator.ofFloat(leftClaw, "y", defC.getHeight());
-        flightClawBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawLeft = ObjectAnimator.ofFloat(rightClaw, "x", 0f);
-        flightClawLeft.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawBottomL = ObjectAnimator.ofFloat(rightClaw, "y", defC.getHeight());
-        flightClawBottomL.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        flightClawRight.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                defC.addView(leftClaw, imageParams);
-                leftClaw.setX(0f);
-                leftClaw.setY(0f);
-                defC.addView(rightClaw, imageParams);
-                rightClaw.setX(defC.getWidth() - rightClaw.getWidth());
-                rightClaw.setY(0f);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                defC.removeView(leftClaw);
-                defC.removeView(rightClaw);
-                atk.setX(atkC.getWidth() - atk.getWidth());
-                atk.setY(atkC.getHeight() - atk.getHeight());
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
-        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", 1f);
-        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        animatorSet.play(flightLeft).with(flightTop);
-        animatorSet.play(flightLeft).with(flightAlpha);
-        animatorSet.play(flightLeft).before(flightClawRight);
-        animatorSet.play(flightClawRight).with(flightClawBottom);
-        animatorSet.play(flightClawRight).with(flightClawLeft);
-        animatorSet.play(flightClawRight).with(flightClawBottomL);
-        animatorSet.play(flightMiddleLeft).after(flightClawRight);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
         return animatorSet;
     }
 
@@ -737,6 +736,377 @@ public class BattleAnimation {
         return animatorSet;
     }
 
+    public static AnimatorSet stream(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int spreadId) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        int initialSize = 40;
+        final ImageView flash1 = new ImageView(context);
+        flash1.setImageResource(spreadId);
+        flash1.setMaxHeight(initialSize);
+        flash1.setMaxWidth(initialSize);
+        flash1.setScaleType(ImageView.ScaleType.CENTER);
+        flash1.setAdjustViewBounds(true);
+        float startX = atkC.getX() + atk.getX() + atk.getWidth() * 0.5f;
+        float startY = atkC.getY() + atk.getY() + atk.getHeight() * 0.5f;
+        flash1.setX(startX);
+        flash1.setY(startY);
+        final ImageView flash2 = new ImageView(context);
+        flash2.setImageResource(spreadId);
+        flash2.setMaxHeight(initialSize);
+        flash2.setMaxWidth(initialSize);
+        flash2.setScaleType(ImageView.ScaleType.CENTER);
+        flash2.setAdjustViewBounds(true);
+        flash2.setX(startX);
+        flash2.setY(startY);
+        final ImageView flash3 = new ImageView(context);
+        flash3.setImageResource(spreadId);
+        flash3.setMaxHeight(initialSize);
+        flash3.setMaxWidth(initialSize);
+        flash3.setScaleType(ImageView.ScaleType.CENTER);
+        flash3.setAdjustViewBounds(true);
+        flash3.setX(startX);
+        flash3.setY(startY);
+        final ImageView flash4 = new ImageView(context);
+        flash4.setImageResource(spreadId);
+        flash4.setMaxHeight(initialSize);
+        flash4.setMaxWidth(initialSize);
+        flash4.setScaleType(ImageView.ScaleType.CENTER);
+        flash4.setAdjustViewBounds(true);
+        flash4.setX(startX);
+        flash4.setY(startY);
+        final ImageView flash5 = new ImageView(context);
+        flash5.setImageResource(spreadId);
+        flash5.setMaxHeight(initialSize);
+        flash5.setMaxWidth(initialSize);
+        flash5.setScaleType(ImageView.ScaleType.CENTER);
+        flash5.setAdjustViewBounds(true);
+        flash5.setX(startX);
+        flash5.setY(startY);
+        final ImageView flash6 = new ImageView(context);
+        flash6.setImageResource(spreadId);
+        flash6.setMaxHeight(initialSize);
+        flash6.setMaxWidth(initialSize);
+        flash6.setScaleType(ImageView.ScaleType.CENTER);
+        flash6.setAdjustViewBounds(true);
+        flash6.setX(startX);
+        flash6.setY(startY);
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        float scale = 1.5f;
+        ObjectAnimator flash1FlyX = ObjectAnimator.ofFloat(flash1, "x", (defC.getX() + def.getX()));
+        flash1FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash1FlyX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator flash1FlyY = ObjectAnimator.ofFloat(flash1, "y", (defC.getY() + def.getY()));
+        flash1FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash1FlyY.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator flash1SizeX = ObjectAnimator.ofFloat(flash1, "scaleX", scale);
+        flash1SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        ObjectAnimator flash1SizeY = ObjectAnimator.ofFloat(flash1, "scaleY", scale);
+        flash1SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        ObjectAnimator flash2FlyX = ObjectAnimator.ofFloat(flash2, "x", (defC.getX() + def.getX()));
+        flash2FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash2FlyX.setInterpolator(new AccelerateInterpolator());
+        flash2FlyX.setStartDelay(BattleFragment.ANIMATION_LONG * (1 / 20));
+        ObjectAnimator flash2FlyY = ObjectAnimator.ofFloat(flash2, "y", (defC.getY() + def.getY()));
+        flash2FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash2FlyY.setInterpolator(new AccelerateInterpolator());
+        flash2FlyY.setStartDelay(BattleFragment.ANIMATION_LONG * (1 / 20));
+        ObjectAnimator flash2SizeX = ObjectAnimator.ofFloat(flash2, "scaleX", scale);
+        flash2SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash2SizeX.setStartDelay(BattleFragment.ANIMATION_LONG * (1 / 20));
+        ObjectAnimator flash2SizeY = ObjectAnimator.ofFloat(flash2, "scaleY", scale);
+        flash2SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash2SizeY.setStartDelay(BattleFragment.ANIMATION_LONG * (1 / 20));
+        ObjectAnimator flash3FlyX = ObjectAnimator.ofFloat(flash3, "x", (defC.getX() + def.getX()));
+        flash3FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash3FlyX.setInterpolator(new AccelerateInterpolator());
+        flash3FlyX.setStartDelay(BattleFragment.ANIMATION_LONG * (2 / 20));
+        ObjectAnimator flash3FlyY = ObjectAnimator.ofFloat(flash3, "y", (defC.getY() + def.getY()));
+        flash3FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash3FlyY.setInterpolator(new AccelerateInterpolator());
+        flash3FlyY.setStartDelay(BattleFragment.ANIMATION_LONG * (2 / 20));
+        ObjectAnimator flash3SizeX = ObjectAnimator.ofFloat(flash3, "scaleX", scale);
+        flash3SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash3SizeX.setStartDelay(BattleFragment.ANIMATION_LONG * (2 / 20));
+        ObjectAnimator flash3SizeY = ObjectAnimator.ofFloat(flash3, "scaleY", scale);
+        flash3SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash3SizeY.setStartDelay(BattleFragment.ANIMATION_LONG * (2 / 20));
+        ObjectAnimator flash4FlyX = ObjectAnimator.ofFloat(flash4, "x", (defC.getX() + def.getX()));
+        flash4FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash4FlyX.setInterpolator(new AccelerateInterpolator());
+        flash4FlyX.setStartDelay(BattleFragment.ANIMATION_LONG * (3 / 30));
+        ObjectAnimator flash4FlyY = ObjectAnimator.ofFloat(flash4, "y", (defC.getY() + def.getY()));
+        flash4FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash4FlyY.setInterpolator(new AccelerateInterpolator());
+        flash4FlyY.setStartDelay(BattleFragment.ANIMATION_LONG * (3 / 30));
+        ObjectAnimator flash4SizeX = ObjectAnimator.ofFloat(flash4, "scaleX", scale);
+        flash4SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash4SizeX.setStartDelay(BattleFragment.ANIMATION_LONG * (3 / 30));
+        ObjectAnimator flash4SizeY = ObjectAnimator.ofFloat(flash4, "scaleY", scale);
+        flash4SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash4SizeY.setStartDelay(BattleFragment.ANIMATION_LONG * (3 / 30));
+        ObjectAnimator flash5FlyX = ObjectAnimator.ofFloat(flash5, "x", (defC.getX() + def.getX()));
+        flash5FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash5FlyX.setInterpolator(new AccelerateInterpolator());
+        flash5FlyX.setStartDelay(BattleFragment.ANIMATION_LONG * (4 / 20));
+        ObjectAnimator flash5FlyY = ObjectAnimator.ofFloat(flash5, "y", (defC.getY() + def.getY()));
+        flash5FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash5FlyY.setInterpolator(new AccelerateInterpolator());
+        flash5FlyY.setStartDelay(BattleFragment.ANIMATION_LONG * (4 / 20));
+        ObjectAnimator flash5SizeX = ObjectAnimator.ofFloat(flash5, "scaleX", scale);
+        flash5SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash5SizeX.setStartDelay(BattleFragment.ANIMATION_LONG * (4 / 20));
+        ObjectAnimator flash5SizeY = ObjectAnimator.ofFloat(flash5, "scaleY", scale);
+        flash5SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash5SizeY.setStartDelay(BattleFragment.ANIMATION_LONG * (4 / 20));
+        ObjectAnimator flash6FlyX = ObjectAnimator.ofFloat(flash6, "x", (defC.getX() + def.getX()));
+        flash6FlyX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash6FlyX.setInterpolator(new AccelerateInterpolator());
+        flash6FlyX.setStartDelay(BattleFragment.ANIMATION_LONG * (5 / 20));
+        ObjectAnimator flash6FlyY = ObjectAnimator.ofFloat(flash6, "y", (defC.getY() + def.getY()));
+        flash6FlyY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash6FlyY.setInterpolator(new AccelerateInterpolator());
+        flash6FlyY.setStartDelay(BattleFragment.ANIMATION_LONG * (5 / 20));
+        ObjectAnimator flash6SizeX = ObjectAnimator.ofFloat(flash6, "scaleX", scale);
+        flash6SizeX.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash6SizeX.setStartDelay(BattleFragment.ANIMATION_LONG * (5 / 20));
+        ObjectAnimator flash6SizeY = ObjectAnimator.ofFloat(flash6, "scaleY", scale);
+        flash6SizeY.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        flash6SizeY.setStartDelay(BattleFragment.ANIMATION_LONG * (5 / 20));
+        flash1FlyX.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                wrapper.addView(flash1, imageParams);
+                wrapper.addView(flash2, imageParams);
+                wrapper.addView(flash3, imageParams);
+                wrapper.addView(flash4, imageParams);
+                wrapper.addView(flash5, imageParams);
+                wrapper.addView(flash6, imageParams);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        flash6FlyX.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                wrapper.addView(flash1, imageParams);
+                wrapper.addView(flash2, imageParams);
+                wrapper.addView(flash3, imageParams);
+                wrapper.addView(flash4, imageParams);
+                wrapper.addView(flash5, imageParams);
+                wrapper.addView(flash6, imageParams);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet.play(flash1FlyX).with(flash1FlyY);
+        animatorSet.play(flash1FlyX).with(flash1SizeX);
+        animatorSet.play(flash1FlyX).with(flash1SizeY);
+        animatorSet.play(flash1FlyX).with(flash2FlyX);
+        animatorSet.play(flash1FlyX).with(flash2FlyY);
+        animatorSet.play(flash1FlyX).with(flash2SizeX);
+        animatorSet.play(flash1FlyX).with(flash2SizeY);
+        animatorSet.play(flash1FlyX).with(flash3FlyX);
+        animatorSet.play(flash1FlyX).with(flash3FlyY);
+        animatorSet.play(flash1FlyX).with(flash3SizeX);
+        animatorSet.play(flash1FlyX).with(flash3SizeY);
+        animatorSet.play(flash1FlyX).with(flash4FlyX);
+        animatorSet.play(flash1FlyX).with(flash4FlyY);
+        animatorSet.play(flash1FlyX).with(flash4SizeX);
+        animatorSet.play(flash1FlyX).with(flash4SizeY);
+        animatorSet.play(flash1FlyX).with(flash5FlyX);
+        animatorSet.play(flash1FlyX).with(flash5FlyY);
+        animatorSet.play(flash1FlyX).with(flash5SizeX);
+        animatorSet.play(flash1FlyX).with(flash5SizeY);
+        animatorSet.play(flash1FlyX).with(flash6FlyX);
+        animatorSet.play(flash1FlyX).with(flash6FlyY);
+        animatorSet.play(flash1FlyX).with(flash6SizeX);
+        animatorSet.play(flash1FlyX).with(flash6SizeY);
+        return animatorSet;
+    }
+    
+    public static AnimatorSet thunderNeutral(Context context, final RelativeLayout defC, final ImageView def){
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final ImageView thunder1 = new ImageView(context);
+        thunder1.setMaxHeight(def.getHeight());
+        thunder1.setAdjustViewBounds(true);
+        thunder1.setX(def.getX() + def.getWidth() * 0.5f);
+        final ImageView thunder2 = new ImageView(context);
+        thunder2.setMaxHeight(def.getHeight());
+        thunder2.setAdjustViewBounds(true);
+        thunder2.setX(def.getX());
+        final ImageView thunder3 = new ImageView(context);
+        thunder3.setMaxHeight(def.getHeight());
+        thunder3.setAdjustViewBounds(true);
+        thunder3.setX(def.getX() + def.getWidth());
+        ObjectAnimator drop1 = ObjectAnimator.ofFloat(thunder1, "y", defC.getY());
+        drop1.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        ObjectAnimator drop2 = ObjectAnimator.ofFloat(thunder2, "y", defC.getY());
+        drop2.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        drop2.setStartDelay(BattleFragment.ANIMATION_LONG / 8);
+        ObjectAnimator drop3 = ObjectAnimator.ofFloat(thunder3, "y", defC.getY());
+        drop3.setDuration(BattleFragment.ANIMATION_LONG * 3 / 4);
+        drop3.setStartDelay(BattleFragment.ANIMATION_LONG / 4);
+        drop1.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(thunder1, params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(thunder1);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        drop2.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(thunder2, params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(thunder2);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        drop3.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(thunder3, params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(thunder3);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet.play(drop1).with(drop2);
+        animatorSet.play(drop1).with(drop3);
+        return animatorSet;
+    }
+
+    public static AnimatorSet thunderStrong(Context context, final RelativeLayout defC, final ImageView def){
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final ImageView thunder1 = new ImageView(context);
+        thunder1.setMaxHeight(def.getHeight());
+        thunder1.setAdjustViewBounds(true);
+        thunder1.setX(def.getX() + def.getWidth() * 0.5f);
+        ObjectAnimator flash1 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash1.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator flash2 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash2.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator flash3 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash3.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        flash1.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(thunder1, params);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        flash3.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(thunder1);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet.play(flash1);
+        animatorSet.play(flash2).after(flash1);
+        animatorSet.play(flash3).after(flash2);
+        return animatorSet;
+    }
+
+    public static AnimatorSet thunderWeak(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        return animatorSet;
+    }
+
     public static AnimatorSet trick(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, ImageView def) {
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView trick = new ImageView(context);
@@ -802,21 +1172,78 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static float[] getCenter(View view) {
+    public static AnimatorSet xatk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
+        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
+        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
+        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        final ImageView leftClaw = new ImageView(context);
+        leftClaw.setImageResource(R.drawable.battle_leftclaw);
+        final ImageView rightClaw = new ImageView(context);
+        rightClaw.setImageResource(R.drawable.battle_rightclaw);
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator flightClawRight = ObjectAnimator.ofFloat(leftClaw, "x", defC.getWidth());
+        flightClawRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawBottom = ObjectAnimator.ofFloat(leftClaw, "y", defC.getHeight());
+        flightClawBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawLeft = ObjectAnimator.ofFloat(rightClaw, "x", 0f);
+        flightClawLeft.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawBottomL = ObjectAnimator.ofFloat(rightClaw, "y", defC.getHeight());
+        flightClawBottomL.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        flightClawRight.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                defC.addView(leftClaw, imageParams);
+                leftClaw.setX(0f);
+                leftClaw.setY(0f);
+                defC.addView(rightClaw, imageParams);
+                rightClaw.setX(defC.getWidth() - rightClaw.getWidth());
+                rightClaw.setY(0f);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                defC.removeView(leftClaw);
+                defC.removeView(rightClaw);
+                atk.setX(atkC.getWidth() - atk.getWidth());
+                atk.setY(atkC.getHeight() - atk.getHeight());
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
+        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
+        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", 1f);
+        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        animatorSet.play(flightLeft).with(flightTop);
+        animatorSet.play(flightLeft).with(flightAlpha);
+        animatorSet.play(flightLeft).before(flightClawRight);
+        animatorSet.play(flightClawRight).with(flightClawBottom);
+        animatorSet.play(flightClawRight).with(flightClawLeft);
+        animatorSet.play(flightClawRight).with(flightClawBottomL);
+        animatorSet.play(flightMiddleLeft).after(flightClawRight);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
+        return animatorSet;
+    }
+
+    private static float[] getCenter(View view) {
         float[] toReturn = new float[2];
         toReturn[0] = view.getX() + view.getWidth() * 0.5f;
         toReturn[1] = view.getY() + view.getHeight() * 0.5f;
-        return toReturn;
-    }
-
-    public static ImageView getImageView(Context activityContext, int resource) {
-        ImageView toReturn = new ImageView(activityContext);
-        toReturn.setImageResource(resource);
-
-        ViewGroup.LayoutParams layoutParams = toReturn.getLayoutParams();
-        layoutParams.width = 32;
-        layoutParams.height = 32;
-
         return toReturn;
     }
 
