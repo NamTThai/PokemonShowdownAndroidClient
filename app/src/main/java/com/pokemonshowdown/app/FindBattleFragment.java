@@ -2,6 +2,7 @@ package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,15 +20,17 @@ import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
 
     private ProgressDialog waitingDialog;
-
+    private Timer disableTimer = null;
     private ArrayList<String> mFormatList;
-
+    private TextView watchBattle;
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
 
@@ -62,20 +65,53 @@ public class FindBattleFragment extends Fragment {
                 new AlertDialog.Builder(getActivity())
                         .setMessage(R.string.still_in_development)
                         .create().show();
+
+                /*
+                waitingDialog.setCancelable(true);
+                waitingDialog.setMessage("Finding battle");
+                waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                waitingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
+                    }
+                });
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitingDialog.show();
+                    }
+                });
+                 */
             }
         });
-        TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
+        watchBattle = (TextView) view.findViewById(R.id.watch_battle);
         watchBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                disableTimer = new Timer();
+                disableTimer.schedule(new TimerTask() {
+                                         @Override
+                                         public void run() {
+                                             dismissWaitingDialog();
+                                         }
+                                     }, 5000);
+
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
                 waitingDialog.setMessage("Downloading list of matches");
+                waitingDialog.setCancelable(true);
                 waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                waitingDialog.setCancelable(false);
+                waitingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        // nothing
+                    }
+                });
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        watchBattle.setEnabled(false);
                         waitingDialog.show();
                     }
                 });
@@ -114,10 +150,15 @@ public class FindBattleFragment extends Fragment {
     }
 
     public void dismissWaitingDialog() {
+        if(disableTimer != null) {
+            disableTimer.cancel();
+            disableTimer = null;
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 waitingDialog.dismiss();
+                watchBattle.setEnabled(true);
             }
         });
 
