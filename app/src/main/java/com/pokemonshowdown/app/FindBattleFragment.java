@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,10 +24,13 @@ import java.util.ArrayList;
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
 
+    private ProgressDialog waitingDialog;
+
     private ArrayList<String> mFormatList;
 
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
+
         return fragment;
     }
     public FindBattleFragment() {
@@ -45,6 +49,8 @@ public class FindBattleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setAvailableFormat();
+        waitingDialog = new ProgressDialog(getActivity());
+
         Spinner spin = (Spinner) view.findViewById(R.id.teams_spinner);
         PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
         //spin.setAdapter(pokemonTeamListArrayAdapter);
@@ -63,6 +69,16 @@ public class FindBattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
+                waitingDialog.setMessage("Downloading list of matches");
+                waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                waitingDialog.setCancelable(false);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitingDialog.show();
+                    }
+                });
             }
         });
     }
@@ -95,6 +111,16 @@ public class FindBattleFragment extends Fragment {
                 BattleFieldData.get(getActivity()).setCurrentFormat(position);
             }
         });
+    }
+
+    public void dismissWaitingDialog() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                waitingDialog.dismiss();
+            }
+        });
+
     }
 
 }

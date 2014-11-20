@@ -197,6 +197,9 @@ public class BattleFieldFragment extends Fragment {
     }
 
     public void generateAvailableWatchBattleDialog() {
+        // this is so hacky
+        FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
+        fragment.dismissWaitingDialog();
         HashMap<String, String> battleList = BattleFieldData.get(getActivity()).getAvailableWatchBattleList();
         if (battleList.isEmpty()) {
             new AlertDialog.Builder(getActivity())
