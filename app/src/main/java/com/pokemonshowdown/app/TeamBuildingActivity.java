@@ -26,6 +26,7 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
+
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
     }
@@ -117,11 +118,11 @@ public class TeamBuildingActivity extends FragmentActivity {
                 ClipboardManager clipboard = (ClipboardManager)
                         getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData importClip = clipboard.getPrimaryClip();
-                if(importClip != null) {
+                if (importClip != null) {
                     ClipData.Item clipItem = importClip.getItemAt(0);
                     // Gets the clipboard as text.
                     String pasteData = clipItem.getText().toString();
-                    pt = PokemonTeam.importPokemonTeam(pasteData);
+                    pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
                     if (pt != null) {
                         pokemonTeamList.add(pt);
                         pokemonTeamListArrayAdapter.notifyDataSetChanged();

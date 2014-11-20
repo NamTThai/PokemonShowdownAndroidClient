@@ -80,8 +80,22 @@ public class PokemonTeam implements Serializable {
         return sb.toString();
     }
 
-    public static PokemonTeam importPokemonTeam(String importString) {
-        return null;
+    public static PokemonTeam importPokemonTeam(String importString, Context c, boolean withAppContest) {
+        PokemonTeam pt = new PokemonTeam();
+        String[] pokemonImportStrings = importString.split("\r\n");
+        StringBuilder sb = new StringBuilder();
+        for (String pokemonString : pokemonImportStrings) {
+            if (pokemonString.isEmpty()) {
+                Pokemon p = Pokemon.importPokemon(sb.toString(), c, withAppContest);
+                if (p != null) {
+                    pt.addPokemon(p);
+                }
+                sb.setLength(0);
+            } else {
+                sb.append(pokemonString).append("\n");
+            }
+        }
+        return pt;
     }
 
     /**

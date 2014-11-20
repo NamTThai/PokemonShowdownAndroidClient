@@ -73,6 +73,7 @@ public class Pokemon implements Serializable {
 
     /**
      * Exporting function
+     *
      * @return A string with the pokemon using Showdown! format
      */
     public String exportPokemon() {
@@ -211,9 +212,33 @@ public class Pokemon implements Serializable {
     }
 
 
-    public static Pokemon importPokemon(String importString, Context appContext) {
-        // TODO
-        return null;
+    public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
+        String[] pokemonStrings = importString.split("\n");
+        String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
+        String pokemonName, pokemonNickname, pokemonItem;
+        Pokemon p = null;
+        if (pokemonMainData.contains("@")) {
+            String[] nameItem = pokemonMainData.split("@");
+            if (nameItem[0].contains("(") && nameItem[0].contains(")")) {
+                pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
+                pokemonNickname = pokemonMainData.substring(nameItem[0].indexOf("("), nameItem[0].indexOf(")"));
+                pokemonItem = nameItem[1];
+            } else {
+                pokemonName = nameItem[0];
+                pokemonItem = nameItem[1];
+            }
+        } else if (pokemonMainData.contains("(") && pokemonMainData.contains(")")) {
+            pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
+            pokemonNickname = pokemonMainData.substring(pokemonMainData.indexOf("("), pokemonMainData.indexOf(")"));
+        } else {
+            // theres only the name
+            pokemonName = pokemonMainData;
+        }
+        pokemonName.toLowerCase().trim();
+        p = new Pokemon(appContext, pokemonName, withAppContext);
+
+        // TODO handle exception and import rest of stats
+        return p;
     }
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
