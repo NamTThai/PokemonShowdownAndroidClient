@@ -1,8 +1,10 @@
 package com.pokemonshowdown.app;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,6 +90,7 @@ public class TeamBuildingActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int position;
         PokemonTeam pt;
+        final PokemonTeam pt2;
         switch (item.getItemId()) {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
@@ -122,13 +126,35 @@ public class TeamBuildingActivity extends FragmentActivity {
                 //todo
                 return true;
             case R.id.action_rename_team:
-                // todo renaming dialog
+                position = pkmn_spinner.getSelectedItemPosition();
+                if (position != AdapterView.INVALID_POSITION) {
+                    pt2 = pokemonTeamList.get(position);
+                    AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
+                    renameDialog.setTitle("Rename");
+                    final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
+                    teamNameEditText.setText(pt2.getNickname());
+                    renameDialog.setView(teamNameEditText);
+
+                    renameDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            pt2.setNickname(teamNameEditText.getText().toString());
+                            pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                            arg0.dismiss();
+                        }
+                    });
+
+                    renameDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            arg0.dismiss();
+                        }
+                    });
+
+                    renameDialog.show();
+                }
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
-
-
 }
