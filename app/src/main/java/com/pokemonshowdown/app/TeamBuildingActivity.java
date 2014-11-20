@@ -5,7 +5,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -13,18 +12,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
-import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.List;
@@ -118,12 +109,24 @@ public class TeamBuildingActivity extends FragmentActivity {
                     pt = pokemonTeamList.get(position);
                     ClipboardManager clipboard = (ClipboardManager)
                             getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.export());
+                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam());
                     clipboard.setPrimaryClip(clip);
                 }
                 return true;
             case R.id.action_import_team:
-                //todo
+                ClipboardManager clipboard = (ClipboardManager)
+                        getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
+                // Gets the clipboard as text.
+                String pasteData = clipItem.getText().toString();
+                pt = PokemonTeam.importPokemonTeam(pasteData);
+                if(pt != null) {
+                    pokemonTeamList.add(pt);
+                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                    pkmn_spinner.setSelection(pokemonTeamList.size() -1);
+                } else {
+                    //todo handle bad data
+                }
                 return true;
             case R.id.action_rename_team:
                 position = pkmn_spinner.getSelectedItemPosition();

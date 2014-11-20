@@ -67,17 +67,21 @@ public class PokemonTeam implements Serializable {
     /**
      * Exporting function to String
      */
-    public String export() {
+    public String exportPokemonTeam() {
         StringBuilder sb = new StringBuilder();
 
         for (Pokemon pokemon : pokemons) {
             if (pokemon != null) {
-                sb.append(pokemon.export());
+                sb.append(pokemon.exportPokemon());
                 sb.append('\n');
             }
         }
 
         return sb.toString();
+    }
+
+    public static PokemonTeam importPokemonTeam(String importString) {
+        return null;
     }
 
     /**
