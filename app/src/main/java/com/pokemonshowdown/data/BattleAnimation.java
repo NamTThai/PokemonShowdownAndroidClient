@@ -30,7 +30,7 @@ public class BattleAnimation {
         RelativeLayout defC = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[2]));
         ImageView def = (ImageView) view.findViewById(battleFragment.getSpriteId(split[2]));
         int[] options = {R.drawable.battle_electroball, R.drawable.battle_energyball, R.drawable.battle_mistball, R.drawable.battle_shadowball, R.drawable.battle_poisonwisp, R.drawable.battle_wisp};
-        return spread(battleFragment.getActivity(), battleWrapper, atkC, atk, options[new Random().nextInt() % 6]);
+        return spread(battleFragment.getActivity(), battleWrapper, atkC, atk, options[Math.abs(new Random().nextInt() % 6)]);
     }
 
     public static AnimatorSet attack(Context context, RelativeLayout atkC, ImageView atk, RelativeLayout defC, ImageView def) {
@@ -808,8 +808,8 @@ public class BattleAnimation {
         flash1.setMaxWidth(100);
         flash1.setScaleType(ImageView.ScaleType.CENTER);
         flash1.setAdjustViewBounds(true);
-        float startX = atkC.getX() + atk.getX() + atk.getWidth() * 0.5f;
-        float startY = atkC.getY() + atk.getY() + atk.getHeight() * 0.5f;
+        float startX = atkC.getX() + atk.getX() + atk.getWidth() * 0.5f - 50;
+        float startY = atkC.getY() + atk.getY() + atk.getHeight() * 0.5f - 50;
         flash1.setX(startX);
         flash1.setY(startY);
         final ImageView flash2 = new ImageView(context);
@@ -853,34 +853,34 @@ public class BattleAnimation {
         flash6.setX(startX);
         flash6.setY(startY);
         final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator flash1FlyX = ObjectAnimator.ofFloat(flash1, "x", flash1.getX() - 100);
+        ObjectAnimator flash1FlyX = ObjectAnimator.ofFloat(flash1, "x", flash1.getX() - 500);
         flash1FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash1FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash2FlyX = ObjectAnimator.ofFloat(flash2, "x", flash2.getX() - 80);
+        ObjectAnimator flash2FlyX = ObjectAnimator.ofFloat(flash2, "x", flash2.getX() - 300);
         flash2FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash2FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash2FlyY = ObjectAnimator.ofFloat(flash2, "y", flash2.getY() - 20);
+        ObjectAnimator flash2FlyY = ObjectAnimator.ofFloat(flash2, "y", flash2.getY() - 100);
         flash2FlyY.setDuration(BattleFragment.ANIMATION_LONG);
         flash2FlyY.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash3FlyX = ObjectAnimator.ofFloat(flash3, "x", flash3.getX() + 80);
+        ObjectAnimator flash3FlyX = ObjectAnimator.ofFloat(flash3, "x", flash3.getX() + 400);
         flash3FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash3FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash3FlyY = ObjectAnimator.ofFloat(flash3, "y", flash2.getY() - 20);
+        ObjectAnimator flash3FlyY = ObjectAnimator.ofFloat(flash3, "y", flash2.getY() - 100);
         flash3FlyY.setDuration(BattleFragment.ANIMATION_LONG);
         flash3FlyY.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash4FlyX = ObjectAnimator.ofFloat(flash4, "x", flash4.getX() + 100);
+        ObjectAnimator flash4FlyX = ObjectAnimator.ofFloat(flash4, "x", flash4.getX() + 500);
         flash4FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash4FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash5FlyX = ObjectAnimator.ofFloat(flash5, "x", flash5.getX() + 80);
+        ObjectAnimator flash5FlyX = ObjectAnimator.ofFloat(flash5, "x", flash5.getX() + 400);
         flash5FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash5FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash5FlyY = ObjectAnimator.ofFloat(flash5, "y", flash5.getY() + 20);
+        ObjectAnimator flash5FlyY = ObjectAnimator.ofFloat(flash5, "y", flash5.getY() + 100);
         flash5FlyY.setDuration(BattleFragment.ANIMATION_LONG);
         flash5FlyY.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash6FlyX = ObjectAnimator.ofFloat(flash6, "x", flash6.getX() - 80);
+        ObjectAnimator flash6FlyX = ObjectAnimator.ofFloat(flash6, "x", flash6.getX() - 400);
         flash6FlyX.setDuration(BattleFragment.ANIMATION_LONG);
         flash6FlyX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator flash6FlyY = ObjectAnimator.ofFloat(flash6, "y", flash6.getY() + 20);
+        ObjectAnimator flash6FlyY = ObjectAnimator.ofFloat(flash6, "y", flash6.getY() + 100);
         flash6FlyY.setDuration(BattleFragment.ANIMATION_LONG);
         flash6FlyY.setInterpolator(new AccelerateDecelerateInterpolator());
         flash1FlyX.addListener(new Animator.AnimatorListener() {

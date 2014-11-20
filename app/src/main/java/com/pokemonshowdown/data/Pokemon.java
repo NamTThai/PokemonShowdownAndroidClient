@@ -75,7 +75,7 @@ public class Pokemon implements Serializable {
      * Exporting function
      * @return A string with the pokemon using Showdown! format
      */
-    public String export() {
+    public String exportPokemon() {
         StringBuilder sb = new StringBuilder();
         if (getName().length() > 0) {
             sb.append(getName());
@@ -208,6 +208,12 @@ public class Pokemon implements Serializable {
         }
 
         return sb.toString();
+    }
+
+
+    public static Pokemon importPokemon(String importString, Context appContext) {
+        // TODO
+        return null;
     }
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
