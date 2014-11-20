@@ -64,7 +64,7 @@ public class FindBattleFragment extends Fragment {
                         .create().show();
             }
         });
-        final TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
+        TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
         watchBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
