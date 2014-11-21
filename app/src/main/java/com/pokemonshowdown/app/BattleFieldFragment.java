@@ -2,7 +2,6 @@ package com.pokemonshowdown.app;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -163,12 +162,12 @@ public class BattleFieldFragment extends Fragment {
         actionBar.removeTab(tab);
     }
 
-    private void processNewRoomRequest(String roomId) {
+    public void processNewRoomRequest(String roomId) {
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
-            BattleFieldData.get(getActivity()).joinRoom(roomId);
+            mRoomList.add(roomId);
             mBattleFieldPagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override
@@ -221,7 +220,7 @@ public class BattleFieldFragment extends Fragment {
                 .setItems(value, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        processNewRoomRequest(key[which]);
+                        BattleFieldData.get(getActivity()).joinRoom(key[which]);
                         dialog.dismiss();
                     }
                 })

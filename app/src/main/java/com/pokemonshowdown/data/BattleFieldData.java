@@ -184,7 +184,6 @@ public class BattleFieldData {
     }
 
     public void joinRoom(String roomId) {
-        mRoomList.add(roomId);
         HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
         roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
         getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));

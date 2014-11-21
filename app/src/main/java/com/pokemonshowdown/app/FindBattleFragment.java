@@ -1,6 +1,5 @@
 package com.pokemonshowdown.app;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -59,9 +58,11 @@ public class FindBattleFragment extends Fragment {
         findBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.still_in_development)
-                        .create().show();
+                String message = "|/search randombattle\"";
+                if (MyApplication.getMyApplication().verifySignedInBeforeSendingMessage()) {
+                    MyApplication.getMyApplication().sendClientMessage("|/utm \"");
+                    MyApplication.getMyApplication().sendClientMessage(message);
+                }
             }
         });
         TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);

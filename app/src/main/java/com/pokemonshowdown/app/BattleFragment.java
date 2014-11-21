@@ -3,7 +3,6 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,11 +122,6 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(String message) {
-        /*try {
-            processMajorAction(message);
-        } catch (Exception e) {
-            Log.d(BTAG, "error is in " + message, e);
-        }*/
         processMajorAction(message);
     }
 

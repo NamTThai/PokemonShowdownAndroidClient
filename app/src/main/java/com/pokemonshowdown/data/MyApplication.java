@@ -31,6 +31,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
     public final static String EXTRA_WATCH_BATTLE_LIST_READY = "Watch Battle List Ready";
     public final static String EXTRA_AVAILABLE_FORMATS = "Available Formats";
+    public final static String EXTRA_NEW_BATTLE_ROOM = "New Room";
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
@@ -309,7 +310,11 @@ public class MyApplication extends Application {
             message = message.substring(1);
         }
 
-        LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
+        if (message.startsWith("init") && channel == 0) {
+            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_NEW_BATTLE_ROOM).putExtra(EXTRA_ROOMID, roomId));
+        } else {
+            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
+        }
     }
 
     public boolean verifySignedInBeforeSendingMessage() {

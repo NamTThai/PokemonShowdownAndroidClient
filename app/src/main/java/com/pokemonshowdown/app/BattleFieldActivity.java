@@ -3,12 +3,9 @@ package com.pokemonshowdown.app;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -17,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,14 +26,6 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
-
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
@@ -286,16 +274,23 @@ public class BattleFieldActivity extends FragmentActivity {
                     battleFieldFragment.generateAvailableWatchBattleDialog();
                 }
                 return;
+            case MyApplication.EXTRA_NEW_BATTLE_ROOM:
+                String roomId = intent.getExtras().getString(MyApplication.EXTRA_ROOMID);
+                BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
+                if (fragment != null) {
+                    fragment.processNewRoomRequest(roomId);
+                }
+                return;
             case MyApplication.EXTRA_SERVER_MESSAGE:
                 String serverMessage = intent.getExtras().getString(MyApplication.EXTRA_SERVER_MESSAGE);
                 int channel = intent.getExtras().getInt(MyApplication.EXTRA_CHANNEL);
-                String roomId = intent.getExtras().getString(MyApplication.EXTRA_ROOMID);
+                roomId = intent.getExtras().getString(MyApplication.EXTRA_ROOMID);
                 processMessage(channel, roomId, serverMessage);
                 return;
             case MyApplication.EXTRA_REQUIRE_SIGN_IN:
                 FragmentManager fm = getSupportFragmentManager();
-                OnboardingDialog fragment = new OnboardingDialog();
-                fragment.show(fm, OnboardingDialog.OTAG);
+                OnboardingDialog dialog = new OnboardingDialog();
+                dialog.show(fm, OnboardingDialog.OTAG);
                 return;
             case MyApplication.EXTRA_ERROR_MESSAGE:
                 final String errorMessage = intent.getExtras().getString(MyApplication.EXTRA_ERROR_MESSAGE);
