@@ -18,89 +18,18 @@ import java.util.Iterator;
 public class MoveDex {
     private final static String MTAG = MoveDex.class.getName();
     private HashMap<String, String> mMoveDexEntries;
-    private HashMap<String, Integer> mMoveAnimationEntries;
-
-    public final static Integer SHAKE = 0;
-    public final static Integer DANCE = 1;
-    public final static Integer FLIGHT = 2;
-    public final static Integer SPINATK = 3;
-    public final static Integer XATK = 4;
-    public final static Integer SELF = 5;
-    public final static Integer SELF_LIGHT = 6;
-    public final static Integer SELF_DARK = 7;
-    public final static Integer TRICK = 8;
-    public final static Integer CHARGE = 9;
-    public final static Integer SPREAD_LIGHT = -1;
-    public final static Integer SPREAD_ENERGY = -2;
-    public final static Integer SPREAD_MIST = -3;
-    public final static Integer SPREAD_SHADOW = -4;
-    public final static Integer SPREAD_POISON = -5;
-    public final static Integer SPREAD_WAVE = -6;
-    public final static Integer SPREAD_FIRE = -7;
-    public final static Integer SPREAD_ROCK = -8;
-    public final static Integer SPREAD_SPIKE = -9;
-    public final static Integer SPREAD_TSPIKE = -10;
-    public final static Integer SPREAD_WEB = -11;
-    public final static Integer CONTACT_ENERGY = 101;
-    public final static Integer CONTACT_CLAW = 102;
-    public final static Integer CONTACT_KICK = 103;
-    public final static Integer CONTACT_WAVE = 104;
-    public final static Integer CONTACT_BITE = 105;
-    public final static Integer CONTACT_POISON = 106;
-    public final static Integer CONTACT_PUNCH = 107;
-    public final static Integer CONTACT_SHADOW = 108;
-    public final static Integer CONTACT_THUNDER = 109;
-    public final static Integer CONTACT_FIRE = 110;
-    public final static Integer CONTACT_NEUTRAL = 111;
-    public final static Integer CONTACT_MIST = 112;
-    public final static Integer CONTACT_LIGHT = 113;
-    public final static Integer DRAIN = 25;
-    public final static Integer FAST = 26;
-    public final static Integer CONTACT_PUNCH_FIRE = 27;
-    public final static Integer CONTACT_PUNCH_ICE = 28;
-    public final static Integer CONTACT_PUNCH_THUNDER = 29;
-    public final static Integer CONTACT_BITE_FIRE = 30;
-    public final static Integer CONTACT_BITE_ICE = 31;
-    public final static Integer CONTACT_BITE_THUNDER = 32;
-    public final static Integer STREAM_NEUTRAL = 301;
-    public final static Integer STREAM_LIGHT = 302;
-    public final static Integer STREAM_ENERGY = 303;
-    public final static Integer STREAM_MIST = 304;
-    public final static Integer STREAM_POISON = 305;
-    public final static Integer STREAM_SHADOW = 306;
-    public final static Integer STREAM_WATER = 307;
-    public final static Integer STREAM_FIRE = 308;
-    public final static Integer STREAM_ICE = 309;
-    public final static Integer STREAM_ROCK = 310;
-    public final static Integer EARTH = 33;
-    public final static Integer PHAZE = 34;
-    public final static Integer THUNDER_STRONG = 35;
-    public final static Integer THUNDER_NEUTRAL = 36;
-    public final static Integer THUNDER_WEAK = 37;
-    public final static Integer STATUS_PSN = 401;
-    public final static Integer STATUS_PAR = 402;
-    public final static Integer STATUS_SLP = 403;
-    public final static Integer STATUS_BRN = 404;
-    public final static Integer BALL_NEUTRAL = 501;
-    public final static Integer BALL_LIGHT = 502;
-    public final static Integer BALL_ENERGY = 503;
-    public final static Integer BALL_MIST = 504;
-    public final static Integer BALL_POISON = 505;
-    public final static Integer BALL_SHADOW = 506;
-    public final static Integer BALL_WATER = 507;
-    public final static Integer BALL_FIRE = 508;
-    public final static Integer BALL_ICE = 509;
-    public final static Integer BALL_ROCK = 510;
-    public final static Integer WISH = 38;
-    public final static Integer SLASH = 39;
-    public final static Integer BOMB_NEUTRAL = 601;
-    public final static Integer BOMB_LIGHT = 602;
-    public final static Integer BOMB_ENERGY = 603;
-    public final static Integer BOMB_MIST = 604;
-    public final static Integer BOMB_POISON = 605;
-    public final static Integer BOMB_SHADOW = 606;
-    public final static Integer BOMB_WATER = 607;
-    public final static Integer BOMB_FIRE = 608;
+    private HashMap<String, Moves> mMoveAnimationEntries;
+    
+    public static enum Moves {SHAKE, DANCE, FLIGHT, SPINATK, XATK, SELF, SELF_LIGHT, SELF_DARK, TRICK, CHARGE,
+            SPREAD_LIGHT, SPREAD_ENERGY, SPREAD_MIST, SPREAD_SHADOW, SPREAD_POISON, SPREAD_WAVE, SPREAD_FIRE, SPREAD_ROCK, SPREAD_SPIKE, SPREAD_TSPIKE, SPREAD_WEB,
+            CONTACT_ENERGY, CONTACT_CLAW, CONTACT_KICK, CONTACT_WAVE, CONTACT_BITE, CONTACT_POISON, CONTACT_PUNCH, CONTACT_SHADOW, CONTACT_THUNDER, CONTACT_FIRE, CONTACT_NEUTRAL, CONTACT_MIST, CONTACT_LIGHT,
+            DRAIN, FAST,
+            CONTACT_PUNCH_FIRE, CONTACT_PUNCH_ICE, CONTACT_PUNCH_THUNDER, CONTACT_BITE_FIRE, CONTACT_BITE_ICE, CONTACT_BITE_THUNDER,
+            STREAM_NEUTRAL, STREAM_LIGHT, STREAM_ENERGY, STREAM_MIST, STREAM_POISON, STREAM_SHADOW, STREAM_WATER, STREAM_FIRE, STREAM_ICE, STREAM_ROCK,
+            EARTH, PHAZE, THUNDER_STRONG, THUNDER_NEUTRAL, THUNDER_WEAK, STATUS_PSN, STATUS_PAR, STATUS_SLP, STATUS_BRN,
+            BALL_NEUTRAL, BALL_LIGHT, BALL_ENERGY, BALL_MIST, BALL_POISON, BALL_SHADOW, BALL_WATER, BALL_FIRE, BALL_ICE, BALL_ROCK,
+            WISH, SLASH,
+            BOMB_NEUTRAL, BOMB_LIGHT, BOMB_ENERGY, BOMB_MIST, BOMB_POISON, BOMB_SHADOW,BOMB_WATER, BOMB_FIRE}
 
     private static MoveDex sMoveDex;
     private Context mAppContext;
@@ -125,21 +54,16 @@ public class MoveDex {
         return sMoveDex;
     }
 
-    public HashMap<String, Integer> getMoveAnimationEntries() {
-        return mMoveAnimationEntries;
-    }
-
-    public Integer getMoveAnimationTag(String move) {
-        Integer animation = getMoveAnimationEntries().get(move);
-        return (animation == null) ? SHAKE : animation;
-    }
-
     public HashMap<String, String> getMoveDexEntries() {
         return mMoveDexEntries;
     }
 
     public String getMove(String name) {
         return mMoveDexEntries.get(name);
+    }
+
+    public Moves getMoveAnimationEntries(String move) {
+        return mMoveAnimationEntries.get(move);
     }
 
     public JSONObject getMoveJsonObject(String name) {
@@ -301,7 +225,7 @@ public class MoveDex {
         String[] statusSlpEntries = {"spore", "leechseed", "sleeppowder", "poisonpowder", "stunspore", "powder"};
         String[] statusBrnEntries = {"willowisp"};
         String[] ballNeutralEntries = {"roar", "hypervoice", "chatter", "round", "yawn", "sing",
-                "perishsong", "echoedvoice", "relicsong", "partingshot", "nobleroar", "defog"};
+                "perishsong", "echoedvoice", "relicsong", "partingshot", "nobleroar", "defog", "clearsmog"};
         String[] ballLightEntries = {"electroball", "weatherball", "flashcannon", "lusterpurge"};
         String[] ballEnergyEntries = {"energyball"};
         String[] ballMistEntries = {"mistball", "dazzlinggleam", "moonblast", "hyperspacehole"};
@@ -322,247 +246,247 @@ public class MoveDex {
         String[] bombWaterEntries = {"hydropump", "originpulse", "hydrocannon"};
         String[] bombFireEntries = {"fireblast", "overheat", "blastburn"};
         for (String shake : shakeEntries) {
-            mMoveAnimationEntries.put(shake, SHAKE);
+            mMoveAnimationEntries.put(shake, Moves.SHAKE);
         }
         for (String dance : danceEntries) {
-            mMoveAnimationEntries.put(dance, DANCE);
+            mMoveAnimationEntries.put(dance, Moves.DANCE);
         }
         for (String flight : flightEntries) {
-            mMoveAnimationEntries.put(flight, FLIGHT);
+            mMoveAnimationEntries.put(flight, Moves.FLIGHT);
         }
         for (String xatk : xatkEntries) {
-            mMoveAnimationEntries.put(xatk, XATK);
+            mMoveAnimationEntries.put(xatk, Moves.XATK);
         }
         for (String spinatk : spinatkEntries) {
-            mMoveAnimationEntries.put(spinatk, SPINATK);
+            mMoveAnimationEntries.put(spinatk, Moves.SPINATK);
         }
         for (String self : selfEntries) {
-            mMoveAnimationEntries.put(self, SELF);
+            mMoveAnimationEntries.put(self, Moves.SELF);
         }
         for (String selfLight : selfLightEntries) {
-            mMoveAnimationEntries.put(selfLight, SELF_LIGHT);
+            mMoveAnimationEntries.put(selfLight, Moves.SELF_LIGHT);
         }
         for (String selfDark : selfDarkEntries) {
-            mMoveAnimationEntries.put(selfDark, SELF_DARK);
+            mMoveAnimationEntries.put(selfDark, Moves.SELF_DARK);
         }
         for (String trick : trickEntries) {
-            mMoveAnimationEntries.put(trick, TRICK);
+            mMoveAnimationEntries.put(trick, Moves.TRICK);
         }
         for (String charge : chargeEntries) {
-            mMoveAnimationEntries.put(charge, CHARGE);
+            mMoveAnimationEntries.put(charge, Moves.CHARGE);
         }
         for (String spreadLight : spreadLightEntries) {
-            mMoveAnimationEntries.put(spreadLight, SPREAD_LIGHT);
+            mMoveAnimationEntries.put(spreadLight, Moves.SPREAD_LIGHT);
         }
         for (String spreadEnergy : spreadEnergyEntries) {
-            mMoveAnimationEntries.put(spreadEnergy, SPREAD_ENERGY);
+            mMoveAnimationEntries.put(spreadEnergy, Moves.SPREAD_ENERGY);
         }
         for (String spreadMist : spreadMistEntries) {
-            mMoveAnimationEntries.put(spreadMist, SPREAD_MIST);
+            mMoveAnimationEntries.put(spreadMist, Moves.SPREAD_MIST);
         }
         for (String spreadShadow : spreadShadowEntries) {
-            mMoveAnimationEntries.put(spreadShadow, SPREAD_SHADOW);
+            mMoveAnimationEntries.put(spreadShadow, Moves.SPREAD_SHADOW);
         }
         for (String spreadPoison : spreadPoisonEntries) {
-            mMoveAnimationEntries.put(spreadPoison, SPREAD_POISON);
+            mMoveAnimationEntries.put(spreadPoison, Moves.SPREAD_POISON);
         }
         for (String spreadWave : spreadWaveEntries) {
-            mMoveAnimationEntries.put(spreadWave, SPREAD_WAVE);
+            mMoveAnimationEntries.put(spreadWave, Moves.SPREAD_WAVE);
         }
         for (String spreadFire : spreadFireEntries) {
-            mMoveAnimationEntries.put(spreadFire, SPREAD_FIRE);
+            mMoveAnimationEntries.put(spreadFire, Moves.SPREAD_FIRE);
         }
         for (String spreadRock : spreadRockEntries) {
-            mMoveAnimationEntries.put(spreadRock, SPREAD_ROCK);
+            mMoveAnimationEntries.put(spreadRock, Moves.SPREAD_ROCK);
         }
         for (String spreadSpike : spreadSpikeEntries) {
-            mMoveAnimationEntries.put(spreadSpike, SPREAD_SPIKE);
+            mMoveAnimationEntries.put(spreadSpike, Moves.SPREAD_SPIKE);
         }
         for (String spreadTspike : spreadTspikeEntries) {
-            mMoveAnimationEntries.put(spreadTspike, SPREAD_TSPIKE);
+            mMoveAnimationEntries.put(spreadTspike, Moves.SPREAD_TSPIKE);
         }
         for (String spreadWeb : spreadWebEntries) {
-            mMoveAnimationEntries.put(spreadWeb, SPREAD_WEB);
+            mMoveAnimationEntries.put(spreadWeb, Moves.SPREAD_WEB);
         }
         for (String contactEnergy : contactEnergyEntries) {
-            mMoveAnimationEntries.put(contactEnergy, CONTACT_ENERGY);
+            mMoveAnimationEntries.put(contactEnergy, Moves.CONTACT_ENERGY);
         }
         for (String contactClaw : contactClawEntries) {
-            mMoveAnimationEntries.put(contactClaw, CONTACT_CLAW);
+            mMoveAnimationEntries.put(contactClaw, Moves.CONTACT_CLAW);
         }
         for (String contactKick : contactKickEntries) {
-            mMoveAnimationEntries.put(contactKick, CONTACT_KICK);
+            mMoveAnimationEntries.put(contactKick, Moves.CONTACT_KICK);
         }
         for (String contactWave : contactWaveEntries) {
-            mMoveAnimationEntries.put(contactWave, CONTACT_WAVE);
+            mMoveAnimationEntries.put(contactWave, Moves.CONTACT_WAVE);
         }
         for (String contactBite : contactBiteEntries) {
-            mMoveAnimationEntries.put(contactBite, CONTACT_BITE);
+            mMoveAnimationEntries.put(contactBite, Moves.CONTACT_BITE);
         }
         for (String contactPoison : contactPoisonEntries) {
-            mMoveAnimationEntries.put(contactPoison, CONTACT_POISON);
+            mMoveAnimationEntries.put(contactPoison, Moves.CONTACT_POISON);
         }
         for (String contactPunch : contactPunchEntries) {
-            mMoveAnimationEntries.put(contactPunch, CONTACT_PUNCH);
+            mMoveAnimationEntries.put(contactPunch, Moves.CONTACT_PUNCH);
         }
         for (String contactShadow : contactShadowEntries) {
-            mMoveAnimationEntries.put(contactShadow, CONTACT_SHADOW);
+            mMoveAnimationEntries.put(contactShadow, Moves.CONTACT_SHADOW);
         }
         for (String contactThunder : contactThunderEntries) {
-            mMoveAnimationEntries.put(contactThunder, CONTACT_THUNDER);
+            mMoveAnimationEntries.put(contactThunder, Moves.CONTACT_THUNDER);
         }
         for (String contactFire : contactFireEntries) {
-            mMoveAnimationEntries.put(contactFire, CONTACT_FIRE);
+            mMoveAnimationEntries.put(contactFire, Moves.CONTACT_FIRE);
         }
         for (String contactNeutral : contactNeutralEntries) {
-            mMoveAnimationEntries.put(contactNeutral, CONTACT_NEUTRAL);
+            mMoveAnimationEntries.put(contactNeutral, Moves.CONTACT_NEUTRAL);
         }
         for (String contactMist : contactMistEntries) {
-            mMoveAnimationEntries.put(contactMist, CONTACT_MIST);
+            mMoveAnimationEntries.put(contactMist, Moves.CONTACT_MIST);
         }
         for (String contactLight : contactLightEntries) {
-            mMoveAnimationEntries.put(contactLight, CONTACT_LIGHT);
+            mMoveAnimationEntries.put(contactLight, Moves.CONTACT_LIGHT);
         }
         for (String drain : drainEntries) {
-            mMoveAnimationEntries.put(drain, DRAIN);
+            mMoveAnimationEntries.put(drain, Moves.DRAIN);
         }
         for (String fast : fastEntries) {
-            mMoveAnimationEntries.put(fast, FAST);
+            mMoveAnimationEntries.put(fast, Moves.FAST);
         }
         for (String punchFire : punchFireEntries) {
-            mMoveAnimationEntries.put(punchFire, CONTACT_PUNCH_FIRE);
+            mMoveAnimationEntries.put(punchFire, Moves.CONTACT_PUNCH_FIRE);
         }
         for (String punchIce : punchIceEntries) {
-            mMoveAnimationEntries.put(punchIce, CONTACT_PUNCH_ICE);
+            mMoveAnimationEntries.put(punchIce, Moves.CONTACT_PUNCH_ICE);
         }
         for (String punchThunder : punchThunderEntries) {
-            mMoveAnimationEntries.put(punchThunder, CONTACT_PUNCH_THUNDER);
+            mMoveAnimationEntries.put(punchThunder, Moves.CONTACT_PUNCH_THUNDER);
         }
         for (String biteFire : biteFireEntries) {
-            mMoveAnimationEntries.put(biteFire, CONTACT_BITE_FIRE);
+            mMoveAnimationEntries.put(biteFire, Moves.CONTACT_BITE_FIRE);
         }
         for (String biteIce : biteIceEntries) {
-            mMoveAnimationEntries.put(biteIce, CONTACT_BITE_ICE);
+            mMoveAnimationEntries.put(biteIce, Moves.CONTACT_BITE_ICE);
         }
         for (String biteThunder : biteThunderEntries) {
-            mMoveAnimationEntries.put(biteThunder, CONTACT_BITE_THUNDER);
+            mMoveAnimationEntries.put(biteThunder, Moves.CONTACT_BITE_THUNDER);
         }
         for (String streamNeutral : streamNeutralEntries) {
-            mMoveAnimationEntries.put(streamNeutral, STREAM_NEUTRAL);
+            mMoveAnimationEntries.put(streamNeutral, Moves.STREAM_NEUTRAL);
         }
         for (String streamLight : streamLightEntries) {
-            mMoveAnimationEntries.put(streamLight, STREAM_LIGHT);
+            mMoveAnimationEntries.put(streamLight, Moves.STREAM_LIGHT);
         }
         for (String streamEnergy : streamEnergyEntries) {
-            mMoveAnimationEntries.put(streamEnergy, STREAM_ENERGY);
+            mMoveAnimationEntries.put(streamEnergy, Moves.STREAM_ENERGY);
         }
         for (String streamMist : streamMistEntries) {
-            mMoveAnimationEntries.put(streamMist, STREAM_MIST);
+            mMoveAnimationEntries.put(streamMist, Moves.STREAM_MIST);
         }
         for (String streamPoison : streamPoisonEntries) {
-            mMoveAnimationEntries.put(streamPoison, STREAM_POISON);
+            mMoveAnimationEntries.put(streamPoison, Moves.STREAM_POISON);
         }
         for (String streamShadow : streamShadowEntries) {
-            mMoveAnimationEntries.put(streamShadow, STREAM_SHADOW);
+            mMoveAnimationEntries.put(streamShadow, Moves.STREAM_SHADOW);
         }
         for (String streamWater : streamWaterEntries) {
-            mMoveAnimationEntries.put(streamWater, STREAM_WATER);
+            mMoveAnimationEntries.put(streamWater, Moves.STREAM_WATER);
         }
         for (String streamFire : streamFireEntries) {
-            mMoveAnimationEntries.put(streamFire, STREAM_FIRE);
+            mMoveAnimationEntries.put(streamFire, Moves.STREAM_FIRE);
         }
         for (String streamIce : streamIceEntries) {
-            mMoveAnimationEntries.put(streamIce, STREAM_ICE);
+            mMoveAnimationEntries.put(streamIce, Moves.STREAM_ICE);
         }
         for (String streamRock : streamRockEntries) {
-            mMoveAnimationEntries.put(streamRock, STREAM_ROCK);
+            mMoveAnimationEntries.put(streamRock, Moves.STREAM_ROCK);
         }
         for (String earth : earthEntries) {
-            mMoveAnimationEntries.put(earth, EARTH);
+            mMoveAnimationEntries.put(earth, Moves.EARTH);
         }
         for (String phaze : phazeEntries) {
-            mMoveAnimationEntries.put(phaze, PHAZE);
+            mMoveAnimationEntries.put(phaze, Moves.PHAZE);
         }
         for (String thunderStrong : thunderStrongEntries) {
-            mMoveAnimationEntries.put(thunderStrong, THUNDER_STRONG);
+            mMoveAnimationEntries.put(thunderStrong, Moves.THUNDER_STRONG);
         }
         for (String thunderNeutral : thunderNeutralEntries) {
-            mMoveAnimationEntries.put(thunderNeutral, THUNDER_NEUTRAL);
+            mMoveAnimationEntries.put(thunderNeutral, Moves.THUNDER_NEUTRAL);
         }
         for (String thunderWeak : thunderWeakEntries) {
-            mMoveAnimationEntries.put(thunderWeak, THUNDER_WEAK);
+            mMoveAnimationEntries.put(thunderWeak, Moves.THUNDER_WEAK);
         }
         for (String statusPsn : statusPsnEntries) {
-            mMoveAnimationEntries.put(statusPsn, STATUS_PSN);
+            mMoveAnimationEntries.put(statusPsn, Moves.STATUS_PSN);
         }
         for (String statusPar : statusParEntries) {
-            mMoveAnimationEntries.put(statusPar, STATUS_PAR);
+            mMoveAnimationEntries.put(statusPar, Moves.STATUS_PAR);
         }
         for (String statusSlp : statusSlpEntries) {
-            mMoveAnimationEntries.put(statusSlp, STATUS_SLP);
+            mMoveAnimationEntries.put(statusSlp, Moves.STATUS_SLP);
         }
         for (String statusBrn : statusBrnEntries) {
-            mMoveAnimationEntries.put(statusBrn, STATUS_BRN);
+            mMoveAnimationEntries.put(statusBrn, Moves.STATUS_BRN);
         }
         for (String ballNeutral : ballNeutralEntries) {
-            mMoveAnimationEntries.put(ballNeutral, BALL_NEUTRAL);
+            mMoveAnimationEntries.put(ballNeutral, Moves.BALL_NEUTRAL);
         }
         for (String ballLight : ballLightEntries) {
-            mMoveAnimationEntries.put(ballLight, BALL_LIGHT);
+            mMoveAnimationEntries.put(ballLight, Moves.BALL_LIGHT);
         }
         for (String ballEnergy : ballEnergyEntries) {
-            mMoveAnimationEntries.put(ballEnergy, BALL_ENERGY);
+            mMoveAnimationEntries.put(ballEnergy, Moves.BALL_ENERGY);
         }
         for (String ballMist : ballMistEntries) {
-            mMoveAnimationEntries.put(ballMist, BALL_MIST);
+            mMoveAnimationEntries.put(ballMist, Moves.BALL_MIST);
         }
         for (String ballPoison : ballPoisonEntries) {
-            mMoveAnimationEntries.put(ballPoison, BALL_POISON);
+            mMoveAnimationEntries.put(ballPoison, Moves.BALL_POISON);
         }
         for (String ballShadow : ballShadowEntries) {
-            mMoveAnimationEntries.put(ballShadow, BALL_SHADOW);
+            mMoveAnimationEntries.put(ballShadow, Moves.BALL_SHADOW);
         }
         for (String ballWater : ballWaterEntries) {
-            mMoveAnimationEntries.put(ballWater, BALL_WATER);
+            mMoveAnimationEntries.put(ballWater, Moves.BALL_WATER);
         }
         for (String ballFire : ballFireEntries) {
-            mMoveAnimationEntries.put(ballFire, BALL_FIRE);
+            mMoveAnimationEntries.put(ballFire, Moves.BALL_FIRE);
         }
         for (String ballIce : ballIceEntries) {
-            mMoveAnimationEntries.put(ballIce, BALL_ICE);
+            mMoveAnimationEntries.put(ballIce, Moves.BALL_ICE);
         }
         for (String ballRock : ballRockEntries) {
-            mMoveAnimationEntries.put(ballRock, BALL_ROCK);
+            mMoveAnimationEntries.put(ballRock, Moves.BALL_ROCK);
         }
         for (String wish : wishEntries) {
-            mMoveAnimationEntries.put(wish, WISH);
+            mMoveAnimationEntries.put(wish, Moves.WISH);
         }
         for (String slash : slashEntries) {
-            mMoveAnimationEntries.put(slash, SLASH);
+            mMoveAnimationEntries.put(slash, Moves.SLASH);
         }
         for (String bombNeutral : bombNeutralEntries) {
-            mMoveAnimationEntries.put(bombNeutral, BOMB_NEUTRAL);
+            mMoveAnimationEntries.put(bombNeutral, Moves.BOMB_NEUTRAL);
         }
         for (String bombLight : bombLightEntries) {
-            mMoveAnimationEntries.put(bombLight, BOMB_LIGHT);
+            mMoveAnimationEntries.put(bombLight, Moves.BOMB_LIGHT);
         }
         for (String bombEnergy : bombEnergyEntries) {
-            mMoveAnimationEntries.put(bombEnergy, BOMB_ENERGY);
+            mMoveAnimationEntries.put(bombEnergy, Moves.BOMB_ENERGY);
         }
         for (String bombMist : bombMistEntries) {
-            mMoveAnimationEntries.put(bombMist, BOMB_MIST);
+            mMoveAnimationEntries.put(bombMist, Moves.BOMB_MIST);
         }
         for (String bombPoison : bombPoisonEntries) {
-            mMoveAnimationEntries.put(bombPoison, BOMB_POISON);
+            mMoveAnimationEntries.put(bombPoison, Moves.BOMB_POISON);
         }
         for (String bombShadow : bombShadowEntries) {
-            mMoveAnimationEntries.put(bombShadow, BOMB_SHADOW);
+            mMoveAnimationEntries.put(bombShadow, Moves.BOMB_SHADOW);
         }
         for (String bombWater : bombWaterEntries) {
-            mMoveAnimationEntries.put(bombWater, BOMB_WATER);
+            mMoveAnimationEntries.put(bombWater, Moves.BOMB_WATER);
         }
         for (String bombFire : bombFireEntries) {
-            mMoveAnimationEntries.put(bombFire, BOMB_FIRE);
+            mMoveAnimationEntries.put(bombFire, Moves.BOMB_FIRE);
         }
     }
 }
