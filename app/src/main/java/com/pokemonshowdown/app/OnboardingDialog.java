@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -26,7 +27,7 @@ public class OnboardingDialog extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.dialog_onboarding, container);
 
-        final EditText username = (EditText) view.findViewById(R.id.username);
+        final EditText username = (EditText) view.findViewById(R.id.loginUsername);
 
         TextView onboarding = (TextView) view.findViewById(R.id.onboarding);
         onboarding.setOnClickListener(new View.OnClickListener() {
@@ -38,6 +39,14 @@ public class OnboardingDialog extends DialogFragment {
                 } else {
                     Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
                     String assertion = onboarding.verifyUsernameRegistered(name);
+                    if (assertion == null) {
+                        getDialog().dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                .setMessage(R.string.server_error)
+                                .create();
+                        alertDialog.show();
+                        return;
+                    }
                     if (assertion.equals(";")) {
                         getDialog().dismiss();
                         FragmentManager fm = getActivity().getSupportFragmentManager();

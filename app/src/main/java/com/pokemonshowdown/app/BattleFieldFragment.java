@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,6 +155,9 @@ public class BattleFieldFragment extends Fragment {
         }
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
+            if (fragment.mBattling != 0) {
+                MyApplication.getMyApplication().sendClientMessage("|/forfeit " + fragment.mRoomId);
+            }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
         BattleFieldData.get(getActivity()).leaveRoom(roomId);

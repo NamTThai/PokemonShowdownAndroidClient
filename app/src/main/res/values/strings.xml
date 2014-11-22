@@ -7,6 +7,7 @@
     <string name="weak_connection">Failed to connect to server.. it needs a thing called \'Internet Connection\', brilliant</string>
     <string name="no_connection">Weak signal, genius.. maybe move your camp trailer to somewhere near civilization?</string>
     <string name="still_in_development">TEASER ALERT: feature still in development</string>
+    <string name="server_error">Cannot connect to Showdown server. Plz try again later :(</string>
     <string name="waiting_for_server">Waiting for server…</string>
     <string name="ok">OK</string>
 

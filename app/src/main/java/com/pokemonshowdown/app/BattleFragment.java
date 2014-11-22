@@ -56,6 +56,12 @@ public class BattleFragment extends Fragment {
     public int[] progressBarHolder = new int[6];
 
     public String mRoomId;
+    /**
+     * 0 if it's a simple watch battle
+     * 1 if player is p1
+     * -1 if player is p2
+     */
+    public int mBattling;
     public String mPlayer1;
     public String mPlayer2;
     public ArrayList<String> mPlayer1Team;
@@ -91,6 +97,8 @@ public class BattleFragment extends Fragment {
             mRoomId = getArguments().getString(ROOM_ID);
         }
 
+        mBattling = 0;
+
         int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
         ((ImageView) view.findViewById(R.id.battle_background)).setImageResource(BACKGROUND_LIBRARY[id]);
 
@@ -119,6 +127,19 @@ public class BattleFragment extends Fragment {
         if (animationData != null) {
             animationData.setMessageListener(true);
         }
+    }
+
+    public void setBattling(boolean isP1) {
+        if (isP1) {
+            mBattling = 1;
+        } else {
+            mBattling = -1;
+            switchUpPlayer();
+        }
+    }
+
+    private void switchUpPlayer() {
+
     }
 
     public void processServerMessage(String message) {
