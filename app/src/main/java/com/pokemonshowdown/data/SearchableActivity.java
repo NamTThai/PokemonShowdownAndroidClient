@@ -273,9 +273,9 @@ public class SearchableActivity extends ListActivity {
                 TextView textView = (TextView) convertView.findViewById(R.id.short_move_name);
                 textView.setText(moveJson.getString("name"));
                 ImageView type = (ImageView) convertView.findViewById(R.id.type);
-                type.setImageResource(MoveDex.getMoveType(getApplicationContext(), moveJson.getString("type")));
+                type.setImageResource(MoveDex.getTypeIcon(getApplicationContext(), moveJson.getString("type")));
                 ImageView category = (ImageView) convertView.findViewById(R.id.category);
-                category.setImageResource(MoveDex.getMoveCategory(getApplicationContext(), moveJson.getString("category")));
+                category.setImageResource(MoveDex.getCategoryIcon(getApplicationContext(), moveJson.getString("category")));
 
                 TextView power = (TextView) convertView.findViewById(R.id.move_power);
                 String pow = moveJson.getString("basePower");

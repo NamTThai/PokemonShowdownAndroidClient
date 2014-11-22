@@ -8,6 +8,7 @@
     <string name="no_connection">Weak signal, genius.. maybe move your camp trailer to somewhere near civilization?</string>
     <string name="still_in_development">TEASER ALERT: feature still in development</string>
     <string name="server_error">Cannot connect to Showdown server. Plz try again later :(</string>
+    <string name="request_error">Server error :( plz close this battle</string>
     <string name="waiting_for_server">Waiting for server…</string>
     <string name="ok">OK</string>
 
@@ -30,6 +31,7 @@
     <string name="pokemon_icon">Pokemon Icon</string>
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>
+    <string name="battle_switch">Switch</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
@@ -120,7 +122,6 @@
     <string name="hint_chatroom">Please login to chat</string>
     <string name="title_activity_team_building">TeamBuildingActivity</string>
 
-
     <!-- These are for teambuilder -->
     <string name="create_team">Create team</string>
     <string name="delete_team">Remove team</string>
@@ -128,5 +129,6 @@
     <string name="import_team">Import team</string>
     <string name="export_team">Export team</string>
     <string name="moves">Moves</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

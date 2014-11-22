@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.widget.TextView;
-
-import com.pokemonshowdown.app.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -183,11 +179,15 @@ public class BattleFieldData {
         return mAnimationDataHashMap.get(roomId);
     }
 
-    public void joinRoom(String roomId) {
+    public void joinRoom(String roomId, boolean watch) {
         HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
-        roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
-        getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));
-        MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
+        if (!roomDataHashMap.containsKey(roomId)) {
+            roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
+            getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));
+        }
+        if (watch) {
+            MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
+        }
     }
 
     public void leaveRoom(String roomId) {

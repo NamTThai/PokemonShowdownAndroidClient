@@ -156,7 +156,7 @@ public class BattleFieldFragment extends Fragment {
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
             if (fragment.mBattling != 0) {
-                MyApplication.getMyApplication().sendClientMessage("|/forfeit " + fragment.mRoomId);
+                MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
             }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
@@ -172,6 +172,7 @@ public class BattleFieldFragment extends Fragment {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
             mRoomList.add(roomId);
+            BattleFieldData.get(getActivity()).joinRoom(roomId, false);
             mBattleFieldPagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override
@@ -224,7 +225,7 @@ public class BattleFieldFragment extends Fragment {
                 .setItems(value, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        BattleFieldData.get(getActivity()).joinRoom(key[which]);
+                        BattleFieldData.get(getActivity()).joinRoom(key[which], true);
                         dialog.dismiss();
                     }
                 })

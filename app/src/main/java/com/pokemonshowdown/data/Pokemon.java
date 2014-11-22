@@ -218,7 +218,8 @@ public class Pokemon implements Serializable {
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
-            mTagName = name;
+            mTagName = MyApplication.toId(name);
+            name = MyApplication.toId(name);
             JSONObject jsonObject;
             if (withAppContext) {
                 jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
@@ -428,6 +429,21 @@ public class Pokemon implements Serializable {
             return null;
         }
         return null;
+    }
+
+    public static int getGenderIcon(String gender) {
+        if (gender == null) {
+            return 0;
+        }
+
+        switch (gender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
     }
 
     public int[] calculateStats() {

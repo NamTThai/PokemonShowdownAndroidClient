@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -36,6 +37,11 @@ import com.pokemonshowdown.data.BattleAnimation;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Pokemon;
+import com.pokemonshowdown.data.PokemonInfo;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -109,6 +115,14 @@ public class BattleFragment extends Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
+
+        view.findViewById(R.id.icon1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PokemonInfo pkm = new PokemonInfo(getActivity(), "Bulbasaur");
+                PokemonInfoFragment.newInstance(pkm, true).show(getActivity().getSupportFragmentManager(), BTAG);
+            }
+        });
     }
 
     @Override
@@ -129,8 +143,9 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void setBattling(boolean isP1) {
-        if (isP1) {
+    private void setBattling(JSONObject object) throws JSONException {
+        String side = object.getJSONObject("side").getString("id");
+        if (side.equals("p1")) {
             mBattling = 1;
         } else {
             mBattling = -1;
@@ -138,11 +153,36 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void switchUpPlayer() {
+    private void setDisplayTeam(JSONObject object) throws JSONException {
+        JSONArray team = object.getJSONArray("pokemon");
+        for(int i = 0; i < team.length(); i++) {
+            JSONObject pkm = team.getJSONObject(i);
+            String name = pkm.getString("ident");
+            name = name.substring(name.indexOf(" ") + 1, name.length());
+            mPlayer1Team.add(i, name);
+        }
+    }
 
+    private void switchUpPlayer() {
+        // Switch player name
+        if (getView() == null) {
+            return;
+        }
+
+        String holderString = mPlayer1;
+        mPlayer1 = mPlayer2;
+        mPlayer2 = holderString;
+
+        // Switch player avatar
+        Drawable holderDrawable = ((ImageView) getView().findViewById(R.id.avatar)).getDrawable();
+        ((ImageView) getView().findViewById(R.id.avatar)).setImageDrawable(((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
+        ((ImageView) getView().findViewById(R.id.avatar_o)).setImageDrawable(holderDrawable);
     }
 
     public void processServerMessage(String message) {
+        if (mBattling == -1) {
+            message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+        }
         processMajorAction(message);
     }
 
@@ -170,7 +210,6 @@ public class BattleFragment extends Fragment {
 
         Spannable logMessage = new SpannableString("");
         switch (command) {
-            case "init":
             case "title":
             case "join":
             case "j":
@@ -348,9 +387,19 @@ public class BattleFragment extends Fragment {
                 break;
 
             case "request":
-                toast = makeToast(messageDetails);
-                startAnimation(toast);
-                logMessage = new SpannableString(messageDetails);
+                try {
+                    JSONObject requestJson = new JSONObject(messageDetails);
+                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
+                        setBattling(requestJson);
+                        setDisplayTeam(requestJson);
+                    }
+                } catch (JSONException e) {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage(R.string.request_error)
+                            .create()
+                            .show();
+                    return;
+                }
                 break;
 
             case "inactive":
