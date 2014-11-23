@@ -218,8 +218,8 @@ public class Pokemon implements Serializable {
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
-            mTagName = MyApplication.toId(name);
             name = MyApplication.toId(name);
+            mTagName = name;
             JSONObject jsonObject;
             if (withAppContext) {
                 jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));

@@ -17,33 +17,38 @@ public class PokemonInfo implements Serializable {
     private boolean mActive;
     private int mHp;
     private String mStatus;
+    /**
+     * Doesn't include HP
+     */
     private int[] mStats;
     private HashMap<String, Integer> mMoves;
     private String mAbility;
     private String mNature;
     private String mItem;
+    private boolean mCanMegaEvo;
 
     public PokemonInfo(Context activityContext, String pkm) {
-        mName = pkm;
-        mNickname = pkm;
-        mLevel = 100;
+        setName(pkm);
+        setNickname(pkm);
+        setLevel(100);
         Pokemon defaultPkm = new Pokemon(activityContext, pkm, false);
-        mTypeIcon = defaultPkm.getTypeIcon();
-        mGender = null;
-        mShiny = false;
-        mActive = false;
-        mHp = 100;
-        mStatus = null;
-        mStats = defaultPkm.getBaseStats();
-        mMoves = new HashMap<>();
+        setTypeIcon(defaultPkm.getTypeIcon());
+        setGender(null);
+        setShiny(false);
+        setActive(false);
+        setHp(100);
+        setStatus(null);
+        setStats(defaultPkm.getBaseStats());
+        setMoves(new HashMap<String, Integer>());
         Collection<String> abilityList = defaultPkm.getAbilityList().values();
-        mAbility = "";
+        setAbility("");
         for (String ability : abilityList) {
             mAbility += ability + "/";
         }
         mAbility = mAbility.substring(0, mAbility.length() - 1);
-        mNature = null;
-        mItem = null;
+        setNature(null);
+        setItem(null);
+        setCanMegaEvo(false);
     }
 
     public int getIcon(Context appContext, boolean withAppContext) {
@@ -143,7 +148,14 @@ public class PokemonInfo implements Serializable {
     }
 
     public void setStats(int[] stats) {
-        mStats = stats;
+        if (stats.length == 6) {
+            if (mStats == null) {
+                mStats = new int[5];
+            }
+            System.arraycopy(stats, 1, mStats, 0, 5);
+        } else {
+            mStats = stats;
+        }
     }
 
     public HashMap<String, Integer> getMoves() {
@@ -170,12 +182,19 @@ public class PokemonInfo implements Serializable {
         mNature = nature;
     }
 
-    public String getItem() {
-        return mItem;
+    public String getItem(Context activityContext) {
+        return ItemDex.get(activityContext).getItem(mItem);
     }
 
     public void setItem(String item) {
         mItem = item;
     }
 
+    public boolean canMegaEvo() {
+        return mCanMegaEvo;
+    }
+
+    public void setCanMegaEvo(boolean canMegaEvo) {
+        mCanMegaEvo = canMegaEvo;
+    }
 }

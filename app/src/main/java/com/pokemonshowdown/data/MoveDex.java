@@ -67,6 +67,7 @@ public class MoveDex {
     }
 
     public JSONObject getMoveJsonObject(String name) {
+        name = MyApplication.toId(name);
         try {
             String move = mMoveDexEntries.get(name);
             return new JSONObject(move);
@@ -87,6 +88,7 @@ public class MoveDex {
     }
 
     public static int getMoveTypeIcon(Context appContext, String move, boolean withAppContext) {
+        move = MyApplication.toId(move);
         try {
             MoveDex moveDex;
             if (withAppContext) {

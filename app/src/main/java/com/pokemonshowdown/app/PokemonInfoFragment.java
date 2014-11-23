@@ -93,9 +93,9 @@ public class PokemonInfoFragment extends DialogFragment {
         }
 
         TextView item = (TextView) view.findViewById(R.id.item);
-        if (mPokemonInfo.getItem() != null) {
-            item.setText(mPokemonInfo.getItem());
-            item.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getActivity(), mPokemonInfo.getItem()), 0, 0, 0);
+        if (mPokemonInfo.getItem(getActivity()) != null) {
+            item.setText(mPokemonInfo.getItem(getActivity()));
+            item.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getActivity(), mPokemonInfo.getItem(getActivity())), 0, 0, 0);
         } else {
             item.setVisibility(View.GONE);
         }
@@ -114,19 +114,39 @@ public class PokemonInfoFragment extends DialogFragment {
         hpBar.setProgress(mPokemonInfo.getHp());
 
         HashMap<String, Integer> moves = mPokemonInfo.getMoves();
-        Set<String> moveNames = moves.keySet();
-        ((TextView) view.findViewById(R.id.move1_name)).setText("abs");
-        ((ImageView) view.findViewById(R.id.move1_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), "scald", false));
-        ((TextView) view.findViewById(R.id.move1_pp)).setText("10");
-        ((TextView) view.findViewById(R.id.move2_name)).setText("abs");
-        ((ImageView) view.findViewById(R.id.move2_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), "scald", false));
-        ((TextView) view.findViewById(R.id.move2_pp)).setText("10");
-        ((TextView) view.findViewById(R.id.move3_name)).setText("abs");
-        ((ImageView) view.findViewById(R.id.move3_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), "scald", false));
-        ((TextView) view.findViewById(R.id.move3_pp)).setText("10");
-        ((TextView) view.findViewById(R.id.move4_name)).setText("abs");
-        ((ImageView) view.findViewById(R.id.move4_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), "scald", false));
-        ((TextView) view.findViewById(R.id.move4_pp)).setText("10");
+        Set<String> moveSets = moves.keySet();
+        String[] moveNames = moveSets.toArray(new String[moveSets.size()]);
+        if (moveNames.length < 4) {
+            view.findViewById(R.id.move4).setVisibility(View.GONE);
+        } else {
+            ((TextView) view.findViewById(R.id.move4_name)).setText(moveNames[3]);
+            ((ImageView) view.findViewById(R.id.move4_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[3], false));
+            ((TextView) view.findViewById(R.id.move4_pp)).setText(moves.get(moveNames[3]));
+        }
+
+        if (moveNames.length < 3) {
+            view.findViewById(R.id.move3).setVisibility(View.GONE);
+        } else {
+            ((TextView) view.findViewById(R.id.move3_name)).setText(moveNames[2]);
+            ((ImageView) view.findViewById(R.id.move3_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[2], false));
+            ((TextView) view.findViewById(R.id.move3_pp)).setText(moves.get(moveNames[2]));
+        }
+
+        if (moveNames.length < 2) {
+            view.findViewById(R.id.move2).setVisibility(View.GONE);
+        } else {
+            ((TextView) view.findViewById(R.id.move2_name)).setText(moveNames[1]);
+            ((ImageView) view.findViewById(R.id.move2_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[1], false));
+            ((TextView) view.findViewById(R.id.move2_pp)).setText(moves.get(moveNames[1]));
+        }
+
+        if (moveNames.length < 1) {
+            view.findViewById(R.id.move1).setVisibility(View.GONE);
+        } else {
+            ((TextView) view.findViewById(R.id.move1_name)).setText(moveNames[0]);
+            ((ImageView) view.findViewById(R.id.move1_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[0], false));
+            ((TextView) view.findViewById(R.id.move1_pp)).setText(moves.get(moveNames[0]));
+        }
 
         TextView switchPkm = (TextView) view.findViewById(R.id.switchPkm);
         if (mSwitch) {
@@ -143,7 +163,7 @@ public class PokemonInfoFragment extends DialogFragment {
 
     public String getStatsString() {
         int[] stats = mPokemonInfo.getStats();
-        return ("HP " + stats[0] + " / Atk " + stats[1] + " / Def " + stats[2] + " / SpA " + stats[3] + " / SpD " + stats[4] + " / Spe " + stats[5]);
+        return ("Atk " + stats[1] + " / Def " + stats[2] + " / SpA " + stats[3] + " / SpD " + stats[4] + " / Spe " + stats[5]);
     }
 
     public void setStatus(TextView statusView, String status) {
