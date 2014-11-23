@@ -73,7 +73,7 @@ public class PokemonTeam implements Serializable {
         for (Pokemon pokemon : pokemons) {
             if (pokemon != null) {
                 sb.append(pokemon.exportPokemon());
-                sb.append("\r\n");
+                sb.append("\n");
             }
         }
 
