@@ -80,18 +80,18 @@ public class Pokemon implements Serializable {
         StringBuilder sb = new StringBuilder();
         if (getName().length() > 0) {
             sb.append(getName());
-            sb.append(" (" + getGender() + ")");
+            sb.append(" (").append(getGender()).append(")");
             if (getItem().length() > 0) {
-                sb.append(" @ " + getItem());
+                sb.append(" @ ").append(getItem());
             }
-            sb.append('\n');
+            sb.append("\n");
         }
         if (getAbility().length() > 0) {
-            sb.append("Ability: " + getAbility() + '\n');
+            sb.append("Ability: ").append(getAbility()).append("\n");
         }
 
         if (getLevel() != 100) {
-            sb.append("Level: " + getLevel() + '\n');
+            sb.append("Level: ").append(getLevel()).append("\n");
         }
 
         if (isShiny()) {
@@ -99,7 +99,7 @@ public class Pokemon implements Serializable {
         }
 
         if (getHappiness() != 255) {
-            sb.append("Happiness: " + getHappiness() + "\n");
+            sb.append("Happiness: ").append(getHappiness()).append("\n");
         }
 
         boolean difZero = false;
@@ -115,56 +115,121 @@ public class Pokemon implements Serializable {
             sb.append("EVs: ");
             if (getHPEV() != 0) {
                 if (first) {
-                    sb.append(getHPEV() + " HP ");
+                    sb.append(getHPEV()).append(" HP ");
                     first = false;
                 }
             }
             if (getAtkEV() != 0) {
                 if (first) {
-                    sb.append(getAtkEV() + " Atk ");
+                    sb.append(getAtkEV()).append(" Atk ");
                     first = false;
 
                 } else {
-                    sb.append("/ " + getAtkEV() + " Atk ");
+                    sb.append("/ ").append(getAtkEV()).append(" Atk ");
                 }
             }
             if (getDefEV() != 0) {
                 if (first) {
-                    sb.append(getDefEV() + " Def ");
+                    sb.append(getDefEV()).append(" Def ");
                     first = false;
 
                 } else {
-                    sb.append("/ " + getDefEV() + " Def ");
+                    sb.append("/ ").append(getDefEV()).append(" Def ");
                 }
             }
             if (getSpAtkEV() != 0) {
                 if (first) {
-                    sb.append(getSpAtkEV() + " SpA ");
+                    sb.append(getSpAtkEV()).append(" SpA ");
                     first = false;
 
                 } else {
-                    sb.append("/ " + getSpAtkEV() + " SpA ");
+                    sb.append("/ ").append(getSpAtkEV()).append(" SpA ");
                 }
             }
             if (getSpDefEV() != 0) {
                 if (first) {
-                    sb.append(getSpDefEV() + " SpD ");
+                    sb.append(getSpDefEV()).append(" SpD ");
                     first = false;
 
                 } else {
-                    sb.append("/ " + getSpDefEV() + " SpD ");
+                    sb.append("/ ").append(getSpDefEV()).append(" SpD ");
                 }
             }
             if (getSpdEV() != 0) {
                 if (first) {
-                    sb.append(getSpdEV() + " Spe ");
+                    sb.append(getSpdEV()).append(" Spe ");
                     first = false;
                 } else {
-                    sb.append("/ " + getSpdEV() + " Spe ");
+                    sb.append("/ ").append(getSpdEV()).append(" Spe ");
                 }
             }
-            sb.append('\n');
+            sb.append("\n");
         }
+
+        // IVS
+        difZero = false;
+        for (int i : getIVs()) {
+            if (i != 0) {
+                difZero = true;
+                break;
+            }
+        }
+        if (difZero) {
+            boolean first = true;
+
+            sb.append("IVs: ");
+            if (getHPIV() != 0) {
+                if (first) {
+                    sb.append(getHPIV()).append(" HP ");
+                    first = false;
+                }
+            }
+            if (getAtkIV() != 0) {
+                if (first) {
+                    sb.append(getAtkIV()).append(" Atk ");
+                    first = false;
+                } else {
+                    sb.append("/ ").append(getAtkIV()).append(" Atk ");
+                }
+            }
+            if (getDefIV() != 0) {
+                if (first) {
+                    sb.append(getDefIV()).append(" Def ");
+                    first = false;
+
+                } else {
+                    sb.append("/ ").append(getDefIV()).append(" Def ");
+                }
+            }
+            if (getSpAtkIV() != 0) {
+                if (first) {
+                    sb.append(getSpAtkIV()).append(" SpA ");
+                    first = false;
+
+                } else {
+                    sb.append("/ ").append(getSpAtkIV()).append(" SpA ");
+                }
+            }
+            if (getSpDefIV() != 0) {
+                if (first) {
+                    sb.append(getSpDefIV()).append(" SpD ");
+                    first = false;
+
+                } else {
+                    sb.append("/ ").append(getSpDefIV()).append(" SpD ");
+                }
+            }
+            if (getSpdIV() != 0) {
+                if (first) {
+                    sb.append(getSpdIV()).append(" Spe ");
+                    first = false;
+                } else {
+                    sb.append("/ ").append(getSpdIV()).append(" Spe ");
+                }
+            }
+            sb.append("\n");
+        }
+        // moves
         boolean noMoves = true;
         if (!getMove1().equals("--")) {
             noMoves = false;
@@ -182,30 +247,30 @@ public class Pokemon implements Serializable {
             if (getMove1().equals("--")) {
                 sb.append("- \n");
             } else {
-                sb.append("- " + getMove1() + "\n");
+                sb.append("- ").append(getMove1()).append("\n");
             }
 
             if (getMove2().equals("--")) {
                 sb.append("- \n");
             } else {
-                sb.append("- " + getMove2() + "\n");
+                sb.append("- ").append(getMove2()).append("\n");
             }
 
             if (getMove3().equals("--")) {
                 sb.append("- \n");
             } else {
-                sb.append("- " + getMove3() + "\n");
+                sb.append("- ").append(getMove3()).append("\n");
             }
 
             if (getMove4().equals("--")) {
                 sb.append("- \n");
             } else {
-                sb.append("- " + getMove4() + "\n");
+                sb.append("- ").append(getMove4()).append("\n");
             }
         }
 
         if (getNature().length() > 0) {
-            sb.append(getNature() + " Nature" + '\n');
+            sb.append(getNature()).append(" Nature").append("\n");
         }
 
         return sb.toString();
@@ -215,31 +280,216 @@ public class Pokemon implements Serializable {
     public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
         String[] pokemonStrings = importString.split("\n");
         String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
-        String pokemonName, pokemonNickname, pokemonItem;
+        String pokemonName, pokemonNickname = null, pokemonItem = null, pokemonGender = null;
         Pokemon p = null;
         if (pokemonMainData.contains("@")) {
             String[] nameItem = pokemonMainData.split("@");
             if (nameItem[0].contains("(") && nameItem[0].contains(")")) {
-                pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
-                pokemonNickname = pokemonMainData.substring(nameItem[0].indexOf("("), nameItem[0].indexOf(")"));
-                pokemonItem = nameItem[1];
+                int count = nameItem[0].length() - nameItem[0].replace("(", "").length();
+                if (count > 1) {
+                    int pos, posEnd;
+                    String tmp = nameItem[0];
+                    while ((pos = tmp.indexOf("(")) != -1 && (posEnd = tmp.indexOf(")")) != -1) {
+                        if (posEnd - pos == 2) { // gender
+                            pokemonGender = tmp.substring(pos + 1, posEnd);
+                        } else {
+                            pokemonNickname = tmp.substring(pos + 1, posEnd);
+                        }
+                        if (posEnd + 1 == tmp.length()) {
+                            break;
+                        }
+                        tmp = tmp.substring(posEnd + 1);
+                    }
+                    pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
+                    pokemonItem = nameItem[1];
+                } else {
+                    pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
+                    if (nameItem[0].indexOf(")") - nameItem[0].indexOf("(") == 2) {
+                        pokemonGender = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
+                    } else {
+                        pokemonNickname = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
+                    }
+                    pokemonItem = nameItem[1];
+                }
             } else {
                 pokemonName = nameItem[0];
                 pokemonItem = nameItem[1];
             }
         } else if (pokemonMainData.contains("(") && pokemonMainData.contains(")")) {
-            pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
-            pokemonNickname = pokemonMainData.substring(pokemonMainData.indexOf("("), pokemonMainData.indexOf(")"));
+            int count = pokemonMainData.length() - pokemonMainData.replace("(", "").length();
+            if (count > 1) {
+                int pos, posEnd;
+                String tmp = pokemonMainData;
+                while ((pos = tmp.indexOf("(")) != -1 && (posEnd = tmp.indexOf(")")) != -1) {
+                    if (posEnd - pos == 2) { // gender
+                        pokemonGender = tmp.substring(pos + 1, posEnd);
+                    } else {
+                        pokemonNickname = tmp.substring(pos + 1, posEnd);
+                    }
+                    if (posEnd + 1 == tmp.length()) {
+                        break;
+                    }
+                    tmp = tmp.substring(posEnd + 1);
+                }
+                pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
+            } else {
+                pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
+                if (pokemonMainData.indexOf(")") - pokemonMainData.indexOf("(") == 2) {
+                    pokemonGender = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
+                } else {
+                    pokemonNickname = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
+                }
+            }
         } else {
             // theres only the name
             pokemonName = pokemonMainData;
         }
-        pokemonName.toLowerCase().trim();
-        p = new Pokemon(appContext, pokemonName, withAppContext);
 
-        // TODO handle exception and import rest of stats
+        pokemonName = pokemonName.toLowerCase().trim();
+        try {
+            p = new Pokemon(appContext, pokemonName, withAppContext, true);
+        } catch (JSONException e) {
+            return null;
+        }
+
+        if (pokemonNickname != null) {
+            p.setNickName(pokemonNickname);
+        }
+
+        if (pokemonItem != null) {
+            p.setItem(pokemonItem.toLowerCase().trim());
+        }
+
+        if (pokemonGender != null) {
+            p.setGender(pokemonGender.toLowerCase().trim());
+        }
+
+        int currentMoveId = 1;
+        for (int i = 1; i < pokemonStrings.length; i++) {
+            String currentString = pokemonStrings[i];
+            if (currentString.contains("-")) {
+                // its a move!
+                String move = currentString.substring(currentString.indexOf("-") + 1).toLowerCase().trim();
+                switch (currentMoveId) {
+                    case 1:
+                        p.setMove1(move);
+                        break;
+                    case 2:
+                        p.setMove2(move);
+                        break;
+                    case 3:
+                        p.setMove3(move);
+                        break;
+                    case 4:
+                        p.setMove4(move);
+                        break;
+                }
+                currentMoveId++;
+            } else if (currentString.contains("IVs:")) {
+                String ivs = currentString.substring(currentString.indexOf(":") + 1);
+                String[] ivsSplit = ivs.split("/");
+
+                for (String iv : ivsSplit) {
+                    iv = iv.trim();
+                    String value, stat;
+                    String[] valueStat = iv.split(" ");
+                    stat = valueStat[1];
+                    value = valueStat[0];
+                    int ivValue;
+                    try {
+                        ivValue = Integer.parseInt(value.trim());
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                    switch (stat) {
+                        case "Atk":
+                            p.setAtkIV(ivValue);
+                            break;
+                        case "Def":
+                            p.setDefIV(ivValue);
+                            break;
+                        case "SpA":
+                            p.setSpAtkIV(ivValue);
+                            break;
+                        case "SpD":
+                            p.setSpDefIV(ivValue);
+                            break;
+                        case "Spe":
+                            p.setSpdIV(ivValue);
+                            break;
+                    }
+                }
+            } else if (currentString.contains("EVs:")) {
+                String evs = currentString.substring(currentString.indexOf(":") + 1);
+                String[] evssplit = evs.split("/");
+
+                for (String ev : evssplit) {
+                    ev = ev.trim();
+                    String value, stat;
+                    String[] valueStat = ev.split(" ");
+                    stat = valueStat[1];
+                    value = valueStat[0];
+                    int ivValue;
+                    try {
+                        ivValue = Integer.parseInt(value.trim());
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                    switch (stat) {
+                        case "Atk":
+                            p.setAtkEV(ivValue);
+                            break;
+                        case "Def":
+                            p.setDefEV(ivValue);
+                            break;
+                        case "SpA":
+                            p.setSpAtkEV(ivValue);
+                            break;
+                        case "SpD":
+                            p.setSpDefEV(ivValue);
+                            break;
+                        case "Spe":
+                            p.setSpdEV(ivValue);
+                            break;
+                    }
+                }
+            } else if (currentString.contains("Nature")) {
+                String nature = currentString.substring(0, currentString.indexOf("Nature")).trim();
+                p.setNature(nature);
+            } else if (currentString.contains("Ability:")) {
+                String abilityName = currentString.substring(currentString.indexOf(":") + 1).trim();
+
+                for (String s : p.getAbilityList().keySet()) {
+                    if (p.getAbilityList().get(s).equals(abilityName)) {
+                        p.setAbilityTag(s);
+                        break;
+                    }
+                }
+            } else if (currentString.contains("Level:")) {
+                String level = currentString.substring(currentString.indexOf(":") + 1).trim();
+                try {
+                    p.setLevel(Integer.parseInt(level));
+                } catch (NumberFormatException e) {
+                    break;
+                }
+            } else if (currentString.contains("Shiny")) {
+                p.setShiny(true);
+            }
+        }
         return p;
     }
+
+    public Pokemon(Context appContext, String name, boolean withAppContext, boolean placeHolder) throws JSONException {
+        mTagName = name;
+        JSONObject jsonObject;
+        if (withAppContext) {
+            jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+        } else {
+            jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+        }
+        initializePokemon(appContext, jsonObject);
+    }
+
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
