@@ -26,6 +26,7 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
+
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
     }
@@ -116,16 +117,21 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_import_team:
                 ClipboardManager clipboard = (ClipboardManager)
                         getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData.Item clipItem = clipboard.getPrimaryClip().getItemAt(0);
-                // Gets the clipboard as text.
-                String pasteData = clipItem.getText().toString();
-                pt = PokemonTeam.importPokemonTeam(pasteData);
-                if(pt != null) {
-                    pokemonTeamList.add(pt);
-                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                    pkmn_spinner.setSelection(pokemonTeamList.size() -1);
+                ClipData importClip = clipboard.getPrimaryClip();
+                if (importClip != null) {
+                    ClipData.Item clipItem = importClip.getItemAt(0);
+                    // Gets the clipboard as text.
+                    String pasteData = clipItem.getText().toString();
+                    pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
+                    if (pt != null) {
+                        pokemonTeamList.add(pt);
+                        pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                    } else {
+                        //todo handle bad data
+                    }
                 } else {
-                    //todo handle bad data
+                    // todo handle no clipboard
                 }
                 return true;
             case R.id.action_rename_team:

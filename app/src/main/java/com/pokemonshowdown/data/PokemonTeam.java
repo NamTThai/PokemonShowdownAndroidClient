@@ -21,12 +21,12 @@ public class PokemonTeam implements Serializable {
     private static final String pokemonTeamStorageName = "pkmnStorage.dat";
     private static List<PokemonTeam> pokemonTeamList;
 
-    public static final List<PokemonTeam> getPokemonTeamList() {
+    public static List<PokemonTeam> getPokemonTeamList() {
         return pokemonTeamList;
     }
 
     public static void loadPokemonTeams(Context c) {
-        FileInputStream fos = null;
+        FileInputStream fos;
         try {
             fos = c.openFileInput(pokemonTeamStorageName);
             ObjectInputStream oos = new ObjectInputStream(fos);
@@ -73,15 +73,37 @@ public class PokemonTeam implements Serializable {
         for (Pokemon pokemon : pokemons) {
             if (pokemon != null) {
                 sb.append(pokemon.exportPokemon());
-                sb.append('\n');
+                sb.append("\n");
             }
         }
 
         return sb.toString();
     }
 
-    public static PokemonTeam importPokemonTeam(String importString) {
-        return null;
+    public static PokemonTeam importPokemonTeam(String importString, Context c, boolean withAppContest) {
+        PokemonTeam pt = new PokemonTeam();
+        String[] pokemonImportStrings = importString.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (String pokemonString : pokemonImportStrings) {
+            if (pokemonString.isEmpty()) {
+                Pokemon p = Pokemon.importPokemon(sb.toString(), c, withAppContest);
+                if (p != null) {
+                    pt.addPokemon(p);
+                }
+                sb.setLength(0);
+            } else {
+                sb.append(pokemonString).append("\n");
+            }
+        }
+
+        if (sb.length() > 0) {
+            Pokemon p = Pokemon.importPokemon(sb.toString(), c, withAppContest);
+            if (p != null) {
+                pt.addPokemon(p);
+            }
+        }
+
+        return pt;
     }
 
     /**
