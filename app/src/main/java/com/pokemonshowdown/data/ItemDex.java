@@ -46,6 +46,7 @@ public class ItemDex {
     }
 
     public String getItem(String name) {
+        name = MyApplication.toId(name);
         return mItemDexEntries.get(name);
     }
 

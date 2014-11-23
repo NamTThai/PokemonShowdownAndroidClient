@@ -118,7 +118,7 @@ public class PokedexActivity extends FragmentActivity {
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(moveJson.getString("name"))
                                 .setMessage(moveJson.getString("desc"))
-                                .setIcon(MoveDex.getMoveType(getApplicationContext(), moveJson.getString("type")))
+                                .setIcon(MoveDex.getTypeIcon(getApplicationContext(), moveJson.getString("type")))
                                 .create();
                         dialog.show();
                         break;

@@ -2,7 +2,6 @@ package com.pokemonshowdown.app;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.MyApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,6 +155,9 @@ public class BattleFieldFragment extends Fragment {
         }
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
+            if (fragment.mBattling != 0) {
+                MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
+            }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
         BattleFieldData.get(getActivity()).leaveRoom(roomId);
@@ -163,12 +166,13 @@ public class BattleFieldFragment extends Fragment {
         actionBar.removeTab(tab);
     }
 
-    private void processNewRoomRequest(String roomId) {
+    public void processNewRoomRequest(String roomId) {
         ActionBar actionBar = getActivity().getActionBar();
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
-            BattleFieldData.get(getActivity()).joinRoom(roomId);
+            mRoomList.add(roomId);
+            BattleFieldData.get(getActivity()).joinRoom(roomId, false);
             mBattleFieldPagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override
@@ -221,7 +225,7 @@ public class BattleFieldFragment extends Fragment {
                 .setItems(value, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        processNewRoomRequest(key[which]);
+                        BattleFieldData.get(getActivity()).joinRoom(key[which], true);
                         dialog.dismiss();
                     }
                 })

@@ -67,6 +67,7 @@ public class MoveDex {
     }
 
     public JSONObject getMoveJsonObject(String name) {
+        name = MyApplication.toId(name);
         try {
             String move = mMoveDexEntries.get(name);
             return new JSONObject(move);
@@ -86,11 +87,27 @@ public class MoveDex {
         }
     }
 
-    public static int getMoveType(Context appContext, String types) {
+    public static int getMoveTypeIcon(Context appContext, String move, boolean withAppContext) {
+        move = MyApplication.toId(move);
+        try {
+            MoveDex moveDex;
+            if (withAppContext) {
+                moveDex = MoveDex.getWithApplicationContext(appContext);
+            } else {
+                moveDex = MoveDex.get(appContext);
+            }
+            String types = moveDex.getMoveJsonObject(move).getString("type");
+            return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
+        } catch (JSONException e) {
+            return 0;
+        }
+    }
+
+    public static int getTypeIcon(Context appContext, String types) {
         return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
     }
 
-    public static int getMoveCategory(Context appContext, String category) {
+    public static int getCategoryIcon(Context appContext, String category) {
         return appContext.getResources().getIdentifier("category_" + category.toLowerCase(), "drawable", appContext.getPackageName());
     }
 

@@ -17,13 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 public class Onboarding {
     public final static String OTAG = Onboarding.class.getName();
-    private static Onboarding sOnboarding;
-
     private final static String GET_LOGGED_IN = "Get logged in";
     private final static String VERIFY_USERNAME_REGISTERED = "Verify username registered";
     private final static String SIGNING_IN = "Signing in";
     private final static String SIGNING_OUT = "Signing out";
-
+    private final static int TIME_OUT = 20;
+    private static Onboarding sOnboarding;
     private Context mAppContext;
     private String mKeyId;
     private String mChallenge;
@@ -49,7 +48,7 @@ public class Onboarding {
         SignIn signIn = new SignIn();
         signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge);
         try {
-            String result = signIn.get(5, TimeUnit.SECONDS);
+            String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
             JSONObject resultJson = new JSONObject(result);
             if (!resultJson.getBoolean("loggedin")) {
                 return null;
@@ -57,7 +56,7 @@ public class Onboarding {
                 return resultJson.getString("username") + ",0," + resultJson.getString("assertion");
             }
         } catch (Exception e) {
-            Log.d(OTAG, e.toString());
+            Log.e(OTAG, "attemptSignIn", e);
             return null;
         }
     }
@@ -66,9 +65,9 @@ public class Onboarding {
         SignIn signIn = new SignIn();
         signIn.execute(VERIFY_USERNAME_REGISTERED, username, mKeyId, mChallenge);
         try {
-            return signIn.get(5, TimeUnit.SECONDS);
+            return signIn.get(TIME_OUT, TimeUnit.SECONDS);
         } catch (Exception e) {
-            Log.d(OTAG, e.toString());
+            Log.e(OTAG, "verifyUsernameRegistered", e);
             return null;
         }
     }
@@ -77,11 +76,11 @@ public class Onboarding {
         SignIn signIn = new SignIn();
         signIn.execute(SIGNING_IN, username, password, mKeyId, mChallenge);
         try {
-            String result = signIn.get(5, TimeUnit.SECONDS);
+            String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
             JSONObject resultJson = new JSONObject(result);
             return resultJson.getString("assertion");
         } catch (Exception e) {
-            Log.d(OTAG, e.toString());
+            Log.e(OTAG, "from signingIn", e);
         }
         return null;
     }
@@ -144,15 +143,16 @@ public class Onboarding {
     }
 
     private class SignIn extends AsyncTask<String, Void, String> {
-        private String[] getUrlComponent = {"http://play.pokemonshowdown.com/action.php?act=upkeep&challengekeyid=","&challenge="};
-        private String[] postDataComponent = {"act=login&name=","&pass=","&challengekeyid=","&challenge="};
-        private String postUrl = "http://play.pokemonshowdown.com/action.php";
-        private String[] verifyUsernameComponent = {"act=getassertion&userid=","&challengekeyid=","&challenge="};
+        private String[] getUrlComponent = {"http://play.pokemonshowdown.com/~~showdown/action.php?act=upkeep&challengekeyid=", "&challenge="};
+        private String[] postDataComponent = {"act=login&name=", "&pass=", "&challengekeyid=", "&challenge="};
+        private String postUrl = "http://play.pokemonshowdown.com/~~showdown/action.php";
+        private String[] verifyUsernameComponent = {"act=getassertion&userid=", "&challengekeyid=", "&challenge="};
         private String signOut = "act=logout&userid=";
 
         @Override
         protected String doInBackground(String... params) {
             String task = params[0];
+            params[1] = MyApplication.toId(params[1]);
             switch (task) {
                 case GET_LOGGED_IN:
                     return getLoggedIn(params[1], params[2]);
@@ -168,7 +168,7 @@ public class Onboarding {
 
         private String getLoggedIn(String keyId, String challenge) {
             try {
-                String getUrl = getUrlComponent[0]+keyId+ getUrlComponent[1]+challenge;
+                String getUrl = getUrlComponent[0] + keyId + getUrlComponent[1] + challenge;
                 URL url = new URL(getUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -184,7 +184,7 @@ public class Onboarding {
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
             } catch (IOException e) {
-                Log.e(OTAG, e.toString());
+                Log.e(OTAG, "from getLoggedIn", e);
                 return null;
             }
         }
@@ -192,7 +192,7 @@ public class Onboarding {
         private String verifyUsernameSignedIn(String username, String keyId, String challenge) {
             try {
                 String verifyData = verifyUsernameComponent[0] + username + verifyUsernameComponent[1] + keyId + verifyUsernameComponent[2] + challenge;
-                String getUrlVerify = postUrl+"?"+verifyData;
+                String getUrlVerify = postUrl + "?" + verifyData;
                 URL url = new URL(getUrlVerify);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -207,14 +207,14 @@ public class Onboarding {
 
                 return output;
             } catch (IOException e) {
-                Log.e(OTAG, e.toString());
+                Log.e(OTAG, "from verifyUsernameSignedIn", e);
                 return null;
             }
         }
 
         private String signingIn(String username, String password, String keyId, String challenge) {
             try {
-                String postData = postDataComponent[0] + username + postDataComponent[1]+password+ postDataComponent[2]+keyId+ postDataComponent[3]+challenge;
+                String postData = postDataComponent[0] + username + postDataComponent[1] + password + postDataComponent[2] + keyId + postDataComponent[3] + challenge;
                 URL url = new URL(postUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
@@ -238,7 +238,7 @@ public class Onboarding {
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
             } catch (IOException e) {
-                Log.e(OTAG, e.toString());
+                Log.e(OTAG, "from signingIn", e);
                 return null;
             }
         }
@@ -268,7 +268,7 @@ public class Onboarding {
 
                 return output;
             } catch (IOException e) {
-                Log.e(OTAG, e.toString());
+                Log.e(OTAG, "from signingOut", e);
                 return null;
             }
         }

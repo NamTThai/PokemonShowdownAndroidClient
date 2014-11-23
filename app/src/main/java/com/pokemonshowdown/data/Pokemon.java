@@ -493,6 +493,7 @@ public class Pokemon implements Serializable {
 
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
+            name = MyApplication.toId(name);
             mTagName = name;
             JSONObject jsonObject;
             if (withAppContext) {
@@ -703,6 +704,21 @@ public class Pokemon implements Serializable {
             return null;
         }
         return null;
+    }
+
+    public static int getGenderIcon(String gender) {
+        if (gender == null) {
+            return 0;
+        }
+
+        switch (gender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
     }
 
     public int[] calculateStats() {
