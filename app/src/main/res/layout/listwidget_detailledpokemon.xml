@@ -1,113 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/pokemonsmallicon"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/teambuilder_pokemonNickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/teambuilder_pokemonIcon"
+            android:layout_margin="4dp"
+            android:background="@drawable/editable_frame"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:lines="1"
+            android:padding="1dp" />
+
+        <ImageView
+            android:id="@id/teambuilder_pokemonIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/teambuilder_pokemonNickName" />
+
+        <ImageView
+            android:id="@+id/teambuilder_itemIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/teambuilder_pokemonIcon"
+            android:layout_margin="4dp" />
+
+        <TextView
+            android:id="@+id/teambuilder_itemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/teambuilder_pokemonIcon"
+            android:layout_below="@id/teambuilder_pokemonIcon"
+            android:layout_margin="4dp"
+            android:layout_toRightOf="@id/teambuilder_itemIcon"
+            android:background="@drawable/editable_frame"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:lines="1"
+            android:padding="1dp" />
+    </RelativeLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="2">
 
-            <TextView
-                android:id="@+id/teambuilder_pokemonname"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/move1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
+                android:background="@drawable/editable_frame">
 
-            <TextView
-                android:id="@+id/teambuilder_pokemonhelditem"
-                android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/move1_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/move1_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/move1_name"
+                    android:contentDescription="@string/move_type" />
+
+                <TextView
+                    android:id="@+id/move1_pp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/move1_type" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/move2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="1dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
+                android:background="@drawable/editable_frame">
+
+                <TextView
+                    android:id="@+id/move2_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:id="@+id/move2_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/move2_name"
+                    android:contentDescription="@string/move_type" />
+
+                <TextView
+                    android:id="@+id/move2_pp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/move2_type" />
+            </RelativeLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="7dp"
-            android:orientation="horizontal">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="2">
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/teambuilder_move1"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:id="@+id/move3"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
+                android:background="@drawable/editable_frame">
 
-            <TextView
-                android:id="@+id/teambuilder_move2"
-                android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/move3_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/move3_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/move3_name"
+                    android:contentDescription="@string/move_type" />
+
+                <TextView
+                    android:id="@+id/move3_pp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/move3_type" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/move4"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="1dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
+                android:background="@drawable/editable_frame">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/move4_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/move4_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/move4_name"
+                    android:contentDescription="@string/move_type" />
 
-            <TextView
-                android:id="@+id/teambuilder_move3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
-                android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
-
-            <TextView
-                android:id="@+id/teambuilder_move4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="1dp"
-                android:layout_weight="1"
-                android:background="@drawable/border_frame"
-                android:gravity="center"
-                android:padding="2dp" />
-
+                <TextView
+                    android:id="@+id/move4_pp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/move4_type" />
+            </RelativeLayout>
         </LinearLayout>
 
 
     </LinearLayout>
-
 </LinearLayout>
