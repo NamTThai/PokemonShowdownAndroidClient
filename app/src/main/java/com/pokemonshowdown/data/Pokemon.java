@@ -248,27 +248,19 @@ public class Pokemon implements Serializable {
             noMoves = false;
         }
         if (!noMoves) {
-            if (getMove1().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove1().equals("--")) {
                 sb.append("- ").append(getMove1()).append("\n");
             }
 
-            if (getMove2().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove2().equals("--")) {
                 sb.append("- ").append(getMove2()).append("\n");
             }
 
-            if (getMove3().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove3().equals("--")) {
                 sb.append("- ").append(getMove3()).append("\n");
             }
 
-            if (getMove4().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove4().equals("--")) {
                 sb.append("- ").append(getMove4()).append("\n");
             }
         }

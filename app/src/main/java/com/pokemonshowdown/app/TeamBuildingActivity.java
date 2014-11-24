@@ -99,11 +99,16 @@ public class TeamBuildingActivity extends FragmentActivity {
                     pokemonTeamList.remove(position);
                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
 
-                    getSupportFragmentManager().beginTransaction().
-                            remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
-
                     if (pokemonTeamList.size() > 0) {
-                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                        pkmn_spinner.setSelection(0, false);
+                        PokemonTeam pt3 = pokemonTeamList.get(0);
+                        TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt3);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
+                                .commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().
+                                remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "There is no team to remove", Toast.LENGTH_SHORT).show();
