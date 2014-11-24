@@ -295,58 +295,63 @@ public class TeamBuildingFragment extends Fragment {
             TextView textView_move4_name = (TextView) convertView.findViewById(R.id.move4_name);
             textView_move4_name.setText(pokemon.getMove4());
 
-            ImageView move1_type = (ImageView) convertView.findViewById(R.id.move1_type);
-            move1_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
-
-            ImageView move2_type = (ImageView) convertView.findViewById(R.id.move2_type);
-            move2_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
-
-            ImageView move3_type = (ImageView) convertView.findViewById(R.id.move3_type);
-            move3_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
-
-            ImageView move4_type = (ImageView) convertView.findViewById(R.id.move4_type);
-            move4_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
-
-
-            try {
+            if(!pokemon.getMove1().equals("--")) {
+                ImageView move1_type = (ImageView) convertView.findViewById(R.id.move1_type);
+                move1_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
-                TextView move1_pp = (TextView) convertView.findViewById(R.id.move1_pp);
                 if (ppObject != null) {
-                    move1_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    TextView move1_pp = (TextView) convertView.findViewById(R.id.move1_pp);
+                    try {
+                        move1_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
-            try {
+            if(!pokemon.getMove2().equals("--")) {
+                ImageView move2_type = (ImageView) convertView.findViewById(R.id.move2_type);
+                move2_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
-                TextView move2_pp = (TextView) convertView.findViewById(R.id.move2_pp);
                 if (ppObject != null) {
-                    move2_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    TextView move2_pp = (TextView) convertView.findViewById(R.id.move2_pp);
+                    try {
+                        move2_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
-            try {
+
+            if(!pokemon.getMove3().equals("--")) {
+                ImageView move3_type = (ImageView) convertView.findViewById(R.id.move3_type);
+                move3_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
-                TextView move3_pp = (TextView) convertView.findViewById(R.id.move3_pp);
                 if (ppObject != null) {
-                    move3_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    TextView move3_pp = (TextView) convertView.findViewById(R.id.move3_pp);
+                    try {
+                        move3_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
-            try {
+            if(!pokemon.getMove4().equals("--")) {
+                ImageView move4_type = (ImageView) convertView.findViewById(R.id.move4_type);
+                move4_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
-                TextView move4_pp = (TextView) convertView.findViewById(R.id.move4_pp);
                 if (ppObject != null) {
-                    move4_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    TextView move4_pp = (TextView) convertView.findViewById(R.id.move4_pp);
+                    try {
+                        move4_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+
 
 
             RelativeLayout move1 = (RelativeLayout) convertView.findViewById(R.id.move1);
