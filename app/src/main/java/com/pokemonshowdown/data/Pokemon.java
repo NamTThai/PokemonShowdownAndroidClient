@@ -370,7 +370,7 @@ public class Pokemon implements Serializable {
         }
 
         if (pokemonNickname != null) {
-            p.setNickName(pokemonNickname);
+            p.setNickName(pokemonNickname.trim());
         }
 
         if (pokemonItem != null) {
