@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -39,6 +40,14 @@ public class SignInDialog extends DialogFragment {
                 if (!password.equals("")) {
                     Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
                     String assertion = onboarding.signingIn(username, password);
+                    if (assertion == null) {
+                        getDialog().dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                .setMessage(R.string.server_error)
+                                .create();
+                        alertDialog.show();
+                        return;
+                    }
                     if (assertion.charAt(0) == ';') {
                         passwordBox.setText("");
                     } else {
