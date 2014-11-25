@@ -499,7 +499,6 @@ public class Pokemon implements Serializable {
         initializePokemon(appContext, jsonObject);
     }
 
-
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
             name = MyApplication.toId(name);
@@ -571,7 +570,7 @@ public class Pokemon implements Serializable {
                 mAbilityList.put(key, abilityList.getString(key));
             }
             setAbilityTag("0");
-            setItem("leftovers");
+            setItem("");
 
             setMove1("--");
             setMove2("--");

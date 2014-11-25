@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +42,7 @@ import java.util.List;
  * This enables the user to add/remove/edit pokemons from the team
  */
 public class TeamBuildingFragment extends Fragment {
+    public static final String TAG = TeamBuildingFragment.class.getName();
     public final static String TEAMTAG = "team";
     private PokemonTeam pokemonTeam;
     private PokemonListAdapter pokemonListAdapter;
@@ -267,11 +269,17 @@ public class TeamBuildingFragment extends Fragment {
             }
 
 
-            ImageView teambuilder_itemIcon = (ImageView) convertView.findViewById(R.id.teambuilder_itemIcon);
-            teambuilder_itemIcon.setImageDrawable(getResources().getDrawable(ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem())));
-
-            TextView teambuilder_itemName = (TextView) convertView.findViewById(R.id.teambuilder_itemName);
-            teambuilder_itemName.setText(pokemon.getItem());
+            TextView teambuilder_itemName = (TextView) convertView.findViewById(R.id.teambuilder_item);
+            if (pokemon.getItem().isEmpty()) {
+                teambuilder_itemName.setText(R.string.pokemon_nohelditem);
+                teambuilder_itemName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            } else {
+                teambuilder_itemName.setText(pokemon.getItem());
+                int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
+                if (itemDrawable != 0) {
+                    teambuilder_itemName.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                }
+            }
             teambuilder_itemName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -295,7 +303,7 @@ public class TeamBuildingFragment extends Fragment {
             TextView textView_move4_name = (TextView) convertView.findViewById(R.id.move4_name);
             textView_move4_name.setText(pokemon.getMove4());
 
-            if(!pokemon.getMove1().equals("--")) {
+            if (!pokemon.getMove1().equals("--")) {
                 ImageView move1_type = (ImageView) convertView.findViewById(R.id.move1_type);
                 move1_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
@@ -304,12 +312,12 @@ public class TeamBuildingFragment extends Fragment {
                     try {
                         move1_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "", e);
                     }
                 }
             }
 
-            if(!pokemon.getMove2().equals("--")) {
+            if (!pokemon.getMove2().equals("--")) {
                 ImageView move2_type = (ImageView) convertView.findViewById(R.id.move2_type);
                 move2_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
@@ -318,13 +326,13 @@ public class TeamBuildingFragment extends Fragment {
                     try {
                         move2_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "", e);
                     }
                 }
             }
 
 
-            if(!pokemon.getMove3().equals("--")) {
+            if (!pokemon.getMove3().equals("--")) {
                 ImageView move3_type = (ImageView) convertView.findViewById(R.id.move3_type);
                 move3_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
@@ -333,12 +341,12 @@ public class TeamBuildingFragment extends Fragment {
                     try {
                         move3_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "", e);
                     }
                 }
             }
 
-            if(!pokemon.getMove4().equals("--")) {
+            if (!pokemon.getMove4().equals("--")) {
                 ImageView move4_type = (ImageView) convertView.findViewById(R.id.move4_type);
                 move4_type.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
                 JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
@@ -347,11 +355,10 @@ public class TeamBuildingFragment extends Fragment {
                     try {
                         move4_pp.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "", e);
                     }
                 }
             }
-
 
 
             RelativeLayout move1 = (RelativeLayout) convertView.findViewById(R.id.move1);
