@@ -59,7 +59,7 @@
         android:weightSum="4">
 
         <RelativeLayout
-            android:id="@+id/move1"
+            android:id="@+id/teambuilder_move1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -95,7 +95,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/move2"
+            android:id="@+id/teambuilder_move2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -133,7 +133,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/move3"
+            android:id="@+id/teambuilder_move3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -171,7 +171,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/move4"
+            android:id="@+id/teambuilder_move4"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
