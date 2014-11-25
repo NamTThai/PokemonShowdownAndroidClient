@@ -243,7 +243,7 @@ public class TeamBuildingFragment extends Fragment {
                     teamNameEditText.setText(pokemon.getNickName());
                     renameDialog.setView(teamNameEditText);
 
-                    renameDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    renameDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pokemon.setNickName(teamNameEditText.getText().toString());
                             notifyDataSetChanged();
@@ -315,6 +315,12 @@ public class TeamBuildingFragment extends Fragment {
                         Log.e(TAG, "", e);
                     }
                 }
+            } else {
+                // in case it's an old view
+                TextView move1_pp = (TextView) convertView.findViewById(R.id.move1_pp);
+                move1_pp.setText("");
+                ImageView move1_type = (ImageView) convertView.findViewById(R.id.move1_type);
+                move1_type.setImageDrawable(null);
             }
 
             if (!pokemon.getMove2().equals("--")) {
@@ -329,6 +335,12 @@ public class TeamBuildingFragment extends Fragment {
                         Log.e(TAG, "", e);
                     }
                 }
+            } else {
+                // in case it's an old view
+                TextView move2_pp = (TextView) convertView.findViewById(R.id.move2_pp);
+                move2_pp.setText("");
+                ImageView move2_type = (ImageView) convertView.findViewById(R.id.move2_type);
+                move2_type.setImageDrawable(null);
             }
 
 
@@ -344,6 +356,12 @@ public class TeamBuildingFragment extends Fragment {
                         Log.e(TAG, "", e);
                     }
                 }
+            } else {
+                // in case it's an old view
+                TextView move3_pp = (TextView) convertView.findViewById(R.id.move3_pp);
+                move3_pp.setText("");
+                ImageView move3_type = (ImageView) convertView.findViewById(R.id.move3_type);
+                move3_type.setImageDrawable(null);
             }
 
             if (!pokemon.getMove4().equals("--")) {
@@ -358,6 +376,12 @@ public class TeamBuildingFragment extends Fragment {
                         Log.e(TAG, "", e);
                     }
                 }
+            } else {
+                // in case it's an old view
+                TextView move4_pp = (TextView) convertView.findViewById(R.id.move4_pp);
+                move4_pp.setText("");
+                ImageView move4_type = (ImageView) convertView.findViewById(R.id.move4_type);
+                move4_type.setImageDrawable(null);
             }
 
 
