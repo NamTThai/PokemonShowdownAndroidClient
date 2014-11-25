@@ -32,7 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/teambuilder_pokemonNickName" />
+            android:layout_below="@id/teambuilder_pokemonNickName"
+            android:paddingLeft="48dp"
+            android:paddingRight="48dp" />
 
         <TextView
             android:id="@+id/teambuilder_item"
@@ -79,17 +81,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="1dp"
                 android:layout_alignTop="@id/move1_type" />
-
 
             <ImageView
                 android:id="@+id/move1_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/move1_pp"
                 android:layout_margin="1dp"
-                android:contentDescription="@string/move_type" />
+                android:layout_toLeftOf="@id/move1_pp"
+                android:contentDescription="@string/move_type"
+                android:paddingRight="16dp" />
 
 
         </RelativeLayout>
@@ -118,7 +119,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="1dp"
                 android:layout_alignTop="@id/move2_type" />
 
 
@@ -126,9 +126,10 @@
                 android:id="@+id/move2_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/move2_pp"
                 android:layout_margin="1dp"
-                android:contentDescription="@string/move_type" />
+                android:layout_toLeftOf="@id/move2_pp"
+                android:contentDescription="@string/move_type"
+                android:paddingRight="16dp" />
 
         </RelativeLayout>
 
@@ -155,7 +156,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="1dp"
                 android:layout_alignTop="@id/move3_type" />
 
 
@@ -163,9 +163,10 @@
                 android:id="@+id/move3_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/move3_pp"
                 android:layout_margin="1dp"
-                android:contentDescription="@string/move_type" />
+                android:layout_toLeftOf="@id/move3_pp"
+                android:contentDescription="@string/move_type"
+                android:paddingRight="16dp" />
 
 
         </RelativeLayout>
@@ -193,7 +194,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="1dp"
                 android:layout_alignTop="@id/move4_type" />
 
 
@@ -201,9 +201,10 @@
                 android:id="@+id/move4_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/move4_pp"
                 android:layout_margin="1dp"
-                android:contentDescription="@string/move_type" />
+                android:layout_toLeftOf="@id/move4_pp"
+                android:contentDescription="@string/move_type"
+                android:paddingRight="16dp" />
 
         </RelativeLayout>
     </LinearLayout>

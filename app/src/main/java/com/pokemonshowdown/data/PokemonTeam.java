@@ -82,11 +82,11 @@ public class PokemonTeam implements Serializable {
 
     public static PokemonTeam importPokemonTeam(String importString, Context c, boolean withAppContest) {
         PokemonTeam pt = new PokemonTeam();
-        importString = importString.replace("\r\n","\n");
+        importString = importString.replace("\r\n", "\n");
         String[] pokemonImportStrings = importString.split("\n");
         StringBuilder sb = new StringBuilder();
         for (String pokemonString : pokemonImportStrings) {
-            if (pokemonString.isEmpty()) {
+            if (pokemonString.isEmpty() && sb.length() > 0) {
                 Pokemon p = Pokemon.importPokemon(sb.toString(), c, withAppContest);
                 if (p != null) {
                     pt.addPokemon(p);

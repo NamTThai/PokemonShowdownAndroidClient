@@ -274,11 +274,20 @@ public class TeamBuildingFragment extends Fragment {
                 itemNameTextView.setText(R.string.pokemon_nohelditem);
                 itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             } else {
-                itemNameTextView.setText(pokemon.getItem());
-                int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
-                if (itemDrawable != 0) {
-                    itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                String itemString = pokemon.getItem();
+                JSONObject itemJSon = ItemDex.get(getActivity()).getItemJsonObject(itemString);
+                try {
+                    String itemName = itemJSon.getString("name");
+                    itemNameTextView.setText(itemName);
+                    int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
+                    if (itemDrawable != 0) {
+                        itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                    }
+                } catch (JSONException e) {
+                    itemNameTextView.setText(R.string.pokemon_nohelditem);
+                    itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 }
+
             }
             itemNameTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -290,28 +299,18 @@ public class TeamBuildingFragment extends Fragment {
                 }
             });
 
-
-            TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
-            move1NameTextView.setText(pokemon.getMove1());
-
-            TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
-            move2NameTextView.setText(pokemon.getMove2());
-
-            TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
-            move3NameTextView.setText(pokemon.getMove3());
-
-            TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
-            move4NameTextView.setText(pokemon.getMove4());
-
             if (!pokemon.getMove1().equals("--")) {
                 ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.move1_type);
                 move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
-                if (ppObject != null) {
+                JSONObject move1Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
+                if (move1Object != null) {
                     TextView move1PpTextView = (TextView) convertView.findViewById(R.id.move1_pp);
+                    TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
                     try {
-                        move1PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        move1PpTextView.setText(move1Object.getInt("pp") + "/" + move1Object.getInt("pp"));
+                        move1NameTextView.setText(move1Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove1("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -326,12 +325,15 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove2().equals("--")) {
                 ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.move2_type);
                 move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
-                if (ppObject != null) {
+                JSONObject move2Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
+                if (move2Object != null) {
                     TextView move2PpTextView = (TextView) convertView.findViewById(R.id.move2_pp);
+                    TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
                     try {
-                        move2PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        move2PpTextView.setText(move2Object.getInt("pp") + "/" + move2Object.getInt("pp"));
+                        move2NameTextView.setText(move2Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove2("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -347,12 +349,15 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove3().equals("--")) {
                 ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.move3_type);
                 move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
-                if (ppObject != null) {
+                JSONObject move3Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
+                if (move3Object != null) {
                     TextView move3PpTextView = (TextView) convertView.findViewById(R.id.move3_pp);
+                    TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
                     try {
-                        move3PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        move3PpTextView.setText(move3Object.getInt("pp") + "/" + move3Object.getInt("pp"));
+                        move3NameTextView.setText(move3Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove3("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -367,12 +372,15 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove4().equals("--")) {
                 ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.move4_type);
                 move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
-                if (ppObject != null) {
+                JSONObject move4Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
+                if (move4Object != null) {
                     TextView move4PpTextView = (TextView) convertView.findViewById(R.id.move4_pp);
+                    TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
                     try {
-                        move4PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        move4PpTextView.setText(move4Object.getInt("pp") + "/" + move4Object.getInt("pp"));
+                        move4NameTextView.setText(move4Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove4("--");
                         Log.e(TAG, "", e);
                     }
                 }

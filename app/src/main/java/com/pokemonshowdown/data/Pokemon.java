@@ -366,7 +366,7 @@ public class Pokemon implements Serializable {
         }
 
         if (pokemonItem != null) {
-            p.setItem(pokemonItem.toLowerCase().trim());
+            p.setItem(pokemonItem.toLowerCase().trim().replace(" ",""));
         }
 
         if (pokemonGender != null) {
