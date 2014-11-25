@@ -30,22 +30,14 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/teambuilder_pokemonNickName" />
 
-        <ImageView
-            android:id="@+id/teambuilder_itemIcon"
+        <TextView
+            android:id="@+id/teambuilder_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/teambuilder_pokemonIcon"
-            android:layout_margin="4dp" />
-
-        <TextView
-            android:id="@+id/teambuilder_itemName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignRight="@id/teambuilder_pokemonIcon"
             android:layout_below="@id/teambuilder_pokemonIcon"
             android:layout_margin="4dp"
-            android:layout_toRightOf="@id/teambuilder_itemIcon"
             android:background="@drawable/editable_frame"
             android:ellipsize="marquee"
             android:gravity="center"
