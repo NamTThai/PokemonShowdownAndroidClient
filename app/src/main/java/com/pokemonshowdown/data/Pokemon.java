@@ -353,8 +353,8 @@ public class Pokemon implements Serializable {
             // theres only the name
             pokemonName = pokemonMainData;
         }
-
-        pokemonName = pokemonName.toLowerCase().trim();
+        // replace for different formes
+        pokemonName = pokemonName.toLowerCase().replace("-","").trim();
         try {
             p = new Pokemon(appContext, pokemonName, withAppContext, true);
         } catch (JSONException e) {
