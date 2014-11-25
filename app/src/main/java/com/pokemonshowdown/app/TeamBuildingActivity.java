@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.PokemonTeam;
 
@@ -89,6 +90,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                 pokemonTeamList.add(pt);
                 pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                Toast.makeText(getApplicationContext(), R.string.team_created, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_remove_team:
                 position = pkmn_spinner.getSelectedItemPosition();
@@ -96,12 +98,20 @@ public class TeamBuildingActivity extends FragmentActivity {
                     pokemonTeamList.remove(position);
                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
 
-                    getSupportFragmentManager().beginTransaction().
-                            remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
-
                     if (pokemonTeamList.size() > 0) {
-                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                        pkmn_spinner.setSelection(0, false);
+                        PokemonTeam pt3 = pokemonTeamList.get(0);
+                        TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt3);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
+                                .commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().
+                                remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
                     }
+                    Toast.makeText(getApplicationContext(), R.string.team_removed, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.team_removed_none, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_export_team:
@@ -112,6 +122,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                             getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam());
                     clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_import_team:
@@ -123,15 +136,16 @@ public class TeamBuildingActivity extends FragmentActivity {
                     // Gets the clipboard as text.
                     String pasteData = clipItem.getText().toString();
                     pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
-                    if (pt != null) {
+                    if (pt.getTeamSize() > 0) {
                         pokemonTeamList.add(pt);
                         pokemonTeamListArrayAdapter.notifyDataSetChanged();
                         pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                        Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
                     } else {
-                        //todo handle bad data
+                        Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // todo handle no clipboard
+                    Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_rename_team:
@@ -159,6 +173,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                     });
 
                     renameDialog.show();
+                    Toast.makeText(getApplicationContext(), R.string.team_renamed, Toast.LENGTH_SHORT).show();
                 }
                 return true;
 

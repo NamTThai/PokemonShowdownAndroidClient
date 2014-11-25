@@ -71,7 +71,7 @@ public class FindBattleFragment extends Fragment {
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
                 waitingDialog.setMessage("Downloading list of matches");
                 waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                waitingDialog.setCancelable(false);
+                waitingDialog.setCancelable(true);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

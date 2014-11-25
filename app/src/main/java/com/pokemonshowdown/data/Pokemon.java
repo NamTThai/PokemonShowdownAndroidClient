@@ -79,7 +79,11 @@ public class Pokemon implements Serializable {
     public String exportPokemon() {
         StringBuilder sb = new StringBuilder();
         if (getName().length() > 0) {
-            sb.append(getName());
+            if (!getNickName().equals(getName())) {
+                sb.append(getNickName()).append(" (").append(getName()).append(")");
+            } else {
+                sb.append(getName());
+            }
             sb.append(" (").append(getGender()).append(")");
             if (getItem().length() > 0) {
                 sb.append(" @ ").append(getItem());
@@ -244,27 +248,19 @@ public class Pokemon implements Serializable {
             noMoves = false;
         }
         if (!noMoves) {
-            if (getMove1().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove1().equals("--")) {
                 sb.append("- ").append(getMove1()).append("\n");
             }
 
-            if (getMove2().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove2().equals("--")) {
                 sb.append("- ").append(getMove2()).append("\n");
             }
 
-            if (getMove3().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove3().equals("--")) {
                 sb.append("- ").append(getMove3()).append("\n");
             }
 
-            if (getMove4().equals("--")) {
-                sb.append("- \n");
-            } else {
+            if (!getMove4().equals("--")) {
                 sb.append("- ").append(getMove4()).append("\n");
             }
         }
@@ -280,8 +276,9 @@ public class Pokemon implements Serializable {
     public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
         String[] pokemonStrings = importString.split("\n");
         String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
-        String pokemonName, pokemonNickname = null, pokemonItem = null, pokemonGender = null;
+        String pokemonName = "", pokemonNickname = null, pokemonItem = null, pokemonGender = null;
         Pokemon p = null;
+        boolean isGender = false; // no nickname, but gender
         if (pokemonMainData.contains("@")) {
             String[] nameItem = pokemonMainData.split("@");
             if (nameItem[0].contains("(") && nameItem[0].contains(")")) {
@@ -293,21 +290,27 @@ public class Pokemon implements Serializable {
                         if (posEnd - pos == 2) { // gender
                             pokemonGender = tmp.substring(pos + 1, posEnd);
                         } else {
-                            pokemonNickname = tmp.substring(pos + 1, posEnd);
+                            pokemonName = tmp.substring(pos + 1, posEnd);
                         }
                         if (posEnd + 1 == tmp.length()) {
                             break;
                         }
                         tmp = tmp.substring(posEnd + 1);
                     }
-                    pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
+                    pokemonNickname = pokemonMainData.substring(0, nameItem[0].indexOf("("));
                     pokemonItem = nameItem[1];
                 } else {
-                    pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
                     if (nameItem[0].indexOf(")") - nameItem[0].indexOf("(") == 2) {
                         pokemonGender = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
+                        isGender = true;
                     } else {
-                        pokemonNickname = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
+                        pokemonName = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
+                        isGender = false;
+                    }
+                    if (!isGender) {
+                        pokemonNickname = pokemonMainData.substring(0, nameItem[0].indexOf("("));
+                    } else {
+                        pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
                     }
                     pokemonItem = nameItem[1];
                 }
@@ -324,28 +327,34 @@ public class Pokemon implements Serializable {
                     if (posEnd - pos == 2) { // gender
                         pokemonGender = tmp.substring(pos + 1, posEnd);
                     } else {
-                        pokemonNickname = tmp.substring(pos + 1, posEnd);
+                        pokemonName = tmp.substring(pos + 1, posEnd);
                     }
                     if (posEnd + 1 == tmp.length()) {
                         break;
                     }
                     tmp = tmp.substring(posEnd + 1);
                 }
-                pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
+                pokemonNickname = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
             } else {
-                pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
                 if (pokemonMainData.indexOf(")") - pokemonMainData.indexOf("(") == 2) {
                     pokemonGender = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
+                    isGender = true;
                 } else {
-                    pokemonNickname = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
+                    pokemonName = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
+                    isGender = false;
+                }
+                if (!isGender) {
+                    pokemonNickname = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
+                } else {
+                    pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
                 }
             }
         } else {
             // theres only the name
             pokemonName = pokemonMainData;
         }
-
-        pokemonName = pokemonName.toLowerCase().trim();
+        // replace for different formes
+        pokemonName = pokemonName.toLowerCase().replace("-","").trim();
         try {
             p = new Pokemon(appContext, pokemonName, withAppContext, true);
         } catch (JSONException e) {
@@ -353,7 +362,7 @@ public class Pokemon implements Serializable {
         }
 
         if (pokemonNickname != null) {
-            p.setNickName(pokemonNickname);
+            p.setNickName(pokemonNickname.trim());
         }
 
         if (pokemonItem != null) {
@@ -490,7 +499,6 @@ public class Pokemon implements Serializable {
         initializePokemon(appContext, jsonObject);
     }
 
-
     public Pokemon(Context appContext, String name, boolean withAppContext) {
         try {
             name = MyApplication.toId(name);
@@ -562,7 +570,7 @@ public class Pokemon implements Serializable {
                 mAbilityList.put(key, abilityList.getString(key));
             }
             setAbilityTag("0");
-            setItem("leftovers");
+            setItem("");
 
             setMove1("--");
             setMove2("--");

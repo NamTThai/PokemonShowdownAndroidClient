@@ -82,6 +82,7 @@ public class PokemonTeam implements Serializable {
 
     public static PokemonTeam importPokemonTeam(String importString, Context c, boolean withAppContest) {
         PokemonTeam pt = new PokemonTeam();
+        importString = importString.replace("\r\n","\n");
         String[] pokemonImportStrings = importString.split("\n");
         StringBuilder sb = new StringBuilder();
         for (String pokemonString : pokemonImportStrings) {
