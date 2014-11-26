@@ -97,7 +97,7 @@ public class TeamBuildingFragment extends Fragment {
                 } else {
                     selectedPos = -1;
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 }
             }
@@ -156,7 +156,7 @@ public class TeamBuildingFragment extends Fragment {
             case 2:
                 selectedPos = info.position;
                 Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 return true;
             default:
@@ -308,7 +308,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
                     selectedPos = position;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
                 }
@@ -421,7 +421,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 1;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -433,7 +433,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 2;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -446,7 +446,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 3;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -459,7 +459,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 4;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);

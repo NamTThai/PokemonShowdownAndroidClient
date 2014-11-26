@@ -27,6 +27,8 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
+    private final static int CLIPBOARD = 0;
+    private final static int PASTEBIN = 0;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
@@ -121,10 +123,10 @@ public class TeamBuildingActivity extends FragmentActivity {
                 return true;
             case R.id.action_export_team:
                 builder = new AlertDialog.Builder(this);
-                builder.setTitle("Export destination");
+                builder.setTitle(R.string.export_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if (items[item].equals("Clipboard")) {
+                        if (items[CLIPBOARD].equals("Clipboard")) {
                             int position = pkmn_spinner.getSelectedItemPosition();
                             if (position != AdapterView.INVALID_POSITION) {
                                 PokemonTeam pt = pokemonTeamList.get(position);
@@ -149,10 +151,10 @@ public class TeamBuildingActivity extends FragmentActivity {
 
             case R.id.action_import_team:
                 builder = new AlertDialog.Builder(this);
-                builder.setTitle("Import sources");
+                builder.setTitle(R.string.import_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if (items[item].equals("Clipboard")) {
+                        if (items[CLIPBOARD].equals("Clipboard")) {
                             ClipboardManager clipboard = (ClipboardManager)
                                     getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData importClip = clipboard.getPrimaryClip();

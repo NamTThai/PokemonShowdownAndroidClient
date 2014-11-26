@@ -31,6 +31,8 @@ public class SearchableActivity extends ListActivity {
     public final static int REQUEST_CODE_SEARCH_ITEM = 2;
     public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
+    public final static String SEARCH_TYPE = "Search Type";
+
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mAdapterList;
     private int mSearchType;
