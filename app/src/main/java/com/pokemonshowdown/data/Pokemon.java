@@ -315,6 +315,9 @@ public class Pokemon implements Serializable {
 
     public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
         String[] pokemonStrings = importString.split("\n");
+        if (pokemonStrings.length == 0) {
+            return null;
+        }
         String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
         String pokemonName = "", pokemonNickname = null, pokemonItem = null, pokemonGender = null;
         Pokemon p = null;
@@ -365,7 +368,7 @@ public class Pokemon implements Serializable {
         pokemonName = pokemonName.toLowerCase().replace("-", "").trim();
         try {
             p = new Pokemon(appContext, pokemonName, withAppContext, true);
-        } catch (JSONException|NullPointerException e) {
+        } catch (JSONException | NullPointerException e) {
             return null;
         }
 

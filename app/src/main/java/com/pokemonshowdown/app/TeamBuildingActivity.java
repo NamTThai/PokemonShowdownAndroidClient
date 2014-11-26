@@ -161,8 +161,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                                 // Gets the clipboard as text.
                                 String pasteData = clipItem.getText().toString();
                                 PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
-                                if (pt.getTeamSize() > 0) {
+                                if (pt != null && pt.getTeamSize() > 0) {
                                     pokemonTeamList.add(pt);
+                                    pt.setNickname("Imported Team");
                                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
                                     pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
                                     Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
