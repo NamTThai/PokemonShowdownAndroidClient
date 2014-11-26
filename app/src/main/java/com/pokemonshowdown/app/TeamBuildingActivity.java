@@ -126,7 +126,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                 builder.setTitle(R.string.export_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if (items[CLIPBOARD].equals("Clipboard")) {
+                        if (item == CLIPBOARD) {
                             int position = pkmn_spinner.getSelectedItemPosition();
                             if (position != AdapterView.INVALID_POSITION) {
                                 PokemonTeam pt = pokemonTeamList.get(position);
@@ -154,7 +154,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                 builder.setTitle(R.string.import_title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if (items[CLIPBOARD].equals("Clipboard")) {
+                        if (item == CLIPBOARD) {
                             ClipboardManager clipboard = (ClipboardManager)
                                     getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData importClip = clipboard.getPrimaryClip();
