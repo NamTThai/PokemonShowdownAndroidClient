@@ -276,16 +276,23 @@ public class TeamBuildingFragment extends Fragment {
             } else {
                 String itemString = pokemon.getItem();
                 JSONObject itemJSon = ItemDex.get(getActivity()).getItemJsonObject(itemString);
-                try {
-                    String itemName = itemJSon.getString("name");
-                    itemNameTextView.setText(itemName);
-                    int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
-                    if (itemDrawable != 0) {
-                        itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                if(itemJSon != null) {
+                    try {
+                        String itemName = itemJSon.getString("name");
+                        itemNameTextView.setText(itemName);
+                        int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
+                        if (itemDrawable != 0) {
+                            itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                        }
+                    } catch (JSONException e) {
+                        itemNameTextView.setText(R.string.pokemon_nohelditem);
+                        itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     }
-                } catch (JSONException e) {
+                } else {
+                    //wrong item data
                     itemNameTextView.setText(R.string.pokemon_nohelditem);
                     itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    pokemon.setItem("");
                 }
 
             }

@@ -1,6 +1,7 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,6 +18,7 @@ import java.util.List;
  * Has a nickname
  */
 public class PokemonTeam implements Serializable {
+    public static final String TAG = PokemonTeam.class.getName();
 
     private static final String pokemonTeamStorageName = "pkmnStorage.dat";
     private static List<PokemonTeam> pokemonTeamList;
@@ -48,8 +50,7 @@ public class PokemonTeam implements Serializable {
             oos.writeObject(pokemonTeamList);
             oos.close();
         } catch (IOException e) {
-            // TODO handle
-            e.printStackTrace();
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -67,12 +68,12 @@ public class PokemonTeam implements Serializable {
     /**
      * Exporting function to String
      */
-    public String exportPokemonTeam() {
+    public String exportPokemonTeam(Context appContext) {
         StringBuilder sb = new StringBuilder();
 
         for (Pokemon pokemon : pokemons) {
             if (pokemon != null) {
-                sb.append(pokemon.exportPokemon());
+                sb.append(pokemon.exportPokemon(appContext));
                 sb.append("\n");
             }
         }

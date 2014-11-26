@@ -120,7 +120,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                     pt = pokemonTeamList.get(position);
                     ClipboardManager clipboard = (ClipboardManager)
                             getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam());
+                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
                 } else {
