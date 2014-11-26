@@ -84,6 +84,10 @@ public class TeamBuildingActivity extends FragmentActivity {
         int position;
         PokemonTeam pt;
         final PokemonTeam pt2;
+        AlertDialog.Builder builder;
+        AlertDialog alert;
+        final String[] items = {"Clipboard", "Pastebin"};
+
         switch (item.getItemId()) {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
@@ -116,39 +120,69 @@ public class TeamBuildingActivity extends FragmentActivity {
                 }
                 return true;
             case R.id.action_export_team:
-                position = pkmn_spinner.getSelectedItemPosition();
-                if (position != AdapterView.INVALID_POSITION) {
-                    pt = pokemonTeamList.get(position);
-                    ClipboardManager clipboard = (ClipboardManager)
-                            getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.action_import_team:
-                ClipboardManager clipboard = (ClipboardManager)
-                        getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData importClip = clipboard.getPrimaryClip();
-                if (importClip != null) {
-                    ClipData.Item clipItem = importClip.getItemAt(0);
-                    // Gets the clipboard as text.
-                    String pasteData = clipItem.getText().toString();
-                    pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
-                    if (pt.getTeamSize() > 0) {
-                        pokemonTeamList.add(pt);
-                        pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
-                        Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle("Export destination");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (items[item].equals("Clipboard")) {
+                            int position = pkmn_spinner.getSelectedItemPosition();
+                            if (position != AdapterView.INVALID_POSITION) {
+                                PokemonTeam pt = pokemonTeamList.get(position);
+                                ClipboardManager clipboard = (ClipboardManager)
+                                        getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            new AlertDialog.Builder(TeamBuildingActivity.this)
+                                    .setMessage(R.string.still_in_development)
+                                    .create().show();
+                        }
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
-                }
+                });
+                alert = builder.create();
+                alert.show();
                 return true;
+
+            case R.id.action_import_team:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle("Import sources");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (items[item].equals("Clipboard")) {
+                            ClipboardManager clipboard = (ClipboardManager)
+                                    getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData importClip = clipboard.getPrimaryClip();
+                            if (importClip != null) {
+                                ClipData.Item clipItem = importClip.getItemAt(0);
+                                // Gets the clipboard as text.
+                                String pasteData = clipItem.getText().toString();
+                                PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
+                                if (pt.getTeamSize() > 0) {
+                                    pokemonTeamList.add(pt);
+                                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                                    pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                                    Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            new AlertDialog.Builder(TeamBuildingActivity.this)
+                                    .setMessage(R.string.still_in_development)
+                                    .create().show();
+                        }
+                    }
+                });
+                alert = builder.create();
+                alert.show();
+                return true;
+
             case R.id.action_rename_team:
                 position = pkmn_spinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
