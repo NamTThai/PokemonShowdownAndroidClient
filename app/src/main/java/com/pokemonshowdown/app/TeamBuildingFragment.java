@@ -322,7 +322,9 @@ public class TeamBuildingFragment extends Fragment {
                     TextView move1PpTextView = (TextView) convertView.findViewById(R.id.move1_pp);
                     TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
                     try {
-                        move1PpTextView.setText(move1Object.getInt("pp") + "/" + move1Object.getInt("pp"));
+                        String pp = String.valueOf(move1Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move1PpTextView.setText(pp + "/" + pp);
                         move1NameTextView.setText(move1Object.getString("name"));
                     } catch (JSONException e) {
                         pokemon.setMove1("--");
@@ -345,7 +347,9 @@ public class TeamBuildingFragment extends Fragment {
                     TextView move2PpTextView = (TextView) convertView.findViewById(R.id.move2_pp);
                     TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
                     try {
-                        move2PpTextView.setText(move2Object.getInt("pp") + "/" + move2Object.getInt("pp"));
+                        String pp = String.valueOf(move2Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move2PpTextView.setText(pp + "/" + pp);
                         move2NameTextView.setText(move2Object.getString("name"));
                     } catch (JSONException e) {
                         pokemon.setMove2("--");
@@ -369,7 +373,9 @@ public class TeamBuildingFragment extends Fragment {
                     TextView move3PpTextView = (TextView) convertView.findViewById(R.id.move3_pp);
                     TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
                     try {
-                        move3PpTextView.setText(move3Object.getInt("pp") + "/" + move3Object.getInt("pp"));
+                        String pp = String.valueOf(move3Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move3PpTextView.setText(pp + "/" + pp);
                         move3NameTextView.setText(move3Object.getString("name"));
                     } catch (JSONException e) {
                         pokemon.setMove3("--");
@@ -392,7 +398,9 @@ public class TeamBuildingFragment extends Fragment {
                     TextView move4PpTextView = (TextView) convertView.findViewById(R.id.move4_pp);
                     TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
                     try {
-                        move4PpTextView.setText(move4Object.getInt("pp") + "/" + move4Object.getInt("pp"));
+                        String pp = String.valueOf(move4Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move4PpTextView.setText(pp + "/" + pp);
                         move4NameTextView.setText(move4Object.getString("name"));
                     } catch (JSONException e) {
                         pokemon.setMove4("--");
