@@ -139,6 +139,9 @@
     <string name="team_imported_empty">Empty clipboard</string>
     <string name="team_renamed">Team renamed</string>
     <string name="pokemon_nohelditem">No item</string>
+    <string name="add_pokemon_button_text">Add a new Pokemon</string>
+    <string name="replace_pokemon">Replace</string>
+    <string name="remove_pokemon">Remove</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

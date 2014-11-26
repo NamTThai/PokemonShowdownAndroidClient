@@ -85,7 +85,7 @@ public class TeamBuildingFragment extends Fragment {
 
         // add pokemon button
         footerButton = new Button(getActivity().getApplicationContext());
-        footerButton.setText("Add Pokemon");
+        footerButton.setText(R.string.add_pokemon_button_text);
         footerButton.setTextColor(Color.BLACK);
         footerButton.setBackgroundColor(Color.WHITE);
         footerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);
@@ -137,7 +137,8 @@ public class TeamBuildingFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(Menu.NONE, 1, Menu.NONE, "Remove");
+        menu.add(Menu.NONE, 1, Menu.NONE, R.string.remove_pokemon);
+        menu.add(Menu.NONE, 2, Menu.NONE, R.string.replace_pokemon);
     }
 
     @Override
@@ -150,6 +151,13 @@ public class TeamBuildingFragment extends Fragment {
                 pokemonListAdapter.notifyDataSetChanged();
                 // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
                 ((TeamBuildingActivity) getActivity()).updateList();
+                return true;
+
+            case 2:
+                selectedPos = info.position;
+                Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -276,7 +284,7 @@ public class TeamBuildingFragment extends Fragment {
             } else {
                 String itemString = pokemon.getItem();
                 JSONObject itemJSon = ItemDex.get(getActivity()).getItemJsonObject(itemString);
-                if(itemJSon != null) {
+                if (itemJSon != null) {
                     try {
                         String itemName = itemJSon.getString("name");
                         itemNameTextView.setText(itemName);

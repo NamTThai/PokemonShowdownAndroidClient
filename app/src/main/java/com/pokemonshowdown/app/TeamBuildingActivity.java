@@ -88,6 +88,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
                 pokemonTeamList.add(pt);
+                pt.setNickname("Team #" + pokemonTeamList.size());
                 pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
                 Toast.makeText(getApplicationContext(), R.string.team_created, Toast.LENGTH_SHORT).show();
