@@ -160,20 +160,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                             if (position != AdapterView.INVALID_POSITION) {
                                 PokemonTeam pt = pokemonTeamList.get(position);
                                 String exportData = pt.exportPokemonTeam(getApplicationContext());
-                                waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
-                                waitingDialog.setMessage("Exporting to pastebin");
-                                waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                                waitingDialog.setCancelable(false);
-
                                 new PastebinPasteTask().execute(exportData);
-
-                                TeamBuildingActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        waitingDialog.show();
-                                    }
-                                });
-
                             }
                         } else {
                             new AlertDialog.Builder(TeamBuildingActivity.this)
@@ -258,23 +245,40 @@ public class TeamBuildingActivity extends FragmentActivity {
     }
 
     class PastebinPasteTask extends AsyncTask<String, Void, String> {
+        private static final String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
+        private static final String API_DEV_KEY_KEY = "api_dev_key";
+        private static final String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
+        private static final String API_OPTION = "api_option";
+        private static final String PASTE_OPTION = "paste";
+        private static final String PASTE_DATA = "api_paste_code";
+        private static final String ENCODING = "UTF-8";
+
         private Exception exception;
 
         @Override
         protected String doInBackground(String... strings) {
+            TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                public void run() {
+                    waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
+                    waitingDialog.setMessage("Exporting to pastebin");
+                    waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    waitingDialog.setCancelable(false);
+                    waitingDialog.show();
+                }
+            });
             String pastebinOut = null;
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://pastebin.com/api/api_post.php");
+            HttpPost httppost = new HttpPost(PASTEBIN_API);
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("api_dev_key", "027d7160b253fbcae3d91ff407ea82a6"));
-                nameValuePairs.add(new BasicNameValuePair("api_option", "paste"));
-                nameValuePairs.add(new BasicNameValuePair("api_paste_code", strings[0]));
+                nameValuePairs.add(new BasicNameValuePair(API_DEV_KEY_KEY, API_DEV_KEY_VALUE));
+                nameValuePairs.add(new BasicNameValuePair(API_OPTION, PASTE_OPTION));
+                nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, strings[0]));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity entity = response.getEntity();
-                pastebinOut = EntityUtils.toString(entity, "UTF-8");
+                pastebinOut = EntityUtils.toString(entity, ENCODING);
                 return pastebinOut;
             } catch (ClientProtocolException e) {
                 exception = e;
