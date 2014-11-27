@@ -28,7 +28,8 @@ public class TeamBuildingActivity extends FragmentActivity {
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
     private final static int CLIPBOARD = 0;
-    private final static int PASTEBIN = 0;
+    private final static int PASTEBIN = 1;
+    private final static int QR = 2;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
