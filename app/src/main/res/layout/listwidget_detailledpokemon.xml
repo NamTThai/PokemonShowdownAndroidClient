@@ -5,44 +5,51 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/teambuilder_pokemonInfo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true">
 
         <TextView
             android:id="@+id/teambuilder_pokemonNickName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/teambuilder_pokemonIcon"
             android:layout_margin="4dp"
             android:background="@drawable/editable_frame"
             android:ellipsize="marquee"
             android:gravity="center"
-            android:layout_gravity="center_horizontal"
             android:lines="1"
-            android:padding="4dp" />
+            android:padding="1dp" />
 
         <ImageView
-            android:id="@+id/teambuilder_pokemonIcon"
+            android:id="@id/teambuilder_pokemonIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:paddingLeft="48dp"
             android:paddingRight="48dp"
-            android:src="@drawable/sprites_abomasnow" />
+            android:layout_below="@id/teambuilder_pokemonNickName" />
 
         <TextView
             android:id="@+id/teambuilder_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignRight="@id/teambuilder_pokemonIcon"
+            android:layout_below="@id/teambuilder_pokemonIcon"
             android:layout_margin="4dp"
-            android:layout_gravity="center_horizontal"
             android:background="@drawable/editable_frame"
             android:ellipsize="marquee"
             android:gravity="center"
             android:lines="1"
-            android:padding="4dp" />
-
-    </LinearLayout>
+            android:padding="1dp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -146,7 +153,6 @@
                 android:layout_toLeftOf="@id/move3_pp"
                 android:contentDescription="@string/move_type"
                 android:paddingRight="16dp" />
-
         </RelativeLayout>
 
         <RelativeLayout

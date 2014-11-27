@@ -76,7 +76,7 @@ public class Pokemon implements Serializable {
      *
      * @return A string with the pokemon using Showdown! format
      */
-    public String exportPokemon() {
+    public String exportPokemon(Context appContext) {
         StringBuilder sb = new StringBuilder();
         if (getName().length() > 0) {
             if (!getNickName().equals(getName())) {
@@ -84,9 +84,18 @@ public class Pokemon implements Serializable {
             } else {
                 sb.append(getName());
             }
-            sb.append(" (").append(getGender()).append(")");
+            sb.append(" (").append(getGender().toUpperCase()).append(")");
             if (getItem().length() > 0) {
-                sb.append(" @ ").append(getItem());
+                JSONObject itemJSon = ItemDex.getWithApplicationContext(appContext).getItemJsonObject(getItem());
+                if (itemJSon != null) {
+                    try {
+                        String itemName = itemJSon.getString("name");
+                        sb.append(" @ ").append(itemName);
+                    } catch (JSONException e) {
+                        Log.e(PTAG, e.toString());
+                    }
+                }
+
             }
             sb.append("\n");
         }
@@ -233,6 +242,11 @@ public class Pokemon implements Serializable {
             }
             sb.append("\n");
         }
+
+        if (getNature().length() > 0) {
+            sb.append(getNature()).append(" Nature").append("\n");
+        }
+
         // moves
         boolean noMoves = true;
         if (!getMove1().equals("--")) {
@@ -249,115 +263,113 @@ public class Pokemon implements Serializable {
         }
         if (!noMoves) {
             if (!getMove1().equals("--")) {
-                sb.append("- ").append(getMove1()).append("\n");
+                JSONObject move1Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove1());
+                if (move1Object != null) {
+                    try {
+                        String realMove = move1Object.getString("name");
+                        sb.append("- ").append(realMove).append("\n");
+                    } catch (JSONException e) {
+                        Log.e(PTAG, e.toString());
+                    }
+                }
             }
 
             if (!getMove2().equals("--")) {
-                sb.append("- ").append(getMove2()).append("\n");
+                JSONObject move2Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove2());
+                if (move2Object != null) {
+                    try {
+                        String realMove = move2Object.getString("name");
+                        sb.append("- ").append(realMove).append("\n");
+                    } catch (JSONException e) {
+                        Log.e(PTAG, e.toString());
+                    }
+                }
             }
 
             if (!getMove3().equals("--")) {
-                sb.append("- ").append(getMove3()).append("\n");
+                JSONObject move3Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove3());
+                if (move3Object != null) {
+                    try {
+                        String realMove = move3Object.getString("name");
+                        sb.append("- ").append(realMove).append("\n");
+                    } catch (JSONException e) {
+                        Log.e(PTAG, e.toString());
+                    }
+                }
             }
 
             if (!getMove4().equals("--")) {
-                sb.append("- ").append(getMove4()).append("\n");
+                JSONObject move4Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove4());
+                if (move4Object != null) {
+                    try {
+                        String realMove = move4Object.getString("name");
+                        sb.append("- ").append(realMove).append("\n");
+                    } catch (JSONException e) {
+                        Log.e(PTAG, e.toString());
+                    }
+                }
             }
-        }
-
-        if (getNature().length() > 0) {
-            sb.append(getNature()).append(" Nature").append("\n");
         }
 
         return sb.toString();
     }
 
-
     public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
         String[] pokemonStrings = importString.split("\n");
+        if (pokemonStrings.length == 0) {
+            return null;
+        }
         String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
         String pokemonName = "", pokemonNickname = null, pokemonItem = null, pokemonGender = null;
         Pokemon p = null;
         boolean isGender = false; // no nickname, but gender
         if (pokemonMainData.contains("@")) {
             String[] nameItem = pokemonMainData.split("@");
-            if (nameItem[0].contains("(") && nameItem[0].contains(")")) {
-                int count = nameItem[0].length() - nameItem[0].replace("(", "").length();
-                if (count > 1) {
-                    int pos, posEnd;
-                    String tmp = nameItem[0];
-                    while ((pos = tmp.indexOf("(")) != -1 && (posEnd = tmp.indexOf(")")) != -1) {
-                        if (posEnd - pos == 2) { // gender
-                            pokemonGender = tmp.substring(pos + 1, posEnd);
-                        } else {
-                            pokemonName = tmp.substring(pos + 1, posEnd);
-                        }
-                        if (posEnd + 1 == tmp.length()) {
-                            break;
-                        }
-                        tmp = tmp.substring(posEnd + 1);
-                    }
-                    pokemonNickname = pokemonMainData.substring(0, nameItem[0].indexOf("("));
-                    pokemonItem = nameItem[1];
-                } else {
-                    if (nameItem[0].indexOf(")") - nameItem[0].indexOf("(") == 2) {
-                        pokemonGender = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
-                        isGender = true;
-                    } else {
-                        pokemonName = pokemonMainData.substring(nameItem[0].indexOf("(") + 1, nameItem[0].indexOf(")"));
-                        isGender = false;
-                    }
-                    if (!isGender) {
-                        pokemonNickname = pokemonMainData.substring(0, nameItem[0].indexOf("("));
-                    } else {
-                        pokemonName = pokemonMainData.substring(0, nameItem[0].indexOf("("));
-                    }
-                    pokemonItem = nameItem[1];
-                }
-            } else {
-                pokemonName = nameItem[0];
-                pokemonItem = nameItem[1];
-            }
-        } else if (pokemonMainData.contains("(") && pokemonMainData.contains(")")) {
-            int count = pokemonMainData.length() - pokemonMainData.replace("(", "").length();
-            if (count > 1) {
-                int pos, posEnd;
-                String tmp = pokemonMainData;
-                while ((pos = tmp.indexOf("(")) != -1 && (posEnd = tmp.indexOf(")")) != -1) {
-                    if (posEnd - pos == 2) { // gender
-                        pokemonGender = tmp.substring(pos + 1, posEnd);
-                    } else {
-                        pokemonName = tmp.substring(pos + 1, posEnd);
-                    }
-                    if (posEnd + 1 == tmp.length()) {
-                        break;
-                    }
-                    tmp = tmp.substring(posEnd + 1);
-                }
-                pokemonNickname = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
-            } else {
-                if (pokemonMainData.indexOf(")") - pokemonMainData.indexOf("(") == 2) {
-                    pokemonGender = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
-                    isGender = true;
-                } else {
-                    pokemonName = pokemonMainData.substring(pokemonMainData.indexOf("(") + 1, pokemonMainData.indexOf(")"));
-                    isGender = false;
-                }
-                if (!isGender) {
-                    pokemonNickname = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
-                } else {
-                    pokemonName = pokemonMainData.substring(0, pokemonMainData.indexOf("("));
-                }
-            }
-        } else {
-            // theres only the name
-            pokemonName = pokemonMainData;
+            pokemonItem = nameItem[1];
+            pokemonMainData = nameItem[0];
         }
+        String tmpString = pokemonMainData;
+        String[] tmpSplit = tmpString.trim().split(" ");
+        switch (tmpSplit.length) {
+            case 1:
+                pokemonName = tmpSplit[0].trim();
+                break;
+
+            case 2:
+                // name (gender)
+                // nickname (name)
+                if (tmpString.contains("(") && tmpString.contains(")")) {
+                    String gender = tmpString.substring(tmpString.indexOf("(") + 1, tmpString.indexOf(")"));
+                    if (gender.equals("M") || gender.equals("F") || gender.equals("N")) {
+                        pokemonGender = gender;
+                        pokemonName = tmpSplit[0].trim();
+                    } else {
+                        //is pokemon name
+                        pokemonNickname = tmpSplit[0].trim();
+                        pokemonName = gender;
+                    }
+                } else {
+                    Log.w(PTAG, "Invalid pokemon name");
+                    return null;
+                }
+                break;
+
+            case 3:
+                // nickname (name) (gender)
+                pokemonNickname = tmpSplit[0].trim();
+                pokemonName = tmpSplit[1].replace("(", "").replace(")", "").trim();
+                pokemonGender = tmpSplit[2].replace("(", "").replace(")", "").trim();
+                break;
+
+            default:
+                return null;
+        }
+
         // replace for different formes
-        pokemonName = pokemonName.toLowerCase().replace("-","").trim();
+        pokemonName = MyApplication.toId(pokemonName);
         try {
             p = new Pokemon(appContext, pokemonName, withAppContext, true);
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return null;
         }
 
@@ -366,11 +378,14 @@ public class Pokemon implements Serializable {
         }
 
         if (pokemonItem != null) {
-            p.setItem(pokemonItem.toLowerCase().trim());
+            //it's a real name item ("Life Orb"), we need to get the corresponding ID, lets just remove all spaces and - put it to lowcase for now
+            p.setItem(MyApplication.toId(pokemonItem));
         }
 
         if (pokemonGender != null) {
-            p.setGender(pokemonGender.toLowerCase().trim());
+            if (pokemonGender.equals("M") || pokemonGender.equals("F") || pokemonGender.equals("N")) {
+                p.setGender(pokemonGender);
+            }
         }
 
         int currentMoveId = 1;
@@ -378,7 +393,9 @@ public class Pokemon implements Serializable {
             String currentString = pokemonStrings[i];
             if (currentString.contains("-")) {
                 // its a move!
-                String move = currentString.substring(currentString.indexOf("-") + 1).toLowerCase().trim();
+                // same as items, it's a real name , we need an id. Lowercasing and removing spaces  + - should do the trick
+                String move = currentString.substring(currentString.indexOf("-") + 1);
+                move = MyApplication.toId(move);
                 switch (currentMoveId) {
                     case 1:
                         p.setMove1(move);

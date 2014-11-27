@@ -85,7 +85,7 @@ public class TeamBuildingFragment extends Fragment {
 
         // add pokemon button
         footerButton = new Button(getActivity().getApplicationContext());
-        footerButton.setText("Add Pokemon");
+        footerButton.setText(R.string.add_pokemon_button_text);
         footerButton.setTextColor(Color.BLACK);
         footerButton.setBackgroundColor(Color.WHITE);
         footerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);
@@ -97,7 +97,7 @@ public class TeamBuildingFragment extends Fragment {
                 } else {
                     selectedPos = -1;
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 }
             }
@@ -137,7 +137,8 @@ public class TeamBuildingFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(Menu.NONE, 1, Menu.NONE, "Remove");
+        menu.add(Menu.NONE, 1, Menu.NONE, R.string.remove_pokemon);
+        menu.add(Menu.NONE, 2, Menu.NONE, R.string.replace_pokemon);
     }
 
     @Override
@@ -150,6 +151,13 @@ public class TeamBuildingFragment extends Fragment {
                 pokemonListAdapter.notifyDataSetChanged();
                 // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
                 ((TeamBuildingActivity) getActivity()).updateList();
+                return true;
+
+            case 2:
+                selectedPos = info.position;
+                Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
+                intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -238,12 +246,12 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingFragment.this.getActivity());
-                    renameDialog.setTitle("Rename");
+                    renameDialog.setTitle(R.string.rename_pokemon);
                     final EditText teamNameEditText = new EditText(TeamBuildingFragment.this.getActivity());
                     teamNameEditText.setText(pokemon.getNickName());
                     renameDialog.setView(teamNameEditText);
 
-                    renameDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pokemon.setNickName(teamNameEditText.getText().toString());
                             notifyDataSetChanged();
@@ -251,7 +259,7 @@ public class TeamBuildingFragment extends Fragment {
                         }
                     });
 
-                    renameDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             arg0.dismiss();
                         }
@@ -274,44 +282,52 @@ public class TeamBuildingFragment extends Fragment {
                 itemNameTextView.setText(R.string.pokemon_nohelditem);
                 itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             } else {
-                itemNameTextView.setText(pokemon.getItem());
-                int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
-                if (itemDrawable != 0) {
-                    itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                String itemString = pokemon.getItem();
+                JSONObject itemJSon = ItemDex.get(getActivity()).getItemJsonObject(itemString);
+                if (itemJSon != null) {
+                    try {
+                        String itemName = itemJSon.getString("name");
+                        itemNameTextView.setText(itemName);
+                        int itemDrawable = ItemDex.getItemIcon(TeamBuildingFragment.this.getActivity(), pokemon.getItem());
+                        if (itemDrawable != 0) {
+                            itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(itemDrawable), null, null, null);
+                        }
+                    } catch (JSONException e) {
+                        itemNameTextView.setText(R.string.pokemon_nohelditem);
+                        itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    }
+                } else {
+                    //wrong item data
+                    itemNameTextView.setText(R.string.pokemon_nohelditem);
+                    itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    pokemon.setItem("");
                 }
+
             }
             itemNameTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
                     selectedPos = position;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
                 }
             });
 
-
-            TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
-            move1NameTextView.setText(pokemon.getMove1());
-
-            TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
-            move2NameTextView.setText(pokemon.getMove2());
-
-            TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
-            move3NameTextView.setText(pokemon.getMove3());
-
-            TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
-            move4NameTextView.setText(pokemon.getMove4());
-
             if (!pokemon.getMove1().equals("--")) {
                 ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.move1_type);
                 move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
-                if (ppObject != null) {
+                JSONObject move1Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
+                if (move1Object != null) {
                     TextView move1PpTextView = (TextView) convertView.findViewById(R.id.move1_pp);
+                    TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
                     try {
-                        move1PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        String pp = String.valueOf(move1Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move1PpTextView.setText(pp + "/" + pp);
+                        move1NameTextView.setText(move1Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove1("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -326,12 +342,17 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove2().equals("--")) {
                 ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.move2_type);
                 move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
-                if (ppObject != null) {
+                JSONObject move2Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
+                if (move2Object != null) {
                     TextView move2PpTextView = (TextView) convertView.findViewById(R.id.move2_pp);
+                    TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
                     try {
-                        move2PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        String pp = String.valueOf(move2Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move2PpTextView.setText(pp + "/" + pp);
+                        move2NameTextView.setText(move2Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove2("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -347,12 +368,17 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove3().equals("--")) {
                 ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.move3_type);
                 move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
-                if (ppObject != null) {
+                JSONObject move3Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
+                if (move3Object != null) {
                     TextView move3PpTextView = (TextView) convertView.findViewById(R.id.move3_pp);
+                    TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
                     try {
-                        move3PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        String pp = String.valueOf(move3Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move3PpTextView.setText(pp + "/" + pp);
+                        move3NameTextView.setText(move3Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove3("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -367,12 +393,17 @@ public class TeamBuildingFragment extends Fragment {
             if (!pokemon.getMove4().equals("--")) {
                 ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.move4_type);
                 move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
-                JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
-                if (ppObject != null) {
+                JSONObject move4Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
+                if (move4Object != null) {
                     TextView move4PpTextView = (TextView) convertView.findViewById(R.id.move4_pp);
+                    TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
                     try {
-                        move4PpTextView.setText(ppObject.getInt("pp") + "/" + ppObject.getInt("pp"));
+                        String pp = String.valueOf(move4Object.getInt("pp"));
+                        pp = MoveDex.getMaxPP(pp);
+                        move4PpTextView.setText(pp + "/" + pp);
+                        move4NameTextView.setText(move4Object.getString("name"));
                     } catch (JSONException e) {
+                        pokemon.setMove4("--");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -390,7 +421,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 1;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -402,7 +433,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 2;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -415,7 +446,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 3;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -428,7 +459,7 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
-                    intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                     selectedPos = position;
                     selectedMove = 4;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
