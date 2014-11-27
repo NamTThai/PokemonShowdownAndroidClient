@@ -35,7 +35,9 @@ public class TeamBuildingActivity extends FragmentActivity {
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
-        currentFragment.updateList();
+        if(currentFragment != null) {
+            currentFragment.updateList();
+        }
     }
 
     @Override
@@ -60,7 +62,7 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                 FragmentManager fm = getSupportFragmentManager();
                 fm.beginTransaction()
-                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "TeamBuildingFragment")
+                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                         .commit();
 
                 currentFragment = fragment;
