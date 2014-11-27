@@ -246,12 +246,12 @@ public class TeamBuildingFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingFragment.this.getActivity());
-                    renameDialog.setTitle("Rename");
+                    renameDialog.setTitle(R.string.rename_pokemon);
                     final EditText teamNameEditText = new EditText(TeamBuildingFragment.this.getActivity());
                     teamNameEditText.setText(pokemon.getNickName());
                     renameDialog.setView(teamNameEditText);
 
-                    renameDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pokemon.setNickName(teamNameEditText.getText().toString());
                             notifyDataSetChanged();
@@ -259,7 +259,7 @@ public class TeamBuildingFragment extends Fragment {
                         }
                     });
 
-                    renameDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             arg0.dismiss();
                         }

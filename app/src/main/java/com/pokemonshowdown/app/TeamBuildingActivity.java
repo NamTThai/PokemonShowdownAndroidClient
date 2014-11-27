@@ -191,12 +191,12 @@ public class TeamBuildingActivity extends FragmentActivity {
                 if (position != AdapterView.INVALID_POSITION) {
                     pt2 = pokemonTeamList.get(position);
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
-                    renameDialog.setTitle("Rename");
+                    renameDialog.setTitle(R.string.rename_pokemon);
                     final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
                     teamNameEditText.setText(pt2.getNickname());
                     renameDialog.setView(teamNameEditText);
 
-                    renameDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pt2.setNickname(teamNameEditText.getText().toString());
                             pokemonTeamListArrayAdapter.notifyDataSetChanged();
@@ -204,7 +204,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                         }
                     });
 
-                    renameDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             arg0.dismiss();
                         }
