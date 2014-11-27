@@ -142,6 +142,8 @@
     <string name="add_pokemon_button_text">Add a new Pokemon</string>
     <string name="replace_pokemon">Replace</string>
     <string name="remove_pokemon">Remove</string>
+    <string name="export_title">Export destination</string>
+    <string name="import_title">Import source</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
