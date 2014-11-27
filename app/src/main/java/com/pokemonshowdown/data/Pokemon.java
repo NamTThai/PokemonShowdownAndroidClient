@@ -242,6 +242,11 @@ public class Pokemon implements Serializable {
             }
             sb.append("\n");
         }
+
+        if (getNature().length() > 0) {
+            sb.append(getNature()).append(" Nature").append("\n");
+        }
+
         // moves
         boolean noMoves = true;
         if (!getMove1().equals("--")) {
@@ -304,10 +309,6 @@ public class Pokemon implements Serializable {
                     }
                 }
             }
-        }
-
-        if (getNature().length() > 0) {
-            sb.append(getNature()).append(" Nature").append("\n");
         }
 
         return sb.toString();
