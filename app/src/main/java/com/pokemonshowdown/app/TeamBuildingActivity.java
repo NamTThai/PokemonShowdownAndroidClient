@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -27,12 +28,14 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
+    private TeamBuildingFragment currentFragment = null;
     private final static int CLIPBOARD = 0;
     private final static int PASTEBIN = 1;
     private final static int QR = 2;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
+        currentFragment.updateList();
     }
 
     @Override
@@ -57,8 +60,10 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                 FragmentManager fm = getSupportFragmentManager();
                 fm.beginTransaction()
-                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
+                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "TeamBuildingFragment")
                         .commit();
+
+                currentFragment = fragment;
             }
 
             @Override
@@ -112,9 +117,11 @@ public class TeamBuildingActivity extends FragmentActivity {
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                                 .commit();
+                        fragment = null;
                     } else {
                         getSupportFragmentManager().beginTransaction().
                                 remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
+                        currentFragment = null;
                     }
                     Toast.makeText(getApplicationContext(), R.string.team_removed, Toast.LENGTH_SHORT).show();
                 } else {
