@@ -200,6 +200,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pt2.setNickname(teamNameEditText.getText().toString());
                             pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(), R.string.team_renamed, Toast.LENGTH_SHORT).show();
                             arg0.dismiss();
                         }
                     });
@@ -211,7 +212,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                     });
 
                     renameDialog.show();
-                    Toast.makeText(getApplicationContext(), R.string.team_renamed, Toast.LENGTH_SHORT).show();
                 }
                 return true;
 
