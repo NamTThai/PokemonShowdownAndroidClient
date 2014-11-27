@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.PokemonTeam;
 
@@ -26,6 +27,9 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
+    private final static int CLIPBOARD = 0;
+    private final static int PASTEBIN = 1;
+    private final static int QR = 2;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
@@ -83,12 +87,17 @@ public class TeamBuildingActivity extends FragmentActivity {
         int position;
         PokemonTeam pt;
         final PokemonTeam pt2;
+        AlertDialog.Builder builder;
+        AlertDialog alert;
+
         switch (item.getItemId()) {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
                 pokemonTeamList.add(pt);
+                pt.setNickname("Team #" + pokemonTeamList.size());
                 pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                Toast.makeText(getApplicationContext(), R.string.team_created, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_remove_team:
                 position = pkmn_spinner.getSelectedItemPosition();
@@ -96,63 +105,107 @@ public class TeamBuildingActivity extends FragmentActivity {
                     pokemonTeamList.remove(position);
                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
 
-                    getSupportFragmentManager().beginTransaction().
-                            remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
-
                     if (pokemonTeamList.size() > 0) {
-                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                        pkmn_spinner.setSelection(0, false);
+                        PokemonTeam pt3 = pokemonTeamList.get(0);
+                        TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt3);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
+                                .commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction().
+                                remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
                     }
+                    Toast.makeText(getApplicationContext(), R.string.team_removed, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.team_removed_none, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_export_team:
-                position = pkmn_spinner.getSelectedItemPosition();
-                if (position != AdapterView.INVALID_POSITION) {
-                    pt = pokemonTeamList.get(position);
-                    ClipboardManager clipboard = (ClipboardManager)
-                            getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam());
-                    clipboard.setPrimaryClip(clip);
-                }
-                return true;
-            case R.id.action_import_team:
-                ClipboardManager clipboard = (ClipboardManager)
-                        getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData importClip = clipboard.getPrimaryClip();
-                if (importClip != null) {
-                    ClipData.Item clipItem = importClip.getItemAt(0);
-                    // Gets the clipboard as text.
-                    String pasteData = clipItem.getText().toString();
-                    pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
-                    if (pt != null) {
-                        pokemonTeamList.add(pt);
-                        pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                        pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
-                    } else {
-                        //todo handle bad data
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.export_title);
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == CLIPBOARD) {
+                            int position = pkmn_spinner.getSelectedItemPosition();
+                            if (position != AdapterView.INVALID_POSITION) {
+                                PokemonTeam pt = pokemonTeamList.get(position);
+                                ClipboardManager clipboard = (ClipboardManager)
+                                        getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            new AlertDialog.Builder(TeamBuildingActivity.this)
+                                    .setMessage(R.string.still_in_development)
+                                    .create().show();
+                        }
                     }
-                } else {
-                    // todo handle no clipboard
-                }
+                });
+                alert = builder.create();
+                alert.show();
                 return true;
+
+            case R.id.action_import_team:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.import_title);
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == CLIPBOARD) {
+                            ClipboardManager clipboard = (ClipboardManager)
+                                    getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData importClip = clipboard.getPrimaryClip();
+                            if (importClip != null) {
+                                ClipData.Item clipItem = importClip.getItemAt(0);
+                                // Gets the clipboard as text.
+                                String pasteData = clipItem.getText().toString();
+                                PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
+                                if (pt != null && pt.getTeamSize() > 0) {
+                                    pokemonTeamList.add(pt);
+                                    pt.setNickname("Imported Team");
+                                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                                    pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                                    Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            new AlertDialog.Builder(TeamBuildingActivity.this)
+                                    .setMessage(R.string.still_in_development)
+                                    .create().show();
+                        }
+                    }
+                });
+                alert = builder.create();
+                alert.show();
+                return true;
+
             case R.id.action_rename_team:
                 position = pkmn_spinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
                     pt2 = pokemonTeamList.get(position);
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
-                    renameDialog.setTitle("Rename");
+                    renameDialog.setTitle(R.string.rename_pokemon);
                     final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
                     teamNameEditText.setText(pt2.getNickname());
                     renameDialog.setView(teamNameEditText);
 
-                    renameDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pt2.setNickname(teamNameEditText.getText().toString());
                             pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(), R.string.team_renamed, Toast.LENGTH_SHORT).show();
                             arg0.dismiss();
                         }
                     });
 
-                    renameDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             arg0.dismiss();
                         }
