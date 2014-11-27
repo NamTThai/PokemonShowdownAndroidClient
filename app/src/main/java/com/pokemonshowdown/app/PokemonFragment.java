@@ -35,6 +35,8 @@ public class PokemonFragment extends DialogFragment {
 
     private Pokemon mPokemon;
 
+    private CancelListener mCancelListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -246,8 +248,24 @@ public class PokemonFragment extends DialogFragment {
         level.setText(Integer.toString(lv));
     }
 
+    public void setCancelListener(CancelListener listener) {
+        mCancelListener = listener;
+    }
+
     private void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if(mCancelListener != null) {
+            mCancelListener.onCancel();
+        }
+    }
+
+    public interface CancelListener {
+        public void onCancel();
     }
 
 }
