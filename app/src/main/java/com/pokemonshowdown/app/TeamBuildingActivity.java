@@ -89,7 +89,6 @@ public class TeamBuildingActivity extends FragmentActivity {
         final PokemonTeam pt2;
         AlertDialog.Builder builder;
         AlertDialog alert;
-        final String[] items = {"Clipboard", "Pastebin", "QR Code"};
 
         switch (item.getItemId()) {
             case R.id.action_create_team:
@@ -125,7 +124,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_export_team:
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.export_title);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == CLIPBOARD) {
                             int position = pkmn_spinner.getSelectedItemPosition();
@@ -153,7 +152,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_import_team:
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.import_title);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == CLIPBOARD) {
                             ClipboardManager clipboard = (ClipboardManager)
