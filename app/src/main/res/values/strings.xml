@@ -144,6 +144,12 @@
     <string name="remove_pokemon">Remove</string>
     <string name="export_title">Export destination</string>
     <string name="import_title">Import source</string>
+    <string-array name="export_import_sources">
+        <item>Clipboard</item>
+        <item>Pastebin</item>
+        <item>QR Code</item>
+    </string-array>
+
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
