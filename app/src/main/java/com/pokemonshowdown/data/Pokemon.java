@@ -339,7 +339,7 @@ public class Pokemon implements Serializable {
                 // nickname (name)
                 if (tmpString.contains("(") && tmpString.contains(")")) {
                     String gender = tmpString.substring(tmpString.indexOf("(") + 1, tmpString.indexOf(")"));
-                    if (gender.equals("M") || gender.equals("M") || gender.equals("M")) {
+                    if (gender.equals("M") || gender.equals("F") || gender.equals("N")) {
                         pokemonGender = gender;
                         pokemonName = tmpSplit[0].trim();
                     } else {
@@ -365,7 +365,7 @@ public class Pokemon implements Serializable {
         }
 
         // replace for different formes
-        pokemonName = pokemonName.toLowerCase().replace("-", "").trim();
+        pokemonName = MyApplication.toId(pokemonName);
         try {
             p = new Pokemon(appContext, pokemonName, withAppContext, true);
         } catch (JSONException | NullPointerException e) {
@@ -378,7 +378,7 @@ public class Pokemon implements Serializable {
 
         if (pokemonItem != null) {
             //it's a real name item ("Life Orb"), we need to get the corresponding ID, lets just remove all spaces and - put it to lowcase for now
-            p.setItem(pokemonItem.toLowerCase().trim().replace(" ", "").replace("-", ""));
+            p.setItem(MyApplication.toId(pokemonItem));
         }
 
         if (pokemonGender != null) {
@@ -393,7 +393,8 @@ public class Pokemon implements Serializable {
             if (currentString.contains("-")) {
                 // its a move!
                 // same as items, it's a real name , we need an id. Lowercasing and removing spaces  + - should do the trick
-                String move = currentString.substring(currentString.indexOf("-") + 1).toLowerCase().trim().replace(" ", "").replace("-", "");
+                String move = currentString.substring(currentString.indexOf("-") + 1);
+                move = MyApplication.toId(move);
                 switch (currentMoveId) {
                     case 1:
                         p.setMove1(move);
