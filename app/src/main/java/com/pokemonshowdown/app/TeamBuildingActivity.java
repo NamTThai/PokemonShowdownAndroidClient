@@ -88,7 +88,7 @@ public class TeamBuildingActivity extends FragmentActivity {
         final PokemonTeam pt2;
         AlertDialog.Builder builder;
         AlertDialog alert;
-        final String[] items = {"Clipboard", "Pastebin"};
+        final String[] items = {"Clipboard", "Pastebin", "QR Code"};
 
         switch (item.getItemId()) {
             case R.id.action_create_team:
