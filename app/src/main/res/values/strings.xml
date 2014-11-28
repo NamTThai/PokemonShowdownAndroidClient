@@ -161,7 +161,6 @@
         <item>NU</item>
         <item>LC</item>
         <item>VGC14</item>
-        <item>UU</item>
     </string-array>
     <string name="url_dialog_title">Enter URL</string>
     <string name="pastebin_url">http://pastebin.com/</string>
