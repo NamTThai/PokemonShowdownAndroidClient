@@ -3,13 +3,14 @@ package com.pokemonshowdown.app;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class DmgCalcFieldXYFragment extends Fragment {
+import com.pokemonshowdown.data.FieldFragment;
+
+public class DmgCalcFieldXYFragment extends FieldFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         final TextView singles = (TextView) getView().findViewById(R.id.dmg_calc_field_singles);
         final TextView doubles = (TextView) getView().findViewById(R.id.dmg_calc_field_doubles);
         final TextView gravity = (TextView) getView().findViewById(R.id.dmg_calc_field_gravity);
@@ -42,13 +43,15 @@ public class DmgCalcFieldXYFragment extends Fragment {
         final TextView lightscreen = (TextView) getView().findViewById(R.id.dmg_calc_field_lightscreen);
         final TextView foresight = (TextView) getView().findViewById(R.id.dmg_calc_field_foresight);
         final TextView helpinghand = (TextView) getView().findViewById(R.id.dmg_calc_field_helpinghand);
-        
-        
+
+
         singles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 singles.setTypeface(null, Typeface.BOLD);
                 doubles.setTypeface(null, Typeface.ITALIC);
+
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.SINGLES, true);
             }
         });
 
@@ -57,6 +60,8 @@ public class DmgCalcFieldXYFragment extends Fragment {
             public void onClick(View v) {
                 doubles.setTypeface(null, Typeface.BOLD);
                 singles.setTypeface(null, Typeface.ITALIC);
+
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.DOUBLES, true);
             }
         });
 
@@ -66,8 +71,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = gravity.getTypeface();
                 if (typeface.isBold()) {
                     gravity.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.GRAVITY, false);
                 } else {
                     gravity.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.GRAVITY, true);
                 }
             }
         });
@@ -80,6 +87,8 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 rain.setTypeface(null, Typeface.ITALIC);
                 sand.setTypeface(null, Typeface.ITALIC);
                 hail.setTypeface(null, Typeface.ITALIC);
+
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.NO_WEATHER, true);
             }
         });
 
@@ -91,6 +100,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 rain.setTypeface(null, Typeface.ITALIC);
                 sand.setTypeface(null, Typeface.ITALIC);
                 hail.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.SUN, true);
             }
         });
 
@@ -102,6 +112,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 rain.setTypeface(null, Typeface.BOLD);
                 sand.setTypeface(null, Typeface.ITALIC);
                 hail.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.RAIN, true);
             }
         });
 
@@ -113,6 +124,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 rain.setTypeface(null, Typeface.ITALIC);
                 sand.setTypeface(null, Typeface.BOLD);
                 hail.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.SAND, true);
             }
         });
 
@@ -124,6 +136,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 rain.setTypeface(null, Typeface.ITALIC);
                 sand.setTypeface(null, Typeface.ITALIC);
                 hail.setTypeface(null, Typeface.BOLD);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.HAIL, true);
             }
         });
 
@@ -133,8 +146,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = sr.getTypeface();
                 if (typeface.isBold()) {
                     sr.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.STEALTH_ROCK, false);
                 } else {
                     sr.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.STEALTH_ROCK, true);
                 }
             }
         });
@@ -146,6 +161,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 spike1.setTypeface(null, Typeface.ITALIC);
                 spike2.setTypeface(null, Typeface.ITALIC);
                 spike3.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.ZERO_SPIKES, true);
             }
         });
 
@@ -156,6 +172,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 spike1.setTypeface(null, Typeface.BOLD);
                 spike2.setTypeface(null, Typeface.ITALIC);
                 spike3.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.ONE_SPIKES, true);
             }
         });
 
@@ -166,6 +183,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 spike1.setTypeface(null, Typeface.ITALIC);
                 spike2.setTypeface(null, Typeface.BOLD);
                 spike3.setTypeface(null, Typeface.ITALIC);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.TWO_SPIKES, true);
             }
         });
 
@@ -176,6 +194,7 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 spike1.setTypeface(null, Typeface.ITALIC);
                 spike2.setTypeface(null, Typeface.ITALIC);
                 spike3.setTypeface(null, Typeface.BOLD);
+                sendUpdateToListeners(DmgCalcActivity.FieldConditions.THREE_SPIKES, true);
             }
         });
 
@@ -185,8 +204,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = reflect.getTypeface();
                 if (typeface.isBold()) {
                     reflect.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.REFLECT, false);
                 } else {
                     reflect.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.REFLECT, true);
                 }
             }
         });
@@ -197,8 +218,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = lightscreen.getTypeface();
                 if (typeface.isBold()) {
                     lightscreen.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.LIGHT_SCREEN, false);
                 } else {
                     lightscreen.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.LIGHT_SCREEN, true);
                 }
             }
         });
@@ -209,8 +232,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = foresight.getTypeface();
                 if (typeface.isBold()) {
                     foresight.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.FORESIGHT, false);
                 } else {
                     foresight.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.FORESIGHT, true);
                 }
             }
         });
@@ -221,8 +246,10 @@ public class DmgCalcFieldXYFragment extends Fragment {
                 Typeface typeface = helpinghand.getTypeface();
                 if (typeface.isBold()) {
                     helpinghand.setTypeface(null, Typeface.ITALIC);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.HELPING_HAND, false);
                 } else {
                     helpinghand.setTypeface(null, Typeface.BOLD);
+                    sendUpdateToListeners(DmgCalcActivity.FieldConditions.HELPING_HAND, true);
                 }
             }
         });
