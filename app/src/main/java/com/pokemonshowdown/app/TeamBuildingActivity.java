@@ -28,15 +28,15 @@ public class TeamBuildingActivity extends FragmentActivity {
     private Spinner pkmn_spinner;
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
-    private TeamBuildingFragment currentFragment = null;
     private final static int CLIPBOARD = 0;
     private final static int PASTEBIN = 1;
     private final static int QR = 2;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
-        if(currentFragment != null) {
-            currentFragment.updateList();
+        TeamBuildingFragment teamBuildingFragment = (TeamBuildingFragment) getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer);
+        if(teamBuildingFragment != null) {
+            teamBuildingFragment.updateList();
         }
     }
 
@@ -64,8 +64,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                 fm.beginTransaction()
                         .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                         .commit();
-
-                currentFragment = fragment;
             }
 
             @Override
@@ -123,7 +121,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                     } else {
                         getSupportFragmentManager().beginTransaction().
                                 remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
-                        currentFragment = null;
                     }
                     Toast.makeText(getApplicationContext(), R.string.team_removed, Toast.LENGTH_SHORT).show();
                 } else {

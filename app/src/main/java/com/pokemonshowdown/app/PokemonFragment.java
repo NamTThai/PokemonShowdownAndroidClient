@@ -24,7 +24,6 @@ import java.util.Set;
 
 public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
-
     private Pokemon mPokemon;
 
     @Override
