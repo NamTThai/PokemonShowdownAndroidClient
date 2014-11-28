@@ -26,6 +26,8 @@ public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
     private Pokemon mPokemon;
 
+    private CancelListener mCancelListener;
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
@@ -246,8 +248,24 @@ public class PokemonFragment extends DialogFragment {
         level.setText(Integer.toString(lv));
     }
 
+    public void setCancelListener(CancelListener listener) {
+        mCancelListener = listener;
+    }
+
     private void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if(mCancelListener != null) {
+            mCancelListener.onCancel();
+        }
+    }
+
+    public interface CancelListener {
+        public void onCancel();
     }
 
 }
