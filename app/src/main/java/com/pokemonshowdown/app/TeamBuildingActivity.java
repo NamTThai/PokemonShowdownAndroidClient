@@ -143,7 +143,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                                 .commit();
-                        fragment = null;
                     } else {
                         getSupportFragmentManager().beginTransaction().
                                 remove(getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer)).commit();
