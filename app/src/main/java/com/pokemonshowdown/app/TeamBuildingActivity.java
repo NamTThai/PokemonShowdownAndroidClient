@@ -25,7 +25,6 @@ import com.pokemonshowdown.data.PokemonTeam;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -35,7 +34,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +47,6 @@ public class TeamBuildingActivity extends FragmentActivity {
     private final static int CLIPBOARD = 0;
     private final static int PASTEBIN = 1;
     private final static int QR = 2;
-    private ProgressDialog waitingDialog;
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
@@ -114,8 +111,6 @@ public class TeamBuildingActivity extends FragmentActivity {
 
             }
         });
-
-
     }
 
     @Override
@@ -192,7 +187,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                             if (position != AdapterView.INVALID_POSITION) {
                                 PokemonTeam pt = pokemonTeamList.get(position);
                                 String exportData = pt.exportPokemonTeam(getApplicationContext());
-                                new PastebinPasteTask().execute(exportData);
+                                new PastebinTask(PastebinTaskId.EXPORT).execute(exportData);
                             }
                         } else {
                             new AlertDialog.Builder(TeamBuildingActivity.this)
@@ -241,7 +236,7 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                             urlDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    new PastebinCopyTask().execute(urlEditText.getText().toString());
+                                    new PastebinTask(PastebinTaskId.IMPORT).execute(urlEditText.getText().toString());
                                 }
                             });
 
@@ -297,30 +292,119 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
     }
 
-    private class PastebinCopyTask extends AsyncTask<String, Void, PokemonTeam> {
+    private class PastebinTask extends AsyncTask<String, Void, String> {
         private final static String PASTEBIN_RAW = "http://pastebin.com/raw.php?i=";
+        private final static String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
+        private final static String API_DEV_KEY_KEY = "api_dev_key";
+        private final static String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
+        private final static String API_OPTION_KEY = "api_option";
+        private final static String API_OPTION_VALUE = "paste";
+        private final static String PASTE_DATA = "api_paste_code";
         private final static String ENCODING = "UTF-8";
 
+        private PastebinTaskId mTask;
+        // TODO use that exception one day
         private Exception mException;
+        private boolean success;
+        private ProgressDialog waitingDialog;
+
+        public PastebinTask(PastebinTaskId task) {
+            mTask = task;
+            waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
+            waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            waitingDialog.setCancelable(false);
+            switch (mTask) {
+                case EXPORT:
+                    waitingDialog.setMessage(getResources().getString(R.string.export_inprogress));
+                    break;
+
+                case IMPORT:
+                    waitingDialog.setMessage(getResources().getString(R.string.import_inprogress));
+                    break;
+            }
+        }
 
         @Override
-        protected PokemonTeam doInBackground(String... strings) {
+        protected void onPostExecute(String aString) {
+            if (success) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
+                switch (mTask) {
+                    case EXPORT:
+                        builder.setMessage(aString);
+                        builder.setTitle(R.string.export_success_dialog_title);
+                        break;
+                    case IMPORT:
+                        builder.setTitle(R.string.import_success_dialog_title);
+                        break;
+                }
+                builder.setIcon(android.R.drawable.ic_dialog_info);
+                builder.setPositiveButton(R.string.dialog_ok, null);
+                final AlertDialog alert = builder.create();
+                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
+                        waitingDialog.dismiss();
+                        alert.show();
+                    }
+                });
+                if (mTask == PastebinTaskId.IMPORT) {
+                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                    pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                }
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
+                builder.setTitle(R.string.error_dialog_title);
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+                switch (mTask) {
+                    case EXPORT:
+                        builder.setMessage(R.string.export_error_dialog_message);
+                        break;
+                    case IMPORT:
+                        builder.setMessage(R.string.import_error_dialog_message);
+                        break;
+                }
+                builder.setPositiveButton(R.string.dialog_ok, null);
+                final AlertDialog alert = builder.create();
+                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
+                        waitingDialog.dismiss();
+                        alert.show();
+                    }
+                });
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
             TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                 public void run() {
-                    waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
-                    waitingDialog.setMessage(getResources().getString(R.string.import_inprogress));
-                    waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    waitingDialog.setCancelable(false);
                     waitingDialog.show();
                 }
             });
+        }
 
-            String url = strings[0];
+        protected String doInBackground(String... strings) {
+            String data = strings[0];
+            String out = null;
+            switch (mTask) {
+                case EXPORT:
+                    out = exportToPastebin(data);
+                    break;
+
+                case IMPORT:
+                    importFromPastebin(data);
+                    break;
+            }
+
+            return out;
+        }
+
+        private void importFromPastebin(String url) {
             if (url.startsWith("http://")) {
                 url = url.substring("http://".length());
             }
             if (!url.startsWith("pastebin.com/")) {
-                return null;
+                success = false;
+                return;
             }
             String[] split = url.split("/");
             String pastebinId = split[1];
@@ -335,124 +419,45 @@ public class TeamBuildingActivity extends FragmentActivity {
                 HttpEntity entity = response.getEntity();
                 pastebinOut = EntityUtils.toString(entity, ENCODING);
             } catch (IOException e) {
-                mException = e;
-                return null;
+
             }
-
             PokemonTeam pokemonTeam = PokemonTeam.importPokemonTeam(pastebinOut, TeamBuildingActivity.this, false);
-            return pokemonTeam;
-        }
-
-        @Override
-        protected void onPostExecute(PokemonTeam pokemonTeam) {
-            waitingDialog.dismiss();
-            if (pokemonTeam == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle(R.string.error_dialog_title);
-                builder.setIcon(android.R.drawable.ic_dialog_alert);
-                builder.setMessage(R.string.import_error_dialog_message);
-                builder.setPositiveButton(R.string.dialog_ok, null);
-                final AlertDialog alert = builder.create();
-                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                    public void run() {
-                        alert.show();
-                    }
-                });
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle(R.string.import_success_dialog_title);
-                builder.setIcon(android.R.drawable.ic_dialog_info);
-                builder.setPositiveButton(R.string.dialog_ok, null);
-                final AlertDialog alert = builder.create();
-                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                    public void run() {
-                        alert.show();
-                    }
-                });
+            if (pokemonTeam != null && pokemonTeam.getTeamSize() > 0) {
                 pokemonTeam.setNickname("Imported Team");
                 pokemonTeamList.add(pokemonTeam);
-                pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                success = true;
+                return;
+            } else {
+                success = false;
+                return;
             }
         }
-    }
 
-    private class PastebinPasteTask extends AsyncTask<String, Void, String> {
-        private final static String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
-        private final static String API_DEV_KEY_KEY = "api_dev_key";
-        private final static String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
-        private final static String API_OPTION_KEY = "api_option";
-        private final static String API_OPTION_VALUE = "paste";
-        private final static String PASTE_DATA = "api_paste_code";
-        private final static String ENCODING = "UTF-8";
-
-        private Exception mException;
-
-        @Override
-        protected String doInBackground(String... strings) {
-            TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                public void run() {
-                    waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
-                    waitingDialog.setMessage(getResources().getString(R.string.export_inprogress));
-                    waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    waitingDialog.setCancelable(false);
-                    waitingDialog.show();
-                }
-            });
-            String pastebinOut = null;
+        private String exportToPastebin(String data) {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(PASTEBIN_API);
+            String outputURL;
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair(API_DEV_KEY_KEY, API_DEV_KEY_VALUE));
                 nameValuePairs.add(new BasicNameValuePair(API_OPTION_KEY, API_OPTION_VALUE));
-                nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, strings[0]));
+                nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, data));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity entity = response.getEntity();
-                pastebinOut = EntityUtils.toString(entity, ENCODING);
-                return pastebinOut;
-            } catch (ClientProtocolException e) {
-                mException = e;
-            } catch (UnsupportedEncodingException e) {
-                mException = e;
+                outputURL = EntityUtils.toString(entity, ENCODING);
+                success = true;
             } catch (IOException e) {
+                outputURL = null;
                 mException = e;
-            } finally {
-                return pastebinOut;
+                success = false;
             }
+            return outputURL;
         }
+    }
 
-        protected void onPostExecute(String returnData) {
-            waitingDialog.dismiss();
-            if (mException != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle(R.string.error_dialog_title);
-                builder.setIcon(android.R.drawable.ic_dialog_alert);
-                builder.setMessage(R.string.export_error_dialog_message);
-                builder.setPositiveButton(R.string.dialog_ok, null);
-                final AlertDialog alert = builder.create();
-                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                    public void run() {
-                        alert.show();
-                    }
-                });
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle(R.string.export_success_dialog_title);
-                builder.setIcon(android.R.drawable.ic_dialog_info);
-                builder.setMessage(returnData);
-                builder.setPositiveButton(R.string.dialog_ok, null);
-                final AlertDialog alert = builder.create();
-                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                    public void run() {
-                        alert.show();
-                    }
-                });
-            }
-        }
-
-
+    private enum PastebinTaskId {
+        IMPORT, EXPORT
     }
 }
