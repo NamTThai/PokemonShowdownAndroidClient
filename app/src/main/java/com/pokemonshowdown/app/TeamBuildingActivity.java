@@ -28,6 +28,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -84,7 +85,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                         .commit();
 
                 Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-                tier_spinner.setSelection(((ArrayAdapter)tier_spinner.getAdapter()).getPosition(pt.getTier()));
+                tier_spinner.setSelection(((ArrayAdapter) tier_spinner.getAdapter()).getPosition(pt.getTier()));
             }
 
             @Override
@@ -102,7 +103,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String tier = (String) adapterView.getItemAtPosition(i);
                 PokemonTeam pt = (PokemonTeam) pkmn_spinner.getSelectedItem();
-                if(pt != null) {
+                if (pt != null) {
                     pt.setTier(tier);
                     pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 }
@@ -230,6 +231,26 @@ public class TeamBuildingActivity extends FragmentActivity {
                             } else {
                                 Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
                             }
+                        } else if (item == PASTEBIN) {
+                            final AlertDialog.Builder urlDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
+                            urlDialog.setTitle(R.string.rename_pokemon);
+                            final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
+                            teamNameEditText.setText("http://pastebin.com/");
+                            urlDialog.setView(teamNameEditText);
+
+                            urlDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    new PastebinCopyTask().execute(teamNameEditText.getText().toString());
+                                }
+                            });
+
+                            urlDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    arg0.dismiss();
+                                }
+                            });
+
+                            urlDialog.show();
                         } else {
                             new AlertDialog.Builder(TeamBuildingActivity.this)
                                     .setMessage(R.string.still_in_development)
@@ -275,12 +296,95 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
     }
 
+    class PastebinCopyTask extends AsyncTask<String, Void, PokemonTeam> {
+        private static final String PASTEBIN_RAW = "http://pastebin.com/raw.php?i=";
+        private static final String ENCODING = "UTF-8";
+
+        private Exception exception;
+
+        @Override
+        protected PokemonTeam doInBackground(String... strings) {
+            TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                public void run() {
+                    waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
+                    waitingDialog.setMessage("Importing from pastebin");
+                    waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    waitingDialog.setCancelable(false);
+                    waitingDialog.show();
+                }
+            });
+
+            String url = strings[0];
+            if (url.startsWith("http://")) {
+                url = url.substring("http://".length());
+            }
+            if (!url.startsWith("pastebin.com/")) {
+                return null;
+            }
+            String[] split = url.split("/");
+            String pastebinId = split[1];
+
+            String finalUrl = PASTEBIN_RAW + pastebinId;
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(finalUrl);
+            HttpResponse response = null;
+            String pastebinOut = null;
+            try {
+                response = httpclient.execute(httpget);
+                HttpEntity entity = response.getEntity();
+                pastebinOut = EntityUtils.toString(entity, ENCODING);
+            } catch (IOException e) {
+                exception = e;
+                return null;
+            }
+
+
+            PokemonTeam pokemonTeam = PokemonTeam.importPokemonTeam(pastebinOut, TeamBuildingActivity.this, false);
+            return pokemonTeam;
+        }
+
+        @Override
+        protected void onPostExecute(PokemonTeam pokemonTeam) {
+            waitingDialog.dismiss();
+            if (pokemonTeam == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
+                builder.setTitle("Error");
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+                builder.setMessage("Importing data failed!");
+                builder.setPositiveButton("Ok", null);
+                final AlertDialog alert = builder.create();
+                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
+                        alert.show();
+                    }
+                });
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
+                builder.setTitle("Success");
+                builder.setIcon(android.R.drawable.ic_dialog_info);
+                builder.setMessage("Team imported successfully!");
+                builder.setPositiveButton("Ok", null);
+                final AlertDialog alert = builder.create();
+                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
+                        alert.show();
+                    }
+                });
+                pokemonTeam.setNickname("Imported Team");
+                pokemonTeam.setTier("(None)");
+                pokemonTeamList.add(pokemonTeam);
+                pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+            }
+        }
+    }
+
     class PastebinPasteTask extends AsyncTask<String, Void, String> {
         private static final String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
         private static final String API_DEV_KEY_KEY = "api_dev_key";
         private static final String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
-        private static final String API_OPTION = "api_option";
-        private static final String PASTE_OPTION = "paste";
+        private static final String API_OPTION_KEY = "api_option";
+        private static final String API_OPTION_VALUE = "paste";
         private static final String PASTE_DATA = "api_paste_code";
         private static final String ENCODING = "UTF-8";
 
@@ -303,7 +407,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair(API_DEV_KEY_KEY, API_DEV_KEY_VALUE));
-                nameValuePairs.add(new BasicNameValuePair(API_OPTION, PASTE_OPTION));
+                nameValuePairs.add(new BasicNameValuePair(API_OPTION_KEY, API_OPTION_VALUE));
                 nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, strings[0]));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
