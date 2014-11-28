@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class PokemonTeamListArrayAdapter extends ArrayAdapter<PokemonTeam> {
     private Context ctx;
+
     public PokemonTeamListArrayAdapter(Context getContext, List<PokemonTeam> userListData) {
         super(getContext, R.layout.listwidget_teampreview, R.id.team_nickname, userListData);
         this.ctx = getContext;
@@ -29,13 +30,17 @@ public class PokemonTeamListArrayAdapter extends ArrayAdapter<PokemonTeam> {
     public View getView(int position, View convertView, ViewGroup parent) {
         List<PokemonTeam> pokemonTeamList = PokemonTeam.getPokemonTeamList();
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.listwidget_teampreview, null);
         }
         PokemonTeam p = pokemonTeamList.get(position);
 
         TextView teamName = (TextView) convertView.findViewById(R.id.team_nickname);
-        teamName.setText(p.getNickname());
+        if (p.getTier().equals("(None)")) {
+            teamName.setText(p.getNickname());
+        } else {
+            teamName.setText(p.getNickname() + " (" + p.getTier() + ")");
+        }
 
         LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.pokemon_small_icon_list);
         layout.removeAllViews();

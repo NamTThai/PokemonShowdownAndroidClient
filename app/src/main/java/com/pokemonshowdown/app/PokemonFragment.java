@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,25 +16,26 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
-
     private Pokemon mPokemon;
 
     private CancelListener mCancelListener;
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (getActivity() instanceof TeamBuildingActivity) {
+            TeamBuildingActivity parent = (TeamBuildingActivity) getActivity();
+            parent.updateList();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +84,7 @@ public class PokemonFragment extends DialogFragment {
             addSearchWidget(view);
         }
 
-        TextView pokemonStats= (TextView) view.findViewById(R.id.stats);
+        TextView pokemonStats = (TextView) view.findViewById(R.id.stats);
         resetStatsString();
         pokemonStats.setBackgroundResource(R.drawable.editable_frame);
         pokemonStats.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +116,7 @@ public class PokemonFragment extends DialogFragment {
                 final String[] abilityNames = new String[abilityList.length];
                 String selectedAbilityTag = getPokemon().getAbilityTag();
                 int selectedAbility = 0;
-                for (int i=0; i<abilityList.length; i++) {
+                for (int i = 0; i < abilityList.length; i++) {
                     abilityNames[i] = getPokemon().getAbilityList().get(abilityList[i]);
                     if (abilityList[i].equals(selectedAbilityTag)) {
                         selectedAbility = i;
@@ -230,7 +230,7 @@ public class PokemonFragment extends DialogFragment {
     }
 
     public void resetStatsString() {
-        TextView pokemonStats= (TextView) getView().findViewById(R.id.stats);
+        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
         pokemonStats.setText(getStatsString());
     }
 
@@ -239,7 +239,7 @@ public class PokemonFragment extends DialogFragment {
     }
 
     public void resetBaseStatsString() {
-        TextView pokemonStats= (TextView) getView().findViewById(R.id.stats);
+        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
         pokemonStats.setText(getBaseStatsString());
     }
 
