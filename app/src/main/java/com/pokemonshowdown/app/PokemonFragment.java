@@ -42,6 +42,15 @@ public class PokemonFragment extends DialogFragment {
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (getActivity() instanceof TeamBuildingActivity) {
+            TeamBuildingActivity parent = (TeamBuildingActivity) getActivity();
+            parent.updateList();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPokemon = (Pokemon) getArguments().getSerializable(ARGUMENT_POKEMON);
