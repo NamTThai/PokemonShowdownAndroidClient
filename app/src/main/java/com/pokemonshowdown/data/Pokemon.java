@@ -64,7 +64,7 @@ public class Pokemon implements Serializable {
     private HashMap<String, String> mAbilityList;
     private String[] mType;
     private int[] mTypeIcon;
-    private int mWeight;
+    private double mWeight;
     private String mItem;
     private String mMove1;
     private String mMove2;
@@ -538,6 +538,8 @@ public class Pokemon implements Serializable {
         try {
             mName = jsonObject.getString("species");
             mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "").toLowerCase();
+
+            mWeight = Double.parseDouble(jsonObject.getString("weightkg"));
 
             mIcon = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconM = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
@@ -1257,11 +1259,11 @@ public class Pokemon implements Serializable {
         mTypeIcon = typeIcon;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return mWeight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         mWeight = weight;
     }
 
@@ -1299,6 +1301,38 @@ public class Pokemon implements Serializable {
 
     public String getMove4() {
         return mMove4;
+    }
+
+    public void setMove(int moveId, String move) {
+        switch (moveId) {
+            case 1:
+                mMove1 = move;
+                break;
+            case 2:
+                mMove2 = move;
+                break;
+            case 3:
+                mMove3 = move;
+                break;
+            case 4:
+                mMove4 = move;
+                break;
+        }
+    }
+
+    public String getMove(int moveId) {
+        switch (moveId) {
+            case 1:
+                return mMove1;
+            case 2:
+                return mMove2;
+            case 3:
+                return mMove3;
+            case 4:
+                return mMove4;
+            default:
+                return null;
+        }
     }
 
     public void setMove4(String move4) {

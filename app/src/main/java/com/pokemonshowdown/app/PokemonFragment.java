@@ -30,25 +30,18 @@ public class PokemonFragment extends DialogFragment {
     public final static String ARGUMENT_SEARCH = "Search";
     public final static String ARGUMENT_SEARCH_CODE = "Search Code";
 
-    private CancelListener mCancelListener;
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if (getActivity() instanceof TeamBuildingActivity) {
             TeamBuildingActivity parent = (TeamBuildingActivity) getActivity();
             parent.updateList();
+        } else if(getActivity() instanceof DmgCalcActivity) {
+            DmgCalcActivity parent = (DmgCalcActivity) getActivity();
+            parent.updateDamage();
         }
     }
 
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (getActivity() instanceof TeamBuildingActivity) {
-            TeamBuildingActivity parent = (TeamBuildingActivity) getActivity();
-            parent.updateList();
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -261,24 +254,9 @@ public class PokemonFragment extends DialogFragment {
         level.setText(Integer.toString(lv));
     }
 
-    public void setCancelListener(CancelListener listener) {
-        mCancelListener = listener;
-    }
-
     private void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
-        if(mCancelListener != null) {
-            mCancelListener.onCancel();
-        }
-    }
-
-    public interface CancelListener {
-        public void onCancel();
-    }
 
 }

@@ -140,8 +140,13 @@ public class DmgCalcActivity extends FragmentActivity {
 
             }
 
-            if (getAttacker() != null && getDefender() != null) {
-                calculateAllMoves();
+            // If it is not saved fall back to defaults
+            if (getAttacker() == null) {
+                setAttacker("azumarill");
+            }
+
+            if (getDefender() == null) {
+                setDefender("heatran");
             }
         }
 
@@ -276,12 +281,6 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private void loadPokemon(Pokemon pokemon, int searchCode) {
         PokemonFragment fragment = new PokemonFragment();
-        fragment.setCancelListener(new PokemonFragment.CancelListener() {
-            @Override
-            public void onCancel() {
-                calculateAllMoves();
-            }
-        });
         Bundle bundle = new Bundle();
         bundle.putSerializable(PokemonFragment.ARGUMENT_POKEMON, pokemon);
         bundle.putBoolean(PokemonFragment.ARGUMENT_SEARCH, true);
@@ -386,31 +385,32 @@ public class DmgCalcActivity extends FragmentActivity {
     private int calculateDefendersDamagePerRound() {
         int baseHP = getDefender().calculateHP();
         int damagePerRound = 0;
+        String defenderAbility = getDefender().getAbility();
         List<String> defenderTypes = Arrays.asList(getDefender().getType());
 
         // Weather damage
-        if ((getDefender().getAbility().equals("Solar Power") || getDefender().getAbility().equals("Dry Skin")) && mActiveWeather == Weather.SUN) {
+        if ((defenderAbility.equals("Solar Power") || defenderAbility.equals("Dry Skin")) && mActiveWeather == Weather.SUN) {
             damagePerRound += (baseHP * 0.125);
         }
 
-        if (!getDefender().getAbility().equals("Overcoat") && !getDefender().getAbility().equals("Magic Guard")) {
-            if (mActiveWeather == Weather.SAND && !getDefender().getAbility().equals("Sand Veil") && !getDefender().getAbility().equals("Sand Rush") && !getDefender().getAbility().equals("Sand Force") && !defenderTypes.contains("Rock") && !defenderTypes.contains("Steel") && !defenderTypes.contains("Ground")) {
+        if (!defenderAbility.equals("Overcoat") && !defenderAbility.equals("Magic Guard")) {
+            if (mActiveWeather == Weather.SAND && !defenderAbility.equals("Sand Veil") && !defenderAbility.equals("Sand Rush") && !defenderAbility.equals("Sand Force") && !defenderTypes.contains("Rock") && !defenderTypes.contains("Steel") && !defenderTypes.contains("Ground")) {
                 damagePerRound += (baseHP / 16);
-            } else if (mActiveWeather == Weather.HAIL && !getDefender().getAbility().equals("Ice Body") && !getDefender().getAbility().equals("Snow Cloak") && !defenderTypes.contains("Ice")) {
+            } else if (mActiveWeather == Weather.HAIL && !defenderAbility.equals("Ice Body") && !defenderAbility.equals("Snow Cloak") && !defenderTypes.contains("Ice")) {
                 damagePerRound += (baseHP / 16);
             }
         }
 
         // Weather Healing
-        if (getDefender().getAbility().equals("Dry Skin") && mActiveWeather == Weather.RAIN) {
+        if (defenderAbility.equals("Dry Skin") && mActiveWeather == Weather.RAIN) {
             damagePerRound -= (baseHP * 0.125);
         }
 
-        if ((getDefender().getAbility().equals("Rain Dish")) && mActiveWeather == Weather.RAIN) {
+        if ((defenderAbility.equals("Rain Dish")) && mActiveWeather == Weather.RAIN) {
             damagePerRound -= (baseHP / 16);
         }
 
-        if ((getDefender().getAbility().equals("Ice Body")) && mActiveWeather == Weather.HAIL) {
+        if ((defenderAbility.equals("Ice Body")) && mActiveWeather == Weather.HAIL) {
             damagePerRound -= (baseHP / 16);
         }
 
@@ -432,20 +432,7 @@ public class DmgCalcActivity extends FragmentActivity {
         String targets = null;
         boolean hasSecondary = false;
 
-        switch (moveIndex) {
-            case 1:
-                move = getAttacker().getMove1();
-                break;
-            case 2:
-                move = getAttacker().getMove2();
-                break;
-            case 3:
-                move = getAttacker().getMove3();
-                break;
-            case 4:
-                move = getAttacker().getMove4();
-                break;
-        }
+        move = getAttacker().getMove(moveIndex);
 
         try {
             JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
@@ -454,7 +441,7 @@ public class DmgCalcActivity extends FragmentActivity {
             category = moveJson.getString("category");
             targets = moveJson.getString("target");
 
-            if ("weatherball".equals("move")) {
+            if ("weatherball".equals(move)) {
                 switch (mActiveWeather) {
                     case HAIL:
                         type = "Ice";
@@ -471,38 +458,37 @@ public class DmgCalcActivity extends FragmentActivity {
                 }
             }
 
-            try {
-                hasSecondary = moveJson.getBoolean("secondary");
-            } catch (JSONException e) {
-                // Ignore as it is already handled
-            }
+            hasSecondary = moveJson.optBoolean("secondary", true);
+
         } catch (JSONException | NullPointerException e) {
             return 0;
         }
 
         if ("Status".equals(category)) {
             return 0;
-        } else if ("dragonrage".equals(move)) {
-            return Arrays.asList(getDefender().getType()).contains("Fairy") ? 0 : 40;
-        } else if ("sonicboom".equals(move)) {
-            return Arrays.asList(getDefender().getType()).contains("Ghost") ? 0 : 200;
-        } else if ("seismictoss".equals(move)) {
-            return Arrays.asList(getDefender().getType()).contains("Ghost") ? 0 : getAttacker().getLevel();
-        } else if ("nightshade".equals(move)) {
-            return Arrays.asList(getDefender().getType()).contains("Normal") ? 0 : getAttacker().getLevel();
         } else {
-            boolean usesAttack = "Physical".equals(category);
-            boolean usesDefense = "Physical".equals(category) || "psyshock".equals(move) || "psystrike".equals(move) || "secredsword".equals(move);
+            switch (move) {
+                case "dragonrage":
+                    return calculateWeaknessModifier(move, type) == 0 ? 0 : 40;
+                case "sonicboom":
+                    return calculateWeaknessModifier(move, type) == 0 ? 0 : 20;
+                case "seismictoss":
+                case "nightshade":
+                    return calculateWeaknessModifier(move, type) == 0 ? 0 : getAttacker().getLevel();
+                default:
+                    boolean usesAttack = "Physical".equals(category);
+                    boolean usesDefense = "Physical".equals(category) || "psyshock".equals(move) || "psystrike".equals(move) || "secretsword".equals(move);
 
-            double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAtkMultiplier()) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAtkMultiplier()) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier();
-            double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier() : getDefender().calculateSpDef() * getSpecialDefenseMultiplier();
-            double base = calculateBasePower(move, type, Double.parseDouble(basePower));
+                    double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAtkMultiplier()) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAtkMultiplier()) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier();
+                    double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier() : getDefender().calculateSpDef() * getSpecialDefenseMultiplier();
+                    double base = calculateBasePower(move, type, Double.parseDouble(basePower));
 
-            boolean isStab = Arrays.asList(getAttacker().getType()).contains(type);
+                    boolean isStab = Arrays.asList(getAttacker().getType()).contains(type);
 
-            //  ((((2 * Level / 5 + 2) * AttackStat * AttackPower / DefenseStat) / 50) + 2) * STAB * Weakness/Resistance * RandomNumber / 100
-            double modifier = luck * (isStab ? 1.5 : 1.0) * calculateWeaknessModifier(move, type) * calculateCritMultiplier(move, crit) * (mHelpingHandActive ? 1.5 : 1.0) * getSpreadMultiplicator(targets);
-            return modifyDamageWithAbility(base == 0.0 ? 0 : (int) (Math.floor(((2 * getAttacker().getLevel() / 5 + 2) * attack * base / defense) / 50 + 2) * modifier), move, type, category, usesDefense, hasSecondary);
+                    //  ((((2 * Level / 5 + 2) * AttackStat * AttackPower / DefenseStat) / 50) + 2) * STAB * Weakness/Resistance * RandomNumber / 100
+                    double modifier = luck * (isStab ? 1.5 : 1.0) * calculateWeaknessModifier(move, type) * calculateCritMultiplier(move, crit) * (mHelpingHandActive ? 1.5 : 1.0) * getSpreadMultiplicator(targets);
+                    return modifyDamageWithAbility(base == 0.0 ? 0 : (int) (Math.floor(((2 * getAttacker().getLevel() / 5 + 2) * attack * base / defense) / 50 + 2) * modifier), move, type, category, usesDefense, hasSecondary);
+            }
         }
     }
 
@@ -555,45 +541,47 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private int modifyDamageWithAbility(int damageNow, String move, String type, String category, boolean usesDefense, boolean hasSecondary) {
         List<String> attackerTyping = Arrays.asList(getAttacker().getType());
+        String attackerAbility = getAttacker().getAbility();
+        String defenderAbility = getDefender().getAbility();
 
-        if (getDefender().getAbility().equals("Wonder Guard") && calculateWeaknessModifier(move, type) > 1.0 && !isMoldBreakerActive()) {
+        if (defenderAbility.equals("Wonder Guard") && calculateWeaknessModifier(move, type) > 1.0 && !isMoldBreakerActive()) {
             damageNow *= 0.0;
         }
 
-        if (getDefender().getAbility().equals("Heatproof") && type.equals("Fire") && !isMoldBreakerActive()) {
+        if (defenderAbility.equals("Heatproof") && type.equals("Fire") && !isMoldBreakerActive()) {
             damageNow /= 2;
         }
 
         // Without the list thingy, this would be unreadable
-        if (getAttacker().getAbility().equals("Mega Launcher") && Arrays.asList(new String[]{"aurasphere", "darkpulse", "dragonpulse", "waterpulse"}).contains(move)) {
+        if (attackerAbility.equals("Mega Launcher") && Arrays.asList(new String[]{"aurasphere", "darkpulse", "dragonpulse", "waterpulse"}).contains(move)) {
             damageNow *= 1.5;
         }
 
-        if (getAttacker().getAbility().equals("Iron Fist") && Arrays.asList(new String[]{"bulletpunch", "cometpunch", "dizzypunch", "drainpunch", "dynamicpunch", "firepunch", "focuspunch", "hammerarm", "icepunch",
+        if (attackerAbility.equals("Iron Fist") && Arrays.asList(new String[]{"bulletpunch", "cometpunch", "dizzypunch", "drainpunch", "dynamicpunch", "firepunch", "focuspunch", "hammerarm", "icepunch",
                 "machpunch", "megapunch", "meteormash", "poweruppunch", "shadowpunch", "skyuppercut", "thunderpunch"}).contains(move)) {
             damageNow *= 1.2;
         }
 
-        if (getDefender().getAbility().equals("Bulletproof") && Arrays.asList(new String[]{"acidspray", "aurasphere", "barrage", "bulletseed", "eggbomb", "electroball", "energyball", "focusblast", "gyroball", "iceball",
+        if (defenderAbility.equals("Bulletproof") && Arrays.asList(new String[]{"acidspray", "aurasphere", "barrage", "bulletseed", "eggbomb", "electroball", "energyball", "focusblast", "gyroball", "iceball",
                 "magnetbomb", "mistball", "mudbomb", "octazooka", "rockwrecker", "searingshot", "seedbomb", "shadowball", "sludgebomb", "weatherball", "zapcannon"}).contains(move) && !isMoldBreakerActive()) {
             damageNow = 0;
         }
 
-        if (getDefender().getAbility().equals("Soundproof") && Arrays.asList(new String[]{"boomburst", "bugbuzz", "chatter", "confide", "disarmingvoice", "echoedvoice", "grasswhistle", "growl", "healbell", "hypervoice",
+        if (defenderAbility.equals("Soundproof") && Arrays.asList(new String[]{"boomburst", "bugbuzz", "chatter", "confide", "disarmingvoice", "echoedvoice", "grasswhistle", "growl", "healbell", "hypervoice",
                 "metalsound", "nobleroar", "relicsong", "round", "snarl", "snore", "uproar"}).contains(move) && !isMoldBreakerActive()) {
             damageNow = 0;
         }
 
-        if (getAttacker().getAbility().equals("Reckless") && Arrays.asList(new String[]{"bravebird", "doubleedge", "flareblitz", "headcharge", "headsmash", "highjumpkick", "jumpkick", "submission", "takedown",
+        if (attackerAbility.equals("Reckless") && Arrays.asList(new String[]{"bravebird", "doubleedge", "flareblitz", "headcharge", "headsmash", "highjumpkick", "jumpkick", "submission", "takedown",
                 "volttackle", "woodhammer", "wildcharge"}).contains(move)) {
             damageNow *= 1.2;
         }
 
-        if (getAttacker().getAbility().equals("Strong Jaw") && Arrays.asList(new String[]{"bite", "crunch", "firefang", "icefang", "poisonfang", "thunderfang"}).contains(move)) {
+        if (attackerAbility.equals("Strong Jaw") && Arrays.asList(new String[]{"bite", "crunch", "firefang", "icefang", "poisonfang", "thunderfang"}).contains(move)) {
             damageNow *= 1.5;
         }
 
-        if (getAttacker().getAbility().equals("Tough Claws") && (Arrays.asList(new String[]{"drainingkiss", "finalgambit", "grassknot", "infestation", "petaldance", "trumpcard", "wringout"}).contains(move)
+        if (attackerAbility.equals("Tough Claws") && (Arrays.asList(new String[]{"drainingkiss", "finalgambit", "grassknot", "infestation", "petaldance", "trumpcard", "wringout"}).contains(move)
                 || ("Physical".equals(category) && !Arrays.asList("attackorder", "barrage", "beatup", "bonemerang", "boneclub", "bonerush", "bulldoze", "bulletseed", "earthquake", "eggbomb", "explosion", "feint", "fling",
                 "freezeshock", "fusionbolt", "geargrind", "gunkshot", "iceshard", "iciclecrash", "iciclespear", "magnetbomb", "magnitude", "metalburst", "naturalgift", "payday", "poisonsting", "pinmissile", "present",
                 "psychocut", "razorleaf", "rockblast", "rockslide", "rockthrow", "rocktomb", "rockwrecker", "sacredfire", "sandtomb", "secretpower", "seedbomb", "selfdestruct", "skyattack", "spikecannon", "smackdown",
@@ -602,55 +590,55 @@ public class DmgCalcActivity extends FragmentActivity {
         }
 
         // Just a hack. This is probably not reliable with some moves. Need to reevaluate
-        if (getAttacker().getAbility().equals("Parental Bond")) {
+        if (attackerAbility.equals("Parental Bond")) {
             damageNow *= 1.5;
         }
 
-        if (getAttacker().getAbility().equals("Sheer Force") && hasSecondary) {
+        if (attackerAbility.equals("Sheer Force") && hasSecondary) {
             damageNow *= 1.3;
         }
 
-        if (((getAttacker().getAbility().equals("Fairy Aura") && getDefender().getAbility().equals("Aura Break")) || (getAttacker().getAbility().equals("Aura Break") && getDefender().getAbility().equals("Fairy Aura"))) &&
+        if (((attackerAbility.equals("Fairy Aura") && defenderAbility.equals("Aura Break")) || (attackerAbility.equals("Aura Break") && defenderAbility.equals("Fairy Aura"))) &&
                 type.equals("Fairy")) {
             damageNow = (damageNow * 2) / 3;
-        } else if ((getAttacker().getAbility().equals("Fairy Aura") || getAttacker().getAbility().equals("Fairy Aura")) && type.equals("Fairy")) {
+        } else if ((attackerAbility.equals("Fairy Aura") || defenderAbility.equals("Fairy Aura")) && type.equals("Fairy")) {
             damageNow = (damageNow * 4) / 3;
         }
 
-        if (((getAttacker().getAbility().equals("Dark Aura") && getDefender().getAbility().equals("Aura Break")) || (getAttacker().getAbility().equals("Aura Break") && getDefender().getAbility().equals("Dark Aura"))) &&
+        if (((attackerAbility.equals("Dark Aura") && defenderAbility.equals("Aura Break")) || (attackerAbility.equals("Aura Break") && defenderAbility.equals("Dark Aura"))) &&
                 type.equals("Dark")) {
             damageNow = (damageNow * 2) / 3;
-        } else if ((getAttacker().getAbility().equals("Dark Aura") || getAttacker().getAbility().equals("Dark Aura")) && type.equals("Dark")) {
+        } else if ((attackerAbility.equals("Dark Aura") || defenderAbility.equals("Dark Aura")) && type.equals("Dark")) {
             damageNow = (damageNow * 4) / 3;
         }
 
-        if (getAttacker().getAbility().equals("Analytic")) {
+        if (attackerAbility.equals("Analytic")) {
             damageNow *= 1.3;
         }
 
-        if (getAttacker().getAbility().equals("Aerilate") && type.equals("Normal")) {
+        if (attackerAbility.equals("Aerilate") && type.equals("Normal")) {
             damageNow *= 1.3;
         }
 
-        if (getAttacker().getAbility().equals("Refrigerate") && type.equals("Normal")) {
+        if (attackerAbility.equals("Refrigerate") && type.equals("Normal")) {
             damageNow *= 1.3;
         }
 
-        if (getAttacker().getAbility().equals("Pixilate") && type.equals("Normal")) {
+        if (attackerAbility.equals("Pixilate") && type.equals("Normal")) {
             damageNow *= 1.3;
         }
 
-        if (getDefender().getAbility().equals("Fur Coat") && usesDefense && !isMoldBreakerActive()) {
+        if (defenderAbility.equals("Fur Coat") && usesDefense && !isMoldBreakerActive()) {
             damageNow *= 0.5;
         }
 
 
-        if (mActiveWeather == Weather.SAND && getAttacker().getAbility().equals("Sand Force") && Arrays.asList(new String[]{"Rock", "Ground", "Steel"}).contains(type)) {
+        if (mActiveWeather == Weather.SAND && attackerAbility.equals("Sand Force") && Arrays.asList(new String[]{"Rock", "Ground", "Steel"}).contains(type)) {
             damageNow *= 1.3;
         }
 
         // Screens
-        if ("Physical".equals(category) && mReflectActive && !getAttacker().getAbility().equals("Infiltrator")) {
+        if ("Physical".equals(category) && mReflectActive && !attackerAbility.equals("Infiltrator")) {
             if (mIsSingles) {
                 damageNow *= 0.5;
             } else {
@@ -658,7 +646,7 @@ public class DmgCalcActivity extends FragmentActivity {
             }
         }
 
-        if ("Special".equals(category) && mLightScreenActive && !getAttacker().getAbility().equals("Infiltrator")) {
+        if ("Special".equals(category) && mLightScreenActive && !attackerAbility.equals("Infiltrator")) {
             if (mIsSingles) {
                 damageNow *= 0.5;
             } else {
@@ -701,7 +689,10 @@ public class DmgCalcActivity extends FragmentActivity {
         double modifier = 1.0;
 
         String[] defenderTyping = getDefender().getType();
-        if ("Forecast".equals(getDefender().getAbility())) {
+        String attackerAbility = getAttacker().getAbility();
+        String defenderAbility = getDefender().getAbility();
+
+        if ("Forecast".equals(defenderAbility)) {
             switch (mActiveWeather) {
                 case RAIN:
                     defenderTyping = new String[]{"Water"};
@@ -715,21 +706,21 @@ public class DmgCalcActivity extends FragmentActivity {
             }
         }
 
-        if ("weatherball".equals(move)) {
-
-        } else if (getAttacker().getAbility().equals("Aerilate") && type.equals("Normal")) {
-            type = "Flying";
-        } else if (getAttacker().getAbility().equals("Refrigerate") && type.equals("Normal")) {
-            type = "Ice";
-        } else if (getAttacker().getAbility().equals("Pixilate") && type.equals("Normal")) {
-            type = "Fairy";
-        } else if (getAttacker().getAbility().equals("Normalize")) {
-            type = "Normal";
+        if (!"weatherball".equals(move)) {
+            if (defenderAbility.equals("Aerilate") && type.equals("Normal")) {
+                type = "Flying";
+            } else if (defenderAbility.equals("Refrigerate") && type.equals("Normal")) {
+                type = "Ice";
+            } else if (defenderAbility.equals("Pixilate") && type.equals("Normal")) {
+                type = "Fairy";
+            } else if (defenderAbility.equals("Normalize")) {
+                type = "Normal";
+            }
         }
 
-        for (String defType : getDefender().getType()) {
+        for (String defType : defenderTyping) {
             if (mEffectivenessImmune.get(defType) != null && mEffectivenessImmune.get(defType).contains(type)) {
-                if ((getAttacker().getAbility().equals("Scrappy") || mForesightActive) && (type.equals("Fighting") || type.equals("Normal"))) {
+                if ((attackerAbility.equals("Scrappy") || mForesightActive) && (type.equals("Fighting") || type.equals("Normal"))) {
                     modifier = 1.0;
                 } else if (defType.equals("Flying") && mGravityActive) {
                     modifier = 1.0;
@@ -747,7 +738,7 @@ public class DmgCalcActivity extends FragmentActivity {
         if ("flyingpress".equals(move)) {
             String backupType = type;
             type = "Flying";
-            for (String defType : getDefender().getType()) {
+            for (String defType : defenderTyping) {
                 if (mEffectivenessImmune.get(defType) != null && mEffectivenessImmune.get(defType).contains(type)) {
                     modifier = 0.0;
                 } else if (mEffectivenessWeak.get(defType) != null && mEffectivenessWeak.get(defType).contains(type)) {
@@ -764,28 +755,28 @@ public class DmgCalcActivity extends FragmentActivity {
         }
 
         // Immunities by ability
-        if (getDefender().getAbility().equals("Flash Fire") && type.equals("Fire") && !isMoldBreakerActive()) {
+        if (defenderAbility.equals("Flash Fire") && type.equals("Fire") && !isMoldBreakerActive()) {
             modifier *= 0;
             // Gamefreak seems to hate electric typing..
-        } else if ((getDefender().getAbility().equals("Motor Drive") || getDefender().getAbility().equals("Lightning Rod") || getDefender().getAbility().equals("Volt Absorb")) && type.equals("Electric") && !isMoldBreakerActive()) {
+        } else if ((defenderAbility.equals("Motor Drive") || defenderAbility.equals("Lightning Rod") || defenderAbility.equals("Volt Absorb")) && type.equals("Electric") && !isMoldBreakerActive()) {
             modifier *= 0;
-        } else if (getDefender().getAbility().equals("Sap Sipper") && type.equals("Grass") && !isMoldBreakerActive()) {
+        } else if (defenderAbility.equals("Sap Sipper") && type.equals("Grass") && !isMoldBreakerActive()) {
             modifier *= 0;
-        } else if ((getDefender().getAbility().equals("Water Absorb") || getDefender().getAbility().equals("Storm Drain")) && type.equals("Water") && !isMoldBreakerActive()) {
+        } else if ((defenderAbility.equals("Water Absorb") || defenderAbility.equals("Storm Drain")) && type.equals("Water") && !isMoldBreakerActive()) {
             modifier *= 0;
-        } else if (getDefender().getAbility().equals("Dry Skin") && type.equals("Water") && !isMoldBreakerActive()) {
+        } else if (defenderAbility.equals("Dry Skin") && type.equals("Water") && !isMoldBreakerActive()) {
             modifier *= 0;
-        } else if (getDefender().getAbility().equals("Dry Skin") && type.equals("Fire") && !isMoldBreakerActive()) {
+        } else if (defenderAbility.equals("Dry Skin") && type.equals("Fire") && !isMoldBreakerActive()) {
             modifier *= 1.25;
-        } else if (getDefender().getAbility().equals("Levitate") && type.equals("Ground") && !isMoldBreakerActive() && !mGravityActive) {
+        } else if (defenderAbility.equals("Levitate") && type.equals("Ground") && !isMoldBreakerActive() && !mGravityActive) {
             modifier *= 0;
-        } else if ((getDefender().getAbility().equals("Filter") || getDefender().getAbility().equals("Solid Rock")) && modifier > 1.0 && !isMoldBreakerActive()) {
+        } else if ((defenderAbility.equals("Filter") || defenderAbility.equals("Solid Rock")) && modifier > 1.0 && !isMoldBreakerActive()) {
             modifier *= 0.75;
-        } else if (getDefender().getAbility().equals("Thick Fat") && (type.equals("Ice") || type.equals("Fire")) && !isMoldBreakerActive()) {
+        } else if (defenderAbility.equals("Thick Fat") && (type.equals("Ice") || type.equals("Fire")) && !isMoldBreakerActive()) {
             modifier *= 0.5;
         }
 
-        if (getAttacker().getAbility().equals("Tinted Lens") && modifier < 1.0) {
+        if (attackerAbility.equals("Tinted Lens") && modifier < 1.0) {
             modifier *= 2.0;
         }
 
@@ -809,9 +800,9 @@ public class DmgCalcActivity extends FragmentActivity {
                 bp = 130;
                 break; // TODO: Reimplement if items are supported
             case "lowkick":
-            case "grassknot": // Currently bugged because getWeight is always 0
-                int weight = getDefender().getWeight();
-                bp = weight < 10 ? 20 : weight < 25 ? 40 : weight < 50 ? 60 : weight < 100 ? 80 : weight < 200 ? 100 : 120;
+            case "grassknot":
+                double weight = getDefender().getWeight();
+                bp = weight < 10.0 ? 20 : weight < 25.0 ? 40 : weight < 50.0 ? 60 : weight < 100.0 ? 80 : weight < 200.0 ? 100 : 120;
                 break;
             case "reversal":
             case "flail":
@@ -819,7 +810,7 @@ public class DmgCalcActivity extends FragmentActivity {
                 break;
             case "heatcrash":
             case "heavyslam":
-                ratio = (double) getDefender().getWeight() / getAttacker().getWeight();
+                ratio = getDefender().getWeight() / getAttacker().getWeight();
                 bp = ratio <= 0.2 ? 120 : ratio <= 0.25 ? 100 : ratio <= 1 / 3 ? 80 : ratio <= 0.5 ? 60 : 40;
                 break;
             case "crushgrip":
@@ -993,6 +984,10 @@ public class DmgCalcActivity extends FragmentActivity {
                 break;
         }
 
+        calculateAllMoves();
+    }
+
+    public void updateDamage() {
         calculateAllMoves();
     }
 
