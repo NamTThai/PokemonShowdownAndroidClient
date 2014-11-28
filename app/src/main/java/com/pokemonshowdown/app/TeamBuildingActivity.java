@@ -65,6 +65,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                 fm.beginTransaction()
                         .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                         .commit();
+
+                Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+                tier_spinner.setSelection(((ArrayAdapter)tier_spinner.getAdapter()).getPosition(pt.getTier()));
             }
 
             @Override
