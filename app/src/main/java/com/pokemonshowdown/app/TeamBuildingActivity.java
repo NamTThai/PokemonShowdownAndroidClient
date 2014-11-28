@@ -233,14 +233,15 @@ public class TeamBuildingActivity extends FragmentActivity {
                             }
                         } else if (item == PASTEBIN) {
                             final AlertDialog.Builder urlDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
-                            urlDialog.setTitle(R.string.rename_pokemon);
-                            final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
-                            teamNameEditText.setText("http://pastebin.com/");
-                            urlDialog.setView(teamNameEditText);
+                            urlDialog.setTitle(R.string.url_dialog_title);
+                            final EditText urlEditText = new EditText(TeamBuildingActivity.this);
+                            urlEditText.setText(R.string.pastebin_url);
+                            urlEditText.setSelection(urlEditText.getText().length());
+                            urlDialog.setView(urlEditText);
 
                             urlDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    new PastebinCopyTask().execute(teamNameEditText.getText().toString());
+                                    new PastebinCopyTask().execute(urlEditText.getText().toString());
                                 }
                             });
 
@@ -307,7 +308,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                 public void run() {
                     waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
-                    waitingDialog.setMessage("Importing from pastebin");
+                    waitingDialog.setMessage(getResources().getString(R.string.import_inprogress));
                     waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     waitingDialog.setCancelable(false);
                     waitingDialog.show();
@@ -338,7 +339,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                 return null;
             }
 
-
             PokemonTeam pokemonTeam = PokemonTeam.importPokemonTeam(pastebinOut, TeamBuildingActivity.this, false);
             return pokemonTeam;
         }
@@ -348,10 +348,10 @@ public class TeamBuildingActivity extends FragmentActivity {
             waitingDialog.dismiss();
             if (pokemonTeam == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle("Error");
+                builder.setTitle(R.string.error_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
-                builder.setMessage("Importing data failed!");
-                builder.setPositiveButton("Ok", null);
+                builder.setMessage(R.string.import_error_dialog_message);
+                builder.setPositiveButton(R.string.dialog_ok, null);
                 final AlertDialog alert = builder.create();
                 TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                     public void run() {
@@ -360,10 +360,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                 });
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle("Success");
+                builder.setTitle(R.string.import_success_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_info);
-                builder.setMessage("Team imported successfully!");
-                builder.setPositiveButton("Ok", null);
+                builder.setPositiveButton(R.string.dialog_ok, null);
                 final AlertDialog alert = builder.create();
                 TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                     public void run() {
@@ -371,7 +370,6 @@ public class TeamBuildingActivity extends FragmentActivity {
                     }
                 });
                 pokemonTeam.setNickname("Imported Team");
-                pokemonTeam.setTier("(None)");
                 pokemonTeamList.add(pokemonTeam);
                 pokemonTeamListArrayAdapter.notifyDataSetChanged();
                 pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
@@ -395,7 +393,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                 public void run() {
                     waitingDialog = new ProgressDialog(TeamBuildingActivity.this);
-                    waitingDialog.setMessage("Exporting to pastebin");
+                    waitingDialog.setMessage(getResources().getString(R.string.export_inprogress));
                     waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     waitingDialog.setCancelable(false);
                     waitingDialog.show();
@@ -430,10 +428,10 @@ public class TeamBuildingActivity extends FragmentActivity {
             waitingDialog.dismiss();
             if (exception != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle("Error");
+                builder.setTitle(R.string.error_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
-                builder.setMessage("Exporting data failed!");
-                builder.setPositiveButton("Ok", null);
+                builder.setMessage(R.string.export_error_dialog_message);
+                builder.setPositiveButton(R.string.dialog_ok, null);
                 final AlertDialog alert = builder.create();
                 TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                     public void run() {
@@ -442,10 +440,10 @@ public class TeamBuildingActivity extends FragmentActivity {
                 });
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
-                builder.setTitle("Success");
+                builder.setTitle(R.string.export_success_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_info);
                 builder.setMessage(returnData);
-                builder.setPositiveButton("Ok", null);
+                builder.setPositiveButton(R.string.dialog_ok, null);
                 final AlertDialog alert = builder.create();
                 TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                     public void run() {
