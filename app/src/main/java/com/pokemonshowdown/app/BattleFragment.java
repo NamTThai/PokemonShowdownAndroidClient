@@ -43,9 +43,9 @@ public class BattleFragment extends Fragment {
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
     public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
-    public final static String[] stats = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
-    public final static String[] sttus = {"psn", "tox", "frz", "par", "slp", "brn"};
-    public final static String[][] teammates = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
+    public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
+    public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
+    public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
 
     public ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
@@ -1149,7 +1149,7 @@ public class BattleFragment extends Fragment {
         LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
         LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
 
-        for (String stat : stats) {
+        for (String stat : STATS) {
             TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
             if (orgStat != null) {
                 TextView destStat = new TextView(getActivity());

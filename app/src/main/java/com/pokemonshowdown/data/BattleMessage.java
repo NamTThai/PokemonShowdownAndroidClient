@@ -1384,7 +1384,7 @@ public class BattleMessage {
                             toast.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    battleFragment.swapBoost(split[0], split[1], BattleFragment.stats);
+                                    battleFragment.swapBoost(split[0], split[1], BattleFragment.STATS);
                                 }
 
                                 @Override
@@ -1475,7 +1475,7 @@ public class BattleMessage {
                             return;
                         }
                         LinearLayout linearLayout = (LinearLayout) battleFragment.getView().findViewById(battleFragment.getTempStatusId(split[0]));
-                        for (String stat : BattleFragment.stats) {
+                        for (String stat : BattleFragment.STATS) {
                             TextView v = (TextView) linearLayout.findViewWithTag(stat);
                             linearLayout.removeView(v);
                         }
@@ -1506,7 +1506,7 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        battleFragment.invertBoost(split[0], BattleFragment.stats);
+                        battleFragment.invertBoost(split[0], BattleFragment.STATS);
                     }
 
                     @Override
@@ -1539,7 +1539,7 @@ public class BattleMessage {
                         String[] layouts = {"p1a", "p1b", "p1c", "p2a", "p2b", "p2c"};
                         for (String layout : layouts) {
                             LinearLayout linearLayout = (LinearLayout) battleFragment.getView().findViewById(battleFragment.getTempStatusId(layout));
-                            for (String stat : BattleFragment.stats) {
+                            for (String stat : BattleFragment.STATS) {
                                 TextView v = (TextView) linearLayout.findViewWithTag(stat);
                                 linearLayout.removeView(v);
                             }
@@ -1919,12 +1919,12 @@ public class BattleMessage {
                     public void onAnimationStart(Animator animation) {
                         String[] teammate;
                         if (split[0].startsWith("p1")) {
-                            teammate = battleFragment.teammates[0];
+                            teammate = battleFragment.TEAMMATES[0];
                         } else {
-                            teammate = battleFragment.teammates[1];
+                            teammate = battleFragment.TEAMMATES[1];
                         }
                         for (String mate : teammate) {
-                            for (String stt : battleFragment.sttus) {
+                            for (String stt : battleFragment.STTUS) {
                                 battleFragment.removeAddonStatus(mate, stt);
                             }
                         }
