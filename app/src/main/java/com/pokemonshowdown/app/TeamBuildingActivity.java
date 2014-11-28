@@ -41,7 +41,7 @@ import java.util.List;
 
 
 public class TeamBuildingActivity extends FragmentActivity {
-    public static final String TAG = TeamBuildingActivity.class.getName();
+    private final static String TAG = TeamBuildingActivity.class.getName();
     private Spinner pkmn_spinner;
 
     private List<PokemonTeam> pokemonTeamList;
@@ -297,11 +297,11 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
     }
 
-    class PastebinCopyTask extends AsyncTask<String, Void, PokemonTeam> {
-        private static final String PASTEBIN_RAW = "http://pastebin.com/raw.php?i=";
-        private static final String ENCODING = "UTF-8";
+    private class PastebinCopyTask extends AsyncTask<String, Void, PokemonTeam> {
+        private final static String PASTEBIN_RAW = "http://pastebin.com/raw.php?i=";
+        private final static String ENCODING = "UTF-8";
 
-        private Exception exception;
+        private Exception mException;
 
         @Override
         protected PokemonTeam doInBackground(String... strings) {
@@ -335,7 +335,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                 HttpEntity entity = response.getEntity();
                 pastebinOut = EntityUtils.toString(entity, ENCODING);
             } catch (IOException e) {
-                exception = e;
+                mException = e;
                 return null;
             }
 
@@ -377,16 +377,16 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
     }
 
-    class PastebinPasteTask extends AsyncTask<String, Void, String> {
-        private static final String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
-        private static final String API_DEV_KEY_KEY = "api_dev_key";
-        private static final String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
-        private static final String API_OPTION_KEY = "api_option";
-        private static final String API_OPTION_VALUE = "paste";
-        private static final String PASTE_DATA = "api_paste_code";
-        private static final String ENCODING = "UTF-8";
+    private class PastebinPasteTask extends AsyncTask<String, Void, String> {
+        private final static String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
+        private final static String API_DEV_KEY_KEY = "api_dev_key";
+        private final static String API_DEV_KEY_VALUE = "027d7160b253fbcae3d91ff407ea82a6";
+        private final static String API_OPTION_KEY = "api_option";
+        private final static String API_OPTION_VALUE = "paste";
+        private final static String PASTE_DATA = "api_paste_code";
+        private final static String ENCODING = "UTF-8";
 
-        private Exception exception;
+        private Exception mException;
 
         @Override
         protected String doInBackground(String... strings) {
@@ -414,11 +414,11 @@ public class TeamBuildingActivity extends FragmentActivity {
                 pastebinOut = EntityUtils.toString(entity, ENCODING);
                 return pastebinOut;
             } catch (ClientProtocolException e) {
-                exception = e;
+                mException = e;
             } catch (UnsupportedEncodingException e) {
-                exception = e;
+                mException = e;
             } catch (IOException e) {
-                exception = e;
+                mException = e;
             } finally {
                 return pastebinOut;
             }
@@ -426,7 +426,7 @@ public class TeamBuildingActivity extends FragmentActivity {
 
         protected void onPostExecute(String returnData) {
             waitingDialog.dismiss();
-            if (exception != null) {
+            if (mException != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
                 builder.setTitle(R.string.error_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
