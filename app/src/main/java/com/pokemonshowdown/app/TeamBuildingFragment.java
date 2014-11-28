@@ -469,4 +469,8 @@ public class TeamBuildingFragment extends Fragment {
             return convertView;
         }
     }
+
+    public void updateList() {
+        pokemonListAdapter.notifyDataSetChanged();
+    }
 }
