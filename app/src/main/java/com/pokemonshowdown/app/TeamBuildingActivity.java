@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ import java.util.List;
 public class TeamBuildingActivity extends FragmentActivity {
     public static final String TAG = TeamBuildingActivity.class.getName();
     private Spinner pkmn_spinner;
+
     private List<PokemonTeam> pokemonTeamList;
     private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
     private final static int CLIPBOARD = 0;
@@ -50,6 +52,10 @@ public class TeamBuildingActivity extends FragmentActivity {
 
     public void updateList() {
         pokemonTeamListArrayAdapter.notifyDataSetChanged();
+        TeamBuildingFragment teamBuildingFragment = (TeamBuildingFragment) getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer);
+        if (teamBuildingFragment != null) {
+            teamBuildingFragment.updateList();
+        }
     }
 
     @Override
@@ -76,6 +82,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                 fm.beginTransaction()
                         .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                         .commit();
+
+                Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+                tier_spinner.setSelection(((ArrayAdapter)tier_spinner.getAdapter()).getPosition(pt.getTier()));
             }
 
             @Override
@@ -83,6 +92,28 @@ public class TeamBuildingActivity extends FragmentActivity {
                 // TODO ?
             }
         });
+
+        Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.tier_list));
+        tier_spinner.setAdapter(adapter);
+
+        tier_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String tier = (String) adapterView.getItemAtPosition(i);
+                PokemonTeam pt = (PokemonTeam) pkmn_spinner.getSelectedItem();
+                if(pt != null) {
+                    pt.setTier(tier);
+                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
     }
 

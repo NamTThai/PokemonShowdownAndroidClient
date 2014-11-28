@@ -19,9 +19,22 @@ import java.util.List;
  */
 public class PokemonTeam implements Serializable {
     public static final String TAG = PokemonTeam.class.getName();
-
     private static final String pokemonTeamStorageName = "pkmnStorage.dat";
     private static List<PokemonTeam> pokemonTeamList;
+    private String tier = "(None)";
+    /**
+     * Nickname for team
+     */
+    private String nickname = "";
+
+    /**
+     * List of pokemons
+     */
+    private ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
+
+    /**
+     * Exporting function to String
+     */
 
     public static List<PokemonTeam> getPokemonTeamList() {
         return pokemonTeamList;
@@ -55,19 +68,6 @@ public class PokemonTeam implements Serializable {
     }
 
 
-    /**
-     * Nickname for team
-     */
-    private String nickname = "Test Team";
-
-    /**
-     * List of pokemons
-     */
-    private ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
-
-    /**
-     * Exporting function to String
-     */
     public String exportPokemonTeam(Context appContext) {
         StringBuilder sb = new StringBuilder();
 
@@ -150,4 +150,11 @@ public class PokemonTeam implements Serializable {
         pokemons.remove(index);
     }
 
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
+
+    public String getTier() {
+        return tier;
+    }
 }
