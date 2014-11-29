@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -214,7 +215,17 @@ public class TeamBuildingActivity extends FragmentActivity {
                     renameDialog.show();
                 }
                 return true;
-
+            case R.id.action_share_team:
+                position = pkmn_spinner.getSelectedItemPosition();
+                if (position != AdapterView.INVALID_POSITION) {
+                    pt2 = pokemonTeamList.get(position);
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, pt2.exportPokemonTeam(getApplicationContext()));
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
