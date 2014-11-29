@@ -4,16 +4,12 @@
     <item
         android:id="@+id/action_create_team"
         android:icon="@drawable/ic_action_new"
-
-        android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/create_team" />
 
     <item
         android:id="@+id/action_remove_team"
         android:icon="@drawable/ic_action_discard"
-
-        android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/delete_team" />
 
@@ -28,26 +24,27 @@
             <item
                 android:id="@+id/action_rename_team"
                 android:icon="@drawable/ic_action_labels"
-
-                android:orderInCategory="100"
                 android:showAsAction="never"
                 android:title="@string/rename_team" />
 
             <item
                 android:id="@+id/action_import_team"
                 android:icon="@drawable/ic_action_import_export"
-
-                android:orderInCategory="100"
                 android:showAsAction="never"
                 android:title="@string/import_team" />
 
             <item
                 android:id="@+id/action_export_team"
                 android:icon="@drawable/ic_action_import_export"
-
-                android:orderInCategory="100"
                 android:showAsAction="never"
                 android:title="@string/export_team" />
+
+            <item
+                android:id="@+id/action_share_team"
+                android:icon="@drawable/ic_action_share"
+                android:showAsAction="never"
+                android:title="@string/share_team" />
+
         </menu>
     </item>
 
