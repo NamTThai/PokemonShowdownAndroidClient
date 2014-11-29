@@ -22,7 +22,7 @@
         android:id="@+id/a_More"
         android:icon="@drawable/ic_action_overflow"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/action_settings">
         <menu>
             <item
