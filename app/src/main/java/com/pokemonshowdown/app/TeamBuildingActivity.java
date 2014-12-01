@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -41,6 +42,7 @@ import java.util.List;
 
 public class TeamBuildingActivity extends FragmentActivity {
     private final static String TAG = TeamBuildingActivity.class.getName();
+    private final static int QR_REQUEST_CODE = 100;
     private Spinner pkmn_spinner;
 
     private List<PokemonTeam> pokemonTeamList;
@@ -126,6 +128,24 @@ public class TeamBuildingActivity extends FragmentActivity {
         inflater.inflate(R.menu.team_building, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == QR_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                String contents = data.getStringExtra("SCAN_RESULT");
+                String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+                new PastebinTask(PastebinTaskId.IMPORT).execute(contents);
+                //contents is pastebin url
+            } else if (resultCode == RESULT_CANCELED) {
+                // TODO Handle cancel
+            }
+        } else {
+            //passing to the fragment below (for searchable pokemons/moves ...  etc etc)
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -249,9 +269,9 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                             urlDialog.show();
                         } else {
-                            new AlertDialog.Builder(TeamBuildingActivity.this)
-                                    .setMessage(R.string.still_in_development)
-                                    .create().show();
+                            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                            startActivityForResult(intent, QR_REQUEST_CODE);
                         }
                     }
                 });
