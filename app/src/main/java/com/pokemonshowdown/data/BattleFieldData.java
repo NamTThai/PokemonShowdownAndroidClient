@@ -290,16 +290,8 @@ public class BattleFieldData {
             return mRoomId;
         }
 
-        public void setRoomId(String roomId) {
-            mRoomId = roomId;
-        }
-
         public ArrayList<String> getServerMessageOnHold() {
             return mServerMessageOnHold;
-        }
-
-        public void setServerMessageOnHold(ArrayList<String> serverMessageOnHold) {
-            mServerMessageOnHold = serverMessageOnHold;
         }
 
         public void addServerMessageOnHold(String serverMessageOnHold) {

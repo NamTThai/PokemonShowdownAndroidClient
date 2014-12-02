@@ -25,10 +25,8 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
-import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.PokemonInfo;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -206,70 +204,6 @@ public class BattleFragment extends Fragment {
             mBattling = -1;
             switchUpPlayer();
         }
-    }
-
-    public void setDisplayTeam(JSONObject object) throws JSONException {
-        object = object.getJSONObject("side");
-        JSONArray team = object.getJSONArray("pokemon");
-        for (int i = 0; i < team.length(); i++) {
-            JSONObject info = team.getJSONObject(i);
-            PokemonInfo pkm = parsePokemonInfo(info);
-            mPlayer1Team.put(i, pkm);
-        }
-    }
-
-    private PokemonInfo parsePokemonInfo(JSONObject info) throws JSONException {
-        String details = info.getString("details");
-        String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
-        PokemonInfo pkm = new PokemonInfo(getActivity(), name);
-        String nickname = info.getString("ident").substring(4);
-        pkm.setNickname(nickname);
-        if (details.contains(", L")) {
-            String level = details.substring(details.indexOf(", L") + 3);
-            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
-            pkm.setLevel(Integer.parseInt(level));
-        }
-        if (details.contains(", M")) {
-            pkm.setGender("M");
-        } else {
-            if (details.contains(", F")) {
-                pkm.setGender("F");
-            }
-        }
-        if (details.contains("shiny")) {
-            pkm.setShiny(true);
-        }
-        String hp = info.getString("condition");
-        pkm.setHp(processHpFraction(hp));
-        pkm.setActive(info.getBoolean("active"));
-        JSONObject statsArray = info.getJSONObject("stats");
-        int[] stats = new int[5];
-        stats[0] = statsArray.getInt("atk");
-        stats[1] = statsArray.getInt("def");
-        stats[2] = statsArray.getInt("spa");
-        stats[3] = statsArray.getInt("spd");
-        stats[4] = statsArray.getInt("spe");
-        pkm.setStats(stats);
-        JSONArray movesArray = info.getJSONArray("moves");
-        HashMap<String, Integer> moves = new HashMap<>();
-        for (int i = 0; i < movesArray.length(); i++) {
-            String move = movesArray.getString(i);
-            JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(move);
-            if (ppObject == null) {
-                moves.put(move, 0);
-            } else {
-                moves.put(move, ppObject.getInt("pp"));
-            }
-        }
-        pkm.setMoves(moves);
-        pkm.setAbility("baseAbility");
-        pkm.setItem("item");
-        try {
-            pkm.setCanMegaEvo(info.getBoolean("canMegaEvo"));
-        } catch (JSONException e) {
-            pkm.setCanMegaEvo(false);
-        }
-        return pkm;
     }
 
     private void switchUpPlayer() {
@@ -1014,19 +948,6 @@ public class BattleFragment extends Fragment {
         ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
         if (sub != null) {
             relativeLayout.removeView(sub);
-        }
-    }
-
-    public int processHpFraction(String hpFraction) {
-        int status = hpFraction.indexOf(' ');
-        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
-        int fraction = hpFraction.indexOf('/');
-        if (fraction == -1) {
-            return 0;
-        } else {
-            int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
-            int total = Integer.parseInt(hpFraction.substring(fraction + 1));
-            return (int) (((float) remaining / (float) total) * 100);
         }
     }
 

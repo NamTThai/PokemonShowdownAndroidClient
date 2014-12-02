@@ -30,6 +30,7 @@ import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +51,8 @@ public class BattleMessage {
 
         int separator = messageDetails.indexOf('|');
         final String[] split = messageDetails.split("\\|");
+        final HashMap<Integer, PokemonInfo> team1 = battleFragment.getPlayer1Team();
+        final HashMap<Integer, PokemonInfo> team2 = battleFragment.getPlayer2Team();
 
         final String position, attacker;
         int start;
@@ -181,9 +184,9 @@ public class BattleMessage {
                 final int iconId;
                 HashMap<Integer, PokemonInfo> team;
                 if (playerType.equals("p1")) {
-                    team = battleFragment.getPlayer1Team();
+                    team = team1;
                 } else {
-                    team = battleFragment.getPlayer2Team();
+                    team = team2;
                 }
                 iconId = team.size();
                 team.put(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
@@ -213,26 +216,26 @@ public class BattleMessage {
                         FrameLayout frameLayout = (FrameLayout) battleFragment.getView().findViewById(R.id.battle_interface);
                         frameLayout.removeAllViews();
                         battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
-                        for (int i = 0; i < battleFragment.getPlayer1Team().size(); i++) {
+                        for (int i = 0; i < team1.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.getPlayer1Team().get(i).getName()), false, true, false, false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team1.get(i).getName()), false, true, false, false));
                         }
-                        for (int i = 0; i < battleFragment.getPlayer2Team().size(); i++) {
+                        for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.getPlayer2Team().get(i).getName()), false, false, false, false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team2.get(i).getName()), false, false, false, false));
                         }
                     }
                 });
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
-                String[] p1Team = battleFragment.getTeamName(battleFragment.getPlayer1Team());
+                String[] p1Team = battleFragment.getTeamName(team1);
                 for (int i = 0; i < p1Team.length - 1; i++) {
                     toAppendBuilder.append(p1Team[i]).append("/");
                 }
                 toAppendBuilder.append(p1Team[p1Team.length - 1]);
 
                 toAppendBuilder.append("\n").append(battleFragment.getPlayer2()).append("'s Team: ");
-                String[] p2Team = battleFragment.getTeamName(battleFragment.getPlayer2Team());
+                String[] p2Team = battleFragment.getTeamName(team2);
                 for (int i = 0; i < p2Team.length - 1; i++) {
                     toAppendBuilder.append(p2Team[i]).append("/");
                 }
@@ -246,7 +249,7 @@ public class BattleMessage {
                     JSONObject requestJson = new JSONObject(messageDetails);
                     if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
-                        battleFragment.setDisplayTeam(requestJson);
+                        setDisplayTeam(battleFragment, requestJson);
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
@@ -423,10 +426,10 @@ public class BattleMessage {
                 final String hpString;
                 final String status;
                 if (separator == -1) {
-                    hpInt = battleFragment.processHpFraction(remaining);
+                    hpInt = processHpFraction(remaining);
                     status = "";
                 } else {
-                    hpInt = battleFragment.processHpFraction(remaining.substring(0, separator));
+                    hpInt = processHpFraction(remaining.substring(0, separator));
                     status = remaining.substring(separator + 1);
                 }
                 battleFragment.setOldHp(messageDetails, hpInt);
@@ -821,7 +824,7 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 oldHP = battleFragment.getOldHp(messageDetails);
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
-                intAmount = battleFragment.processHpFraction(remaining);
+                intAmount = processHpFraction(remaining);
                 battleFragment.setOldHp(messageDetails, intAmount);
                 lostHP = intAmount - oldHP;
 
@@ -968,7 +971,7 @@ public class BattleMessage {
                 oldHP = battleFragment.getOldHp(messageDetails);
 
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
-                intAmount = battleFragment.processHpFraction(remaining);
+                intAmount = processHpFraction(remaining);
                 battleFragment.setOldHp(messageDetails, intAmount);
                 lostHP = intAmount - oldHP;
 
@@ -1111,8 +1114,8 @@ public class BattleMessage {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
-                                int pkmAHp = battleFragment.processHpFraction(split[1]);
-                                int pkmBHp = battleFragment.processHpFraction(split[3]);
+                                int pkmAHp = processHpFraction(split[1]);
+                                int pkmBHp = processHpFraction(split[3]);
 
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
@@ -4176,6 +4179,83 @@ public class BattleMessage {
 
         logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         battleFragment.addToLog(logMessage);
+    }
+
+    private static void setDisplayTeam(BattleFragment battleFragment, JSONObject object) throws JSONException {
+        object = object.getJSONObject("side");
+        JSONArray team = object.getJSONArray("pokemon");
+        for (int i = 0; i < team.length(); i++) {
+            JSONObject info = team.getJSONObject(i);
+            PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
+            battleFragment.getPlayer1Team().put(i, pkm);
+        }
+    }
+
+    private static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
+        String details = info.getString("details");
+        String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
+        PokemonInfo pkm = new PokemonInfo(battleFragment.getActivity(), name);
+        String nickname = info.getString("ident").substring(4);
+        pkm.setNickname(nickname);
+        if (details.contains(", L")) {
+            String level = details.substring(details.indexOf(", L") + 3);
+            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
+            pkm.setLevel(Integer.parseInt(level));
+        }
+        if (details.contains(", M")) {
+            pkm.setGender("M");
+        } else {
+            if (details.contains(", F")) {
+                pkm.setGender("F");
+            }
+        }
+        if (details.contains("shiny")) {
+            pkm.setShiny(true);
+        }
+        String hp = info.getString("condition");
+        pkm.setHp(processHpFraction(hp));
+        pkm.setActive(info.getBoolean("active"));
+        JSONObject statsArray = info.getJSONObject("stats");
+        int[] stats = new int[5];
+        stats[0] = statsArray.getInt("atk");
+        stats[1] = statsArray.getInt("def");
+        stats[2] = statsArray.getInt("spa");
+        stats[3] = statsArray.getInt("spd");
+        stats[4] = statsArray.getInt("spe");
+        pkm.setStats(stats);
+        JSONArray movesArray = info.getJSONArray("moves");
+        HashMap<String, Integer> moves = new HashMap<>();
+        for (int i = 0; i < movesArray.length(); i++) {
+            String move = movesArray.getString(i);
+            JSONObject ppObject = MoveDex.get(battleFragment.getActivity()).getMoveJsonObject(move);
+            if (ppObject == null) {
+                moves.put(move, 0);
+            } else {
+                moves.put(move, ppObject.getInt("pp"));
+            }
+        }
+        pkm.setMoves(moves);
+        pkm.setAbility("baseAbility");
+        pkm.setItem("item");
+        try {
+            pkm.setCanMegaEvo(info.getBoolean("canMegaEvo"));
+        } catch (JSONException e) {
+            pkm.setCanMegaEvo(false);
+        }
+        return pkm;
+    }
+
+    private static int processHpFraction(String hpFraction) {
+        int status = hpFraction.indexOf(' ');
+        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
+        int fraction = hpFraction.indexOf('/');
+        if (fraction == -1) {
+            return 0;
+        } else {
+            int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
+            int total = Integer.parseInt(hpFraction.substring(fraction + 1));
+            return (int) (((float) remaining / (float) total) * 100);
+        }
     }
     
 }
