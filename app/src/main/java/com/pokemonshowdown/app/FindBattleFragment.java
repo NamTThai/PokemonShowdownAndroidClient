@@ -27,7 +27,7 @@ public class FindBattleFragment extends Fragment {
     private ProgressDialog waitingDialog;
 
     private ArrayList<String> mFormatList;
-
+    private Spinner pokemonTeamSpinner;
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
 
@@ -50,10 +50,6 @@ public class FindBattleFragment extends Fragment {
 
         setAvailableFormat();
         waitingDialog = new ProgressDialog(getActivity());
-
-        Spinner spin = (Spinner) view.findViewById(R.id.teams_spinner);
-        PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
-        //spin.setAdapter(pokemonTeamListArrayAdapter);
 
         TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
         findBattle.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +77,26 @@ public class FindBattleFragment extends Fragment {
                 });
             }
         });
+
+        pokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        PokemonTeam.loadPokemonTeams(getActivity());
+
+        if(PokemonTeam.getPokemonTeamList().size() > 0) {
+            PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
+            pokemonTeamSpinner.setAdapter(pokemonTeamListArrayAdapter);
+            pokemonTeamSpinner.setEnabled(true);
+        } else {
+            //there are no teams, we fill the spinner with a filler item an disable it
+            ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
+            pokemonTeamSpinner.setAdapter(adapter);
+            pokemonTeamSpinner.setEnabled(false);
+        }
+
     }
 
     public void setAvailableFormat() {

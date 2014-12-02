@@ -172,9 +172,9 @@
     <string name="import_success_dialog_title">Import successful!</string>
     <string name="export_inprogress">Exporting to pastebin…</string>
     <string name="import_inprogress">Importing from pastebin…</string>
-
-
-
+    <string-array name="empty_team_list_filler">
+        <item>No teams!</item>
+    </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
