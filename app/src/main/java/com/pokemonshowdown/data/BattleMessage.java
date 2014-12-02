@@ -42,6 +42,7 @@ public class BattleMessage {
 
     public static void processMajorAction(final BattleFragment battleFragment, final String message) {
         BattleFieldData.AnimationData animationData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
+        final BattleFieldData.ViewData viewData = BattleFieldData.get(battleFragment.getActivity()).getViewData(battleFragment.getRoomId());
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
         if (command.startsWith("-")) {
@@ -51,8 +52,9 @@ public class BattleMessage {
 
         int separator = messageDetails.indexOf('|');
         final String[] split = messageDetails.split("\\|");
-        final HashMap<Integer, PokemonInfo> team1 = battleFragment.getPlayer1Team();
-        final HashMap<Integer, PokemonInfo> team2 = battleFragment.getPlayer2Team();
+        final ArrayList<PokemonInfo> team1 = battleFragment.getPlayer1Team();
+        final ArrayList<PokemonInfo> team2 = battleFragment.getPlayer2Team();
+        final View view = battleFragment.getView();
 
         final String position, attacker;
         int start;
@@ -78,11 +80,12 @@ public class BattleMessage {
             case "c":
             case "tc":
             case "c:":
-                String user = messageDetails.substring(0, separator);
-                String userMessage = messageDetails.substring(separator + 1);
+                String user = split[0];
+                String userMessage = split[1];
                 toAppend = user + ": " + userMessage;
                 toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(user)), 0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new ForegroundColorSpan(ChatRoomFragment.getColorStrong(user)),
+                        0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
             case "raw":
@@ -99,10 +102,6 @@ public class BattleMessage {
             case "gen":
                 break;
             case "player":
-                if (battleFragment.getView() == null) {
-                    return;
-                }
-
                 final String playerType;
                 final String playerName;
                 final String avatar;
@@ -111,22 +110,32 @@ public class BattleMessage {
                     playerName = "";
                     avatar = null;
                 } else {
-                    playerType = messageDetails.substring(0, separator);
-                    String playerDetails = messageDetails.substring(separator + 1);
-                    separator = playerDetails.indexOf('|');
-                    playerName = playerDetails.substring(0, separator);
-                    avatar = playerDetails.substring(separator + 1);
+                    playerType = split[0];
+                    playerName = split[1];
+                    avatar = split[2];
+                }
+                final int avatarResource;
+                if (avatar != null) {
+                    avatarResource = battleFragment.getActivity().getApplicationContext()
+                            .getResources().getIdentifier("avatar_" + avatar, "drawable",
+                                    battleFragment.getActivity().getApplicationContext().getPackageName());
+
+                } else {
+                    avatarResource = 0;
                 }
                 if (playerType.equals("p1")) {
                     animationData.setPlayer1(playerName);
                     battleFragment.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((TextView) battleFragment.getView().findViewById(R.id.username)).setText(playerName);
-                            if (avatar != null) {
-                                int avatarResource = battleFragment.getActivity().getApplicationContext()
-                                        .getResources().getIdentifier("avatar_" + avatar, "drawable", battleFragment.getActivity().getApplicationContext().getPackageName());
-                                ((ImageView) battleFragment.getView().findViewById(R.id.avatar)).setImageResource(avatarResource);
+                            if (view == null) {
+                                viewData.addViewSetterOnHold(R.id.username, playerName,
+                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                                viewData.addViewSetterOnHold(R.id.avatar, avatarResource,
+                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            } else {
+                                ((TextView) view.findViewById(R.id.username)).setText(playerName);
+                                ((ImageView) view.findViewById(R.id.avatar)).setImageResource(avatarResource);
                             }
                         }
                     });
@@ -136,11 +145,14 @@ public class BattleMessage {
                     battleFragment.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((TextView) battleFragment.getView().findViewById(R.id.username_o)).setText(playerName);
-                            if (avatar != null) {
-                                int avatarResource = battleFragment.getActivity().getApplicationContext()
-                                        .getResources().getIdentifier("avatar_" + avatar, "drawable", battleFragment.getActivity().getApplicationContext().getPackageName());
-                                ((ImageView) battleFragment.getView().findViewById(R.id.avatar_o)).setImageResource(avatarResource);
+                            if (view == null) {
+                                viewData.addViewSetterOnHold(R.id.username_o, playerName,
+                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                                viewData.addViewSetterOnHold(R.id.avatar_o, avatarResource,
+                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            } else {
+                                ((TextView) view.findViewById(R.id.username_o)).setText(playerName);
+                                ((ImageView) view.findViewById(R.id.avatar_o)).setImageResource(avatarResource);
                             }
                         }
                     });
@@ -150,20 +162,23 @@ public class BattleMessage {
             case "tier":
                 toAppend = "Format:" + "\n" + messageDetails;
                 toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), toAppend.indexOf('\n') + 1, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD),
+                        toAppend.indexOf('\n') + 1, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
             case "rated":
                 toAppend = command.toUpperCase();
                 toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_blue),
+                        0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
             case "rule":
                 toAppendSpannable = new SpannableString(messageDetails);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.ITALIC), 0, messageDetails.indexOf(':') + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new StyleSpan(Typeface.ITALIC),
+                        0, messageDetails.indexOf(':') + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
@@ -172,8 +187,8 @@ public class BattleMessage {
                 break;
 
             case "clearpoke":
-                battleFragment.setPlayer1Team(new HashMap<Integer, PokemonInfo>());
-                battleFragment.setPlayer2Team(new HashMap<Integer, PokemonInfo>());
+                battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
+                battleFragment.setPlayer2Team(new ArrayList<PokemonInfo>());
                 break;
 
             case "poke":
@@ -182,23 +197,23 @@ public class BattleMessage {
                 final String pokeName = (comma == -1) ? messageDetails.substring(separator + 1) :
                         messageDetails.substring(separator + 1, comma);
                 final int iconId;
-                HashMap<Integer, PokemonInfo> team;
+                ArrayList<PokemonInfo> team;
                 if (playerType.equals("p1")) {
                     team = team1;
                 } else {
                     team = team2;
                 }
                 iconId = team.size();
-                team.put(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
+                team.set(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
 
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
-                        ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(playerType, iconId));
+                        ImageView icon = (ImageView) view.findViewById(battleFragment.getIconId(playerType, iconId));
                         if (icon != null) {
                             icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(pokeName), false));
                         }
@@ -209,19 +224,19 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
-                        FrameLayout frameLayout = (FrameLayout) battleFragment.getView().findViewById(R.id.battle_interface);
+                        FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
                         frameLayout.removeAllViews();
                         battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
                         for (int i = 0; i < team1.size(); i++) {
-                            ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
+                            ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team1.get(i).getName()), false, true, false, false));
                         }
                         for (int i = 0; i < team2.size(); i++) {
-                            ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
+                            ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team2.get(i).getName()), false, false, false, false));
                         }
                     }
@@ -443,22 +458,20 @@ public class BattleMessage {
                 // Switching sprites and icons
                 final String levelFinal = attacker + " " + level;
                 final String genderFinal = gender;
-                HashMap<Integer, PokemonInfo> playerTeam = battleFragment.getTeam(messageDetails);
+                ArrayList<PokemonInfo> playerTeam = battleFragment.getTeam(messageDetails);
                 if (playerTeam == null) {
-                    playerTeam = new HashMap<>();
+                    playerTeam = new ArrayList<>();
                 }
-                ArrayList<String> teamName = battleFragment.getTeamNameArrayList(playerTeam);
-                if (battleFragment.findPokemonInTeam(teamName, species) == -1) {
-                    playerTeam.put(playerTeam.size(), new PokemonInfo(battleFragment.getActivity(), species));
+                if (battleFragment.findPokemonInTeam(playerTeam, species) == -1) {
+                    playerTeam.set(playerTeam.size(), new PokemonInfo(battleFragment.getActivity(), species));
                     toBeSwapped = playerTeam.size() - 1;
                 } else {
-                    toBeSwapped = battleFragment.findPokemonInTeam(teamName, species);
+                    toBeSwapped = battleFragment.findPokemonInTeam(playerTeam, species);
                 }
                 int j = battleFragment.getTeamSlot(messageDetails);
-                playerTeam.put(7, playerTeam.get(j));
-                playerTeam.put(j, playerTeam.get(toBeSwapped));
-                playerTeam.put(toBeSwapped, playerTeam.get(7));
-                playerTeam.remove(7);
+                PokemonInfo holder = playerTeam.get(j);
+                playerTeam.set(j, playerTeam.get(toBeSwapped));
+                playerTeam.set(toBeSwapped, holder);
 
                 battleFragment.setTeam(messageDetails, playerTeam);
 
@@ -4187,7 +4200,7 @@ public class BattleMessage {
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            battleFragment.getPlayer1Team().put(i, pkm);
+            battleFragment.getPlayer1Team().set(i, pkm);
         }
     }
 

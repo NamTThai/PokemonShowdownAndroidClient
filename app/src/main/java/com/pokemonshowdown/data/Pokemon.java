@@ -34,7 +34,7 @@ import java.util.Iterator;
  * Level: 100
  */
 public class Pokemon implements Serializable {
-    public final static String PTAG = "POKEMON_OBJECT";
+    public final static String PTAG = Pokemon.class.getName();
     public final static String[] NATURES = {"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"};
     public final static String[] NATURES_DETAILS = {"Adamant (+Atk -SpA)", "Bashful", "Bold (+Def -Atk)", "Brave (+Atk -Spe)", "Calm (+SpD -Atk)", "Careful (+SpD -SpA)", "Docile", "Gentle (+SpD -Def)", "Hardy", "Hasty (+Spe -Def)", "Impish (+Def -SpA)", "Jolly (+Spe -SpA)", "Lax (+Def -SpD)", "Lonely (+Atk -Def)", "Mild (+SpA -Def)", "Modest (+SpA -Atk)", "Naive (+Spe -SpD)", "Naughty (+Atk -SpD)", "Quiet (+SpA -Spe)", "Quirky", "Rash (+SpA -SpD)", "Relaxed (+Def -Spe)", "Sassy (+SpD -Spe)", "Serious", "Timid (+Spe -Atk)"};
 

@@ -57,8 +57,8 @@ public class BattleFragment extends Fragment {
     private int mBattling;
     private String mPlayer1;
     private String mPlayer2;
-    private HashMap<Integer, PokemonInfo> mPlayer1Team;
-    private HashMap<Integer, PokemonInfo> mPlayer2Team;
+    private ArrayList<PokemonInfo> mPlayer1Team;
+    private ArrayList<PokemonInfo> mPlayer2Team;
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
@@ -125,6 +125,9 @@ public class BattleFragment extends Fragment {
     }
 
     public String getPlayer1() {
+        if (mPlayer1 == null) {
+            mPlayer1 = BattleFieldData.get(getActivity()).getAnimationInstance(getRoomId()).getPlayer1();
+        }
         return mPlayer1;
     }
 
@@ -133,6 +136,9 @@ public class BattleFragment extends Fragment {
     }
 
     public String getPlayer2() {
+        if (mPlayer2 == null) {
+            mPlayer2 = BattleFieldData.get(getActivity()).getAnimationInstance(getRoomId()).getPlayer2();
+        }
         return mPlayer2;
     }
 
@@ -140,19 +146,19 @@ public class BattleFragment extends Fragment {
         mPlayer2 = player2;
     }
 
-    public HashMap<Integer, PokemonInfo> getPlayer1Team() {
+    public ArrayList<PokemonInfo> getPlayer1Team() {
         return mPlayer1Team;
     }
 
-    public void setPlayer1Team(HashMap<Integer, PokemonInfo> player1Team) {
+    public void setPlayer1Team(ArrayList<PokemonInfo> player1Team) {
         mPlayer1Team = player1Team;
     }
 
-    public HashMap<Integer, PokemonInfo> getPlayer2Team() {
+    public ArrayList<PokemonInfo> getPlayer2Team() {
         return mPlayer2Team;
     }
 
-    public void setPlayer2Team(HashMap<Integer, PokemonInfo> player2Team) {
+    public void setPlayer2Team(ArrayList<PokemonInfo> player2Team) {
         mPlayer2Team = player2Team;
     }
 
@@ -216,7 +222,7 @@ public class BattleFragment extends Fragment {
         mPlayer1 = mPlayer2;
         mPlayer2 = holderString;
 
-        HashMap<Integer, PokemonInfo> holderTeam = mPlayer1Team;
+        ArrayList<PokemonInfo> holderTeam = mPlayer1Team;
         mPlayer1Team = mPlayer2Team;
         mPlayer2Team = holderTeam;
 
@@ -953,19 +959,19 @@ public class BattleFragment extends Fragment {
 
     public void replacePokemon(String playerTag, String oldPkm, String newPkm) {
         if (playerTag.startsWith("p1")) {
-            int index = findPokemonInTeam(getTeamNameArrayList(mPlayer1Team), oldPkm);
+            int index = findPokemonInTeam(mPlayer1Team, oldPkm);
             if (index != -1) {
-                mPlayer1Team.put(index, new PokemonInfo(getActivity(), newPkm));
+                mPlayer1Team.set(index, new PokemonInfo(getActivity(), newPkm));
             }
         } else {
-            int index = findPokemonInTeam(getTeamNameArrayList(mPlayer2Team), oldPkm);
+            int index = findPokemonInTeam(mPlayer2Team, oldPkm);
             if (index != -1) {
-                mPlayer2Team.put(index, new PokemonInfo(getActivity(), newPkm));
+                mPlayer2Team.set(index, new PokemonInfo(getActivity(), newPkm));
             }
         }
     }
 
-    public HashMap<Integer, PokemonInfo> getTeam(String playerTag) {
+    public ArrayList<PokemonInfo> getTeam(String playerTag) {
         if (playerTag.startsWith("p1")) {
             return mPlayer1Team;
         } else {
@@ -973,7 +979,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void setTeam(String playerTag, HashMap<Integer, PokemonInfo> playerTeam) {
+    public void setTeam(String playerTag, ArrayList<PokemonInfo> playerTeam) {
         if (playerTag.startsWith("p1")) {
             mPlayer1Team = playerTeam;
         } else {
@@ -981,7 +987,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public String[] getTeamName(HashMap<Integer, PokemonInfo> teamMap) {
+    public String[] getTeamName(ArrayList<PokemonInfo> teamMap) {
         String[] team = new String[teamMap.size()];
         for (Integer i = 0; i < teamMap.size(); i++) {
             PokemonInfo pkm = teamMap.get(i);
@@ -990,16 +996,7 @@ public class BattleFragment extends Fragment {
         return team;
     }
 
-    public ArrayList<String> getTeamNameArrayList(HashMap<Integer, PokemonInfo> teamMap) {
-        ArrayList<String> team = new ArrayList<>();
-        for (Integer i = 0; i < teamMap.size(); i++) {
-            PokemonInfo pkm = teamMap.get(i);
-            team.add(pkm.getName());
-        }
-        return team;
-    }
-
-    public int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
+    public int findPokemonInTeam(ArrayList<PokemonInfo> playerTeam, String pkm) {
         String[] specialPkm = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
         boolean special = false;
         String species = "";
@@ -1010,16 +1007,27 @@ public class BattleFragment extends Fragment {
                 break;
             }
         }
+
+        ArrayList<String> teamName = getPokemonNameInTeam(playerTeam);
+
         if (!special) {
-            return playerTeam.indexOf(pkm);
+            return teamName.indexOf(pkm);
         } else {
-            for (int i = 0; i < playerTeam.size(); i++) {
-                if (playerTeam.get(i).contains(species)) {
+            for (int i = 0; i < teamName.size(); i++) {
+                if (teamName.get(i).contains(species)) {
                     return i;
                 }
             }
             return -1;
         }
+    }
+
+    public ArrayList<String> getPokemonNameInTeam(ArrayList<PokemonInfo> playerTeam) {
+        ArrayList<String> teamName = new ArrayList<>();
+        for (PokemonInfo pkm : playerTeam) {
+            teamName.add(pkm.getName());
+        }
+        return teamName;
     }
 
     public String getPrintableOutputPokemonSide(String split) {
