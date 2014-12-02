@@ -47,7 +47,7 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
 
-    public ArrayDeque<AnimatorSet> mAnimatorSetQueue;
+    private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
 
     private String mRoomId;
@@ -56,16 +56,16 @@ public class BattleFragment extends Fragment {
      * 1 if player is p1
      * -1 if player is p2
      */
-    public int mBattling;
-    public String mPlayer1;
-    public String mPlayer2;
-    public HashMap<Integer, PokemonInfo> mPlayer1Team;
-    public HashMap<Integer, PokemonInfo> mPlayer2Team;
+    private int mBattling;
+    private String mPlayer1;
+    private String mPlayer2;
+    private HashMap<Integer, PokemonInfo> mPlayer1Team;
+    private HashMap<Integer, PokemonInfo> mPlayer2Team;
 
-    public String currentWeather;
-    public boolean weatherExist;
-    public int turnNumber;
-    public boolean myTurn;
+    private String mCurrentWeather;
+    private boolean mWeatherExist;
+    private int mTurnNumber;
+    private boolean mMyTurn;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -126,8 +126,76 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public String getPlayer1() {
+        return mPlayer1;
+    }
+
+    public void setPlayer1(String player1) {
+        mPlayer1 = player1;
+    }
+
+    public String getPlayer2() {
+        return mPlayer2;
+    }
+
+    public void setPlayer2(String player2) {
+        mPlayer2 = player2;
+    }
+
+    public HashMap<Integer, PokemonInfo> getPlayer1Team() {
+        return mPlayer1Team;
+    }
+
+    public void setPlayer1Team(HashMap<Integer, PokemonInfo> player1Team) {
+        mPlayer1Team = player1Team;
+    }
+
+    public HashMap<Integer, PokemonInfo> getPlayer2Team() {
+        return mPlayer2Team;
+    }
+
+    public void setPlayer2Team(HashMap<Integer, PokemonInfo> player2Team) {
+        mPlayer2Team = player2Team;
+    }
+
+    public String getCurrentWeather() {
+        return mCurrentWeather;
+    }
+
+    public void setCurrentWeather(String currentWeather) {
+        this.mCurrentWeather = currentWeather;
+    }
+
+    public boolean isWeatherExist() {
+        return mWeatherExist;
+    }
+
+    public void setWeatherExist(boolean weatherExist) {
+        this.mWeatherExist = weatherExist;
+    }
+
+    public int getTurnNumber() {
+        return mTurnNumber;
+    }
+
+    public void setTurnNumber(int turnNumber) {
+        this.mTurnNumber = turnNumber;
+    }
+
+    public boolean isMyTurn() {
+        return mMyTurn;
+    }
+
+    public void setMyTurn(boolean myTurn) {
+        this.mMyTurn = myTurn;
+    }
+
     public String getRoomId() {
         return mRoomId;
+    }
+
+    public int getBattling() {
+        return mBattling;
     }
 
     public void setBattling(JSONObject object) throws JSONException {

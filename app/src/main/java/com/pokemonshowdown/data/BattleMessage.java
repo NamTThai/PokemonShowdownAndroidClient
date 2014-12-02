@@ -127,7 +127,7 @@ public class BattleMessage {
                             }
                         }
                     });
-                    battleFragment.mPlayer1 = playerName;
+                    battleFragment.setPlayer1(playerName);
                 } else {
                     animationData.setPlayer2(playerName);
                     battleFragment.getActivity().runOnUiThread(new Runnable() {
@@ -141,7 +141,7 @@ public class BattleMessage {
                             }
                         }
                     });
-                    battleFragment.mPlayer2 = playerName;
+                    battleFragment.setPlayer2(playerName);
                 }
                 break;
             case "tier":
@@ -169,8 +169,8 @@ public class BattleMessage {
                 break;
 
             case "clearpoke":
-                battleFragment.mPlayer1Team = new HashMap<>();
-                battleFragment.mPlayer2Team = new HashMap<>();
+                battleFragment.setPlayer1Team(new HashMap<Integer, PokemonInfo>());
+                battleFragment.setPlayer2Team(new HashMap<Integer, PokemonInfo>());
                 break;
 
             case "poke":
@@ -179,13 +179,15 @@ public class BattleMessage {
                 final String pokeName = (comma == -1) ? messageDetails.substring(separator + 1) :
                         messageDetails.substring(separator + 1, comma);
                 final int iconId;
+                HashMap<Integer, PokemonInfo> team;
                 if (playerType.equals("p1")) {
-                    iconId = battleFragment.mPlayer1Team.size();
-                    battleFragment.mPlayer1Team.put(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
+                    team = battleFragment.getPlayer1Team();
                 } else {
-                    iconId = battleFragment.mPlayer2Team.size();
-                    battleFragment.mPlayer2Team.put(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
+                    team = battleFragment.getPlayer2Team();
                 }
+                iconId = team.size();
+                team.put(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
+
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -211,26 +213,26 @@ public class BattleMessage {
                         FrameLayout frameLayout = (FrameLayout) battleFragment.getView().findViewById(R.id.battle_interface);
                         frameLayout.removeAllViews();
                         battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
-                        for (int i = 0; i < battleFragment.mPlayer1Team.size(); i++) {
+                        for (int i = 0; i < battleFragment.getPlayer1Team().size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.mPlayer1Team.get(i).getName()), false, true, false, false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.getPlayer1Team().get(i).getName()), false, true, false, false));
                         }
-                        for (int i = 0; i < battleFragment.mPlayer2Team.size(); i++) {
+                        for (int i = 0; i < battleFragment.getPlayer2Team().size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.mPlayer2Team.get(i).getName()), false, false, false, false));
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(battleFragment.getPlayer2Team().get(i).getName()), false, false, false, false));
                         }
                     }
                 });
                 toAppendBuilder = new StringBuilder();
-                toAppendBuilder.append(battleFragment.mPlayer1).append("'s Team: ");
-                String[] p1Team = battleFragment.getTeamName(battleFragment.mPlayer1Team);
+                toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
+                String[] p1Team = battleFragment.getTeamName(battleFragment.getPlayer1Team());
                 for (int i = 0; i < p1Team.length - 1; i++) {
                     toAppendBuilder.append(p1Team[i]).append("/");
                 }
                 toAppendBuilder.append(p1Team[p1Team.length - 1]);
 
-                toAppendBuilder.append("\n").append(battleFragment.mPlayer2).append("'s Team: ");
-                String[] p2Team = battleFragment.getTeamName(battleFragment.mPlayer2Team);
+                toAppendBuilder.append("\n").append(battleFragment.getPlayer2()).append("'s Team: ");
+                String[] p2Team = battleFragment.getTeamName(battleFragment.getPlayer2Team());
                 for (int i = 0; i < p2Team.length - 1; i++) {
                     toAppendBuilder.append(p2Team[i]).append("/");
                 }
@@ -258,10 +260,10 @@ public class BattleMessage {
             case "inactive":
                 final String inactive;
                 final String player;
-                if ((messageDetails.startsWith(battleFragment.mPlayer1)) || (messageDetails.startsWith("Player 1"))) {
+                if ((messageDetails.startsWith(battleFragment.getPlayer1())) || (messageDetails.startsWith("Player 1"))) {
                     player = "p1";
                 } else {
-                    if ((messageDetails.startsWith(battleFragment.mPlayer2)) || (messageDetails.startsWith("Player 2"))) {
+                    if ((messageDetails.startsWith(battleFragment.getPlayer2())) || (messageDetails.startsWith("Player 2"))) {
                         player = "p2";
                     } else {
                         break;
@@ -324,7 +326,7 @@ public class BattleMessage {
                         battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_animation, frameLayout);
                     }
                 });
-                toAppend = battleFragment.mPlayer1 + " vs. " + battleFragment.mPlayer2;
+                toAppend = battleFragment.getPlayer1() + " vs. " + battleFragment.getPlayer2();
                 toAppendSpannable = new SpannableString(toAppend);
                 toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
@@ -461,7 +463,7 @@ public class BattleMessage {
                     //TODO need to buffer batonpass/uturn/voltswitch for switching out message
                     //then we switch in
                     if(messageDetails.startsWith("p2")) {
-                        toAppendBuilder.append(battleFragment.mPlayer2).append(" sent out ").append(species).append("!");
+                        toAppendBuilder.append(battleFragment.getPlayer2()).append(" sent out ").append(species).append("!");
                     } else {
                         toAppendBuilder.append("Go! ").append(species).append("!");
                     }
@@ -3217,12 +3219,11 @@ public class BattleMessage {
 
                     case "celebrate":
                         if (attacker.startsWith("p2")) {
-                            side = battleFragment.mPlayer2;
+                            side = battleFragment.getPlayer2();
                         } else {
-                            side = battleFragment.mPlayer1;
+                            side = battleFragment.getPlayer1();
                         }
                         toAppendBuilder.append("Congratulations, ").append(side).append("!");
-
                         break;
 
                     case "trick":
@@ -3821,7 +3822,7 @@ public class BattleMessage {
                             toAppendBuilder.append("Rain continues to fall!");
                         } else {
                             toAppendBuilder.append("It started to rain!");
-                            battleFragment.weatherExist = true;
+                            battleFragment.setWeatherExist(true);
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -3854,7 +3855,7 @@ public class BattleMessage {
                             toAppendBuilder.append("The sandstorm rages.");
                         } else {
                             toAppendBuilder.append("A sandstorm kicked up!");
-                            battleFragment.weatherExist = true;
+                            battleFragment.setWeatherExist(true);
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -3887,7 +3888,7 @@ public class BattleMessage {
                             toAppendBuilder.append("The sunlight is strong!");
                         } else {
                             toAppendBuilder.append("The sunlight turned harsh!");
-                            battleFragment.weatherExist = true;
+                            battleFragment.setWeatherExist(true);
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -3921,7 +3922,7 @@ public class BattleMessage {
                             toAppendBuilder.append("The hail crashes down.");
                         } else {
                             toAppendBuilder.append("It started to hail!");
-                            battleFragment.weatherExist = true;
+                            battleFragment.setWeatherExist(true);
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -3950,8 +3951,8 @@ public class BattleMessage {
                         }
                         break;
                     case "none":
-                        if (battleFragment.weatherExist) {
-                            switch (battleFragment.currentWeather) {
+                        if (battleFragment.isWeatherExist()) {
+                            switch (battleFragment.getCurrentWeather()) {
                                 case "RainDance":
                                     toAppendBuilder.append("The rain stopped.");
                                     break;
@@ -3991,10 +3992,10 @@ public class BattleMessage {
                                 }
                             });
                         }
-                        battleFragment.weatherExist = false;
+                        battleFragment.setWeatherExist(false);
                         break;
                 }
-                battleFragment.currentWeather = weather;
+                battleFragment.setCurrentWeather(weather);
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
                 animatorSet.play(toast);
