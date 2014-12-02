@@ -29,6 +29,7 @@ public class PokemonFragment extends DialogFragment {
     public final static String ARGUMENT_POKEMON = "Pokemon";
     public final static String ARGUMENT_SEARCH = "Search";
     public final static String ARGUMENT_SEARCH_CODE = "Search Code";
+    public final static String ARGUMENT_USE_STAGES = "Stages";
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -36,7 +37,7 @@ public class PokemonFragment extends DialogFragment {
         if (getActivity() instanceof TeamBuildingActivity) {
             TeamBuildingActivity parent = (TeamBuildingActivity) getActivity();
             parent.updateList();
-        } else if(getActivity() instanceof DmgCalcActivity) {
+        } else if (getActivity() instanceof DmgCalcActivity) {
             DmgCalcActivity parent = (DmgCalcActivity) getActivity();
             parent.updateDamage();
         }
@@ -99,12 +100,18 @@ public class PokemonFragment extends DialogFragment {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 StatsDialog statsDialog = new StatsDialog();
                 Bundle bundle = new Bundle();
-                bundle.putIntArray("Stats", getPokemon().getStats());
-                bundle.putIntArray("BaseStats", getPokemon().getBaseStats());
-                bundle.putIntArray("EVs", getPokemon().getEVs());
-                bundle.putIntArray("IVs", getPokemon().getIVs());
-                bundle.putInt("Level", getPokemon().getLevel());
-                bundle.putFloatArray("NatureMultiplier", getPokemon().getNatureMultiplier());
+                bundle.putIntArray(StatsDialog.ARGUMENT_STATS, getPokemon().getStats());
+                bundle.putIntArray(StatsDialog.ARGUMENT_BASE_STATS, getPokemon().getBaseStats());
+                bundle.putIntArray(StatsDialog.ARGUMENT_EV, getPokemon().getEVs());
+                bundle.putIntArray(StatsDialog.ARGUMENT_IV, getPokemon().getIVs());
+                bundle.putInt(StatsDialog.ARGUMENT_LEVEL, getPokemon().getLevel());
+                bundle.putFloatArray(StatsDialog.ARGUMENT_NATURE_MULTIPLIER, getPokemon().getNatureMultiplier());
+                bundle.putIntArray(StatsDialog.ARGUMENT_STAGES, getPokemon().getStages());
+
+                if (getArguments().containsKey(ARGUMENT_USE_STAGES)) {
+                    bundle.putBoolean(StatsDialog.ARGUMENT_SHOW_STAGES, getArguments().getBoolean(ARGUMENT_USE_STAGES));
+                }
+
                 statsDialog.setArguments(bundle);
                 statsDialog.show(fm, StatsDialog.STAG);
             }
