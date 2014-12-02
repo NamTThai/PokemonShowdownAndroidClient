@@ -56,7 +56,10 @@ public class BattleMessage {
         final ArrayList<PokemonInfo> team2 = battleFragment.getPlayer2Team();
         final View view = battleFragment.getView();
 
+        final ArrayList<PokemonInfo> team;
         final String position, attacker;
+        final int iconId;
+        final PokemonInfo pokemonInfo;
         int start;
         String remaining;
         final String toAppend;
@@ -192,30 +195,25 @@ public class BattleMessage {
                 break;
 
             case "poke":
-                playerType = messageDetails.substring(0, separator);
-                int comma = messageDetails.indexOf(',');
-                final String pokeName = (comma == -1) ? messageDetails.substring(separator + 1) :
-                        messageDetails.substring(separator + 1, comma);
-                final int iconId;
-                ArrayList<PokemonInfo> team;
-                if (playerType.equals("p1")) {
-                    team = team1;
-                } else {
-                    team = team2;
-                }
-                iconId = team.size();
-                team.set(iconId, new PokemonInfo(battleFragment.getActivity(), pokeName));
+                playerType = split[0];
+                int comma = split[1].indexOf(',');
+                final String pokeName = (comma == -1) ? split[1] : split[1].substring(0, comma);
+                team = (playerType.equals("p1")) ? team1 : team2;
+                iconId = battleFragment.getIconId(playerType, team.size());
+                pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
+                team.add(pokemonInfo);
 
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(pokeName), false);
                         if (view == null) {
-                            return;
-                        }
-
-                        ImageView icon = (ImageView) view.findViewById(battleFragment.getIconId(playerType, iconId));
-                        if (icon != null) {
-                            icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(pokeName), false));
+                            viewData.addViewSetterOnHold(iconId, imageResource, BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                        } else {
+                            ImageView icon = (ImageView) view.findViewById(iconId);
+                            if (icon != null) {
+                                icon.setImageResource(imageResource);
+                            }
                         }
                     }
                 });
@@ -4269,6 +4267,19 @@ public class BattleMessage {
             int total = Integer.parseInt(hpFraction.substring(fraction + 1));
             return (int) (((float) remaining / (float) total) * 100);
         }
+    }
+
+    private static String processSpecialName(String name) {
+        for (String sp : BattleFragment.MORPHS) {
+            if (name.contains(sp)) {
+                return sp;
+            }
+        }
+        return name;
+    }
+
+    private static void processPokemonInfoString(PokemonInfo pkm, String info) {
+
     }
     
 }

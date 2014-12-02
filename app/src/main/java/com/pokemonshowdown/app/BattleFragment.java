@@ -32,7 +32,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -44,6 +43,7 @@ public class BattleFragment extends Fragment {
     public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
+    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
@@ -997,10 +997,9 @@ public class BattleFragment extends Fragment {
     }
 
     public int findPokemonInTeam(ArrayList<PokemonInfo> playerTeam, String pkm) {
-        String[] specialPkm = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
         boolean special = false;
         String species = "";
-        for (String sp : specialPkm) {
+        for (String sp : MORPHS) {
             if (pkm.contains(sp)) {
                 special = true;
                 species = sp;

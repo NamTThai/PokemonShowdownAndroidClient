@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Created by thain on 7/22/14.
  * <p/>
  * Array index (including nature array)
  * HP: 0
