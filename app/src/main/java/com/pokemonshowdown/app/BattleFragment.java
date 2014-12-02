@@ -25,16 +25,13 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
-import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.PokemonInfo;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -46,8 +43,9 @@ public class BattleFragment extends Fragment {
     public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
+    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
 
-    public ArrayDeque<AnimatorSet> mAnimatorSetQueue;
+    private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
 
     private String mRoomId;
@@ -56,16 +54,16 @@ public class BattleFragment extends Fragment {
      * 1 if player is p1
      * -1 if player is p2
      */
-    public int mBattling;
-    public String mPlayer1;
-    public String mPlayer2;
-    public HashMap<Integer, PokemonInfo> mPlayer1Team;
-    public HashMap<Integer, PokemonInfo> mPlayer2Team;
+    private int mBattling;
+    private String mPlayer1;
+    private String mPlayer2;
+    private ArrayList<PokemonInfo> mPlayer1Team;
+    private ArrayList<PokemonInfo> mPlayer2Team;
 
-    public String currentWeather;
-    public boolean weatherExist;
-    public int turnNumber;
-    public boolean myTurn;
+    private String mCurrentWeather;
+    private boolean mWeatherExist;
+    private int mTurnNumber;
+    private boolean mMyTurn;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -126,8 +124,82 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public String getPlayer1() {
+        if (mPlayer1 == null) {
+            mPlayer1 = BattleFieldData.get(getActivity()).getAnimationInstance(getRoomId()).getPlayer1();
+        }
+        return mPlayer1;
+    }
+
+    public void setPlayer1(String player1) {
+        mPlayer1 = player1;
+    }
+
+    public String getPlayer2() {
+        if (mPlayer2 == null) {
+            mPlayer2 = BattleFieldData.get(getActivity()).getAnimationInstance(getRoomId()).getPlayer2();
+        }
+        return mPlayer2;
+    }
+
+    public void setPlayer2(String player2) {
+        mPlayer2 = player2;
+    }
+
+    public ArrayList<PokemonInfo> getPlayer1Team() {
+        return mPlayer1Team;
+    }
+
+    public void setPlayer1Team(ArrayList<PokemonInfo> player1Team) {
+        mPlayer1Team = player1Team;
+    }
+
+    public ArrayList<PokemonInfo> getPlayer2Team() {
+        return mPlayer2Team;
+    }
+
+    public void setPlayer2Team(ArrayList<PokemonInfo> player2Team) {
+        mPlayer2Team = player2Team;
+    }
+
+    public String getCurrentWeather() {
+        return mCurrentWeather;
+    }
+
+    public void setCurrentWeather(String currentWeather) {
+        this.mCurrentWeather = currentWeather;
+    }
+
+    public boolean isWeatherExist() {
+        return mWeatherExist;
+    }
+
+    public void setWeatherExist(boolean weatherExist) {
+        this.mWeatherExist = weatherExist;
+    }
+
+    public int getTurnNumber() {
+        return mTurnNumber;
+    }
+
+    public void setTurnNumber(int turnNumber) {
+        this.mTurnNumber = turnNumber;
+    }
+
+    public boolean isMyTurn() {
+        return mMyTurn;
+    }
+
+    public void setMyTurn(boolean myTurn) {
+        this.mMyTurn = myTurn;
+    }
+
     public String getRoomId() {
         return mRoomId;
+    }
+
+    public int getBattling() {
+        return mBattling;
     }
 
     public void setBattling(JSONObject object) throws JSONException {
@@ -140,70 +212,6 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void setDisplayTeam(JSONObject object) throws JSONException {
-        object = object.getJSONObject("side");
-        JSONArray team = object.getJSONArray("pokemon");
-        for (int i = 0; i < team.length(); i++) {
-            JSONObject info = team.getJSONObject(i);
-            PokemonInfo pkm = parsePokemonInfo(info);
-            mPlayer1Team.put(i, pkm);
-        }
-    }
-
-    private PokemonInfo parsePokemonInfo(JSONObject info) throws JSONException {
-        String details = info.getString("details");
-        String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
-        PokemonInfo pkm = new PokemonInfo(getActivity(), name);
-        String nickname = info.getString("ident").substring(4);
-        pkm.setNickname(nickname);
-        if (details.contains(", L")) {
-            String level = details.substring(details.indexOf(", L") + 3);
-            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
-            pkm.setLevel(Integer.parseInt(level));
-        }
-        if (details.contains(", M")) {
-            pkm.setGender("M");
-        } else {
-            if (details.contains(", F")) {
-                pkm.setGender("F");
-            }
-        }
-        if (details.contains("shiny")) {
-            pkm.setShiny(true);
-        }
-        String hp = info.getString("condition");
-        pkm.setHp(processHpFraction(hp));
-        pkm.setActive(info.getBoolean("active"));
-        JSONObject statsArray = info.getJSONObject("stats");
-        int[] stats = new int[5];
-        stats[0] = statsArray.getInt("atk");
-        stats[1] = statsArray.getInt("def");
-        stats[2] = statsArray.getInt("spa");
-        stats[3] = statsArray.getInt("spd");
-        stats[4] = statsArray.getInt("spe");
-        pkm.setStats(stats);
-        JSONArray movesArray = info.getJSONArray("moves");
-        HashMap<String, Integer> moves = new HashMap<>();
-        for (int i = 0; i < movesArray.length(); i++) {
-            String move = movesArray.getString(i);
-            JSONObject ppObject = MoveDex.get(getActivity()).getMoveJsonObject(move);
-            if (ppObject == null) {
-                moves.put(move, 0);
-            } else {
-                moves.put(move, ppObject.getInt("pp"));
-            }
-        }
-        pkm.setMoves(moves);
-        pkm.setAbility("baseAbility");
-        pkm.setItem("item");
-        try {
-            pkm.setCanMegaEvo(info.getBoolean("canMegaEvo"));
-        } catch (JSONException e) {
-            pkm.setCanMegaEvo(false);
-        }
-        return pkm;
-    }
-
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
@@ -214,7 +222,7 @@ public class BattleFragment extends Fragment {
         mPlayer1 = mPlayer2;
         mPlayer2 = holderString;
 
-        HashMap<Integer, PokemonInfo> holderTeam = mPlayer1Team;
+        ArrayList<PokemonInfo> holderTeam = mPlayer1Team;
         mPlayer1Team = mPlayer2Team;
         mPlayer2Team = holderTeam;
 
@@ -949,34 +957,21 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public int processHpFraction(String hpFraction) {
-        int status = hpFraction.indexOf(' ');
-        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
-        int fraction = hpFraction.indexOf('/');
-        if (fraction == -1) {
-            return 0;
-        } else {
-            int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
-            int total = Integer.parseInt(hpFraction.substring(fraction + 1));
-            return (int) (((float) remaining / (float) total) * 100);
-        }
-    }
-
     public void replacePokemon(String playerTag, String oldPkm, String newPkm) {
         if (playerTag.startsWith("p1")) {
-            int index = findPokemonInTeam(getTeamNameArrayList(mPlayer1Team), oldPkm);
+            int index = findPokemonInTeam(mPlayer1Team, oldPkm);
             if (index != -1) {
-                mPlayer1Team.put(index, new PokemonInfo(getActivity(), newPkm));
+                mPlayer1Team.set(index, new PokemonInfo(getActivity(), newPkm));
             }
         } else {
-            int index = findPokemonInTeam(getTeamNameArrayList(mPlayer2Team), oldPkm);
+            int index = findPokemonInTeam(mPlayer2Team, oldPkm);
             if (index != -1) {
-                mPlayer2Team.put(index, new PokemonInfo(getActivity(), newPkm));
+                mPlayer2Team.set(index, new PokemonInfo(getActivity(), newPkm));
             }
         }
     }
 
-    public HashMap<Integer, PokemonInfo> getTeam(String playerTag) {
+    public ArrayList<PokemonInfo> getTeam(String playerTag) {
         if (playerTag.startsWith("p1")) {
             return mPlayer1Team;
         } else {
@@ -984,7 +979,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void setTeam(String playerTag, HashMap<Integer, PokemonInfo> playerTeam) {
+    public void setTeam(String playerTag, ArrayList<PokemonInfo> playerTeam) {
         if (playerTag.startsWith("p1")) {
             mPlayer1Team = playerTeam;
         } else {
@@ -992,7 +987,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public String[] getTeamName(HashMap<Integer, PokemonInfo> teamMap) {
+    public String[] getTeamName(ArrayList<PokemonInfo> teamMap) {
         String[] team = new String[teamMap.size()];
         for (Integer i = 0; i < teamMap.size(); i++) {
             PokemonInfo pkm = teamMap.get(i);
@@ -1001,36 +996,37 @@ public class BattleFragment extends Fragment {
         return team;
     }
 
-    public ArrayList<String> getTeamNameArrayList(HashMap<Integer, PokemonInfo> teamMap) {
-        ArrayList<String> team = new ArrayList<>();
-        for (Integer i = 0; i < teamMap.size(); i++) {
-            PokemonInfo pkm = teamMap.get(i);
-            team.add(pkm.getName());
-        }
-        return team;
-    }
-
-    public int findPokemonInTeam(ArrayList<String> playerTeam, String pkm) {
-        String[] specialPkm = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+    public int findPokemonInTeam(ArrayList<PokemonInfo> playerTeam, String pkm) {
         boolean special = false;
         String species = "";
-        for (String sp : specialPkm) {
+        for (String sp : MORPHS) {
             if (pkm.contains(sp)) {
                 special = true;
                 species = sp;
                 break;
             }
         }
+
+        ArrayList<String> teamName = getPokemonNameInTeam(playerTeam);
+
         if (!special) {
-            return playerTeam.indexOf(pkm);
+            return teamName.indexOf(pkm);
         } else {
-            for (int i = 0; i < playerTeam.size(); i++) {
-                if (playerTeam.get(i).contains(species)) {
+            for (int i = 0; i < teamName.size(); i++) {
+                if (teamName.get(i).contains(species)) {
                     return i;
                 }
             }
             return -1;
         }
+    }
+
+    public ArrayList<String> getPokemonNameInTeam(ArrayList<PokemonInfo> playerTeam) {
+        ArrayList<String> teamName = new ArrayList<>();
+        for (PokemonInfo pkm : playerTeam) {
+            teamName.add(pkm.getName());
+        }
+        return teamName;
     }
 
     public String getPrintableOutputPokemonSide(String split) {

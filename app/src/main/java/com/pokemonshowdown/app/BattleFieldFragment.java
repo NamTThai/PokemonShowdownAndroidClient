@@ -155,7 +155,7 @@ public class BattleFieldFragment extends Fragment {
         }
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
-            if (fragment.mBattling != 0) {
+            if (fragment.getBattling() != 0) {
                 MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
             }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
