@@ -24,10 +24,9 @@ import java.util.ArrayList;
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
 
-    private ProgressDialog waitingDialog;
-
+    private ProgressDialog mWaitingDialog;
     private ArrayList<String> mFormatList;
-    private Spinner pokemonTeamSpinner;
+    private Spinner mPokemonTeamSpinner;
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
 
@@ -49,7 +48,7 @@ public class FindBattleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setAvailableFormat();
-        waitingDialog = new ProgressDialog(getActivity());
+        mWaitingDialog = new ProgressDialog(getActivity());
 
         TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
         findBattle.setOnClickListener(new View.OnClickListener() {
@@ -65,20 +64,20 @@ public class FindBattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
-                waitingDialog.setMessage("Downloading list of matches");
-                waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                waitingDialog.setCancelable(true);
+                mWaitingDialog.setMessage("Downloading list of matches");
+                mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mWaitingDialog.setCancelable(true);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        waitingDialog.show();
+                        mWaitingDialog.show();
                     }
                 });
             }
         });
 
-        pokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
+        mPokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
     }
 
     @Override
@@ -88,13 +87,13 @@ public class FindBattleFragment extends Fragment {
 
         if(PokemonTeam.getPokemonTeamList().size() > 0) {
             PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
-            pokemonTeamSpinner.setAdapter(pokemonTeamListArrayAdapter);
-            pokemonTeamSpinner.setEnabled(true);
+            mPokemonTeamSpinner.setAdapter(pokemonTeamListArrayAdapter);
+            mPokemonTeamSpinner.setEnabled(true);
         } else {
             //there are no teams, we fill the spinner with a filler item an disable it
             ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
-            pokemonTeamSpinner.setAdapter(adapter);
-            pokemonTeamSpinner.setEnabled(false);
+            mPokemonTeamSpinner.setAdapter(adapter);
+            mPokemonTeamSpinner.setEnabled(false);
         }
 
     }
@@ -133,7 +132,7 @@ public class FindBattleFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                waitingDialog.dismiss();
+                mWaitingDialog.dismiss();
             }
         });
 
