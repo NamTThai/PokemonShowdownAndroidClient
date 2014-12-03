@@ -406,8 +406,13 @@ public class TeamBuildingActivity extends FragmentActivity {
                 builder.setTitle(R.string.error_dialog_title);
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
                 switch (mTask) {
+                    case EXPORT_FOR_QR:
                     case EXPORT:
-                        builder.setMessage(R.string.export_error_dialog_message);
+                        if (aString == null) {
+                            builder.setMessage(R.string.export_error_dialog_message);
+                        } else {
+                            builder.setMessage(aString);
+                        }
                         break;
                     case IMPORT:
                         builder.setMessage(R.string.import_error_dialog_message);
@@ -501,7 +506,12 @@ public class TeamBuildingActivity extends FragmentActivity {
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity entity = response.getEntity();
                 outputURL = EntityUtils.toString(entity, ENCODING);
-                success = true;
+                if (outputURL.startsWith("http://pastebin.com/")) {
+                    success = true;
+                } else {
+                    //export error (post limit reached)
+                    success = false;
+                }
             } catch (IOException e) {
                 outputURL = null;
                 mException = e;
