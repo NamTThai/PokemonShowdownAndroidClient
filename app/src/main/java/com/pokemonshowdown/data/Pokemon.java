@@ -614,24 +614,6 @@ public class Pokemon implements Serializable {
         return "???";
     }
 
-    public static int getPokemonSprite(Context appContext, String name, boolean withAppContext) {
-        try {
-            JSONObject jsonObject;
-            if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
-            } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
-            }
-            int toReturn = appContext.getResources().getIdentifier("sprites_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
-            return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
-        } catch (JSONException e) {
-            Log.d(PTAG, e.toString());
-        } catch (NullPointerException e) {
-            return R.drawable.sprites_0;
-        }
-        return R.drawable.sprites_0;
-    }
-
     public static int getPokemonSprite(Context appContext, String name, boolean withAppContext, boolean back, boolean female, boolean shiny) {
         try {
             JSONObject jsonObject;

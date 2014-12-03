@@ -206,9 +206,11 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(pokeName), false);
+                        int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                MyApplication.toId(pokeName), false);
                         if (view == null) {
-                            viewData.addViewSetterOnHold(iconId, imageResource, BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            viewData.addViewSetterOnHold(iconId, imageResource,
+                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
                         } else {
                             ImageView icon = (ImageView) view.findViewById(iconId);
                             if (icon != null) {
@@ -231,24 +233,28 @@ public class BattleMessage {
                         battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_teampreview, frameLayout);
                         for (int i = 0; i < team1.size(); i++) {
                             ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team1.get(i).getName()), false, true, false, false));
+                            PokemonInfo pkm = team1.get(i);
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
+                                    MyApplication.toId(pkm.getName()), false, true, pkm.isFemale(), pkm.isShiny()));
                         }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
-                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(team2.get(i).getName()), false, false, false, false));
+                            PokemonInfo pkm = team2.get(i);
+                            sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
+                                    MyApplication.toId(pkm.getName()), false, false, pkm.isFemale(), pkm.isShiny()));
                         }
                     }
                 });
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
-                String[] p1Team = battleFragment.getTeamName(team1);
+                String[] p1Team = battleFragment.getTeamNameStringArray(team1);
                 for (int i = 0; i < p1Team.length - 1; i++) {
                     toAppendBuilder.append(p1Team[i]).append("/");
                 }
                 toAppendBuilder.append(p1Team[p1Team.length - 1]);
 
                 toAppendBuilder.append("\n").append(battleFragment.getPlayer2()).append("'s Team: ");
-                String[] p2Team = battleFragment.getTeamName(team2);
+                String[] p2Team = battleFragment.getTeamNameStringArray(team2);
                 for (int i = 0; i < p2Team.length - 1; i++) {
                     toAppendBuilder.append(p2Team[i]).append("/");
                 }
@@ -294,22 +300,34 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (battleFragment.getView() == null) {
-                            return;
-                        }
                         if (player.equals("p1")) {
-                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
-                            textView.setVisibility(View.VISIBLE);
-                            textView.setText(inactive);
+                            if (view == null) {
+                                viewData.addViewSetterOnHold(R.id.inactive, inactive,
+                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                                viewData.addViewSetterOnHold(R.id.inactive, null,
+                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
+                            } else {
+                                TextView textView = (TextView) view.findViewById(R.id.inactive);
+                                textView.setVisibility(View.VISIBLE);
+                                textView.setText(inactive);
+                            }
                         } else {
-                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive_o);
-                            textView.setVisibility(View.VISIBLE);
-                            textView.setText(inactive);
+                            if (view == null) {
+                                viewData.addViewSetterOnHold(R.id.inactive_o, inactive,
+                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                                viewData.addViewSetterOnHold(R.id.inactive_o, null,
+                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
+                            } else {
+                                TextView textView = (TextView) view.findViewById(R.id.inactive_o);
+                                textView.setVisibility(View.VISIBLE);
+                                textView.setText(inactive);
+                            }
                         }
                     }
                 });
                 toAppendSpannable = new SpannableString(messageDetails);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red), 0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red),
+                        0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
@@ -317,15 +335,20 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (battleFragment.getView() == null) {
-                            return;
+                        if (view == null) {
+                            viewData.addViewSetterOnHold(R.id.inactive, null,
+                                    BattleFieldData.ViewData.SetterType.VIEW_GONE);
+                            viewData.addViewSetterOnHold(R.id.inactive_o, null,
+                                    BattleFieldData.ViewData.SetterType.VIEW_GONE);
+                        } else {
+                            view.findViewById(R.id.inactive).setVisibility(View.GONE);
+                            view.findViewById(R.id.inactive_o).setVisibility(View.GONE);
                         }
-                        (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        (battleFragment.getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
                 });
                 toAppendSpannable = new SpannableString(messageDetails);
-                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red), 0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red),
+                        0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
@@ -333,18 +356,21 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (battleFragment.getView() == null) {
-                            return;
+                        if (view == null) {
+                            viewData.addViewSetterOnHold(R.id.battle_interface, null,
+                                    BattleFieldData.ViewData.SetterType.BATTLE_START);
+                        } else {
+                            FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.battle_interface);
+                            frameLayout.removeAllViews();
+                            battleFragment.getActivity().getLayoutInflater()
+                                    .inflate(R.layout.fragment_battle_animation, frameLayout);
                         }
-
-                        FrameLayout frameLayout = (FrameLayout) battleFragment.getView().findViewById(R.id.battle_interface);
-                        frameLayout.removeAllViews();
-                        battleFragment.getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_animation, frameLayout);
                     }
                 });
                 toAppend = battleFragment.getPlayer1() + " vs. " + battleFragment.getPlayer2();
                 toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), 0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD),
+                        0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
             case "move":
@@ -360,17 +386,18 @@ public class BattleMessage {
                 toAppend = toAppendBuilder.toString();
                 start = toAppend.indexOf(move);
                 toAppendSpannable = new SpannableString(toAppend);
-                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD), start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD),
+                        start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = toAppendSpannable;
                 toast = battleFragment.makeToast(logMessage);
 
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment.getView(), battleFragment, split);
+                        AnimatorSet animatorSet = BattleAnimation.processMove(move, view, battleFragment, split);
                         animatorSet.start();
                     }
 
@@ -493,28 +520,28 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
                         battleFragment.displayPokemon(messageDetails.substring(0, 3));
 
-                        ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(messageDetails.substring(0, 3)));
+                        ImageView sprites = (ImageView) view.findViewById(battleFragment.getSpriteId(messageDetails.substring(0, 3)));
                         if (sprites != null) {
                             sprites.setImageResource(spriteId);
                         }
-                        ImageView iconLeader = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(messageDetails, battleFragment.getTeamSlot(messageDetails)));
+                        ImageView iconLeader = (ImageView) view.findViewById(battleFragment.getIconId(messageDetails, battleFragment.getTeamSlot(messageDetails)));
                         Drawable leader = iconLeader.getDrawable();
-                        ImageView iconTrailer = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(messageDetails, toBeSwapped));
+                        ImageView iconTrailer = (ImageView) view.findViewById(battleFragment.getIconId(messageDetails, toBeSwapped));
                         iconTrailer.setImageDrawable(leader);
                         iconLeader.setImageResource(iconId);
 
-                        TextView pkmName = (TextView) battleFragment.getView().findViewById(battleFragment.getSpriteNameid(messageDetails.substring(0, 3)));
+                        TextView pkmName = (TextView) view.findViewById(battleFragment.getSpriteNameid(messageDetails.substring(0, 3)));
                         if (pkmName != null) {
                             pkmName.setText(levelFinal);
                         }
 
-                        ImageView gender = (ImageView) battleFragment.getView().findViewById(battleFragment.getGenderId(messageDetails.substring(0, 3)));
+                        ImageView gender = (ImageView) view.findViewById(battleFragment.getGenderId(messageDetails.substring(0, 3)));
                         if (gender != null) {
                             if (genderFinal.equals("M")) {
                                 gender.setImageResource(R.drawable.ic_gender_male);
@@ -525,8 +552,8 @@ public class BattleMessage {
                             }
                         }
 
-                        TextView hpText = (TextView) battleFragment.getView().findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
-                        ProgressBar hpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(messageDetails.substring(0, 3)));
+                        TextView hpText = (TextView) view.findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
+                        ProgressBar hpBar = (ProgressBar) view.findViewById(battleFragment.getHpBarId(messageDetails.substring(0, 3)));
                         if (hpText != null) {
                             hpText.setText(hpString);
                         }
@@ -569,14 +596,14 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
                         boolean back = split[0].startsWith("p1");
-                        ImageView sprite = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(position));
+                        ImageView sprite = (ImageView) view.findViewById(battleFragment.getSpriteId(position));
                         sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(forme), false, back, false, false));
-                        ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
+                        ImageView icon = (ImageView) view.findViewById(battleFragment.getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(forme), false));
                     }
 
@@ -610,12 +637,12 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
                         battleFragment.hidePokemon(position);
-                        ImageView fainted = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
+                        ImageView fainted = (ImageView) view.findViewById(battleFragment.getIconId(position));
                         fainted.setImageResource(R.drawable.pokeball_unavailable);
                     }
 
@@ -640,22 +667,22 @@ public class BattleMessage {
                 break;
 
             case "turn":
-                if (battleFragment.getView() == null) {
+                if (view == null) {
                     return;
                 }
-                TextView turn = (TextView) battleFragment.getView().findViewById(R.id.turn);
+                TextView turn = (TextView) view.findViewById(R.id.turn);
                 animator = ObjectAnimator.ofFloat(turn, "alpha", 0f, 1f);
                 toAppend = "TURN " + messageDetails;
                 animator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        battleFragment.getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
-                        ((TextView) battleFragment.getView().findViewById(R.id.turn)).setText(toAppend);
-                        (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        (battleFragment.getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
+                        view.findViewById(R.id.turn).setVisibility(View.VISIBLE);
+                        ((TextView) view.findViewById(R.id.turn)).setText(toAppend);
+                        (view.findViewById(R.id.inactive)).setVisibility(View.GONE);
+                        (view.findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
 
                     @Override
@@ -783,6 +810,8 @@ public class BattleMessage {
 
 
     public static void processMinorAction(final BattleFragment battleFragment, String command, final String messageDetails) {
+        final View view = battleFragment.getView();
+
         int separator;
         Integer oldHP;
         final int lostHP;
@@ -826,7 +855,7 @@ public class BattleMessage {
         AnimatorSet toast;
         AnimatorSet animatorSet;
 
-        if (battleFragment.getView() == null) {
+        if (view == null) {
             return;
         }
 
@@ -915,14 +944,14 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(messageDetails))).setText(Integer.toString(intAmount));
+                        ((TextView) view.findViewById(battleFragment.getHpId(messageDetails))).setText(Integer.toString(intAmount));
 
-                        ImageView imageView = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(messageDetails));
+                        ImageView imageView = (ImageView) view.findViewById(battleFragment.getSpriteId(messageDetails));
 
-                        RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
+                        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams.addRule(RelativeLayout.ALIGN_TOP, battleFragment.getSpriteId(messageDetails));
                         layoutParams.addRule(RelativeLayout.ALIGN_LEFT, battleFragment.getSpriteId(messageDetails));
@@ -932,11 +961,11 @@ public class BattleMessage {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
-                        RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
+                        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         relativeLayout.removeView(damage);
                     }
 
@@ -960,7 +989,7 @@ public class BattleMessage {
                 fadeOut.setStartDelay(BattleFragment.ANIMATION_SHORT / 2);
                 fadeOut.setDuration(BattleFragment.ANIMATION_SHORT / 4);
 
-                ProgressBar hpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(messageDetails));
+                ProgressBar hpBar = (ProgressBar) view.findViewById(battleFragment.getHpBarId(messageDetails));
                 ObjectAnimator hpCountDownBar = ObjectAnimator.ofInt(hpBar, "progress", intAmount);
                 hpCountDownBar.setDuration(BattleFragment.ANIMATION_SHORT);
                 hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -1053,14 +1082,14 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(messageDetails))).setText(Integer.toString(intAmount));
+                        ((TextView) view.findViewById(battleFragment.getHpId(messageDetails))).setText(Integer.toString(intAmount));
 
-                        ImageView imageView = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(messageDetails));
+                        ImageView imageView = (ImageView) view.findViewById(battleFragment.getSpriteId(messageDetails));
 
-                        RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
+                        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         layoutParams.addRule(RelativeLayout.ALIGN_TOP, battleFragment.getSpriteId(messageDetails));
                         layoutParams.addRule(RelativeLayout.ALIGN_LEFT, battleFragment.getSpriteId(messageDetails));
@@ -1070,11 +1099,11 @@ public class BattleMessage {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
 
-                        RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
+                        RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         relativeLayout.removeView(heal);
                     }
 
@@ -1098,7 +1127,7 @@ public class BattleMessage {
                 fadeOut.setStartDelay(BattleFragment.ANIMATION_SHORT / 2);
                 fadeOut.setDuration(BattleFragment.ANIMATION_SHORT / 4);
 
-                hpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(messageDetails));
+                hpBar = (ProgressBar) view.findViewById(battleFragment.getHpBarId(messageDetails));
                 hpCountDownBar = ObjectAnimator.ofInt(hpBar, "progress", intAmount);
                 hpCountDownBar.setDuration(BattleFragment.ANIMATION_SHORT);
                 hpCountDownBar.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -1122,20 +1151,20 @@ public class BattleMessage {
                         toast.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int pkmAHp = processHpFraction(split[1]);
                                 int pkmBHp = processHpFraction(split[3]);
 
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
+                                ((TextView) view.findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
+                                ((TextView) view.findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
 
-                                ProgressBar pkmAHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0]));
+                                ProgressBar pkmAHpBar = (ProgressBar) view.findViewById(battleFragment.getHpBarId(split[0]));
                                 ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
                                 pkmACountDown.setDuration(BattleFragment.ANIMATION_SHORT);
                                 pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
-                                ProgressBar pkmBHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2]));
+                                ProgressBar pkmBHpBar = (ProgressBar) view.findViewById(battleFragment.getHpBarId(split[2]));
                                 ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
                                 pkmBCountDown.setDuration(BattleFragment.ANIMATION_SHORT);
                                 pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -1487,10 +1516,10 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        LinearLayout linearLayout = (LinearLayout) battleFragment.getView().findViewById(battleFragment.getTempStatusId(split[0]));
+                        LinearLayout linearLayout = (LinearLayout) view.findViewById(battleFragment.getTempStatusId(split[0]));
                         for (String stat : BattleFragment.STATS) {
                             TextView v = (TextView) linearLayout.findViewWithTag(stat);
                             linearLayout.removeView(v);
@@ -1549,12 +1578,12 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
                         String[] layouts = {"p1a", "p1b", "p1c", "p2a", "p2b", "p2c"};
                         for (String layout : layouts) {
-                            LinearLayout linearLayout = (LinearLayout) battleFragment.getView().findViewById(battleFragment.getTempStatusId(layout));
+                            LinearLayout linearLayout = (LinearLayout) view.findViewById(battleFragment.getTempStatusId(layout));
                             for (String stat : BattleFragment.STATS) {
                                 TextView v = (TextView) linearLayout.findViewWithTag(stat);
                                 linearLayout.removeView(v);
@@ -2261,11 +2290,11 @@ public class BattleMessage {
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (battleFragment.getView() == null) {
+                        if (view == null) {
                             return;
                         }
-                        ImageView orgn = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
-                        ImageView dest = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[1]));
+                        ImageView orgn = (ImageView) view.findViewById(battleFragment.getSpriteId(split[0]));
+                        ImageView dest = (ImageView) view.findViewById(battleFragment.getSpriteId(split[1]));
                         orgn.setImageDrawable(dest.getDrawable());
                         battleFragment.copyBoost(split[1], split[0]);
                     }
@@ -2825,16 +2854,16 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ImageView imageView = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
+                                    ImageView imageView = (ImageView) view.findViewById(battleFragment.getSpriteId(split[0]));
                                     imageView.setAlpha(0.2f);
                                     ImageView substitute = new ImageView(battleFragment.getActivity());
                                     substitute.setImageResource(battleFragment.getSubstitute(split[0]));
                                     substitute.setTag("Substitute");
 
-                                    RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[0]));
+                                    RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[0]));
                                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                                     layoutParams.addRule(RelativeLayout.ALIGN_TOP, battleFragment.getSpriteId(split[0]));
                                     layoutParams.addRule(RelativeLayout.ALIGN_LEFT, battleFragment.getSpriteId(split[0]));
@@ -3037,15 +3066,15 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[0]));
+                                RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[0]));
                                 View v = relativeLayout.findViewWithTag("Substitute");
                                 if (v != null) {
                                     relativeLayout.removeView(v);
                                 }
-                                ImageView imageView = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
+                                ImageView imageView = (ImageView) view.findViewById(battleFragment.getSpriteId(split[0]));
                                 imageView.setAlpha(1f);
                             }
 
@@ -3433,11 +3462,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
+                                view.findViewById(id).setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -3462,10 +3491,10 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, true)).setVisibility(View.VISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleSpike(messageDetails, true)).setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -3490,10 +3519,10 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, true)).setVisibility(View.VISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleTSpike(messageDetails, true)).setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -3526,11 +3555,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
+                                view.findViewById(id).setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -3555,11 +3584,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
+                                view.findViewById(id).setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -3633,11 +3662,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
+                                view.findViewById(id).setVisibility(View.INVISIBLE);
                             }
 
                             @Override
@@ -3662,12 +3691,12 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
                             }
 
                             @Override
@@ -3692,11 +3721,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
-                                battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
+                                view.findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
                             }
 
                             @Override
@@ -3731,11 +3760,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
+                                view.findViewById(id).setVisibility(View.INVISIBLE);
                             }
 
                             @Override
@@ -3761,11 +3790,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
-                                battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
+                                view.findViewById(id).setVisibility(View.INVISIBLE);
                             }
 
                             @Override
@@ -3840,11 +3869,11 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
-                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                    ((ImageView) view.findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
+                                    ((TextView) view.findViewById(R.id.weather)).setText(weather);
                                 }
 
                                 @Override
@@ -3873,11 +3902,11 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sandstorm);
-                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                    ((ImageView) view.findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sandstorm);
+                                    ((TextView) view.findViewById(R.id.weather)).setText(weather);
                                 }
 
                                 @Override
@@ -3906,11 +3935,11 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
-                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                    ((ImageView) view.findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
+                                    ((TextView) view.findViewById(R.id.weather)).setText(weather);
                                 }
 
                                 @Override
@@ -3940,11 +3969,11 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_hail);
-                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                    ((ImageView) view.findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_hail);
+                                    ((TextView) view.findViewById(R.id.weather)).setText(weather);
                                 }
 
                                 @Override
@@ -3983,11 +4012,11 @@ public class BattleMessage {
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
-                                    if (battleFragment.getView() == null) {
+                                    if (view == null) {
                                         return;
                                     }
-                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(0);
-                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(null);
+                                    ((ImageView) view.findViewById(R.id.weather_background)).setImageResource(0);
+                                    ((TextView) view.findViewById(R.id.weather)).setText(null);
                                 }
 
                                 @Override
@@ -4026,10 +4055,10 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
-                                ((ImageView) battleFragment.getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
+                                ((ImageView) view.findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
                             }
 
                             @Override
@@ -4087,11 +4116,11 @@ public class BattleMessage {
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-                                if (battleFragment.getView() == null) {
+                                if (view == null) {
                                     return;
                                 }
                                 int id = new Random().nextInt(BattleFragment.BACKGROUND_LIBRARY.length);
-                                ((ImageView) battleFragment.getView().findViewById(R.id.battle_background)).setImageResource(BattleFragment.BACKGROUND_LIBRARY[id]);
+                                ((ImageView) view.findViewById(R.id.battle_background)).setImageResource(BattleFragment.BACKGROUND_LIBRARY[id]);
                             }
 
                             @Override
@@ -4206,23 +4235,9 @@ public class BattleMessage {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
         PokemonInfo pkm = new PokemonInfo(battleFragment.getActivity(), name);
+        processPokemonDetailString(pkm, details);
         String nickname = info.getString("ident").substring(4);
         pkm.setNickname(nickname);
-        if (details.contains(", L")) {
-            String level = details.substring(details.indexOf(", L") + 3);
-            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
-            pkm.setLevel(Integer.parseInt(level));
-        }
-        if (details.contains(", M")) {
-            pkm.setGender("M");
-        } else {
-            if (details.contains(", F")) {
-                pkm.setGender("F");
-            }
-        }
-        if (details.contains("shiny")) {
-            pkm.setShiny(true);
-        }
         String hp = info.getString("condition");
         pkm.setHp(processHpFraction(hp));
         pkm.setActive(info.getBoolean("active"));
@@ -4278,8 +4293,25 @@ public class BattleMessage {
         return name;
     }
 
-    private static void processPokemonInfoString(PokemonInfo pkm, String info) {
-
+    private static void processPokemonDetailString(PokemonInfo pkm, String details) {
+        String[] split = details.split(" ,");
+        String name = split[0];
+        pkm.setName(name);
+        if (details.contains(", L")) {
+            String level = details.substring(details.indexOf(", L") + 3);
+            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
+            pkm.setLevel(Integer.parseInt(level));
+        }
+        if (details.contains(", M")) {
+            pkm.setGender("M");
+        } else {
+            if (details.contains(", F")) {
+                pkm.setGender("F");
+            }
+        }
+        if (details.contains("shiny")) {
+            pkm.setShiny(true);
+        }
     }
     
 }

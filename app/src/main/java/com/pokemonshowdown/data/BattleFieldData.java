@@ -339,7 +339,10 @@ public class BattleFieldData {
     public static class ViewData {
         private String mRoomId;
         private LinkedList<ViewSetter> mViewSetterOnHold;
-        public static enum SetterType {TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE};
+        public static enum SetterType {
+            BATTLE_START,
+            TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
+            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE};
 
         public ViewData(String roomId) {
             mRoomId = roomId;

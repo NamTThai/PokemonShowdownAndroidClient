@@ -166,7 +166,7 @@
     </string-array>
     <string name="url_dialog_title">Enter URL</string>
     <string name="pastebin_url">http://pastebin.com/</string>
-    <string name="error_dialog_title">Eror</string>
+    <string name="error_dialog_title">Error</string>
     <string name="export_error_dialog_message">Exporting data failed!</string>
     <string name="import_error_dialog_message">Importing data failed!</string>
     <string name="export_success_dialog_title">Export successful!</string>
@@ -176,7 +176,7 @@
     <string-array name="empty_team_list_filler">
         <item>No teams!</item>
     </string-array>
+    <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>
