@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Created by thain on 7/22/14.
  * <p/>
  * Array index (including nature array)
  * HP: 0
@@ -34,7 +33,7 @@ import java.util.Iterator;
  * Level: 100
  */
 public class Pokemon implements Serializable {
-    public final static String PTAG = "POKEMON_OBJECT";
+    public final static String PTAG = Pokemon.class.getName();
     public final static String[] NATURES = {"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"};
     public final static String[] NATURES_DETAILS = {"Adamant (+Atk -SpA)", "Bashful", "Bold (+Def -Atk)", "Brave (+Atk -Spe)", "Calm (+SpD -Atk)", "Careful (+SpD -SpA)", "Docile", "Gentle (+SpD -Def)", "Hardy", "Hasty (+Spe -Def)", "Impish (+Def -SpA)", "Jolly (+Spe -SpA)", "Lax (+Def -SpD)", "Lonely (+Atk -Def)", "Mild (+SpA -Def)", "Modest (+SpA -Atk)", "Naive (+Spe -SpD)", "Naughty (+Atk -SpD)", "Quiet (+SpA -Spe)", "Quirky", "Rash (+SpA -SpD)", "Relaxed (+Def -Spe)", "Sassy (+SpD -Spe)", "Serious", "Timid (+Spe -Atk)"};
 
@@ -613,24 +612,6 @@ public class Pokemon implements Serializable {
             return "???";
         }
         return "???";
-    }
-
-    public static int getPokemonSprite(Context appContext, String name, boolean withAppContext) {
-        try {
-            JSONObject jsonObject;
-            if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
-            } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
-            }
-            int toReturn = appContext.getResources().getIdentifier("sprites_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
-            return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
-        } catch (JSONException e) {
-            Log.d(PTAG, e.toString());
-        } catch (NullPointerException e) {
-            return R.drawable.sprites_0;
-        }
-        return R.drawable.sprites_0;
     }
 
     public static int getPokemonSprite(Context appContext, String name, boolean withAppContext, boolean back, boolean female, boolean shiny) {

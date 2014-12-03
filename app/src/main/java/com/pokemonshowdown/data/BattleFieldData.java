@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public class BattleFieldData {
     private final static String BTAG = BattleFieldData.class.getName();
@@ -21,6 +22,7 @@ public class BattleFieldData {
     private ArrayList<String> mRoomList;
     private HashMap<String, RoomData> mRoomDataHashMap;
     private HashMap<String, AnimationData> mAnimationDataHashMap;
+    private HashMap<String, ViewData> mViewDataHashMap;
 
     private static BattleFieldData sBattleFieldData;
     private Context mAppContext;
@@ -32,6 +34,7 @@ public class BattleFieldData {
         mRoomList.add("global");
         mRoomDataHashMap = new HashMap<>();
         mAnimationDataHashMap = new HashMap<>();
+        mViewDataHashMap = new HashMap<>();
     }
 
     public static BattleFieldData get(Context c) {
@@ -179,11 +182,20 @@ public class BattleFieldData {
         return mAnimationDataHashMap.get(roomId);
     }
 
+    public HashMap<String, ViewData> getViewDataHashMap() {
+        return mViewDataHashMap;
+    }
+
+    public ViewData getViewData(String roomId) {
+        return mViewDataHashMap.get(roomId);
+    }
+
     public void joinRoom(String roomId, boolean watch) {
         HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
         if (!roomDataHashMap.containsKey(roomId)) {
             roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
             getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));
+            getViewDataHashMap().put(roomId, new ViewData(roomId));
         }
         if (watch) {
             MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
@@ -194,6 +206,7 @@ public class BattleFieldData {
         mRoomList.remove(roomId);
         getRoomDataHashMap().remove(roomId);
         getAnimationDataHashMap().remove(roomId);
+        getViewDataHashMap().remove(roomId);
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 
@@ -290,16 +303,8 @@ public class BattleFieldData {
             return mRoomId;
         }
 
-        public void setRoomId(String roomId) {
-            mRoomId = roomId;
-        }
-
         public ArrayList<String> getServerMessageOnHold() {
             return mServerMessageOnHold;
-        }
-
-        public void setServerMessageOnHold(ArrayList<String> serverMessageOnHold) {
-            mServerMessageOnHold = serverMessageOnHold;
         }
 
         public void addServerMessageOnHold(String serverMessageOnHold) {
@@ -328,6 +333,57 @@ public class BattleFieldData {
 
         public void setPlayer2(String player2) {
             mPlayer2 = player2;
+        }
+    }
+
+    public static class ViewData {
+        private String mRoomId;
+        private LinkedList<ViewSetter> mViewSetterOnHold;
+        public static enum SetterType {
+            BATTLE_START,
+            TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
+            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE};
+
+        public ViewData(String roomId) {
+            mRoomId = roomId;
+            mViewSetterOnHold = new LinkedList<>();
+        }
+
+        public String getRoomId() {
+            return mRoomId;
+        }
+
+        public void addViewSetterOnHold(int viewId, Object value, SetterType type) {
+            mViewSetterOnHold.addLast(new ViewSetter(viewId, value, type));
+        }
+
+        public LinkedList<ViewSetter> getViewSetterOnHold() {
+            return mViewSetterOnHold;
+        }
+
+    }
+
+    public static class ViewSetter {
+        private int viewId;
+        private Object value;
+        private ViewData.SetterType type;
+
+        public ViewSetter(int viewId, Object value, ViewData.SetterType type) {
+            this.viewId = viewId;
+            this.value = value;
+            this.type = type;
+        }
+
+        public int getViewId() {
+            return viewId;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public ViewData.SetterType getType() {
+            return type;
         }
     }
 
