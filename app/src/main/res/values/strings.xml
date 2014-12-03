@@ -165,13 +165,14 @@
     </string-array>
     <string name="url_dialog_title">Enter URL</string>
     <string name="pastebin_url">http://pastebin.com/</string>
-    <string name="error_dialog_title">Eror</string>
+    <string name="error_dialog_title">Error</string>
     <string name="export_error_dialog_message">Exporting data failed!</string>
     <string name="import_error_dialog_message">Importing data failed!</string>
     <string name="export_success_dialog_title">Export successful!</string>
     <string name="import_success_dialog_title">Import successful!</string>
     <string name="export_inprogress">Exporting to pastebin…</string>
     <string name="import_inprogress">Importing from pastebin…</string>
+    <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
 
 
 
