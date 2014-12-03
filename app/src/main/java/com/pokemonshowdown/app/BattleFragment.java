@@ -987,7 +987,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public String[] getTeamName(ArrayList<PokemonInfo> teamMap) {
+    public String[] getTeamNameStringArray(ArrayList<PokemonInfo> teamMap) {
         String[] team = new String[teamMap.size()];
         for (Integer i = 0; i < teamMap.size(); i++) {
             PokemonInfo pkm = teamMap.get(i);
@@ -1007,7 +1007,7 @@ public class BattleFragment extends Fragment {
             }
         }
 
-        ArrayList<String> teamName = getPokemonNameInTeam(playerTeam);
+        ArrayList<String> teamName = getTeamNameArrayList(playerTeam);
 
         if (!special) {
             return teamName.indexOf(pkm);
@@ -1021,7 +1021,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public ArrayList<String> getPokemonNameInTeam(ArrayList<PokemonInfo> playerTeam) {
+    public ArrayList<String> getTeamNameArrayList(ArrayList<PokemonInfo> playerTeam) {
         ArrayList<String> teamName = new ArrayList<>();
         for (PokemonInfo pkm : playerTeam) {
             teamName.add(pkm.getName());

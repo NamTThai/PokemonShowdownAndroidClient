@@ -111,6 +111,10 @@ public class PokemonInfo implements Serializable {
         mGender = gender;
     }
 
+    public boolean isFemale() {
+        return (getGender() != null && getGender().equals("F"));
+    }
+
     public boolean isShiny() {
         return mShiny;
     }
