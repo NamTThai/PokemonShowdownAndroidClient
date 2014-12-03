@@ -1,6 +1,5 @@
 package com.pokemonshowdown.app;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -22,6 +21,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import org.apache.http.HttpEntity;
@@ -90,7 +91,6 @@ public class TeamBuildingActivity extends FragmentActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                // TODO ?
             }
         });
 
@@ -131,18 +131,15 @@ public class TeamBuildingActivity extends FragmentActivity {
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == QR_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                String format = data.getStringExtra("SCAN_RESULT_FORMAT");
-                new PastebinTask(PastebinTaskId.IMPORT).execute(contents);
-                //contents is pastebin url
-            } else if (resultCode == RESULT_CANCELED) {
-                // TODO Handle cancel
-            }
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            //  here weh ave the url read from the barcode
+            String url = scanResult.getContents();
+            new PastebinTask(PastebinTaskId.IMPORT).execute(url);
         } else {
             //passing to the fragment below (for searchable pokemons/moves ...  etc etc)
             super.onActivityResult(requestCode, resultCode, data);
+
         }
     }
 
@@ -189,34 +186,41 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_export_team:
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.export_title);
-                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == CLIPBOARD) {
-                            int position = pkmn_spinner.getSelectedItemPosition();
-                            if (position != AdapterView.INVALID_POSITION) {
-                                PokemonTeam pt = pokemonTeamList.get(position);
-                                ClipboardManager clipboard = (ClipboardManager)
-                                        getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
-                                clipboard.setPrimaryClip(clip);
-                                Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (item == CLIPBOARD) {
+                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    if (position != AdapterView.INVALID_POSITION) {
+                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        ClipboardManager clipboard = (ClipboardManager)
+                                                getSystemService(Context.CLIPBOARD_SERVICE);
+                                        ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
+                                        clipboard.setPrimaryClip(clip);
+                                        Toast.makeText(getApplicationContext(), R.string.team_exported, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
+                                    }
+                                } else if (item == PASTEBIN) {
+                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    if (position != AdapterView.INVALID_POSITION) {
+                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        String exportData = pt.exportPokemonTeam(getApplicationContext());
+                                        new PastebinTask(PastebinTaskId.EXPORT).execute(exportData);
+                                    }
+                                } else if (item == QR) {
+                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    if (position != AdapterView.INVALID_POSITION) {
+                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        String exportData = pt.exportPokemonTeam(getApplicationContext());
+                                        PastebinTask pastebinTask = new PastebinTask(PastebinTaskId.EXPORT_FOR_QR);
+                                        pastebinTask.execute(exportData);
+                                    }
+                                }
                             }
-                        } else if (item == PASTEBIN) {
-                            int position = pkmn_spinner.getSelectedItemPosition();
-                            if (position != AdapterView.INVALID_POSITION) {
-                                PokemonTeam pt = pokemonTeamList.get(position);
-                                String exportData = pt.exportPokemonTeam(getApplicationContext());
-                                new PastebinTask(PastebinTaskId.EXPORT).execute(exportData);
-                            }
-                        } else {
-                            new AlertDialog.Builder(TeamBuildingActivity.this)
-                                    .setMessage(R.string.still_in_development)
-                                    .create().show();
                         }
-                    }
-                });
+
+                );
                 alert = builder.create();
                 alert.show();
                 return true;
@@ -224,57 +228,59 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_import_team:
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.import_title);
-                builder.setItems(getResources().getStringArray(R.array.export_import_sources), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == CLIPBOARD) {
-                            ClipboardManager clipboard = (ClipboardManager)
-                                    getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData importClip = clipboard.getPrimaryClip();
-                            if (importClip != null) {
-                                ClipData.Item clipItem = importClip.getItemAt(0);
-                                // Gets the clipboard as text.
-                                String pasteData = clipItem.getText().toString();
-                                PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
-                                if (pt != null && pt.getTeamSize() > 0) {
-                                    pokemonTeamList.add(pt);
-                                    pt.setNickname("Imported Team");
-                                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                                    pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
-                                    Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
+                builder.setItems(getResources().getStringArray(R.array.export_import_sources),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (item == CLIPBOARD) {
+                                    ClipboardManager clipboard = (ClipboardManager)
+                                            getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData importClip = clipboard.getPrimaryClip();
+                                    if (importClip != null) {
+                                        ClipData.Item clipItem = importClip.getItemAt(0);
+                                        // Gets the clipboard as text.
+                                        String pasteData = clipItem.getText().toString();
+                                        PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
+                                        if (pt != null && pt.getTeamSize() > 0) {
+                                            pokemonTeamList.add(pt);
+                                            pt.setNickname("Imported Team");
+                                            pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                                            pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                                            Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
+                                    }
+                                } else if (item == PASTEBIN) {
+                                    final AlertDialog.Builder urlDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
+                                    urlDialog.setTitle(R.string.url_dialog_title);
+                                    final EditText urlEditText = new EditText(TeamBuildingActivity.this);
+                                    urlEditText.setText(R.string.pastebin_url);
+                                    urlEditText.setSelection(urlEditText.getText().length());
+                                    urlDialog.setView(urlEditText);
+
+                                    urlDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            new PastebinTask(PastebinTaskId.IMPORT).execute(urlEditText.getText().toString());
+                                        }
+                                    });
+
+                                    urlDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            arg0.dismiss();
+                                        }
+                                    });
+
+                                    urlDialog.show();
+                                } else if (item == QR) {
+                                    IntentIntegrator integrator = new IntentIntegrator(TeamBuildingActivity.this);
+                                    integrator.initiateScan();
                                 }
-                            } else {
-                                Toast.makeText(getApplicationContext(), R.string.team_imported_empty, Toast.LENGTH_SHORT).show();
                             }
-                        } else if (item == PASTEBIN) {
-                            final AlertDialog.Builder urlDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
-                            urlDialog.setTitle(R.string.url_dialog_title);
-                            final EditText urlEditText = new EditText(TeamBuildingActivity.this);
-                            urlEditText.setText(R.string.pastebin_url);
-                            urlEditText.setSelection(urlEditText.getText().length());
-                            urlDialog.setView(urlEditText);
-
-                            urlDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    new PastebinTask(PastebinTaskId.IMPORT).execute(urlEditText.getText().toString());
-                                }
-                            });
-
-                            urlDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    arg0.dismiss();
-                                }
-                            });
-
-                            urlDialog.show();
-                        } else {
-                            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-                            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                            startActivityForResult(intent, QR_REQUEST_CODE);
                         }
-                    }
-                });
+
+                );
                 alert = builder.create();
                 alert.show();
                 return true;
@@ -306,6 +312,7 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                     renameDialog.show();
                 }
+
                 return true;
             case R.id.action_share_team:
                 position = pkmn_spinner.getSelectedItemPosition();
@@ -317,6 +324,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                     sendIntent.setType("text/plain");
                     startActivity(sendIntent);
                 }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -345,6 +353,10 @@ public class TeamBuildingActivity extends FragmentActivity {
             waitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             waitingDialog.setCancelable(false);
             switch (mTask) {
+                case EXPORT_FOR_QR:
+                    waitingDialog.setMessage(getResources().getString(R.string.exportQR_inprogress));
+                    break;
+
                 case EXPORT:
                     waitingDialog.setMessage(getResources().getString(R.string.export_inprogress));
                     break;
@@ -359,6 +371,11 @@ public class TeamBuildingActivity extends FragmentActivity {
         protected void onPostExecute(String aString) {
             if (success) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
+                TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                    public void run() {
+                        waitingDialog.dismiss();
+                    }
+                });
                 switch (mTask) {
                     case EXPORT:
                         builder.setMessage(aString);
@@ -367,13 +384,16 @@ public class TeamBuildingActivity extends FragmentActivity {
                     case IMPORT:
                         builder.setTitle(R.string.import_success_dialog_title);
                         break;
+                    case EXPORT_FOR_QR:
+                        IntentIntegrator integrator = new IntentIntegrator(TeamBuildingActivity.this);
+                        integrator.shareText(aString);
+                        return;
                 }
                 builder.setIcon(android.R.drawable.ic_dialog_info);
                 builder.setPositiveButton(R.string.dialog_ok, null);
                 final AlertDialog alert = builder.create();
                 TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
                     public void run() {
-                        waitingDialog.dismiss();
                         alert.show();
                     }
                 });
@@ -417,6 +437,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             String data = strings[0];
             String out = null;
             switch (mTask) {
+                case EXPORT_FOR_QR:
                 case EXPORT:
                     out = exportToPastebin(data);
                     break;
@@ -450,7 +471,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                 HttpEntity entity = response.getEntity();
                 pastebinOut = EntityUtils.toString(entity, ENCODING);
             } catch (IOException e) {
-
+                mException = e;
+                success = false;
+                return;
             }
             PokemonTeam pokemonTeam = PokemonTeam.importPokemonTeam(pastebinOut, TeamBuildingActivity.this, false);
             if (pokemonTeam != null && pokemonTeam.getTeamSize() > 0) {
@@ -489,6 +512,6 @@ public class TeamBuildingActivity extends FragmentActivity {
     }
 
     private enum PastebinTaskId {
-        IMPORT, EXPORT
+        IMPORT, EXPORT, EXPORT_FOR_QR // for QR
     }
 }
