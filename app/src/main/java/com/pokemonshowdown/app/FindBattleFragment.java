@@ -19,6 +19,7 @@ import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class FindBattleFragment extends Fragment {
@@ -27,11 +28,17 @@ public class FindBattleFragment extends Fragment {
     private ProgressDialog mWaitingDialog;
     private ArrayList<String> mFormatList;
     private Spinner mPokemonTeamSpinner;
+
+    private PokemonTeamListArrayAdapter mRandomTeamAdapter;
+    private ArrayAdapter<String> mNoTeamsAdapter;
+    private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
+
     public static FindBattleFragment newInstance() {
         FindBattleFragment fragment = new FindBattleFragment();
 
         return fragment;
     }
+
     public FindBattleFragment() {
         // Required empty public constructor
     }
@@ -59,6 +66,7 @@ public class FindBattleFragment extends Fragment {
                         .create().show();
             }
         });
+
         TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
         watchBattle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,24 +86,24 @@ public class FindBattleFragment extends Fragment {
         });
 
         mPokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
+
+        mNoTeamsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
+        mRandomTeamAdapter = new PokemonTeamListArrayAdapter(getActivity(), Arrays.asList(new PokemonTeam[]{new PokemonTeam("Random Team")}));
     }
 
     @Override
     public void onResume() {
         super.onResume();
         PokemonTeam.loadPokemonTeams(getActivity());
-
-        if(PokemonTeam.getPokemonTeamList().size() > 0) {
-            PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
-            mPokemonTeamSpinner.setAdapter(pokemonTeamListArrayAdapter);
+        if (PokemonTeam.getPokemonTeamList().size() > 0) {
+            mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
+            mPokemonTeamSpinner.setAdapter(mPokemonTeamListArrayAdapter);
             mPokemonTeamSpinner.setEnabled(true);
         } else {
             //there are no teams, we fill the spinner with a filler item an disable it
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
-            mPokemonTeamSpinner.setAdapter(adapter);
+            mPokemonTeamSpinner.setAdapter(mNoTeamsAdapter);
             mPokemonTeamSpinner.setEnabled(false);
         }
-
     }
 
     public void setAvailableFormat() {
@@ -124,6 +132,48 @@ public class FindBattleFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BattleFieldData.get(getActivity()).setCurrentFormat(position);
+                String currentFormatString = (String) listView.getItemAtPosition(position);
+                BattleFieldData.Format currentFormat = null;
+                if (currentFormatString != null) {
+                    ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(getActivity()).getFormatTypes();
+                    for (BattleFieldData.FormatType formatType : formatTypes) {
+                        ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
+                        for (BattleFieldData.Format format : result) {
+                            if (format.getName().equals(currentFormatString)) {
+                                currentFormat = format;
+                            }
+                        }
+                    }
+
+                    if (currentFormat != null) {
+                        if (currentFormat.isRandomFormat()) {
+                            mPokemonTeamSpinner.setAdapter(mRandomTeamAdapter);
+                            mPokemonTeamSpinner.setEnabled(false);
+                        } else {
+                            if (PokemonTeam.getPokemonTeamList().size() > 0) {
+                                int currentSelectedTeam = mPokemonTeamSpinner.getSelectedItemPosition();
+                                mPokemonTeamSpinner.setAdapter(mPokemonTeamListArrayAdapter);
+                                mPokemonTeamSpinner.setEnabled(true);
+                                int newSelectedTeam = -1;
+                                for (int i = 0; i < PokemonTeam.getPokemonTeamList().size(); i++) {
+                                    if (PokemonTeam.getPokemonTeamList().get(i).getTier().equals(currentFormatString)) {
+                                        newSelectedTeam = i;
+                                        break;
+                                    }
+                                }
+                                if (newSelectedTeam > -1) {
+                                    mPokemonTeamSpinner.setSelection(newSelectedTeam);
+                                } else {
+                                    mPokemonTeamSpinner.setSelection(currentSelectedTeam);
+                                }
+                            } else {
+                                //there are no teams, we fill the spinner with a filler item an disable it
+                                mPokemonTeamSpinner.setAdapter(mNoTeamsAdapter);
+                                mPokemonTeamSpinner.setEnabled(false);
+                            }
+                        }
+                    }
+                }
             }
         });
     }

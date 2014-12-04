@@ -105,8 +105,7 @@ public class TeamBuildingActivity extends FragmentActivity {
         for (BattleFieldData.FormatType formatType : formatTypes) {
             ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
             for (BattleFieldData.Format format : result) {
-                // ,# indicates a random team, we pass
-                if (format.getSpecialTrait().equals(",#")) {
+                if (format.isRandomFormat()) {
                     continue;
                 }
                 mFormatList.add(format.getName());
