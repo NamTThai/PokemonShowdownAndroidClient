@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import org.apache.http.HttpEntity;
@@ -43,17 +44,18 @@ import java.util.List;
 
 public class TeamBuildingActivity extends FragmentActivity {
     private final static String TAG = TeamBuildingActivity.class.getName();
-    private final static int QR_REQUEST_CODE = 100;
-    private Spinner pkmn_spinner;
-
-    private List<PokemonTeam> pokemonTeamList;
-    private PokemonTeamListArrayAdapter pokemonTeamListArrayAdapter;
     private final static int CLIPBOARD = 0;
     private final static int PASTEBIN = 1;
     private final static int QR = 2;
 
+    private Spinner mPokemonTeamSpinner;
+    private List<PokemonTeam> mPokemonTeamList;
+    private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
+    private ArrayList<String> mFormatList;
+
+
     public void updateList() {
-        pokemonTeamListArrayAdapter.notifyDataSetChanged();
+        mPokemonTeamListArrayAdapter.notifyDataSetChanged();
         TeamBuildingFragment teamBuildingFragment = (TeamBuildingFragment) getSupportFragmentManager().findFragmentById(R.id.teambuilding_fragmentcontainer);
         if (teamBuildingFragment != null) {
             teamBuildingFragment.updateList();
@@ -66,14 +68,14 @@ public class TeamBuildingActivity extends FragmentActivity {
         setContentView(R.layout.activity_team_building);
 
         PokemonTeam.loadPokemonTeams(getApplicationContext());
-        pokemonTeamList = PokemonTeam.getPokemonTeamList();
+        mPokemonTeamList = PokemonTeam.getPokemonTeamList();
 
         // spinner
-        pkmn_spinner = (Spinner) findViewById(R.id.pokemonteamlist_spinner);
-        pokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getApplicationContext(), pokemonTeamList);
-        pkmn_spinner.setAdapter(pokemonTeamListArrayAdapter);
+        mPokemonTeamSpinner = (Spinner) findViewById(R.id.pokemonteamlist_spinner);
+        mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getApplicationContext(), mPokemonTeamList);
+        mPokemonTeamSpinner.setAdapter(mPokemonTeamListArrayAdapter);
 
-        pkmn_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mPokemonTeamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 PokemonTeam pt = (PokemonTeam) adapterView.getItemAtPosition(i);
@@ -86,7 +88,10 @@ public class TeamBuildingActivity extends FragmentActivity {
                         .commit();
 
                 Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-                tier_spinner.setSelection(((ArrayAdapter) tier_spinner.getAdapter()).getPosition(pt.getTier()));
+                ArrayAdapter adapter = (ArrayAdapter) tier_spinner.getAdapter();
+                if (adapter != null && adapter.getPosition(pt.getTier()) != -1) {
+                    tier_spinner.setSelection(adapter.getPosition(pt.getTier()));
+                }
             }
 
             @Override
@@ -94,18 +99,36 @@ public class TeamBuildingActivity extends FragmentActivity {
             }
         });
 
+        mFormatList = new ArrayList<>();
         Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.tier_list));
-        tier_spinner.setAdapter(adapter);
+        ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(this).getFormatTypes();
+        for (BattleFieldData.FormatType formatType : formatTypes) {
+            ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
+            for (BattleFieldData.Format format : result) {
+                // ,# indicates a random team, we pass
+                if (format.getSpecialTrait().contains(",#")) {
+                    continue;
+                }
+                mFormatList.add(format.getName());
+            }
+        }
+
+        if (mFormatList.size() > 0) {
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mFormatList);
+            tier_spinner.setAdapter(adapter);
+            tier_spinner.setVisibility(View.VISIBLE);
+        } else {
+            tier_spinner.setVisibility(View.GONE);
+        }
 
         tier_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String tier = (String) adapterView.getItemAtPosition(i);
-                PokemonTeam pt = (PokemonTeam) pkmn_spinner.getSelectedItem();
+                PokemonTeam pt = (PokemonTeam) mPokemonTeamSpinner.getSelectedItem();
                 if (pt != null) {
                     pt.setTier(tier);
-                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                    mPokemonTeamListArrayAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -155,21 +178,21 @@ public class TeamBuildingActivity extends FragmentActivity {
         switch (item.getItemId()) {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
-                pokemonTeamList.add(pt);
-                pt.setNickname("Team #" + pokemonTeamList.size());
-                pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                mPokemonTeamList.add(pt);
+                pt.setNickname("Team #" + mPokemonTeamList.size());
+                mPokemonTeamListArrayAdapter.notifyDataSetChanged();
+                mPokemonTeamSpinner.setSelection(mPokemonTeamList.size() - 1);
                 Toast.makeText(getApplicationContext(), R.string.team_created, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_remove_team:
-                position = pkmn_spinner.getSelectedItemPosition();
+                position = mPokemonTeamSpinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
-                    pokemonTeamList.remove(position);
-                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                    mPokemonTeamList.remove(position);
+                    mPokemonTeamListArrayAdapter.notifyDataSetChanged();
 
-                    if (pokemonTeamList.size() > 0) {
-                        pkmn_spinner.setSelection(0, false);
-                        PokemonTeam pt3 = pokemonTeamList.get(0);
+                    if (mPokemonTeamList.size() > 0) {
+                        mPokemonTeamSpinner.setSelection(0, false);
+                        PokemonTeam pt3 = mPokemonTeamList.get(0);
                         TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt3);
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
@@ -190,9 +213,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int item) {
                                 if (item == CLIPBOARD) {
-                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    int position = mPokemonTeamSpinner.getSelectedItemPosition();
                                     if (position != AdapterView.INVALID_POSITION) {
-                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        PokemonTeam pt = mPokemonTeamList.get(position);
                                         ClipboardManager clipboard = (ClipboardManager)
                                                 getSystemService(Context.CLIPBOARD_SERVICE);
                                         ClipData clip = ClipData.newPlainText(pt.getNickname(), pt.exportPokemonTeam(getApplicationContext()));
@@ -202,16 +225,16 @@ public class TeamBuildingActivity extends FragmentActivity {
                                         Toast.makeText(getApplicationContext(), R.string.team_exported_none, Toast.LENGTH_SHORT).show();
                                     }
                                 } else if (item == PASTEBIN) {
-                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    int position = mPokemonTeamSpinner.getSelectedItemPosition();
                                     if (position != AdapterView.INVALID_POSITION) {
-                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        PokemonTeam pt = mPokemonTeamList.get(position);
                                         String exportData = pt.exportPokemonTeam(getApplicationContext());
                                         new PastebinTask(PastebinTaskId.EXPORT).execute(exportData);
                                     }
                                 } else if (item == QR) {
-                                    int position = pkmn_spinner.getSelectedItemPosition();
+                                    int position = mPokemonTeamSpinner.getSelectedItemPosition();
                                     if (position != AdapterView.INVALID_POSITION) {
-                                        PokemonTeam pt = pokemonTeamList.get(position);
+                                        PokemonTeam pt = mPokemonTeamList.get(position);
                                         String exportData = pt.exportPokemonTeam(getApplicationContext());
                                         PastebinTask pastebinTask = new PastebinTask(PastebinTaskId.EXPORT_FOR_QR);
                                         pastebinTask.execute(exportData);
@@ -241,10 +264,10 @@ public class TeamBuildingActivity extends FragmentActivity {
                                         String pasteData = clipItem.getText().toString();
                                         PokemonTeam pt = PokemonTeam.importPokemonTeam(pasteData, getApplicationContext(), true);
                                         if (pt != null && pt.getTeamSize() > 0) {
-                                            pokemonTeamList.add(pt);
+                                            mPokemonTeamList.add(pt);
                                             pt.setNickname("Imported Team");
-                                            pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                                            pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                                            mPokemonTeamListArrayAdapter.notifyDataSetChanged();
+                                            mPokemonTeamSpinner.setSelection(mPokemonTeamList.size() - 1);
                                             Toast.makeText(getApplicationContext(), R.string.team_imported, Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getApplicationContext(), R.string.team_imported_invalid_data, Toast.LENGTH_SHORT).show();
@@ -286,9 +309,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                 return true;
 
             case R.id.action_rename_team:
-                position = pkmn_spinner.getSelectedItemPosition();
+                position = mPokemonTeamSpinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
-                    pt2 = pokemonTeamList.get(position);
+                    pt2 = mPokemonTeamList.get(position);
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(TeamBuildingActivity.this);
                     renameDialog.setTitle(R.string.rename_pokemon);
                     final EditText teamNameEditText = new EditText(TeamBuildingActivity.this);
@@ -298,7 +321,7 @@ public class TeamBuildingActivity extends FragmentActivity {
                     renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             pt2.setNickname(teamNameEditText.getText().toString());
-                            pokemonTeamListArrayAdapter.notifyDataSetChanged();
+                            mPokemonTeamListArrayAdapter.notifyDataSetChanged();
                             Toast.makeText(getApplicationContext(), R.string.team_renamed, Toast.LENGTH_SHORT).show();
                             arg0.dismiss();
                         }
@@ -315,9 +338,9 @@ public class TeamBuildingActivity extends FragmentActivity {
 
                 return true;
             case R.id.action_share_team:
-                position = pkmn_spinner.getSelectedItemPosition();
+                position = mPokemonTeamSpinner.getSelectedItemPosition();
                 if (position != AdapterView.INVALID_POSITION) {
-                    pt2 = pokemonTeamList.get(position);
+                    pt2 = mPokemonTeamList.get(position);
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, pt2.exportPokemonTeam(getApplicationContext()));
@@ -398,8 +421,8 @@ public class TeamBuildingActivity extends FragmentActivity {
                     }
                 });
                 if (mTask == PastebinTaskId.IMPORT) {
-                    pokemonTeamListArrayAdapter.notifyDataSetChanged();
-                    pkmn_spinner.setSelection(pokemonTeamList.size() - 1);
+                    mPokemonTeamListArrayAdapter.notifyDataSetChanged();
+                    mPokemonTeamSpinner.setSelection(mPokemonTeamList.size() - 1);
                 }
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamBuildingActivity.this);
@@ -483,7 +506,7 @@ public class TeamBuildingActivity extends FragmentActivity {
             PokemonTeam pokemonTeam = PokemonTeam.importPokemonTeam(pastebinOut, TeamBuildingActivity.this, false);
             if (pokemonTeam != null && pokemonTeam.getTeamSize() > 0) {
                 pokemonTeam.setNickname("Imported Team");
-                pokemonTeamList.add(pokemonTeam);
+                mPokemonTeamList.add(pokemonTeam);
                 success = true;
                 return;
             } else {

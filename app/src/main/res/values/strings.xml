@@ -153,17 +153,6 @@
     <string name="rename_pokemon">Rename</string>
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
-    <string-array name="tier_list">
-        <item>(None)</item>
-        <item>OU</item>
-        <item>Ubers</item>
-        <item>UU</item>
-        <item>AG</item>
-        <item>RU</item>
-        <item>NU</item>
-        <item>LC</item>
-        <item>VGC14</item>
-    </string-array>
     <string name="url_dialog_title">Enter URL</string>
     <string name="pastebin_url">http://pastebin.com/</string>
     <string name="error_dialog_title">Error</string>

@@ -36,7 +36,7 @@ public class PokemonTeamListArrayAdapter extends ArrayAdapter<PokemonTeam> {
         PokemonTeam p = pokemonTeamList.get(position);
 
         TextView teamName = (TextView) convertView.findViewById(R.id.team_nickname);
-        if (p.getTier().equals("(None)")) {
+        if (p.getTier().isEmpty()) {
             teamName.setText(p.getNickname());
         } else {
             teamName.setText(p.getNickname() + " (" + p.getTier() + ")");

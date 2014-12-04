@@ -21,7 +21,7 @@ public class PokemonTeam implements Serializable {
     public static final String TAG = PokemonTeam.class.getName();
     private static final String pokemonTeamStorageName = "pkmnStorage.dat";
     private static List<PokemonTeam> pokemonTeamList;
-    private String tier = "(None)";
+    private String tier = "";
     /**
      * Nickname for team
      */
