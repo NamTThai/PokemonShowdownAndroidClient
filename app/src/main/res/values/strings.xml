@@ -80,6 +80,9 @@
     <string name="dmg_calc_field_helpinghand">Helping Hand</string>
     <string name="attacker">Attacker</string>
     <string name="defender">Defender</string>
+    <string name="dmg_is_same">"%1$s, KO in %2$s round(s)</string>
+    <string name="dmg_not_same_same_ko">"%1$s - %2$s\nKO in %3$s round(s)</string>
+    <string name="dmg_not_same_not_same_ko">%1$s - %2$s\nKO in %3$s to %4$s rounds</string>
 
     <!-- These are for Pokemon List -->
     <string name="pokemon_list">Pokemon List</string>

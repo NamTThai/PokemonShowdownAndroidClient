@@ -11,16 +11,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.InputFilterMinMax;
 import com.pokemonshowdown.data.Pokemon;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by thain on 7/22/14.
- *
+ * <p/>
  * Array indices:
  * HP 0
  * Atk 1
@@ -28,9 +34,21 @@ import com.pokemonshowdown.data.Pokemon;
  * SpA 3 SpAtk
  * SpD 4 SpDef
  * Spe 5 Spd
-*/
+ */
 public class StatsDialog extends DialogFragment {
     public static final String STAG = "STATS_DIALOG";
+
+    public final static String ARGUMENT_STAGES = "Stages";
+    public final static String ARGUMENT_SHOW_STAGES = "ShowStages";
+    public final static String ARGUMENT_STATS = "Stats";
+    public final static String ARGUMENT_BASE_STATS = "BaseStats";
+    public final static String ARGUMENT_EV = "EVs";
+    public final static String ARGUMENT_IV = "IVs";
+    public final static String ARGUMENT_LEVEL = "Level";
+    public final static String ARGUMENT_NATURE_MULTIPLIER = "NatureMultiplier";
+
+    private final static List<String> SPINNER_STAGES = Arrays.asList(new String[]{"-6", "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5", "+6"});
+
     public static final int maxEV = 508;
 
     private int[] mStats;
@@ -39,6 +57,8 @@ public class StatsDialog extends DialogFragment {
     private int[] mIVs;
     private int mLevel;
     private float[] mNatureMultiplier;
+    private int[] mStages;
+    private boolean mShowStages = false;
 
     public StatsDialog() {
 
@@ -47,12 +67,14 @@ public class StatsDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mStats = getArguments().getIntArray("Stats");
-        mBaseStats = getArguments().getIntArray("BaseStats");
-        mEVs = getArguments().getIntArray("EVs");
-        mIVs = getArguments().getIntArray("IVs");
-        mLevel = getArguments().getInt("Level");
-        mNatureMultiplier = getArguments().getFloatArray("NatureMultiplier");
+        mStats = getArguments().getIntArray(ARGUMENT_STATS);
+        mBaseStats = getArguments().getIntArray(ARGUMENT_BASE_STATS);
+        mEVs = getArguments().getIntArray(ARGUMENT_EV);
+        mIVs = getArguments().getIntArray(ARGUMENT_IV);
+        mLevel = getArguments().getInt(ARGUMENT_LEVEL);
+        mNatureMultiplier = getArguments().getFloatArray(ARGUMENT_NATURE_MULTIPLIER);
+        mStages = getArguments().getIntArray(ARGUMENT_STAGES);
+        mShowStages = getArguments().getBoolean(ARGUMENT_SHOW_STAGES);
     }
 
     @Override
@@ -69,13 +91,17 @@ public class StatsDialog extends DialogFragment {
         setEVs(mEVs);
         setIVs(mIVs);
 
+        initializeSpinner();
+
         getView().findViewById(R.id.save_settings).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {FragmentManager fm = getActivity().getSupportFragmentManager();
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
                 PokemonFragment pokemonFragment = (PokemonFragment) fm.findFragmentByTag(PokemonFragment.PTAG);
                 pokemonFragment.getPokemon().setStats(mStats);
                 pokemonFragment.getPokemon().setEVs(mEVs);
                 pokemonFragment.getPokemon().setIVs(mIVs);
+                pokemonFragment.getPokemon().setStages(mStages);
                 pokemonFragment.resetStatsString();
                 getDialog().dismiss();
             }
@@ -131,7 +157,7 @@ public class StatsDialog extends DialogFragment {
                 seekBar.setProgress(mEVs[1] / 4);
                 TextView textView = (TextView) getView().findViewById(R.id.EV_Atk);
                 textView.setText(Integer.toString(mEVs[1]));
-                mStats[1] = Pokemon.calculateAtk(mBaseStats[1], mIVs[1], mEVs[1], mLevel, mNatureMultiplier[1]);
+                mStats[1] = Pokemon.calculateAtk(mBaseStats[1], mIVs[1], mEVs[1], mStages[1], mLevel, mNatureMultiplier[1]);
                 setStats(-1, mStats[1], -1, -1, -1, -1);
             }
 
@@ -161,7 +187,7 @@ public class StatsDialog extends DialogFragment {
                 seekBar.setProgress(mEVs[2] / 4);
                 TextView textView = (TextView) getView().findViewById(R.id.EV_Def);
                 textView.setText(Integer.toString(mEVs[2]));
-                mStats[2] = Pokemon.calculateDef(mBaseStats[2], mIVs[2], mEVs[2], mLevel, mNatureMultiplier[2]);
+                mStats[2] = Pokemon.calculateDef(mBaseStats[2], mIVs[2], mEVs[2], mStages[1], mLevel, mNatureMultiplier[2]);
                 setStats(-1, -1, mStats[2], -1, -1, -1);
             }
 
@@ -191,7 +217,7 @@ public class StatsDialog extends DialogFragment {
                 seekBar.setProgress(mEVs[3] / 4);
                 TextView textView = (TextView) getView().findViewById(R.id.EV_SpAtk);
                 textView.setText(Integer.toString(mEVs[3]));
-                mStats[3] = Pokemon.calculateSpAtk(mBaseStats[3], mIVs[3], mEVs[3], mLevel, mNatureMultiplier[3]);
+                mStats[3] = Pokemon.calculateSpAtk(mBaseStats[3], mIVs[3], mEVs[3], mStages[1], mLevel, mNatureMultiplier[3]);
                 setStats(-1, -1, -1, mStats[3], -1, -1);
             }
 
@@ -221,7 +247,7 @@ public class StatsDialog extends DialogFragment {
                 seekBar.setProgress(mEVs[4] / 4);
                 TextView textView = (TextView) getView().findViewById(R.id.EV_SpDef);
                 textView.setText(Integer.toString(mEVs[4]));
-                mStats[4] = Pokemon.calculateSpDef(mBaseStats[4], mIVs[4], mEVs[4], mLevel, mNatureMultiplier[4]);
+                mStats[4] = Pokemon.calculateSpDef(mBaseStats[4], mIVs[4], mEVs[4], mStages[1], mLevel, mNatureMultiplier[4]);
                 setStats(-1, -1, -1, -1, mStats[4], -1);
             }
 
@@ -251,7 +277,7 @@ public class StatsDialog extends DialogFragment {
                 seekBar.setProgress(mEVs[5] / 4);
                 TextView textView = (TextView) getView().findViewById(R.id.EV_Spd);
                 textView.setText(Integer.toString(mEVs[5]));
-                mStats[5] = Pokemon.calculateSpd(mBaseStats[5], mIVs[5], mEVs[5], mLevel, mNatureMultiplier[5]);
+                mStats[5] = Pokemon.calculateSpd(mBaseStats[5], mIVs[5], mEVs[5], mStages[1], mLevel, mNatureMultiplier[5]);
                 setStats(-1, -1, -1, -1, -1, mStats[5]);
             }
 
@@ -648,6 +674,32 @@ public class StatsDialog extends DialogFragment {
         }
     }
 
+    public void setStages(int[] stages) {
+        setStages(stages[1], stages[2], stages[3], stages[4], stages[5]);
+    }
+
+    public void setStages(int atk, int def, int spAtk, int spDef, int spd) {
+        if (atk != -1) {
+            mStages[1] = atk;
+        }
+
+        if (def != -1) {
+            mStages[2] = def;
+        }
+
+        if (spAtk != -1) {
+            mStages[3] = spAtk;
+        }
+
+        if (spDef != -1) {
+            mStages[4] = spDef;
+        }
+
+        if (spd != -1) {
+            mStages[5] = spd;
+        }
+    }
+
     private void highlightNature() {
         TextView textViewPositive;
         TextView textViewNegative;
@@ -691,5 +743,41 @@ public class StatsDialog extends DialogFragment {
             textViewNegative = (TextView) getView().findViewById(R.id.final_Spd);
             textViewNegative.setBackgroundResource(R.drawable.nature_negative);
         }
+    }
+
+    private void initializeSpinner() {
+        initializeSpinner(R.id.Stages_Atk, mStages[1], 1);
+        initializeSpinner(R.id.Stages_Def, mStages[2], 2);
+        initializeSpinner(R.id.Stages_SpAtk, mStages[3], 3);
+        initializeSpinner(R.id.Stages_SpDef, mStages[4], 4);
+        initializeSpinner(R.id.Stages_Spd, mStages[5], 5);
+    }
+
+    private Spinner initializeSpinner(int id, int initialPosition, final int stagePosition) {
+        Spinner spinner = (Spinner) getView().findViewById(id);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, SPINNER_STAGES);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+        spinner.setSelection(initialPosition);
+        spinner.setVisibility(mShowStages ? View.VISIBLE : View.GONE);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int[] change = new int[6];
+                Arrays.fill(change, -1);
+                change[stagePosition] = position;
+                setStages(change);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+        return spinner;
     }
 }
