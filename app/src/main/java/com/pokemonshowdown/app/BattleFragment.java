@@ -957,18 +957,38 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void replacePokemon(String playerTag, String oldPkm, String newPkm) {
+    public void formChange(String playerTag, String oldPkm, String newPkm) {
+        PokemonInfo oldInfo, newInfo;
         if (playerTag.startsWith("p1")) {
             int index = findPokemonInTeam(mPlayer1Team, oldPkm);
-            if (index != -1) {
-                mPlayer1Team.set(index, new PokemonInfo(getActivity(), newPkm));
+            if (index == -1) {
+                return;
+            } else {
+                oldInfo = mPlayer1Team.get(index);
+                newInfo = new PokemonInfo(getActivity(), newPkm);
+                mPlayer1Team.set(index, newInfo);
             }
         } else {
             int index = findPokemonInTeam(mPlayer2Team, oldPkm);
-            if (index != -1) {
-                mPlayer2Team.set(index, new PokemonInfo(getActivity(), newPkm));
+            if (index == -1) {
+                return;
+            } else {
+                oldInfo = mPlayer2Team.get(index);
+                newInfo = new PokemonInfo(getActivity(), newPkm);
+                mPlayer2Team.set(index, newInfo);
             }
         }
+
+        newInfo.setNickname(oldInfo.getNickname());
+        newInfo.setLevel(oldInfo.getLevel());
+        newInfo.setGender(oldInfo.getGender());
+        newInfo.setShiny(oldInfo.isShiny());
+        newInfo.setActive(oldInfo.isActive());
+        newInfo.setHp(oldInfo.getHp());
+        newInfo.setStatus(oldInfo.getStatus());
+        newInfo.setMoves(oldInfo.getMoves());
+        newInfo.setName(oldInfo.getName());
+        newInfo.setItem(oldInfo.getItem(getActivity()));
     }
 
     public ArrayList<PokemonInfo> getTeam(String playerTag) {

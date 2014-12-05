@@ -586,11 +586,11 @@ public class BattleMessage {
                 break;
 
             case "detailschange":
-                final String forme = (split[1].indexOf(',') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(','));
+                final String forme = (split[1].contains(",")) ? split[1] : split[1].substring(0, split[1].indexOf(','));
                 position = split[0].substring(0, 3);
                 species = split[0].substring(5);
 
-                battleFragment.replacePokemon(position, species, forme);
+                battleFragment.formChange(position, species, forme);
 
                 toast = battleFragment.makeToast("Transforming", BattleFragment.ANIMATION_SHORT);
                 toast.addListener(new Animator.AnimatorListener() {
@@ -602,9 +602,11 @@ public class BattleMessage {
 
                         boolean back = split[0].startsWith("p1");
                         ImageView sprite = (ImageView) view.findViewById(battleFragment.getSpriteId(position));
-                        sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(), MyApplication.toId(forme), false, back, false, false));
+                        sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
+                                MyApplication.toId(forme), false, back, false, false));
                         ImageView icon = (ImageView) view.findViewById(battleFragment.getIconId(position));
-                        icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(), MyApplication.toId(forme), false));
+                        icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                MyApplication.toId(forme), false));
                     }
 
                     @Override

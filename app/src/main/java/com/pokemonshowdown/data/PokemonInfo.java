@@ -9,7 +9,6 @@ import java.util.HashMap;
 public class PokemonInfo implements Serializable {
     private String mName;
     private String mNickname;
-    private String mNickName;
     private int[] mTypeIcon;
     private int mLevel;
     private String mGender;
@@ -77,14 +76,6 @@ public class PokemonInfo implements Serializable {
 
     public void setNickname(String nickname) {
         mNickname = nickname;
-    }
-
-    public String getNickName() {
-        return mNickName;
-    }
-
-    public void setNickName(String nickName) {
-        mNickName = nickName;
     }
 
     public int getLevel() {
