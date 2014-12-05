@@ -38,6 +38,8 @@ public class Pokemon implements Serializable {
     public final static String[] NATURES = {"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"};
     public final static String[] NATURES_DETAILS = {"Adamant (+Atk -SpA)", "Bashful", "Bold (+Def -Atk)", "Brave (+Atk -Spe)", "Calm (+SpD -Atk)", "Careful (+SpD -SpA)", "Docile", "Gentle (+SpD -Def)", "Hardy", "Hasty (+Spe -Def)", "Impish (+Def -SpA)", "Jolly (+Spe -SpA)", "Lax (+Def -SpD)", "Lonely (+Atk -Def)", "Mild (+SpA -Def)", "Modest (+SpA -Atk)", "Naive (+Spe -SpD)", "Naughty (+Atk -SpD)", "Quiet (+SpA -Spe)", "Quirky", "Rash (+SpA -SpD)", "Relaxed (+Def -Spe)", "Sassy (+SpD -Spe)", "Serious", "Timid (+Spe -Atk)"};
 
+    private final static double[] STAGES_MAIN_STATS = {0.25, 0.285, 0.33, 0.4, 0.5, 0.66, 1, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
+
     private int mHappiness;
     private int mIcon;
     private int mIconM;
@@ -54,6 +56,7 @@ public class Pokemon implements Serializable {
     private int[] mBaseStats;
     private int[] mEVs;
     private int[] mIVs;
+    private int[] mStages;
     private int mLevel;
     private String mGender;
     private boolean mGenderAvailable;
@@ -64,7 +67,7 @@ public class Pokemon implements Serializable {
     private HashMap<String, String> mAbilityList;
     private String[] mType;
     private int[] mTypeIcon;
-    private int mWeight;
+    private double mWeight;
     private String mItem;
     private String mMove1;
     private String mMove2;
@@ -539,6 +542,8 @@ public class Pokemon implements Serializable {
             mName = jsonObject.getString("species");
             mNameWithUnderScore = mName.replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "").toLowerCase();
 
+            mWeight = Double.parseDouble(jsonObject.getString("weightkg"));
+
             mIcon = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconM = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore, "drawable", appContext.getPackageName());
             mIconF = appContext.getResources().getIdentifier("sprites_" + mNameWithUnderScore + "_f", "drawable", appContext.getPackageName());
@@ -557,6 +562,10 @@ public class Pokemon implements Serializable {
             mBaseStats[3] = baseStats.getInt("spa");
             mBaseStats[4] = baseStats.getInt("spd");
             mBaseStats[5] = baseStats.getInt("spe");
+
+            mStages = new int[6];
+            Arrays.fill(mStages, 6); // Neutral Stage
+
             setEVs(new int[6]);
             setIVs(new int[6]);
             Arrays.fill(mIVs, 31);
@@ -762,34 +771,38 @@ public class Pokemon implements Serializable {
     }
 
     public int calculateAtk() {
-        return (int) (((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1]);
+        return (int) (((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1] * STAGES_MAIN_STATS[mStages[1]]);
     }
 
     public int calculateDef() {
-        return (int) (((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2]);
+        return (int) (((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2] * STAGES_MAIN_STATS[mStages[2]]);
     }
 
     public int calculateSpAtk() {
-        return (int) (((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3]);
+        return (int) (((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3] * STAGES_MAIN_STATS[mStages[3]]);
     }
 
     public int calculateSpDef() {
-        return (int) (((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4]);
+        return (int) (((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4] * STAGES_MAIN_STATS[mStages[4]]);
     }
 
     public int calculateSpd() {
-        return (int) (((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5]);
+        return (int) (((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5] * STAGES_MAIN_STATS[mStages[5]]);
     }
 
-    public static int[] calculateStats(int[] baseStats, int[] IVs, int[] EVs, int level, int[] natureMultiplier) {
+    public static int[] calculateStats(int[] baseStats, int[] IVs, int[] EVs, int[] stages, int level, int[] natureMultiplier) {
         int[] stats = new int[6];
         stats[0] = calculateHP(baseStats[0], IVs[0], EVs[0], level);
-        stats[1] = calculateAtk(baseStats[1], IVs[1], EVs[1], level, natureMultiplier[1]);
-        stats[2] = calculateDef(baseStats[2], IVs[2], EVs[2], level, natureMultiplier[2]);
-        stats[3] = calculateSpAtk(baseStats[3], IVs[3], EVs[3], level, natureMultiplier[3]);
-        stats[4] = calculateSpDef(baseStats[4], IVs[4], EVs[4], level, natureMultiplier[4]);
-        stats[5] = calculateSpd(baseStats[5], IVs[5], EVs[5], level, natureMultiplier[5]);
+        stats[1] = calculateAtk(baseStats[1], IVs[1], EVs[1], stages[1], level, natureMultiplier[1]);
+        stats[2] = calculateDef(baseStats[2], IVs[2], EVs[2], stages[1], level, natureMultiplier[2]);
+        stats[3] = calculateSpAtk(baseStats[3], IVs[3], EVs[3], stages[1], level, natureMultiplier[3]);
+        stats[4] = calculateSpDef(baseStats[4], IVs[4], EVs[4], stages[1], level, natureMultiplier[4]);
+        stats[5] = calculateSpd(baseStats[5], IVs[5], EVs[5], stages[1], level, natureMultiplier[5]);
         return stats;
+    }
+
+    public static int calculateHP(int baseHP, int HPIV, int HPEV, int hpStage, int level) {
+        return calculateHP(baseHP, HPIV, HPEV, level);
     }
 
     public static int calculateHP(int baseHP, int HPIV, int HPEV, int level) {
@@ -800,20 +813,40 @@ public class Pokemon implements Serializable {
         return (int) (((AtkIV + 2 * baseAtk + AtkEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
+    public static int calculateAtk(int baseAtk, int AtkIV, int AtkEV, int atkStage, int level, float natureMultiplier) {
+        return (int) (((AtkIV + 2 * baseAtk + AtkEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[atkStage]);
+    }
+
     public static int calculateDef(int baseDef, int DefIV, int DefEV, int level, float natureMultiplier) {
         return (int) (((DefIV + 2 * baseDef + DefEV / 4) * level / 100 + 5) * natureMultiplier);
+    }
+
+    public static int calculateDef(int baseDef, int DefIV, int DefEV, int defStages, int level, float natureMultiplier) {
+        return (int) (((DefIV + 2 * baseDef + DefEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[defStages]);
     }
 
     public static int calculateSpAtk(int baseSpAtk, int SpAtkIV, int SpAtkEV, int level, float natureMultiplier) {
         return (int) (((SpAtkIV + 2 * baseSpAtk + SpAtkEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
+    public static int calculateSpAtk(int baseSpAtk, int SpAtkIV, int SpAtkEV, int spAtkStages, int level, float natureMultiplier) {
+        return (int) (((SpAtkIV + 2 * baseSpAtk + SpAtkEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[spAtkStages]);
+    }
+
     public static int calculateSpDef(int baseSpDef, int SpDefIV, int SpDefEV, int level, float natureMultiplier) {
         return (int) (((SpDefIV + 2 * baseSpDef + SpDefEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
+    public static int calculateSpDef(int baseSpDef, int SpDefIV, int SpDefEV, int spDefStages, int level, float natureMultiplier) {
+        return (int) (((SpDefIV + 2 * baseSpDef + SpDefEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[spDefStages]);
+    }
+
     public static int calculateSpd(int baseSpd, int SpdIV, int SpdEV, int level, float natureMultiplier) {
         return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier);
+    }
+
+    public static int calculateSpd(int baseSpd, int SpdIV, int SpdEV, int spdStages, int level, float natureMultiplier) {
+        return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[spdStages]);
     }
 
     public String getName() {
@@ -1055,6 +1088,54 @@ public class Pokemon implements Serializable {
         mIVs[5] = Spd;
     }
 
+    public int[] getStages() {
+        return mStages;
+    }
+
+    public void setStages(int[] stages) {
+        mStages = stages;
+    }
+
+    public int getAtkStages() {
+        return mStages[1];
+    }
+
+    public void setAtkStages(int atk) {
+        mStages[1] = atk;
+    }
+
+    public int getDefStages() {
+        return mStages[2];
+    }
+
+    public void setDefStages(int def) {
+        mStages[2] = def;
+    }
+
+    public int getSpAtkStages() {
+        return mStages[3];
+    }
+
+    public void setSpAtkStages(int spAtk) {
+        mStages[4] = spAtk;
+    }
+
+    public int getSpDefStages() {
+        return mStages[4];
+    }
+
+    public void setSpDefStages(int spDef) {
+        mStages[4] = spDef;
+    }
+
+    public int getSpdStages() {
+        return mStages[5];
+    }
+
+    public void setSpdStages(int spd) {
+        mStages[5] = spd;
+    }
+
     public int getLevel() {
         return mLevel;
     }
@@ -1257,11 +1338,11 @@ public class Pokemon implements Serializable {
         mTypeIcon = typeIcon;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return mWeight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         mWeight = weight;
     }
 
@@ -1299,6 +1380,38 @@ public class Pokemon implements Serializable {
 
     public String getMove4() {
         return mMove4;
+    }
+
+    public void setMove(int moveId, String move) {
+        switch (moveId) {
+            case 1:
+                mMove1 = move;
+                break;
+            case 2:
+                mMove2 = move;
+                break;
+            case 3:
+                mMove3 = move;
+                break;
+            case 4:
+                mMove4 = move;
+                break;
+        }
+    }
+
+    public String getMove(int moveId) {
+        switch (moveId) {
+            case 1:
+                return mMove1;
+            case 2:
+                return mMove2;
+            case 3:
+                return mMove3;
+            case 4:
+                return mMove4;
+            default:
+                return null;
+        }
     }
 
     public void setMove4(String move4) {

@@ -95,6 +95,12 @@
                 android:imeOptions="actionDone"
                 />
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Stages_Atk"
+                android:spinnerMode="dropdown" />
+
         </TableRow>
 
         <TableRow
@@ -137,6 +143,12 @@
                 android:inputType="number"
                 android:imeOptions="actionDone"
                 />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Stages_Def"
+                android:spinnerMode="dropdown" />
 
         </TableRow>
 
@@ -181,6 +193,12 @@
                 android:imeOptions="actionDone"
                 />
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Stages_SpAtk"
+                android:spinnerMode="dropdown" />
+
         </TableRow>
 
         <TableRow
@@ -224,6 +242,12 @@
                 android:imeOptions="actionDone"
                 />
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Stages_SpDef"
+                android:spinnerMode="dropdown" />
+
         </TableRow>
 
         <TableRow
@@ -266,6 +290,12 @@
                 android:inputType="number"
                 android:imeOptions="actionDone"
                 />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Stages_Spd"
+                android:spinnerMode="dropdown" />
 
         </TableRow>
 
