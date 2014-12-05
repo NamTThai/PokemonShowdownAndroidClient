@@ -339,10 +339,14 @@ public class BattleFieldData {
     public static class ViewData {
         private String mRoomId;
         private LinkedList<ViewSetter> mViewSetterOnHold;
+
         public static enum SetterType {
             BATTLE_START,
             TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
-            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE};
+            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE
+        }
+
+        ;
 
         public ViewData(String roomId) {
             mRoomId = roomId;
@@ -426,6 +430,7 @@ public class BattleFieldData {
     public static class Format {
         private String mName;
         private ArrayList<String> mSpecialTrait;
+        private static final String RANDOM_FORMAT_TRAIT = ",#";
 
         public Format(String name) {
             mName = name;
@@ -446,6 +451,15 @@ public class BattleFieldData {
 
         public void setSpecialTrait(ArrayList<String> specialTrait) {
             mSpecialTrait = specialTrait;
+        }
+
+        public boolean isRandomFormat() {
+            for (String s : mSpecialTrait) {
+                if (s.equals(RANDOM_FORMAT_TRAIT)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

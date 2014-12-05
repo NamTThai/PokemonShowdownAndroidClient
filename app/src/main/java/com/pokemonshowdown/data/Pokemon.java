@@ -427,6 +427,9 @@ public class Pokemon implements Serializable {
                         continue;
                     }
                     switch (stat) {
+                        case "HP":
+                            p.setHPIV(ivValue);
+                            break;
                         case "Atk":
                             p.setAtkIV(ivValue);
                             break;
@@ -461,6 +464,9 @@ public class Pokemon implements Serializable {
                         continue;
                     }
                     switch (stat) {
+                        case "HP":
+                            p.setHPEV(ivValue);
+                            break;
                         case "Atk":
                             p.setAtkEV(ivValue);
                             break;

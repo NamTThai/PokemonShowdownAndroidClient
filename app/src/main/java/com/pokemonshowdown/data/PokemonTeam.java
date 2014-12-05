@@ -20,24 +20,27 @@ import java.util.List;
 public class PokemonTeam implements Serializable {
     public static final String TAG = PokemonTeam.class.getName();
     private static final String pokemonTeamStorageName = "pkmnStorage.dat";
-    private static List<PokemonTeam> pokemonTeamList;
-    private String tier = "(None)";
+    private static List<PokemonTeam> mPokemonTeamList;
+    private String mTier = "";
     /**
      * Nickname for team
      */
-    private String nickname = "";
-
+    private String mNickname = "";
     /**
      * List of pokemons
      */
-    private ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
+    private ArrayList<Pokemon> mPokemons = new ArrayList<Pokemon>();
 
-    /**
-     * Exporting function to String
-     */
+    public PokemonTeam() {
+    }
+
+    public PokemonTeam(String nickname) {
+        this.mNickname = nickname;
+    }
+
 
     public static List<PokemonTeam> getPokemonTeamList() {
-        return pokemonTeamList;
+        return mPokemonTeamList;
     }
 
     public static void loadPokemonTeams(Context c) {
@@ -45,12 +48,12 @@ public class PokemonTeam implements Serializable {
         try {
             fos = c.openFileInput(pokemonTeamStorageName);
             ObjectInputStream oos = new ObjectInputStream(fos);
-            pokemonTeamList = (ArrayList<PokemonTeam>) oos.readObject();
+            mPokemonTeamList = (ArrayList<PokemonTeam>) oos.readObject();
             oos.close();
         } catch (IOException e) {
-            pokemonTeamList = new ArrayList<>();
+            mPokemonTeamList = new ArrayList<>();
         } catch (ClassNotFoundException e) {
-            pokemonTeamList = new ArrayList<>();
+            mPokemonTeamList = new ArrayList<>();
         }
     }
 
@@ -60,18 +63,17 @@ public class PokemonTeam implements Serializable {
             fos = c.openFileOutput(pokemonTeamStorageName, Context.MODE_PRIVATE);
 
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(pokemonTeamList);
+            oos.writeObject(mPokemonTeamList);
             oos.close();
         } catch (IOException e) {
             Log.e(TAG, e.toString());
         }
     }
 
-
     public String exportPokemonTeam(Context appContext) {
         StringBuilder sb = new StringBuilder();
 
-        for (Pokemon pokemon : pokemons) {
+        for (Pokemon pokemon : mPokemons) {
             if (pokemon != null) {
                 sb.append(pokemon.exportPokemon(appContext));
                 sb.append("\n");
@@ -115,46 +117,46 @@ public class PokemonTeam implements Serializable {
      * Accessors
      */
     public String getNickname() {
-        return nickname;
+        return mNickname;
     }
 
     public void setNickname(String nickname) {
-        this.nickname = nickname;
+        this.mNickname = nickname;
     }
 
     public ArrayList<Pokemon> getPokemons() {
-        return pokemons;
+        return mPokemons;
     }
 
     public void addPokemon(Pokemon p) {
-        pokemons.add(p);
+        mPokemons.add(p);
     }
 
     public void replacePokemon(int oldIndex, Pokemon p) {
-        pokemons.set(oldIndex, p);
+        mPokemons.set(oldIndex, p);
     }
 
     public Pokemon getPokemon(int index) {
-        return pokemons.get(index);
+        return mPokemons.get(index);
     }
 
     public int getTeamSize() {
-        return pokemons.size();
+        return mPokemons.size();
     }
 
     public boolean isFull() {
-        return (pokemons.size() == 6);
+        return (mPokemons.size() == 6);
     }
 
     public void removePokemon(int index) {
-        pokemons.remove(index);
+        mPokemons.remove(index);
     }
 
     public void setTier(String tier) {
-        this.tier = tier;
+        this.mTier = tier;
     }
 
     public String getTier() {
-        return tier;
+        return mTier;
     }
 }
