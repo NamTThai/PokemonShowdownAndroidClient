@@ -2,18 +2,6 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-24ff0d5f40a28dfbc8557301ab9887c5ac3b3f83.jar"
-        jar="C:\Users\Nicky\AppData\Local\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
-    <item
-        dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-869b20428fb9fd366a6387d6159a4863315ce6cd.jar"
-        jar="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
-    <item
         dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\classes-11af37ae24ab5497c53d920205e80c365e68640c.jar"
         jar="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
         jumboMode="false"
@@ -25,6 +13,24 @@
         jumboMode="false"
         revision="20.0.0"
         sha1="db2658f013fb163de4a99274c2eb9e17efe535d2"/>
+    <item
+        dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\android-integration-3.1.0-c0ea1ca7c1a5466ff75451fed9fddd576b68d9e9.jar"
+        jar="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\libs\android-integration-3.1.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="52707c1c0801b4e1c0ca9bdbabd2dae20d8564d7"/>
+    <item
+        dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-24ff0d5f40a28dfbc8557301ab9887c5ac3b3f83.jar"
+        jar="C:\Users\Nicky\AppData\Local\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+    <item
+        dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-869b20428fb9fd366a6387d6159a4863315ce6cd.jar"
+        jar="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
     <item
         dex="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\build\intermediates\pre-dexed\debug\jackson-databind-2.3.1-fa951039ffd3544c7981432030ebc7f83c7456bb.jar"
         jar="C:\Users\Nicky\Documents\GitHub\PokemonShowdownAndroidClient\app\libs\jackson-databind-2.3.1.jar"
