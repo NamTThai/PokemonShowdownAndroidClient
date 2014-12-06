@@ -76,7 +76,6 @@ public class FindBattleFragment extends Fragment {
                     OnboardingDialog fragment = new OnboardingDialog();
                     fragment.show(fm, OnboardingDialog.OTAG);
                     return;
-
                 }
                 // first we look the select format. if random -> send empty /utm
                 // else export selected team for showdown verification
@@ -89,18 +88,28 @@ public class FindBattleFragment extends Fragment {
                         MyApplication.getMyApplication().sendClientMessage("|/utm");
                         MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
                     } else {
-                        //we need to send the tem for verification
-                        PokemonTeam pokemonTeam = (PokemonTeam) mPokemonTeamSpinner.getSelectedItem();
-                        if (pokemonTeam == null) {
-                            //todo
+                        //we need to send the team for verification
+                        Object pokemonTeamObject = mPokemonTeamSpinner.getSelectedItem();
+                        // if we have no teams
+                        if (!(pokemonTeamObject instanceof PokemonTeam)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle(R.string.error_dialog_title);
+                            builder.setIcon(android.R.drawable.ic_dialog_alert);
+                            builder.setMessage(R.string.no_teams);
+                            final AlertDialog alert = builder.create();
+                            getActivity().runOnUiThread(new java.lang.Runnable() {
+                                public void run() {
+                                    alert.show();
+                                }
+                            });
                             return;
                         }
+                        PokemonTeam pokemonTeam = (PokemonTeam) pokemonTeamObject;
                         String teamVerificationString = pokemonTeam.exportForVerification(getActivity().getApplicationContext());
                         MyApplication.getMyApplication().sendClientMessage("|/utm " + teamVerificationString);
                         MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
                     }
                 }
-
             }
         });
 

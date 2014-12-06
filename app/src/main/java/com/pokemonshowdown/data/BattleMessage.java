@@ -4259,6 +4259,10 @@ public class BattleMessage {
         HashMap<String, Integer> moves = new HashMap<>();
         for (int i = 0; i < movesArray.length(); i++) {
             String move = movesArray.getString(i);
+            if(move.startsWith("hiddenpower")) {
+                move = move.toLowerCase().replaceAll("[^a-z]", "");
+                //dirty fix to remvoe that 60 from hiddenpower...
+            }
             JSONObject ppObject = MoveDex.get(battleFragment.getActivity()).getMoveJsonObject(move);
             if (ppObject == null) {
                 moves.put(move, 0);

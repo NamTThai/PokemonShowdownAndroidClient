@@ -33,6 +33,7 @@
     <string name="weather">Normal Weather</string>
     <string name="battle_switch">Switch</string>
     <string name="download_matches_inprogress">Downloading list of matches</string>
+    <string name="no_teams">You have no teams!</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
