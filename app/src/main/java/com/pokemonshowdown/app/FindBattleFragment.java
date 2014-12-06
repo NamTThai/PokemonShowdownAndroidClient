@@ -90,7 +90,14 @@ public class FindBattleFragment extends Fragment {
                         MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
                     } else {
                         //we need to send the tem for verification
-
+                        PokemonTeam pokemonTeam = (PokemonTeam) mPokemonTeamSpinner.getSelectedItem();
+                        if (pokemonTeam == null) {
+                            //todo
+                            return;
+                        }
+                        String teamVerificationString = pokemonTeam.exportForVerification(getActivity().getApplicationContext());
+                        MyApplication.getMyApplication().sendClientMessage("|/utm " + teamVerificationString);
+                        MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
                     }
                 }
 

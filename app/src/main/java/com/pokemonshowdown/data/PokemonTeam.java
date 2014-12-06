@@ -70,6 +70,22 @@ public class PokemonTeam implements Serializable {
         }
     }
 
+    public String exportForVerification(Context appContext) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Pokemon pokemon : mPokemons) {
+            if (pokemon != null) {
+                if (first == false) {
+                    sb.append("]");
+                }
+                sb.append(pokemon.exportForVerification(appContext));
+                first = false;
+            }
+        }
+        Log.d(TAG, sb.toString());
+        return sb.toString();
+    }
+
     public String exportPokemonTeam(Context appContext) {
         StringBuilder sb = new StringBuilder();
 
