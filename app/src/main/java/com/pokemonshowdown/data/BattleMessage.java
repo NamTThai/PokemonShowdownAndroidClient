@@ -488,7 +488,7 @@ public class BattleMessage {
                     playerTeam = new ArrayList<>();
                 }
                 if (battleFragment.findPokemonInTeam(playerTeam, species) == -1) {
-                    playerTeam.set(playerTeam.size(), new PokemonInfo(battleFragment.getActivity(), species));
+                    playerTeam.add(playerTeam.size(), new PokemonInfo(battleFragment.getActivity(), species));
                     toBeSwapped = playerTeam.size() - 1;
                 } else {
                     toBeSwapped = battleFragment.findPokemonInTeam(playerTeam, species);
