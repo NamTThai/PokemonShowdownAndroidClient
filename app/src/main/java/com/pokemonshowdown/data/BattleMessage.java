@@ -500,10 +500,10 @@ public class BattleMessage {
 
                 battleFragment.setTeam(messageDetails, playerTeam);
 
-                if(command.equals("switch")) {
+                if (command.equals("switch")) {
                     //TODO need to buffer batonpass/uturn/voltswitch for switching out message
                     //then we switch in
-                    if(messageDetails.startsWith("p2")) {
+                    if (messageDetails.startsWith("p2")) {
                         toAppendBuilder.append(battleFragment.getPlayer2()).append(" sent out ").append(species).append("!");
                     } else {
                         toAppendBuilder.append("Go! ").append(species).append("!");
@@ -786,7 +786,7 @@ public class BattleMessage {
 
                     default:
                         toAppendBuilder.append(attackerOutputName);
-                        if(split.length > 2) {
+                        if (split.length > 2) {
                             toAppendBuilder.append(" can't use ").append(battleFragment.getPrintable(split[2]));
                         } else {
                             toAppendBuilder.append(" can't move");
@@ -932,7 +932,7 @@ public class BattleMessage {
                     }
                 } else {
                     toAppendBuilder.append(attackerOutputName).append(" lost ");
-                    toAppendBuilder.append(- lostHP).append("% of its health!");
+                    toAppendBuilder.append(-lostHP).append("% of its health!");
                 }
 
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
@@ -4229,7 +4229,11 @@ public class BattleMessage {
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            battleFragment.getPlayer1Team().set(i, pkm);
+            if (battleFragment.getPlayer1Team().size() <= i) {
+                battleFragment.getPlayer1Team().add(pkm);
+            } else {
+                battleFragment.getPlayer1Team().set(i, pkm);
+            }
         }
     }
 
@@ -4315,5 +4319,5 @@ public class BattleMessage {
             pkm.setShiny(true);
         }
     }
-    
+
 }

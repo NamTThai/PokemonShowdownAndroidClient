@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -57,8 +58,8 @@ public class BattleFragment extends Fragment {
     private int mBattling;
     private String mPlayer1;
     private String mPlayer2;
-    private ArrayList<PokemonInfo> mPlayer1Team;
-    private ArrayList<PokemonInfo> mPlayer2Team;
+    private ArrayList<PokemonInfo> mPlayer1Team = new ArrayList<>();
+    private ArrayList<PokemonInfo> mPlayer2Team = new ArrayList<>();
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
