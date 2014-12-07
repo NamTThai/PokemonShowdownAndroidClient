@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
-
+    public final static String RANDOM_TEAM_NAME = "Random Team";
     private ProgressDialog mWaitingDialog;
     private ArrayList<String> mFormatList;
     private Spinner mPokemonTeamSpinner;
@@ -58,7 +58,7 @@ public class FindBattleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mNoTeamsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
-        mRandomTeamAdapter = new PokemonTeamListArrayAdapter(getActivity(), Arrays.asList(new PokemonTeam("Random Team")));
+        mRandomTeamAdapter = new PokemonTeamListArrayAdapter(getActivity(), Arrays.asList(new PokemonTeam(RANDOM_TEAM_NAME)));
         mPokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
 
         setAvailableFormat();

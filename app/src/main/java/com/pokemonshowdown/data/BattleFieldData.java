@@ -73,8 +73,8 @@ public class BattleFieldData {
 
     }
     public Format getFormat(String formatName) {
-        for (FormatType mFormatType : mFormatTypes) {
-            for (Format format : mFormatType.getFormatList()) {
+        for (FormatType formatType : mFormatTypes) {
+            for (Format format : formatType.getFormatList()) {
                 if(format.getName().equals(formatName)) {
                     return format;
                 }
