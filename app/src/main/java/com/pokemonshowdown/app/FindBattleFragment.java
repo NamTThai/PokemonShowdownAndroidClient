@@ -140,7 +140,6 @@ public class FindBattleFragment extends Fragment {
         mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
         //we execute a click on the format view in order to select the appropriate team for the current format
         mFormatListView.performItemClick(null, mFormatListView.getCheckedItemPosition(), mFormatListView.getCheckedItemPosition());
-
     }
 
     public void setAvailableFormat() {
