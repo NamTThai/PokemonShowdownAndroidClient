@@ -275,6 +275,10 @@ public class MyApplication extends Application {
                     BattleFieldData.getWithApplicationContext(getApplicationContext()).generateAvailableRoomList(messageDetail);
                     break;
                 case "popup":
+                    channel = -1;
+                    final String popupMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_ERROR_MESSAGE).putExtra(EXTRA_ERROR_MESSAGE, popupMessage));
+                    break;
                 case "pm":
                 case "usercount":
                 case "updatesearch":

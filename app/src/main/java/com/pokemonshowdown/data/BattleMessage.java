@@ -500,10 +500,10 @@ public class BattleMessage {
 
                 battleFragment.setTeam(messageDetails, playerTeam);
 
-                if(command.equals("switch")) {
+                if (command.equals("switch")) {
                     //TODO need to buffer batonpass/uturn/voltswitch for switching out message
                     //then we switch in
-                    if(messageDetails.startsWith("p2")) {
+                    if (messageDetails.startsWith("p2")) {
                         toAppendBuilder.append(battleFragment.getPlayer2()).append(" sent out ").append(species).append("!");
                     } else {
                         toAppendBuilder.append("Go! ").append(species).append("!");
@@ -786,7 +786,7 @@ public class BattleMessage {
 
                     default:
                         toAppendBuilder.append(attackerOutputName);
-                        if(split.length > 2) {
+                        if (split.length > 2) {
                             toAppendBuilder.append(" can't use ").append(battleFragment.getPrintable(split[2]));
                         } else {
                             toAppendBuilder.append(" can't move");
@@ -932,7 +932,7 @@ public class BattleMessage {
                     }
                 } else {
                     toAppendBuilder.append(attackerOutputName).append(" lost ");
-                    toAppendBuilder.append(- lostHP).append("% of its health!");
+                    toAppendBuilder.append(-lostHP).append("% of its health!");
                 }
 
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
@@ -4229,7 +4229,7 @@ public class BattleMessage {
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            battleFragment.getPlayer1Team().set(i, pkm);
+            battleFragment.getPlayer1Team().add(i, pkm);
         }
     }
 
@@ -4255,6 +4255,10 @@ public class BattleMessage {
         HashMap<String, Integer> moves = new HashMap<>();
         for (int i = 0; i < movesArray.length(); i++) {
             String move = movesArray.getString(i);
+            if (move.startsWith("hiddenpower")) {
+                move = move.toLowerCase().replaceAll("[^a-z]", "");
+                //dirty fix to remvoe that 60 from hiddenpower...
+            }
             JSONObject ppObject = MoveDex.get(battleFragment.getActivity()).getMoveJsonObject(move);
             if (ppObject == null) {
                 moves.put(move, 0);
@@ -4315,5 +4319,5 @@ public class BattleMessage {
             pkm.setShiny(true);
         }
     }
-    
+
 }

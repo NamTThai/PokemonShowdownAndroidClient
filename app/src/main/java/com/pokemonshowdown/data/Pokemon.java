@@ -73,6 +73,60 @@ public class Pokemon implements Serializable {
     private String mMove3;
     private String mMove4;
 
+
+    public String exportForVerification(Context appContext) {
+        StringBuilder sb = new StringBuilder();
+        if (!getNickName().equals(getName())) {
+            sb.append(getNickName()).append("|").append(getName());
+        } else {
+            sb.append(getName()).append("|");
+        }
+        sb.append("|");
+        sb.append(getItem()).append("|");
+        sb.append(getAbilityTag()).append("|");
+        if (!getMove1().equals("--")) {
+            sb.append(getMove1()).append(",");
+        }
+        if (!getMove2().equals("--")) {
+            sb.append(getMove2()).append(",");
+        }
+        if (!getMove3().equals("--")) {
+            sb.append(getMove3()).append(",");
+        }
+        if (!getMove4().equals("--")) {
+            sb.append(getMove4());
+        }
+        sb.append("|");
+        sb.append(getNature()).append("|");
+        //evs
+        sb.append(getHPEV()).append(",");
+        sb.append(getAtkEV()).append(",");
+        sb.append(getDefEV()).append(",");
+        sb.append(getSpAtkEV()).append(",");
+        sb.append(getSpDefEV()).append(",");
+        sb.append(getSpdEV()).append("|");
+        //gender
+        sb.append(getGender()).append("|");
+        //ivs
+        sb.append(getHPIV()).append(",");
+        sb.append(getAtkIV()).append(",");
+        sb.append(getDefIV()).append(",");
+        sb.append(getSpAtkIV()).append(",");
+        sb.append(getSpDefIV()).append(",");
+        sb.append(getSpdIV()).append("|");
+
+        // shiny
+        if (isShiny()) {
+            sb.append("S");
+        }
+        sb.append("|");
+
+        //level
+        sb.append(getLevel()).append("|");
+        sb.append(getHappiness());
+        return sb.toString();
+    }
+
     /**
      * Exporting function
      *

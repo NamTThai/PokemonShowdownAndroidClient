@@ -315,12 +315,12 @@ public class TeamBuildingFragment extends Fragment {
             });
 
             if (!pokemon.getMove1().equals("--")) {
-                ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.move1_type);
+                ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move1_type);
                 move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
                 JSONObject move1Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
                 if (move1Object != null) {
-                    TextView move1PpTextView = (TextView) convertView.findViewById(R.id.move1_pp);
-                    TextView move1NameTextView = (TextView) convertView.findViewById(R.id.move1_name);
+                    TextView move1PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move1_pp);
+                    TextView move1NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move1_name);
                     try {
                         String pp = String.valueOf(move1Object.getInt("pp"));
                         pp = MoveDex.getMaxPP(pp);
@@ -333,19 +333,19 @@ public class TeamBuildingFragment extends Fragment {
                 }
             } else {
                 // in case it's an old view
-                TextView move1PpTextView = (TextView) convertView.findViewById(R.id.move1_pp);
+                TextView move1PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move1_pp);
                 move1PpTextView.setText("");
-                ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.move1_type);
+                ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move1_type);
                 move1TypeImageView.setImageDrawable(null);
             }
 
             if (!pokemon.getMove2().equals("--")) {
-                ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.move2_type);
+                ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move2_type);
                 move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
                 JSONObject move2Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
                 if (move2Object != null) {
-                    TextView move2PpTextView = (TextView) convertView.findViewById(R.id.move2_pp);
-                    TextView move2NameTextView = (TextView) convertView.findViewById(R.id.move2_name);
+                    TextView move2PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move2_pp);
+                    TextView move2NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move2_name);
                     try {
                         String pp = String.valueOf(move2Object.getInt("pp"));
                         pp = MoveDex.getMaxPP(pp);
@@ -358,20 +358,20 @@ public class TeamBuildingFragment extends Fragment {
                 }
             } else {
                 // in case it's an old view
-                TextView move2PpTextView = (TextView) convertView.findViewById(R.id.move2_pp);
+                TextView move2PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move2_pp);
                 move2PpTextView.setText("");
-                ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.move2_type);
+                ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move2_type);
                 move2TypeImageView.setImageDrawable(null);
             }
 
 
             if (!pokemon.getMove3().equals("--")) {
-                ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.move3_type);
+                ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move3_type);
                 move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
                 JSONObject move3Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
                 if (move3Object != null) {
-                    TextView move3PpTextView = (TextView) convertView.findViewById(R.id.move3_pp);
-                    TextView move3NameTextView = (TextView) convertView.findViewById(R.id.move3_name);
+                    TextView move3PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move3_pp);
+                    TextView move3NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move3_name);
                     try {
                         String pp = String.valueOf(move3Object.getInt("pp"));
                         pp = MoveDex.getMaxPP(pp);
@@ -384,19 +384,19 @@ public class TeamBuildingFragment extends Fragment {
                 }
             } else {
                 // in case it's an old view
-                TextView move3PpTextView = (TextView) convertView.findViewById(R.id.move3_pp);
+                TextView move3PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move3_pp);
                 move3PpTextView.setText("");
-                ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.move3_type);
+                ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move3_type);
                 move3TypeImageView.setImageDrawable(null);
             }
 
             if (!pokemon.getMove4().equals("--")) {
-                ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.move4_type);
+                ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move4_type);
                 move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
                 JSONObject move4Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
                 if (move4Object != null) {
-                    TextView move4PpTextView = (TextView) convertView.findViewById(R.id.move4_pp);
-                    TextView move4NameTextView = (TextView) convertView.findViewById(R.id.move4_name);
+                    TextView move4PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move4_pp);
+                    TextView move4NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move4_name);
                     try {
                         String pp = String.valueOf(move4Object.getInt("pp"));
                         pp = MoveDex.getMaxPP(pp);
@@ -409,9 +409,9 @@ public class TeamBuildingFragment extends Fragment {
                 }
             } else {
                 // in case it's an old view
-                TextView move4PpTextView = (TextView) convertView.findViewById(R.id.move4_pp);
+                TextView move4PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move4_pp);
                 move4PpTextView.setText("");
-                ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.move4_type);
+                ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move4_type);
                 move4TypeImageView.setImageDrawable(null);
             }
 

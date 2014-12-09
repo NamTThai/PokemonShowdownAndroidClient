@@ -72,7 +72,16 @@ public class BattleFieldData {
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
 
     }
-
+    public Format getFormat(String formatName) {
+        for (FormatType formatType : mFormatTypes) {
+            for (Format format : formatType.getFormatList()) {
+                if(format.getName().equals(formatName)) {
+                    return format;
+                }
+            }
+        }
+        return null;
+    }
     public String getCurrentFormatName() {
         int currentFormat = getCurrentFormat();
         int count = 0;
