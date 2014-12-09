@@ -4229,11 +4229,7 @@ public class BattleMessage {
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            if (battleFragment.getPlayer1Team().size() <= i) {
-                battleFragment.getPlayer1Team().add(pkm);
-            } else {
-                battleFragment.getPlayer1Team().set(i, pkm);
-            }
+            battleFragment.getPlayer1Team().add(i, pkm);
         }
     }
 
@@ -4259,7 +4255,7 @@ public class BattleMessage {
         HashMap<String, Integer> moves = new HashMap<>();
         for (int i = 0; i < movesArray.length(); i++) {
             String move = movesArray.getString(i);
-            if(move.startsWith("hiddenpower")) {
+            if (move.startsWith("hiddenpower")) {
                 move = move.toLowerCase().replaceAll("[^a-z]", "");
                 //dirty fix to remvoe that 60 from hiddenpower...
             }
