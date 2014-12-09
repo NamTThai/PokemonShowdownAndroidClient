@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 public class BattleMessage {
@@ -269,6 +270,14 @@ public class BattleMessage {
                     if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
                         setDisplayTeam(battleFragment, requestJson);
+                    } else {
+                        Iterator<String> keys = requestJson.keys();
+                        while (keys.hasNext()) {
+                            if (keys.next().equals("active")) {
+                                battleFragment.showMoves(requestJson);
+                                break;
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
@@ -4259,7 +4268,7 @@ public class BattleMessage {
         HashMap<String, Integer> moves = new HashMap<>();
         for (int i = 0; i < movesArray.length(); i++) {
             String move = movesArray.getString(i);
-            if(move.startsWith("hiddenpower")) {
+            if (move.startsWith("hiddenpower")) {
                 move = move.toLowerCase().replaceAll("[^a-z]", "");
                 //dirty fix to remvoe that 60 from hiddenpower...
             }

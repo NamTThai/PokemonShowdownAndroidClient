@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -32,7 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -1252,4 +1252,13 @@ public class BattleFragment extends Fragment {
         return animatorSet;
     }
 
+    public void showMoves(JSONObject requestJson) {
+        BattleMoveFragment fragment = BattleMoveFragment.newInstance(requestJson, getRoomId());
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.move_fragment_container, fragment, "")
+                .commit();
+
+    }
 }
