@@ -586,7 +586,8 @@ public class BattleMessage {
                 break;
 
             case "detailschange":
-                final String forme = (split[1].contains(",")) ? split[1] : split[1].substring(0, split[1].indexOf(','));
+                final String forme = (split[1].contains(",")) ? split[1].substring(0, split[1].indexOf(',')) : split[1];
+
                 position = split[0].substring(0, 3);
                 species = split[0].substring(5);
 
