@@ -250,7 +250,7 @@ public class DmgCalcActivity extends FragmentActivity {
         mAttacker = attacker;
 
         TextView textView = (TextView) findViewById(R.id.dmgcalc_attacker);
-        textView.setCompoundDrawablesWithIntrinsicBounds(attacker.getIconSmall(), 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(attacker.getIcon(), 0, 0, 0);
         textView.setText(attacker.getName());
 
         setMove1(attacker.getMove1());
@@ -260,7 +260,7 @@ public class DmgCalcActivity extends FragmentActivity {
     }
 
     public void setAttacker(String attacker) {
-        setAttacker(new Pokemon(getApplicationContext(), attacker, true));
+        setAttacker(new Pokemon(this, attacker));
     }
 
     public Pokemon getDefender() {
@@ -270,14 +270,14 @@ public class DmgCalcActivity extends FragmentActivity {
     public void setDefender(Pokemon defender) {
         mDefender = defender;
         TextView textView = (TextView) findViewById(R.id.dmgcalc_defender);
-        textView.setCompoundDrawablesWithIntrinsicBounds(defender.getIconSmall(), 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(defender.getIcon(), 0, 0, 0);
         textView.setText(defender.getName());
 
         calculateAllMoves();
     }
 
     public void setDefender(String defender) {
-        setDefender(new Pokemon(getApplicationContext(), defender, true));
+        setDefender(new Pokemon(this, defender));
     }
 
     private void loadPokemon(Pokemon pokemon, int searchCode) {
@@ -294,28 +294,28 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private void setMove1(String move) {
         mAttacker.setMove1(move);
-        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move1)).setText(moveName);
         calculateDamage(1);
     }
 
     private void setMove2(String move) {
         mAttacker.setMove2(move);
-        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move2)).setText(moveName);
         calculateDamage(2);
     }
 
     private void setMove3(String move) {
         mAttacker.setMove3(move);
-        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move3)).setText(moveName);
         calculateDamage(3);
     }
 
     private void setMove4(String move) {
         mAttacker.setMove4(move);
-        String moveName = (move.equals("--")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move4)).setText(moveName);
         calculateDamage(4);
     }
@@ -437,7 +437,7 @@ public class DmgCalcActivity extends FragmentActivity {
         move = getAttacker().getMove(moveIndex);
 
         try {
-            JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+            JSONObject moveJson = MoveDex.get(getApplicationContext()).getMoveJsonObject(move);
             type = moveJson.getString("type");
             basePower = moveJson.getString("basePower");
             category = moveJson.getString("category");

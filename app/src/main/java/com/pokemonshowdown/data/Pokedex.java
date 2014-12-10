@@ -17,13 +17,10 @@ import java.util.Iterator;
 
 public class Pokedex {
     public final static String PTAG = Pokedex.class.getName();
+    private static Pokedex sPokedex;
     private HashMap<String, String> mPokedexEntries;
 
-    private static Pokedex sPokedex;
-    private Context mAppContext;
-
     private Pokedex(Context appContext) {
-        mAppContext = appContext;
         mPokedexEntries = readFile(appContext);
     }
 
@@ -34,19 +31,25 @@ public class Pokedex {
         return sPokedex;
     }
 
-    public static Pokedex getWithApplicationContext(Context appContext) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(appContext);
-        }
-        return sPokedex;
+    public static int getUnownIcon(Context appContext, String name) {
+        return appContext.getResources()
+                .getIdentifier("unown_" + name.toLowerCase().charAt(0), "drawable", appContext.getPackageName());
     }
 
     public HashMap<String, String> getPokedexEntries() {
         return mPokedexEntries;
     }
 
-    public String getPokemon(String name) {
-        return mPokedexEntries.get(name);
+    public JSONObject getPokemonJSONObject(String name) {
+        try {
+            return new JSONObject(getPokemonJSONString(name));
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    public String getPokemonJSONString(String name) {
+        return mPokedexEntries.get(MyApplication.toId(name));
     }
 
     private HashMap<String, String> readFile(Context appContext) {
@@ -71,11 +74,8 @@ public class Pokedex {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                Object value = jsonObject.get(key);
-                if (jsonObject.get(key) instanceof JSONObject) {
-                    JSONObject entry = (JSONObject) value;
-                    pokedexEntries.put(key, entry.toString());
-                }
+                JSONObject entry = jsonObject.getJSONObject(key);
+                pokedexEntries.put(key, entry.toString());
             }
         } catch (JSONException e) {
             Log.d(PTAG, "JSON Exception");
@@ -84,9 +84,5 @@ public class Pokedex {
         }
 
         return pokedexEntries;
-    }
-
-    public static int getUnownIcon(Context appContext, String name) {
-        return appContext.getResources().getIdentifier("unown_"+name.toLowerCase().charAt(0), "drawable", appContext.getPackageName());
     }
 }

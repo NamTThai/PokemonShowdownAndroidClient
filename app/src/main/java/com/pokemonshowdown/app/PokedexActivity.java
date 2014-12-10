@@ -83,7 +83,7 @@ public class PokedexActivity extends FragmentActivity {
                 Dialog dialog;
                 switch (requestCode) {
                     case REQUEST_CODE_SEARCH_POKEMON:
-                        Pokemon pokemon = new Pokemon(getApplicationContext(), data.getExtras().getString("Search"), true);
+                        Pokemon pokemon = new Pokemon(this, data.getExtras().getString(SearchableActivity.SEARCH));
                         fragment = new PokemonFragment();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("Pokemon", pokemon);
@@ -94,8 +94,8 @@ public class PokedexActivity extends FragmentActivity {
                         fragment.show(fragmentManager, PokemonFragment.PTAG);
                         break;
                     case REQUEST_CODE_SEARCH_ABILITY:
-                        String ability = data.getExtras().getString("Search");
-                        JSONObject abilityJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(ability);
+                        String ability = data.getExtras().getString(SearchableActivity.SEARCH);
+                        JSONObject abilityJson = AbilityDex.get(getApplicationContext()).getAbilityJsonObject(ability);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(abilityJson.getString("name"))
                                 .setMessage(abilityJson.getString("desc"))
@@ -103,8 +103,8 @@ public class PokedexActivity extends FragmentActivity {
                         dialog.show();
                         break;
                     case REQUEST_CODE_SEARCH_ITEM:
-                        String item = data.getExtras().getString("Search");
-                        JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(item);
+                        String item = data.getExtras().getString(SearchableActivity.SEARCH);
+                        JSONObject itemJson = ItemDex.get(getApplicationContext()).getItemJsonObject(item);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(itemJson.getString("name"))
                                 .setMessage(itemJson.getString("desc"))
@@ -113,8 +113,8 @@ public class PokedexActivity extends FragmentActivity {
                         dialog.show();
                         break;
                     case REQUEST_CODE_SEARCH_MOVES:
-                        String move = data.getExtras().getString("Search");
-                        JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+                        String move = data.getExtras().getString(SearchableActivity.SEARCH);
+                        JSONObject moveJson = MoveDex.get(getApplicationContext()).getMoveJsonObject(move);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(moveJson.getString("name"))
                                 .setMessage(moveJson.getString("desc"))
