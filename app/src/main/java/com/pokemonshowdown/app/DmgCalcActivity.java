@@ -437,7 +437,7 @@ public class DmgCalcActivity extends FragmentActivity {
         move = getAttacker().getMove(moveIndex);
 
         try {
-            JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+            JSONObject moveJson = MoveDex.get(getApplicationContext()).getMoveJsonObject(move);
             type = moveJson.getString("type");
             basePower = moveJson.getString("basePower");
             category = moveJson.getString("category");

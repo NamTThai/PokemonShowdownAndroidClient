@@ -20,7 +20,7 @@ public class BattleAnimation {
 
     public static AnimatorSet processMove(String move, View view, BattleFragment battleFragment, String[] split) {
         move = MyApplication.toId(move);
-        MoveDex.Moves animationId = MoveDex.get(battleFragment.getActivity()).getMoveAnimationEntries(move);
+        MoveDex.Moves animationId = MoveDex.get(battleFragment.getActivity()).getMoveAnimationEntry(move);
         if (view == null) {
             return null;
         }

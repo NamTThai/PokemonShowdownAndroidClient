@@ -142,7 +142,7 @@ public class Pokemon implements Serializable {
             }
             sb.append(" (").append(getGender().toUpperCase()).append(")");
             if (getItem().length() > 0) {
-                JSONObject itemJSon = ItemDex.getWithApplicationContext(appContext).getItemJsonObject(getItem());
+                JSONObject itemJSon = ItemDex.get(appContext).getItemJsonObject(getItem());
                 if (itemJSon != null) {
                     try {
                         String itemName = itemJSon.getString("name");
@@ -319,7 +319,7 @@ public class Pokemon implements Serializable {
         }
         if (!noMoves) {
             if (!getMove1().equals("--")) {
-                JSONObject move1Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove1());
+                JSONObject move1Object = MoveDex.get(appContext).getMoveJsonObject(getMove1());
                 if (move1Object != null) {
                     try {
                         String realMove = move1Object.getString("name");
@@ -331,7 +331,7 @@ public class Pokemon implements Serializable {
             }
 
             if (!getMove2().equals("--")) {
-                JSONObject move2Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove2());
+                JSONObject move2Object = MoveDex.get(appContext).getMoveJsonObject(getMove2());
                 if (move2Object != null) {
                     try {
                         String realMove = move2Object.getString("name");
@@ -343,7 +343,7 @@ public class Pokemon implements Serializable {
             }
 
             if (!getMove3().equals("--")) {
-                JSONObject move3Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove3());
+                JSONObject move3Object = MoveDex.get(appContext).getMoveJsonObject(getMove3());
                 if (move3Object != null) {
                     try {
                         String realMove = move3Object.getString("name");
@@ -355,7 +355,7 @@ public class Pokemon implements Serializable {
             }
 
             if (!getMove4().equals("--")) {
-                JSONObject move4Object = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(getMove4());
+                JSONObject move4Object = MoveDex.get(appContext).getMoveJsonObject(getMove4());
                 if (move4Object != null) {
                     try {
                         String realMove = move4Object.getString("name");
@@ -571,9 +571,9 @@ public class Pokemon implements Serializable {
         mTagName = name;
         JSONObject jsonObject;
         if (withAppContext) {
-            jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+            jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
         } else {
-            jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+            jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
         }
         initializePokemon(appContext, jsonObject);
     }
@@ -584,13 +584,11 @@ public class Pokemon implements Serializable {
             mTagName = name;
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             initializePokemon(appContext, jsonObject);
-        } catch (JSONException e) {
-            Log.d(PTAG, e.toString());
         } catch (NullPointerException e) {
             Log.e(PTAG, "Can't find pokemon " + name + " with error log " + e.toString());
         }
@@ -670,9 +668,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             return jsonObject.getString("species");
         } catch (JSONException e) {
@@ -687,9 +685,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             String prefix = (shiny) ? "sprshiny_" : "sprites_";
             String pkmName = jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "");
@@ -718,9 +716,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             int toReturn = appContext.getResources().getIdentifier("smallicons_" + jsonObject.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
             return (toReturn == 0) ? R.drawable.smallicons_0 : toReturn;
@@ -736,9 +734,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
             Integer[] baseStatsInteger = new Integer[6];
@@ -761,9 +759,9 @@ public class Pokemon implements Serializable {
         try {
             JSONObject jsonObject;
             if (withAppContext) {
-                jsonObject = new JSONObject(Pokedex.getWithApplicationContext(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             } else {
-                jsonObject = new JSONObject(Pokedex.get(appContext).getPokemon(name));
+                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             }
             JSONArray types = jsonObject.getJSONArray("types");
             String[] typesString = new String[types.length()];

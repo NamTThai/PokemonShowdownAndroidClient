@@ -316,7 +316,7 @@ public class TeamBuildingFragment extends Fragment {
 
             if (!pokemon.getMove1().equals("--")) {
                 ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move1_type);
-                move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1(), false));
+                move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1()));
                 JSONObject move1Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
                 if (move1Object != null) {
                     TextView move1PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move1_pp);
@@ -341,7 +341,7 @@ public class TeamBuildingFragment extends Fragment {
 
             if (!pokemon.getMove2().equals("--")) {
                 ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move2_type);
-                move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2(), false));
+                move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2()));
                 JSONObject move2Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
                 if (move2Object != null) {
                     TextView move2PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move2_pp);
@@ -367,7 +367,7 @@ public class TeamBuildingFragment extends Fragment {
 
             if (!pokemon.getMove3().equals("--")) {
                 ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move3_type);
-                move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3(), false));
+                move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3()));
                 JSONObject move3Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
                 if (move3Object != null) {
                     TextView move3PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move3_pp);
@@ -392,7 +392,7 @@ public class TeamBuildingFragment extends Fragment {
 
             if (!pokemon.getMove4().equals("--")) {
                 ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move4_type);
-                move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4(), false));
+                move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4()));
                 JSONObject move4Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
                 if (move4Object != null) {
                     TextView move4PpTextView = (TextView) convertView.findViewById(R.id.teambuilder_move4_pp);

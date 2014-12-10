@@ -61,10 +61,10 @@ public class MyApplication extends Application {
         Context appContext = getApplicationContext();
 
         mWebSocketClient = getWebSocketClient();
-        mPokedex = Pokedex.getWithApplicationContext(appContext);
-        mMoveDex = MoveDex.getWithApplicationContext(appContext);
-        mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
-        mItemDex = ItemDex.getWithApplicationContext(appContext);
+        mPokedex = Pokedex.get(appContext);
+        mMoveDex = MoveDex.get(appContext);
+        mAbilityDex = AbilityDex.get(appContext);
+        mItemDex = ItemDex.get(appContext);
         mOnboarding = Onboarding.getWithApplicationContext(appContext);
         mBattleFieldData = BattleFieldData.getWithApplicationContext(appContext);
         mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);

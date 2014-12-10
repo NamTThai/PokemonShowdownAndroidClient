@@ -179,7 +179,7 @@ public class PokemonInfo implements Serializable {
 
     public String getItem(Context activityContext) {
         if(mItem != null) {
-            return ItemDex.get(activityContext).getItem(mItem);
+            return ItemDex.get(activityContext).getItemName(mItem);
         } else {
             return null;
         }

@@ -47,28 +47,28 @@ public class SearchableActivity extends ListActivity {
 
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:
-                HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
+                HashMap<String, String> pokedex = Pokedex.get(getApplicationContext()).getPokedexEntries();
                 mAdapterList = new ArrayList<>(pokedex.keySet());
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_pokemon);
                 break;
             case REQUEST_CODE_SEARCH_ABILITY:
-                HashMap<String, String> abilityDex = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityDexEntries();
+                HashMap<String, String> abilityDex = AbilityDex.get(getApplicationContext()).getAbilityDexEntries();
                 mAdapterList = new ArrayList<>(abilityDex.keySet());
                 mAdapter = new AbilityAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_ability);
                 break;
             case REQUEST_CODE_SEARCH_ITEM:
-                HashMap<String, String> itemDex = ItemDex.getWithApplicationContext(getApplicationContext()).getItemDexEntries();
+                HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
                 mAdapterList = new ArrayList<>(itemDex.keySet());
                 mAdapter = new ItemAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_item);
                 break;
             case REQUEST_CODE_SEARCH_MOVES:
-                HashMap<String, String> moveDex = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveDexEntries();
+                HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
                 mAdapterList = new ArrayList<>(moveDex.keySet());
                 mAdapter = new MovesAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
@@ -131,7 +131,7 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchPokemon(String query) {
-        HashMap<String, String> pokedex = Pokedex.getWithApplicationContext(getApplicationContext()).getPokedexEntries();
+        HashMap<String, String> pokedex = Pokedex.get(getApplicationContext()).getPokedexEntries();
         mAdapterList = new ArrayList<>();
         for (String pokemonName : pokedex.keySet()) {
             if (pokemonName.contains(query.toLowerCase())) {
@@ -143,7 +143,7 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchAbility(String query) {
-        HashMap<String, String> abilityDex = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityDexEntries();
+        HashMap<String, String> abilityDex = AbilityDex.get(getApplicationContext()).getAbilityDexEntries();
         mAdapterList = new ArrayList<>();
         for (String abilityName : abilityDex.keySet()) {
             if (abilityName.contains(query.toLowerCase())) {
@@ -155,7 +155,7 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchItem(String query) {
-        HashMap<String, String> itemDex = ItemDex.getWithApplicationContext(getApplicationContext()).getItemDexEntries();
+        HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
         mAdapterList = new ArrayList<>();
         for (String itemName : itemDex.keySet()) {
             if (itemName.contains(query.toLowerCase())) {
@@ -167,7 +167,7 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchMove(String query) {
-        HashMap<String, String> moveDex = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveDexEntries();
+        HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
         mAdapterList = new ArrayList<>();
         for (String moveName : moveDex.keySet()) {
             if (moveName.contains(query.toLowerCase())) {
@@ -242,7 +242,7 @@ public class SearchableActivity extends ListActivity {
             try {
                 String abilityName = getItem(position);
 
-                JSONObject abilityJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(abilityName);
+                JSONObject abilityJson = AbilityDex.get(getApplicationContext()).getAbilityJsonObject(abilityName);
                 TextView textView = (TextView) convertView.findViewById(R.id.short_ability_name);
                 textView.setText(abilityJson.getString("name"));
                 textView.setCompoundDrawablesWithIntrinsicBounds(Pokedex.getUnownIcon(getApplicationContext(), abilityName), 0, 0, 0);
@@ -271,7 +271,7 @@ public class SearchableActivity extends ListActivity {
             try {
                 String move = getItem(position);
 
-                JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+                JSONObject moveJson = MoveDex.get(getApplicationContext()).getMoveJsonObject(move);
                 TextView textView = (TextView) convertView.findViewById(R.id.short_move_name);
                 textView.setText(moveJson.getString("name"));
                 ImageView type = (ImageView) convertView.findViewById(R.id.type);
@@ -317,7 +317,7 @@ public class SearchableActivity extends ListActivity {
 
             try {
                 String itemTag = getItem(position);
-                JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(itemTag);
+                JSONObject itemJson = ItemDex.get(getApplicationContext()).getItemJsonObject(itemTag);
                 TextView textView = (TextView) convertView.findViewById(R.id.short_item_name);
                 textView.setText(itemJson.getString("name"));
                 textView.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getApplicationContext(), itemTag), 0, 0, 0);

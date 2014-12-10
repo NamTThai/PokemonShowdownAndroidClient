@@ -95,7 +95,7 @@ public class PokedexActivity extends FragmentActivity {
                         break;
                     case REQUEST_CODE_SEARCH_ABILITY:
                         String ability = data.getExtras().getString("Search");
-                        JSONObject abilityJson = AbilityDex.getWithApplicationContext(getApplicationContext()).getAbilityJsonObject(ability);
+                        JSONObject abilityJson = AbilityDex.get(getApplicationContext()).getAbilityJsonObject(ability);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(abilityJson.getString("name"))
                                 .setMessage(abilityJson.getString("desc"))
@@ -104,7 +104,7 @@ public class PokedexActivity extends FragmentActivity {
                         break;
                     case REQUEST_CODE_SEARCH_ITEM:
                         String item = data.getExtras().getString("Search");
-                        JSONObject itemJson = ItemDex.getWithApplicationContext(getApplicationContext()).getItemJsonObject(item);
+                        JSONObject itemJson = ItemDex.get(getApplicationContext()).getItemJsonObject(item);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(itemJson.getString("name"))
                                 .setMessage(itemJson.getString("desc"))
@@ -114,7 +114,7 @@ public class PokedexActivity extends FragmentActivity {
                         break;
                     case REQUEST_CODE_SEARCH_MOVES:
                         String move = data.getExtras().getString("Search");
-                        JSONObject moveJson = MoveDex.getWithApplicationContext(getApplicationContext()).getMoveJsonObject(move);
+                        JSONObject moveJson = MoveDex.get(getApplicationContext()).getMoveJsonObject(move);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(moveJson.getString("name"))
                                 .setMessage(moveJson.getString("desc"))
