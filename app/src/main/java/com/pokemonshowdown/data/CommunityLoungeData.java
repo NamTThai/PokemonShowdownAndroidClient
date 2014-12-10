@@ -1,8 +1,6 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +11,8 @@ public class CommunityLoungeData {
     private HashMap<String, RoomData> mRoomDataHashMap;
 
     private static CommunityLoungeData sCommunityLoungeData;
-    private Context mAppContext;
 
     private CommunityLoungeData(Context appContext) {
-        mAppContext = appContext;
         mRoomList = new ArrayList<>();
         mRoomDataHashMap = new HashMap<>();
     }
@@ -24,13 +20,6 @@ public class CommunityLoungeData {
     public static CommunityLoungeData get(Context c) {
         if (sCommunityLoungeData == null) {
             sCommunityLoungeData = new CommunityLoungeData(c.getApplicationContext());
-        }
-        return sCommunityLoungeData;
-    }
-
-    public static CommunityLoungeData getWithApplicationContext(Context appContext) {
-        if (sCommunityLoungeData == null) {
-            sCommunityLoungeData = new CommunityLoungeData(appContext);
         }
         return sCommunityLoungeData;
     }

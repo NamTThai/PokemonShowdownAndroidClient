@@ -22,7 +22,7 @@ public class UserDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_user, container);
 
-        final Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+        final Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
 
         getDialog().setTitle(onboarding.getUsername());
         String avatarId = onboarding.getAvatar();

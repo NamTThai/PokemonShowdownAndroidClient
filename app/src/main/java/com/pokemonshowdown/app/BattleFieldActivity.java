@@ -153,7 +153,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 startActivity(new Intent(this, DmgCalcActivity.class));
                 return true;
             case R.id.menu_login:
-                Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                Onboarding onboarding = Onboarding.get(getApplicationContext());
                 if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                     MyApplication.getMyApplication().getWebSocketClient();
                     runOnUiThread(new Runnable() {
@@ -318,7 +318,7 @@ public class BattleFieldActivity extends FragmentActivity {
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1) {
-            CommunityLoungeData.RoomData roomData = CommunityLoungeData.getWithApplicationContext(getApplicationContext()).getRoomInstance(roomId);
+            CommunityLoungeData.RoomData roomData = CommunityLoungeData.get(getApplicationContext()).getRoomInstance(roomId);
             if (roomData != null && roomData.isMessageListener()) {
                 roomData.addServerMessageOnHold(message);
             } else {

@@ -195,9 +195,9 @@ public class SearchableActivity extends ListActivity {
 
             String pokemonName = getItem(position);
             TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
-            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
+            textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName));
             textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIcon(getApplicationContext(), pokemonName), 0, 0, 0);
-            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
+            Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName);
             ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
             type1.setImageResource(typesIcon[0]);
             ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
@@ -206,7 +206,7 @@ public class SearchableActivity extends ListActivity {
             } else {
                 type2.setImageResource(0);
             }
-            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName, true);
+            Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName);
             TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
             hp.setText(baseStats[0].toString());
             TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);

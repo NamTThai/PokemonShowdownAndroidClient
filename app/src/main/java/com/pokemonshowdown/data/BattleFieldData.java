@@ -44,13 +44,6 @@ public class BattleFieldData {
         return sBattleFieldData;
     }
 
-    public static BattleFieldData getWithApplicationContext(Context appContext) {
-        if (sBattleFieldData == null) {
-            sBattleFieldData = new BattleFieldData(appContext);
-        }
-        return sBattleFieldData;
-    }
-
     public ArrayList<FormatType> getFormatTypes() {
         return mFormatTypes;
     }

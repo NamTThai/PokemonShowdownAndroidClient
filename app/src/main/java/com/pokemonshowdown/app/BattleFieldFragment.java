@@ -45,7 +45,7 @@ public class BattleFieldFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mRoomList = BattleFieldData.getWithApplicationContext(getActivity().getApplicationContext()).getRoomList();
+        mRoomList = BattleFieldData.get(getActivity()).getRoomList();
     }
 
     @Override

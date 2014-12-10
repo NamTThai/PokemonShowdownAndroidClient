@@ -65,9 +65,9 @@ public class MyApplication extends Application {
         mMoveDex = MoveDex.get(appContext);
         mAbilityDex = AbilityDex.get(appContext);
         mItemDex = ItemDex.get(appContext);
-        mOnboarding = Onboarding.getWithApplicationContext(appContext);
-        mBattleFieldData = BattleFieldData.getWithApplicationContext(appContext);
-        mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
+        mOnboarding = Onboarding.get(appContext);
+        mBattleFieldData = BattleFieldData.get(appContext);
+        mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
     }
@@ -206,10 +206,10 @@ public class MyApplication extends Application {
             switch (command) {
                 case "challstr":
                     channel = -1;
-                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding = Onboarding.get(getApplicationContext());
                     onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
                     onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
-                    String result = Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
+                    String result = Onboarding.get(getApplicationContext()).attemptSignIn();
                     if (result != null) {
                         sendClientMessage("|/trn " + result);
                     }
@@ -232,7 +232,7 @@ public class MyApplication extends Application {
                             avatar = "0" + avatar;
                         }
                     }
-                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding = Onboarding.get(getApplicationContext());
                     if (guestStatus.equals("0")) {
                         onboarding.setUsername(username);
                         onboarding.setSignedIn(false);
@@ -264,7 +264,7 @@ public class MyApplication extends Application {
                             break;
                         case "roomlist":
                             String roomlist = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                            BattleFieldData.getWithApplicationContext(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
+                            BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
                             break;
                         default:
                             Log.d(MTAG, message);
@@ -272,7 +272,7 @@ public class MyApplication extends Application {
                     break;
                 case "formats":
                     channel = -1;
-                    BattleFieldData.getWithApplicationContext(getApplicationContext()).generateAvailableRoomList(messageDetail);
+                    BattleFieldData.get(getApplicationContext()).generateAvailableRoomList(messageDetail);
                     break;
                 case "popup":
                     channel = -1;
@@ -322,7 +322,7 @@ public class MyApplication extends Application {
     }
 
     public boolean verifySignedInBeforeSendingMessage() {
-        Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+        Onboarding onboarding = Onboarding.get(getApplicationContext());
         if (!onboarding.isSignedIn()) {
             if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                 getWebSocketClient();

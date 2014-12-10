@@ -278,14 +278,9 @@ public class Pokemon implements Serializable {
         return p;
     }
 
-    public static String getPokemonName(Context appContext, String name, boolean withAppContext) {
+    public static String getPokemonName(Context appContext, String name) {
         try {
-            JSONObject jsonObject;
-            if (withAppContext) {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            } else {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            }
+            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             return jsonObject.getString("species");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
@@ -327,14 +322,9 @@ public class Pokemon implements Serializable {
         }
     }
 
-    public static Integer[] getPokemonBaseStats(Context appContext, String name, boolean withAppContext) {
+    public static Integer[] getPokemonBaseStats(Context appContext, String name) {
         try {
-            JSONObject jsonObject;
-            if (withAppContext) {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            } else {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            }
+            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
             Integer[] baseStatsInteger = new Integer[6];
             baseStatsInteger[0] = baseStats.getInt("hp");
@@ -352,20 +342,16 @@ public class Pokemon implements Serializable {
         return null;
     }
 
-    public static Integer[] getPokemonTypeIcon(Context appContext, String name, boolean withAppContext) {
+    public static Integer[] getPokemonTypeIcon(Context appContext, String name) {
         try {
-            JSONObject jsonObject;
-            if (withAppContext) {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            } else {
-                jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            }
+            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             JSONArray types = jsonObject.getJSONArray("types");
             String[] typesString = new String[types.length()];
             Integer[] typesIcon = new Integer[types.length()];
             for (int i = 0; i < types.length(); i++) {
                 typesString[i] = types.get(i).toString();
-                typesIcon[i] = appContext.getResources().getIdentifier("types_" + typesString[i].toLowerCase(), "drawable", appContext.getPackageName());
+                typesIcon[i] = appContext.getResources()
+                        .getIdentifier("types_" + typesString[i].toLowerCase(), "drawable", appContext.getPackageName());
             }
             return typesIcon;
         } catch (JSONException e) {
