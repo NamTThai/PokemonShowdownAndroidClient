@@ -143,12 +143,12 @@ public class PokemonInfo implements Serializable {
     }
 
     public void setStats(int[] stats) {
-        if (stats.length == 6) {
+        if (stats != null && stats.length == 6) {
             if (mStats == null) {
                 mStats = new int[5];
             }
             System.arraycopy(stats, 1, mStats, 0, 5);
-        } else {
+        } else if (stats != null) {
             mStats = stats;
         }
     }
@@ -178,7 +178,11 @@ public class PokemonInfo implements Serializable {
     }
 
     public String getItem(Context activityContext) {
-        return ItemDex.get(activityContext).getItem(mItem);
+        if(mItem != null) {
+            return ItemDex.get(activityContext).getItem(mItem);
+        } else {
+            return null;
+        }
     }
 
     public void setItem(String item) {
