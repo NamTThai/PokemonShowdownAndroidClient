@@ -17,13 +17,10 @@ import java.util.Iterator;
 
 public class ItemDex {
     private final static String ITAG = ItemDex.class.getName();
+    private static ItemDex sItemDex;
     private HashMap<String, String> mItemDexEntries;
 
-    private static ItemDex sItemDex;
-    private Context mAppContext;
-
     private ItemDex(Context appContext) {
-        mAppContext = appContext;
         mItemDexEntries = readFile(appContext);
     }
 
@@ -34,34 +31,37 @@ public class ItemDex {
         return sItemDex;
     }
 
-    public static ItemDex getWithApplicationContext(Context appContext) {
-        if (sItemDex == null) {
-            sItemDex = new ItemDex(appContext);
-        }
-        return sItemDex;
+    public static int getItemIcon(Context appContext, String itemName) {
+        return appContext.getResources()
+                .getIdentifier("item_" + MyApplication.toId(itemName), "drawable", appContext.getPackageName());
     }
 
     public HashMap<String, String> getItemDexEntries() {
         return mItemDexEntries;
     }
 
-    public String getItem(String name) {
+    public String getItemName(String name) {
         name = MyApplication.toId(name);
-        return mItemDexEntries.get(name);
+        String item;
+        try {
+            item = mItemDexEntries.get(name);
+            if (item != null) {
+                JSONObject itemEntries = new JSONObject(item);
+                item = itemEntries.getString("name");
+            }
+        } catch (JSONException e) {
+            item = null;
+        }
+        return item;
     }
 
     public JSONObject getItemJsonObject(String name) {
         try {
-            String item = mItemDexEntries.get(name);
+            String item = mItemDexEntries.get(MyApplication.toId(name));
             return new JSONObject(item);
         } catch (JSONException e) {
-            Log.d(ITAG, e.toString());
             return null;
         }
-    }
-
-    public static int getItemIcon(Context appContext, String itemName) {
-            return appContext.getResources().getIdentifier("item_" + itemName.toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), ""), "drawable", appContext.getPackageName());
     }
 
     private HashMap<String, String> readFile(Context appContext) {
@@ -86,11 +86,8 @@ public class ItemDex {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                Object value = jsonObject.get(key);
-                if (jsonObject.get(key) instanceof JSONObject) {
-                    JSONObject entry = (JSONObject) value;
-                    ItemDexEntries.put(key, entry.toString());
-                }
+                JSONObject entry = jsonObject.getJSONObject(key);
+                ItemDexEntries.put(key, entry.toString());
             }
         } catch (JSONException e) {
             Log.d(ITAG, "JSON Exception");

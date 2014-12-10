@@ -17,25 +17,11 @@ import java.util.Iterator;
 
 public class MoveDex {
     private final static String MTAG = MoveDex.class.getName();
+    private static MoveDex sMoveDex;
     private HashMap<String, String> mMoveDexEntries;
     private HashMap<String, Moves> mMoveAnimationEntries;
-    
-    public static enum Moves {SHAKE, DANCE, FLIGHT, SPINATK, XATK, SELF, SELF_LIGHT, SELF_DARK, TRICK, CHARGE,
-            SPREAD_LIGHT, SPREAD_ENERGY, SPREAD_MIST, SPREAD_SHADOW, SPREAD_POISON, SPREAD_WAVE, SPREAD_FIRE, SPREAD_ROCK, SPREAD_SPIKE, SPREAD_TSPIKE, SPREAD_WEB,
-            CONTACT_ENERGY, CONTACT_CLAW, CONTACT_KICK, CONTACT_WAVE, CONTACT_BITE, CONTACT_POISON, CONTACT_PUNCH, CONTACT_SHADOW, CONTACT_THUNDER, CONTACT_FIRE, CONTACT_NEUTRAL, CONTACT_MIST, CONTACT_LIGHT,
-            DRAIN, FAST,
-            CONTACT_PUNCH_FIRE, CONTACT_PUNCH_ICE, CONTACT_PUNCH_THUNDER, CONTACT_BITE_FIRE, CONTACT_BITE_ICE, CONTACT_BITE_THUNDER,
-            STREAM_NEUTRAL, STREAM_LIGHT, STREAM_ENERGY, STREAM_MIST, STREAM_POISON, STREAM_SHADOW, STREAM_WATER, STREAM_FIRE, STREAM_ICE, STREAM_ROCK,
-            EARTH, PHAZE, THUNDER_STRONG, THUNDER_NEUTRAL, THUNDER_WEAK, STATUS_PSN, STATUS_PAR, STATUS_SLP, STATUS_BRN,
-            BALL_NEUTRAL, BALL_LIGHT, BALL_ENERGY, BALL_MIST, BALL_POISON, BALL_SHADOW, BALL_WATER, BALL_FIRE, BALL_ICE, BALL_ROCK,
-            WISH, SLASH,
-            BOMB_NEUTRAL, BOMB_LIGHT, BOMB_ENERGY, BOMB_MIST, BOMB_POISON, BOMB_SHADOW,BOMB_WATER, BOMB_FIRE}
-
-    private static MoveDex sMoveDex;
-    private Context mAppContext;
 
     private MoveDex(Context appContext) {
-        mAppContext = appContext;
         mMoveDexEntries = readFile(appContext);
         initializeAnimationEntries();
     }
@@ -47,22 +33,49 @@ public class MoveDex {
         return sMoveDex;
     }
 
-    public static MoveDex getWithApplicationContext(Context appContext) {
-        if (sMoveDex == null) {
-            sMoveDex = new MoveDex(appContext);
+    public static String getMoveName(Context appContext, String name) {
+        try {
+            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
+            return moveJson.getString("name");
+        } catch (JSONException e) {
+            return null;
         }
-        return sMoveDex;
+    }
+
+    public static int getMoveTypeIcon(Context appContext, String move) {
+        move = MyApplication.toId(move);
+        try {
+            MoveDex moveDex;
+            moveDex = MoveDex.get(appContext);
+            String types = moveDex.getMoveJsonObject(move).getString("type");
+            return appContext.getResources()
+                    .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
+        } catch (JSONException e) {
+            return 0;
+        }
+    }
+
+    public static int getTypeIcon(Context appContext, String types) {
+        return appContext.getResources()
+                .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
+    }
+
+    public static int getCategoryIcon(Context appContext, String category) {
+        return appContext.getResources()
+                .getIdentifier("category_" + MyApplication.toId(category), "drawable", appContext.getPackageName());
+    }
+
+    public static String getMaxPP(String pp) {
+        int ppInt = Integer.parseInt(pp);
+        ppInt *= 1.6;
+        return Integer.toString(ppInt);
     }
 
     public HashMap<String, String> getMoveDexEntries() {
         return mMoveDexEntries;
     }
 
-    public String getMove(String name) {
-        return mMoveDexEntries.get(name);
-    }
-
-    public Moves getMoveAnimationEntries(String move) {
+    public Moves getMoveAnimationEntry(String move) {
         return mMoveAnimationEntries.get(move);
     }
 
@@ -72,49 +85,8 @@ public class MoveDex {
             String move = mMoveDexEntries.get(name);
             return new JSONObject(move);
         } catch (JSONException e) {
-            Log.d(MTAG, e.toString());
             return null;
         }
-    }
-
-    public static String getMoveName(Context appContext, String name) {
-        try {
-            JSONObject moveJson = MoveDex.getWithApplicationContext(appContext).getMoveJsonObject(name);
-            return moveJson.getString("name");
-        } catch (JSONException e) {
-            Log.d(MTAG, e.toString());
-            return null;
-        }
-    }
-
-    public static int getMoveTypeIcon(Context appContext, String move, boolean withAppContext) {
-        move = MyApplication.toId(move);
-        try {
-            MoveDex moveDex;
-            if (withAppContext) {
-                moveDex = MoveDex.getWithApplicationContext(appContext);
-            } else {
-                moveDex = MoveDex.get(appContext);
-            }
-            String types = moveDex.getMoveJsonObject(move).getString("type");
-            return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
-        } catch (JSONException e) {
-            return 0;
-        }
-    }
-
-    public static int getTypeIcon(Context appContext, String types) {
-        return appContext.getResources().getIdentifier("types_" + types.toLowerCase(), "drawable", appContext.getPackageName());
-    }
-
-    public static int getCategoryIcon(Context appContext, String category) {
-        return appContext.getResources().getIdentifier("category_" + category.toLowerCase(), "drawable", appContext.getPackageName());
-    }
-
-    public static String getMaxPP(String pp) {
-        int ppInt = Integer.parseInt(pp);
-        ppInt *= 1.6;
-        return Integer.toString(ppInt);
     }
 
     private HashMap<String, String> readFile(Context appContext) {
@@ -139,11 +111,8 @@ public class MoveDex {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                Object value = jsonObject.get(key);
-                if (jsonObject.get(key) instanceof JSONObject) {
-                    JSONObject entry = (JSONObject) value;
-                    MoveDexEntries.put(key, entry.toString());
-                }
+                Object entry = jsonObject.get(key);
+                MoveDexEntries.put(key, entry.toString());
             }
         } catch (JSONException e) {
             Log.d(MTAG, "JSON Exception");
@@ -167,7 +136,7 @@ public class MoveDex {
         String[] selfEntries = {"reflect", "safeguard", "lightscreen", "mist", "transform", "bellydrum",
                 "aromatherapy", "healbell", "magiccoat", "protect", "detect", "kingshield", "spikyshield",
                 "endure", "bide", "rockpolish", "harden", "irondefense", "rest", "howl", "acupressure",
-                "curse", "shiftgear", "autotomize", "bulkup", "workup", "honeclaws", "shellsmash","stockpile",
+                "curse", "shiftgear", "autotomize", "bulkup", "workup", "honeclaws", "shellsmash", "stockpile",
                 "ingrain", "aquaring", "coil", "refresh", "minimize", "doomdesire", "futuresight", "cottonguard",
                 "roost", "softboiled", "milkdrink", "slackoff", "acidarmor", "substitute", "batonpass", "growth",
                 "painsplit", "assist", "naturepower", "copycat", "sleeptalk", "meanlook", "destinybond",
@@ -505,5 +474,18 @@ public class MoveDex {
         for (String bombFire : bombFireEntries) {
             mMoveAnimationEntries.put(bombFire, Moves.BOMB_FIRE);
         }
+    }
+
+    public static enum Moves {
+        SHAKE, DANCE, FLIGHT, SPINATK, XATK, SELF, SELF_LIGHT, SELF_DARK, TRICK, CHARGE,
+        SPREAD_LIGHT, SPREAD_ENERGY, SPREAD_MIST, SPREAD_SHADOW, SPREAD_POISON, SPREAD_WAVE, SPREAD_FIRE, SPREAD_ROCK, SPREAD_SPIKE, SPREAD_TSPIKE, SPREAD_WEB,
+        CONTACT_ENERGY, CONTACT_CLAW, CONTACT_KICK, CONTACT_WAVE, CONTACT_BITE, CONTACT_POISON, CONTACT_PUNCH, CONTACT_SHADOW, CONTACT_THUNDER, CONTACT_FIRE, CONTACT_NEUTRAL, CONTACT_MIST, CONTACT_LIGHT,
+        DRAIN, FAST,
+        CONTACT_PUNCH_FIRE, CONTACT_PUNCH_ICE, CONTACT_PUNCH_THUNDER, CONTACT_BITE_FIRE, CONTACT_BITE_ICE, CONTACT_BITE_THUNDER,
+        STREAM_NEUTRAL, STREAM_LIGHT, STREAM_ENERGY, STREAM_MIST, STREAM_POISON, STREAM_SHADOW, STREAM_WATER, STREAM_FIRE, STREAM_ICE, STREAM_ROCK,
+        EARTH, PHAZE, THUNDER_STRONG, THUNDER_NEUTRAL, THUNDER_WEAK, STATUS_PSN, STATUS_PAR, STATUS_SLP, STATUS_BRN,
+        BALL_NEUTRAL, BALL_LIGHT, BALL_ENERGY, BALL_MIST, BALL_POISON, BALL_SHADOW, BALL_WATER, BALL_FIRE, BALL_ICE, BALL_ROCK,
+        WISH, SLASH,
+        BOMB_NEUTRAL, BOMB_LIGHT, BOMB_ENERGY, BOMB_MIST, BOMB_POISON, BOMB_SHADOW, BOMB_WATER, BOMB_FIRE
     }
 }

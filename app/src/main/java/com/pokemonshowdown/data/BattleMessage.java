@@ -208,7 +208,7 @@ public class BattleMessage {
                     @Override
                     public void run() {
                         int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                MyApplication.toId(pokeName), false);
+                                MyApplication.toId(pokeName));
                         if (view == null) {
                             viewData.addViewSetterOnHold(iconId, imageResource,
                                     BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
@@ -236,13 +236,13 @@ public class BattleMessage {
                             ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p1", i));
                             PokemonInfo pkm = team1.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
-                                    MyApplication.toId(pkm.getName()), false, true, pkm.isFemale(), pkm.isShiny()));
+                                    MyApplication.toId(pkm.getName()), true, pkm.isFemale(), pkm.isShiny()));
                         }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) view.findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             PokemonInfo pkm = team2.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
-                                    MyApplication.toId(pkm.getName()), false, false, pkm.isFemale(), pkm.isShiny()));
+                                    MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
                     }
                 });
@@ -486,8 +486,8 @@ public class BattleMessage {
 
                 String speciesId = MyApplication.toId(species);
 
-                spriteId = Pokemon.getPokemonSprite(battleFragment.getActivity(), speciesId, false, back, female, shiny);
-                iconId = Pokemon.getPokemonIcon(battleFragment.getActivity(), speciesId, false);
+                spriteId = Pokemon.getPokemonSprite(battleFragment.getActivity(), speciesId, back, female, shiny);
+                iconId = Pokemon.getPokemonIcon(battleFragment.getActivity(), speciesId);
 
                 // Switching sprites and icons
                 final String levelFinal = attacker + " " + level;
@@ -595,7 +595,8 @@ public class BattleMessage {
                 break;
 
             case "detailschange":
-                final String forme = (split[1].contains(",")) ? split[1] : split[1].substring(0, split[1].indexOf(','));
+                final String forme = (split[1].contains(",")) ? split[1].substring(0, split[1].indexOf(',')) : split[1];
+
                 position = split[0].substring(0, 3);
                 species = split[0].substring(5);
 
@@ -612,10 +613,10 @@ public class BattleMessage {
                         boolean back = split[0].startsWith("p1");
                         ImageView sprite = (ImageView) view.findViewById(battleFragment.getSpriteId(position));
                         sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
-                                MyApplication.toId(forme), false, back, false, false));
+                                MyApplication.toId(forme), back, false, false));
                         ImageView icon = (ImageView) view.findViewById(battleFragment.getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                MyApplication.toId(forme), false));
+                                MyApplication.toId(forme)));
                     }
 
                     @Override
@@ -4238,11 +4239,7 @@ public class BattleMessage {
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            if (battleFragment.getPlayer1Team().size() <= i) {
-                battleFragment.getPlayer1Team().add(pkm);
-            } else {
-                battleFragment.getPlayer1Team().set(i, pkm);
-            }
+            battleFragment.getPlayer1Team().add(i, pkm);
         }
     }
 

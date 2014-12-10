@@ -27,6 +27,9 @@ import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
 
@@ -142,7 +145,7 @@ public class BattleFieldActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.team_building:
                 startActivity(new Intent(this, TeamBuildingActivity.class));
                 return true;
@@ -208,7 +211,7 @@ public class BattleFieldActivity extends FragmentActivity {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
-        switch(position) {
+        switch (position) {
             case 0:
                 mPosition = 0;
                 fragment = BattleFieldFragment.newInstance();
@@ -248,6 +251,36 @@ public class BattleFieldActivity extends FragmentActivity {
     private void processBroadcastMessage(Intent intent) {
         String details = intent.getExtras().getString(MyApplication.EXTRA_DETAILS);
         switch (details) {
+            case MyApplication.EXTRA_UPDATE_SEARCH:
+                String updateSearchStatus = intent.getExtras().getString(MyApplication.EXTRA_UPDATE_SEARCH);
+                try {
+                    JSONObject updateSearchJSon = new JSONObject(updateSearchStatus);
+                    Object updateStatusObject = updateSearchJSon.get("searching");
+                    // is only boolean when search is done or maybe canceled
+                    if (updateStatusObject instanceof Boolean) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDialog != null && mDialog.isShowing()) {
+                                    mDialog.dismiss();
+                                }
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                        .setMessage(R.string.searching_battle)
+                                        .create();
+                                mDialog.show();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
             case MyApplication.EXTRA_NO_INTERNET_CONNECTION:
                 runOnUiThread(new Runnable() {
                     @Override

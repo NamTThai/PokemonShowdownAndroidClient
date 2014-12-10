@@ -17,13 +17,10 @@ import java.util.Iterator;
 
 public class AbilityDex {
     public final static String ATAG = AbilityDex.class.getName();
+    private static AbilityDex sAbilityDex;
     private HashMap<String, String> mAbilityDexEntries;
 
-    private static AbilityDex sAbilityDex;
-    private Context mAppContext;
-
     private AbilityDex(Context appContext) {
-        mAppContext = appContext;
         mAbilityDexEntries = readFile(appContext);
     }
 
@@ -34,27 +31,15 @@ public class AbilityDex {
         return sAbilityDex;
     }
 
-    public static AbilityDex getWithApplicationContext(Context appContext) {
-        if (sAbilityDex == null) {
-            sAbilityDex = new AbilityDex(appContext);
-        }
-        return sAbilityDex;
-    }
-
     public HashMap<String, String> getAbilityDexEntries() {
         return mAbilityDexEntries;
     }
 
-    public String getAbility(String name) {
-        return mAbilityDexEntries.get(name);
-    }
-
     public JSONObject getAbilityJsonObject(String name) {
         try {
-            String ability = mAbilityDexEntries.get(name);
+            String ability = mAbilityDexEntries.get(MyApplication.toId(name));
             return new JSONObject(ability);
         } catch (JSONException e) {
-            Log.d(ATAG, "JSONException");
             return null;
         }
     }
@@ -81,11 +66,8 @@ public class AbilityDex {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                Object value = jsonObject.get(key);
-                if (jsonObject.get(key) instanceof JSONObject) {
-                    JSONObject entry = (JSONObject) value;
-                    AbilityDexEntries.put(key, entry.toString());
-                }
+                JSONObject entry = jsonObject.getJSONObject(key);
+                AbilityDexEntries.put(key, entry.toString());
             }
         } catch (JSONException e) {
             Log.d(ATAG, "JSON Exception");
