@@ -68,7 +68,7 @@ public class PokemonInfoFragment extends DialogFragment {
 
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(mPokemonInfo.getName());
-        pokemonName.setCompoundDrawablesWithIntrinsicBounds(mPokemonInfo.getIcon(getActivity(), false), 0, typeIcon[0], 0);
+        pokemonName.setCompoundDrawablesWithIntrinsicBounds(mPokemonInfo.getIcon(getActivity()), 0, typeIcon[0], 0);
         pokemonName.setCompoundDrawablePadding(8);
 
         TextView pokemonLevelGender = (TextView) view.findViewById(R.id.pokemon_level_gender);
@@ -77,7 +77,7 @@ public class PokemonInfoFragment extends DialogFragment {
         pokemonLevelGender.setCompoundDrawablePadding(8);
 
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
-        pokemonView.setImageResource(mPokemonInfo.getSprite(getActivity(), false));
+        pokemonView.setImageResource(mPokemonInfo.getSprite(getActivity()));
 
         TextView pokemonStats = (TextView) view.findViewById(R.id.stats);
         pokemonStats.setText(getStatsString());
