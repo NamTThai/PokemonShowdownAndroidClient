@@ -388,10 +388,6 @@ public class Pokemon implements Serializable {
         return stats;
     }
 
-    public static int calculateHP(int baseHP, int HPIV, int HPEV, int hpStage, int level) {
-        return calculateHP(baseHP, HPIV, HPEV, level);
-    }
-
     public static int calculateHP(int baseHP, int HPIV, int HPEV, int level) {
         return ((HPIV + 2 * baseHP + HPEV / 4 + 100) * level / 100 + 10);
     }
@@ -1285,10 +1281,6 @@ public class Pokemon implements Serializable {
 
     public HashMap<String, String> getAbilityList() {
         return mAbilityList;
-    }
-
-    public void setAbilityList(HashMap<String, String> abilityList) {
-        mAbilityList = abilityList;
     }
 
     public String[] getType() {
