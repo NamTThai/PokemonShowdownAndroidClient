@@ -310,7 +310,7 @@ public class TeamBuildingFragment extends Fragment {
                 }
             });
 
-            if (!pokemon.getMove1().equals("--")) {
+            if (!pokemon.getMove1().equals("")) {
                 ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move1_type);
                 move1TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove1()));
                 JSONObject move1Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove1());
@@ -323,7 +323,7 @@ public class TeamBuildingFragment extends Fragment {
                         move1PpTextView.setText(pp + "/" + pp);
                         move1NameTextView.setText(move1Object.getString("name"));
                     } catch (JSONException e) {
-                        pokemon.setMove1("--");
+                        pokemon.setMove1("");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -335,7 +335,7 @@ public class TeamBuildingFragment extends Fragment {
                 move1TypeImageView.setImageDrawable(null);
             }
 
-            if (!pokemon.getMove2().equals("--")) {
+            if (!pokemon.getMove2().equals("")) {
                 ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move2_type);
                 move2TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove2()));
                 JSONObject move2Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove2());
@@ -348,7 +348,7 @@ public class TeamBuildingFragment extends Fragment {
                         move2PpTextView.setText(pp + "/" + pp);
                         move2NameTextView.setText(move2Object.getString("name"));
                     } catch (JSONException e) {
-                        pokemon.setMove2("--");
+                        pokemon.setMove2("");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -361,7 +361,7 @@ public class TeamBuildingFragment extends Fragment {
             }
 
 
-            if (!pokemon.getMove3().equals("--")) {
+            if (!pokemon.getMove3().equals("")) {
                 ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move3_type);
                 move3TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove3()));
                 JSONObject move3Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove3());
@@ -374,7 +374,7 @@ public class TeamBuildingFragment extends Fragment {
                         move3PpTextView.setText(pp + "/" + pp);
                         move3NameTextView.setText(move3Object.getString("name"));
                     } catch (JSONException e) {
-                        pokemon.setMove3("--");
+                        pokemon.setMove3("");
                         Log.e(TAG, "", e);
                     }
                 }
@@ -386,7 +386,7 @@ public class TeamBuildingFragment extends Fragment {
                 move3TypeImageView.setImageDrawable(null);
             }
 
-            if (!pokemon.getMove4().equals("--")) {
+            if (!pokemon.getMove4().equals("")) {
                 ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move4_type);
                 move4TypeImageView.setImageResource(MoveDex.getMoveTypeIcon(getActivity(), pokemon.getMove4()));
                 JSONObject move4Object = MoveDex.get(getActivity()).getMoveJsonObject(pokemon.getMove4());
@@ -399,7 +399,7 @@ public class TeamBuildingFragment extends Fragment {
                         move4PpTextView.setText(pp + "/" + pp);
                         move4NameTextView.setText(move4Object.getString("name"));
                     } catch (JSONException e) {
-                        pokemon.setMove4("--");
+                        pokemon.setMove4("");
                         Log.e(TAG, "", e);
                     }
                 }
