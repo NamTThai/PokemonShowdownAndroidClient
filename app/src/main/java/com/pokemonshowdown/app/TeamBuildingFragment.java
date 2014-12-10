@@ -253,7 +253,11 @@ public class TeamBuildingFragment extends Fragment {
 
                     renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
-                            pokemon.setNickName(teamNameEditText.getText().toString());
+                            if (teamNameEditText.getText().toString().isEmpty()) {
+                                pokemon.setNickName(pokemon.getName());
+                            } else {
+                                pokemon.setNickName(teamNameEditText.getText().toString());
+                            }
                             notifyDataSetChanged();
                             arg0.dismiss();
                         }
