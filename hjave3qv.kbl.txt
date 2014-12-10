@@ -1,0 +1,40 @@
+﻿Merge branch 'master' of https://github.com/NamTThai/PokemonShowdownAndroidClient
+
+Conflicts:
+	build/intermediates/dex-cache/cache.xml
+	build/intermediates/model_data.bin
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 2 and 4 different commits each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   .gitignore
+#	modified:   app/src/main/java/com/pokemonshowdown/data/BattleMessage.java
+#	deleted:    build/dex-cache/cache.xml
+#	deleted:    build/exploded-aar/com.android.support/support-v4/20.0.0/AndroidManifest.xml
+#	deleted:    build/exploded-aar/com.android.support/support-v4/20.0.0/aidl/android/support/v4/app/INotificationSideChannel.aidl
+#	deleted:    build/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar
+#	deleted:    build/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar
+#	deleted:    build/intermediates/dex-cache/cache.xml
+#	deleted:    build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/AndroidManifest.xml
+#	deleted:    build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/aidl/android/support/v4/app/INotificationSideChannel.aidl
+#	deleted:    build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar
+#	deleted:    build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar
+#	deleted:    build/intermediates/model_data.bin
+#
+# Changes not staged for commit:
+#	modified:   app/src/main/java/com/pokemonshowdown/replays/RetrieveReplayTask.java
+#
+

@@ -56,7 +56,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.i("test", "testetesetsterrrr");
         sMyApplication = this;
         Context appContext = getApplicationContext();
 

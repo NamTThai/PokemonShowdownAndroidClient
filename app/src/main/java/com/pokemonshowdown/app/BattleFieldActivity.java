@@ -26,6 +26,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
+import com.pokemonshowdown.replays.ReplayFragment;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
@@ -217,8 +218,12 @@ public class BattleFieldActivity extends FragmentActivity {
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance();
                 break;
-            default:
+            case 2:
                 mPosition = 2;
+                fragment = ReplayFragment.newInstance();
+                break;
+            default:
+                mPosition = 3;
                 fragment = new PlaceHolderFragment();
         }
 
