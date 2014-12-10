@@ -66,7 +66,8 @@ public class Pokemon implements Serializable {
     private String mMove3;
     private String mMove4;
 
-    public Pokemon(Context appContext, String name, boolean placeHolder) throws JSONException {
+    public Pokemon(Context appContext, String name, boolean placeHolder) throws JSONException, NullPointerException {
+        name = MyApplication.toId(name);
         JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
         initializePokemon(appContext, jsonObject);
     }
@@ -459,16 +460,16 @@ public class Pokemon implements Serializable {
         sb.append("|");
         sb.append(getItem()).append("|");
         sb.append(getAbilityTag()).append("|");
-        if (!getMove1().equals("--")) {
+        if (!getMove1().equals("")) {
             sb.append(getMove1()).append(",");
         }
-        if (!getMove2().equals("--")) {
+        if (!getMove2().equals("")) {
             sb.append(getMove2()).append(",");
         }
-        if (!getMove3().equals("--")) {
+        if (!getMove3().equals("")) {
             sb.append(getMove3()).append(",");
         }
-        if (!getMove4().equals("--")) {
+        if (!getMove4().equals("")) {
             sb.append(getMove4());
         }
         sb.append("|");
@@ -680,20 +681,20 @@ public class Pokemon implements Serializable {
 
         // moves
         boolean noMoves = true;
-        if (!getMove1().equals("--")) {
+        if (!getMove1().equals("")) {
             noMoves = false;
         }
-        if (!getMove2().equals("--")) {
+        if (!getMove2().equals("")) {
             noMoves = false;
         }
-        if (!getMove3().equals("--")) {
+        if (!getMove3().equals("")) {
             noMoves = false;
         }
-        if (!getMove4().equals("--")) {
+        if (!getMove4().equals("")) {
             noMoves = false;
         }
         if (!noMoves) {
-            if (!getMove1().equals("--")) {
+            if (!getMove1().equals("")) {
                 JSONObject move1Object = MoveDex.get(appContext).getMoveJsonObject(getMove1());
                 if (move1Object != null) {
                     try {
@@ -705,7 +706,7 @@ public class Pokemon implements Serializable {
                 }
             }
 
-            if (!getMove2().equals("--")) {
+            if (!getMove2().equals("")) {
                 JSONObject move2Object = MoveDex.get(appContext).getMoveJsonObject(getMove2());
                 if (move2Object != null) {
                     try {
@@ -717,7 +718,7 @@ public class Pokemon implements Serializable {
                 }
             }
 
-            if (!getMove3().equals("--")) {
+            if (!getMove3().equals("")) {
                 JSONObject move3Object = MoveDex.get(appContext).getMoveJsonObject(getMove3());
                 if (move3Object != null) {
                     try {
@@ -729,7 +730,7 @@ public class Pokemon implements Serializable {
                 }
             }
 
-            if (!getMove4().equals("--")) {
+            if (!getMove4().equals("")) {
                 JSONObject move4Object = MoveDex.get(appContext).getMoveJsonObject(getMove4());
                 if (move4Object != null) {
                     try {
@@ -748,8 +749,6 @@ public class Pokemon implements Serializable {
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("species");
-
-            mWeight = Double.parseDouble(jsonObject.getString("weightkg"));
 
             mSprite = appContext.getResources()
                     .getIdentifier("sprites_" + MyApplication.toId(mName), "drawable", appContext.getPackageName());
@@ -789,9 +788,11 @@ public class Pokemon implements Serializable {
             setType(new String[types.length()]);
             setTypeIcon(new int[types.length()]);
             for (int i = 0; i < types.length(); i++) {
-                mType[i] = types.get(i).toString();
-                mTypeIcon[i] = appContext.getResources().getIdentifier("types_" + mType[i].toLowerCase(), "drawable", appContext.getPackageName());
+                mType[i] = types.getString(i);
+                mTypeIcon[i] = appContext.getResources()
+                        .getIdentifier("types_" + mType[i].toLowerCase(), "drawable", appContext.getPackageName());
             }
+
             JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
             Iterator<String> keys = abilityList.keys();
             mAbilityList = new HashMap<>();
@@ -800,12 +801,15 @@ public class Pokemon implements Serializable {
                 mAbilityList.put(key, abilityList.getString(key));
             }
             setAbilityTag("0");
+
+            setWeight(Double.parseDouble(jsonObject.getString("weightkg")));
+
             setItem("");
 
-            setMove1("--");
-            setMove2("--");
-            setMove3("--");
-            setMove4("--");
+            setMove1("");
+            setMove2("");
+            setMove3("");
+            setMove4("");
         } catch (JSONException e) {
             Log.d(PTAG, e.toString());
         }
