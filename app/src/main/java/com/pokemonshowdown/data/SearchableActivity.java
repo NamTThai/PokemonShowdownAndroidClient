@@ -32,6 +32,7 @@ public class SearchableActivity extends ListActivity {
     public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
     public final static String SEARCH_TYPE = "Search Type";
+    public final static String SEARCH = "Search";
 
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mAdapterList;
@@ -80,7 +81,7 @@ public class SearchableActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent();
-        intent.putExtra("Search", mAdapterList.get(position));
+        intent.putExtra(SEARCH, mAdapterList.get(position));
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
@@ -195,7 +196,7 @@ public class SearchableActivity extends ListActivity {
             String pokemonName = getItem(position);
             TextView textView = (TextView) convertView.findViewById(R.id.short_pokemon_name);
             textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName, true));
-            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIcon(getApplicationContext(), pokemonName, true), 0, 0, 0);
+            textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIcon(getApplicationContext(), pokemonName), 0, 0, 0);
             Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName, true);
             ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
             type1.setImageResource(typesIcon[0]);

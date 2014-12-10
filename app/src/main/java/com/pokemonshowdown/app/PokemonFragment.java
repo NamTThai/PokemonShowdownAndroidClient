@@ -63,27 +63,19 @@ public class PokemonFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ImageView pokemonIcon = (ImageView) view.findViewById(R.id.pokemon_icon);
-        pokemonIcon.setImageResource(getPokemon().getIconSmall());
+        pokemonIcon.setImageResource(getPokemon().getIcon());
 
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(getPokemon().getName());
 
         final ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
-        if (getPokemon().isShiny()) {
-            pokemonView.setImageResource(getPokemon().getIconShiny());
-        } else {
-            pokemonView.setImageResource(getPokemon().getIcon());
-        }
+        pokemonView.setImageResource(getPokemon().getSprite());
 
         pokemonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPokemon().switchShiny();
-                if (getPokemon().isShiny()) {
-                    pokemonView.setImageResource(getPokemon().getIconShiny());
-                } else {
-                    pokemonView.setImageResource(getPokemon().getIcon());
-                }
+                getPokemon().switchShiny(getActivity());
+                pokemonView.setImageResource(getPokemon().getSprite());
             }
         });
 
@@ -182,10 +174,10 @@ public class PokemonFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (getPokemon().isGenderAvailable()) {
-                    getPokemon().switchGender();
+                    getPokemon().switchGender(getActivity());
                     gender.setImageResource(getPokemon().getGenderIcon());
-                    int pokemonIcon = (getPokemon().isShiny()) ? getPokemon().getIconShiny() : getPokemon().getIcon();
-                    pokemonView.setImageResource(pokemonIcon);
+                    int pokemonSprite = getPokemon().getSprite();
+                    pokemonView.setImageResource(pokemonSprite);
                 }
             }
         });

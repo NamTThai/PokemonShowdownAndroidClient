@@ -30,7 +30,7 @@ public class PokemonInfo implements Serializable {
         setName(pkm);
         setNickname(pkm);
         setLevel(100);
-        Pokemon defaultPkm = new Pokemon(activityContext, pkm, false);
+        Pokemon defaultPkm = new Pokemon(activityContext, pkm);
         setTypeIcon(defaultPkm.getTypeIcon());
         setGender(null);
         setShiny(false);
@@ -50,16 +50,16 @@ public class PokemonInfo implements Serializable {
         setCanMegaEvo(false);
     }
 
-    public int getIcon(Context appContext, boolean withAppContext) {
-        return Pokemon.getPokemonIcon(appContext, MyApplication.toId(mName), withAppContext);
+    public int getIcon(Context appContext) {
+        return Pokemon.getPokemonIcon(appContext, MyApplication.toId(mName));
     }
 
-    public int getSprite(Context appContext, boolean withAppContext) {
+    public int getSprite(Context appContext) {
         String gender = mGender;
         if (gender == null) {
             gender = "";
         }
-        return Pokemon.getPokemonSprite(appContext, MyApplication.toId(mName), withAppContext, false, (gender.equals("F")), mShiny);
+        return Pokemon.getPokemonSprite(appContext, MyApplication.toId(mName), false, (gender.equals("F")), mShiny);
     }
 
     public String getName() {

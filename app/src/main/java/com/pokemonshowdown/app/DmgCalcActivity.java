@@ -250,7 +250,7 @@ public class DmgCalcActivity extends FragmentActivity {
         mAttacker = attacker;
 
         TextView textView = (TextView) findViewById(R.id.dmgcalc_attacker);
-        textView.setCompoundDrawablesWithIntrinsicBounds(attacker.getIconSmall(), 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(attacker.getIcon(), 0, 0, 0);
         textView.setText(attacker.getName());
 
         setMove1(attacker.getMove1());
@@ -260,7 +260,7 @@ public class DmgCalcActivity extends FragmentActivity {
     }
 
     public void setAttacker(String attacker) {
-        setAttacker(new Pokemon(getApplicationContext(), attacker, true));
+        setAttacker(new Pokemon(this, attacker));
     }
 
     public Pokemon getDefender() {
@@ -270,14 +270,14 @@ public class DmgCalcActivity extends FragmentActivity {
     public void setDefender(Pokemon defender) {
         mDefender = defender;
         TextView textView = (TextView) findViewById(R.id.dmgcalc_defender);
-        textView.setCompoundDrawablesWithIntrinsicBounds(defender.getIconSmall(), 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(defender.getIcon(), 0, 0, 0);
         textView.setText(defender.getName());
 
         calculateAllMoves();
     }
 
     public void setDefender(String defender) {
-        setDefender(new Pokemon(getApplicationContext(), defender, true));
+        setDefender(new Pokemon(this, defender));
     }
 
     private void loadPokemon(Pokemon pokemon, int searchCode) {

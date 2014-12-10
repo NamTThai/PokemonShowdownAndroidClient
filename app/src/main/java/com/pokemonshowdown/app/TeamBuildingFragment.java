@@ -175,7 +175,7 @@ public class TeamBuildingFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_POKEMON) {
-                Pokemon pokemon = new Pokemon(getActivity().getApplicationContext(), data.getExtras().getString("Search"), true);
+                Pokemon pokemon = new Pokemon(getActivity(), data.getExtras().getString("Search"));
                 if (selectedPos != -1) {
                     pokemonTeam.replacePokemon(selectedPos, pokemon);
                 } else {
@@ -270,11 +270,7 @@ public class TeamBuildingFragment extends Fragment {
             });
 
             ImageView pokemonIconImageView = (ImageView) convertView.findViewById(R.id.teambuilder_pokemonIcon);
-            if (pokemon.isShiny()) {
-                pokemonIconImageView.setImageDrawable(getResources().getDrawable(pokemon.getIconShiny()));
-            } else {
-                pokemonIconImageView.setImageDrawable(getResources().getDrawable(pokemon.getIcon()));
-            }
+            pokemonIconImageView.setImageDrawable(getResources().getDrawable(pokemon.getSprite()));
 
 
             TextView itemNameTextView = (TextView) convertView.findViewById(R.id.teambuilder_item);
