@@ -55,7 +55,8 @@ public class BattleFragment extends Fragment {
         P1A_PREV, P1B_PREV, P1C_PREV, P1D_PREV, P1E_PREV, P1F_PREV,
         P2A_PREV, P2B_PREV, P2C_PREV, P2D_PREV, P2E_PREV, P2F_PREV,
         REFLECT, LIGHTSCREEN, ROCKS, SPIKE1, SPIKE2, SPIKE3, TSPIKE1, TSPIKE2,
-        REFLECT_O, LIGHTSCREEN_O, ROCKS_O, SPIKE1_O, SPIKE2_O, SPIKE3_O, TSPIKE1_O, TSPIKE2_O
+        REFLECT_O, LIGHTSCREEN_O, ROCKS_O, SPIKE1_O, SPIKE2_O, SPIKE3_O, TSPIKE1_O, TSPIKE2_O,
+        ANIMATION_QUEUE
     }
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
@@ -246,6 +247,11 @@ public class BattleFragment extends Fragment {
                         setVisibility(getView().findViewById(R.id.field_tspikes2_o),
                                 (Integer) viewBundle.get(ViewBundle.TSPIKE2_O));
                     }
+
+                    mAnimatorSetQueue = (ArrayDeque<AnimatorSet>) viewBundle.get(ViewBundle.ANIMATION_QUEUE);
+                    if (mAnimatorSetQueue != null && !mAnimatorSetQueue.isEmpty()) {
+                        mAnimatorSetQueue.peekFirst().start();
+                    }
                     roomData.setViewBundle(null);
                 }
             }
@@ -362,6 +368,7 @@ public class BattleFragment extends Fragment {
                     viewBundle.put(ViewBundle.TSPIKE2_O,
                             getView().findViewById(R.id.field_tspikes2_o).getVisibility());
                 }
+                viewBundle.put(ViewBundle.ANIMATION_QUEUE, mAnimatorSetQueue);
                 roomData.setViewBundle(viewBundle);
             }
         }
