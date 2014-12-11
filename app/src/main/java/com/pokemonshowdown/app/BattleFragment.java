@@ -52,7 +52,8 @@ public class BattleFragment extends Fragment {
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER, TEAMPREVIEW,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
         ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
-
+        P1A_PREV, P1B_PREV, P1C_PREV, P1D_PREV, P1E_PREV, P1F_PREV,
+        P2A_PREV, P2B_PREV, P2C_PREV, P2D_PREV, P2E_PREV, P2F_PREV
     }
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
@@ -177,6 +178,30 @@ public class BattleFragment extends Fragment {
                         setTeamPreview(true);
                         getActivity().getLayoutInflater()
                                 .inflate(R.layout.fragment_battle_teampreview, frameLayout);
+                        ((ImageView) getView().findViewById(R.id.p1a_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1A_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1b_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1B_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1c_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1C_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1d_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1D_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1e_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1E_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1f_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1F_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2a_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2A_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2b_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2B_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2c_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2C_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2d_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2D_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2e_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2E_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2f_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2F_PREV));
                     } else {
                         setTeamPreview(false);
                         getActivity().getLayoutInflater()
@@ -240,6 +265,30 @@ public class BattleFragment extends Fragment {
                         ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
                 if (isTeamPreview()) {
                     viewBundle.put(ViewBundle.TEAMPREVIEW, true);
+                    viewBundle.put(ViewBundle.P1A_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1a_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1B_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1b_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1C_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1c_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1D_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1d_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1E_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1e_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1F_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1f_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2A_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2a_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2B_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2b_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2C_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2c_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2D_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2d_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2E_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2e_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2F_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2f_prev)).getDrawable());
                 } else {
                     viewBundle.put(ViewBundle.TEAMPREVIEW, false);
                     viewBundle.put(ViewBundle.TURN,
