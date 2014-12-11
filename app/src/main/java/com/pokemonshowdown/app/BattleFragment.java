@@ -506,8 +506,14 @@ public class BattleFragment extends Fragment {
                                         ((ImageView) getView().findViewById(R.id.p1c_icon)).getDrawable());
                                 viewBundle.put(ViewBundle.P1C_STATUS,
                                         getAllChild((LinearLayout) getView().findViewById(R.id.p1c_temp_status)));
+                            } else {
+                                viewBundle.put(ViewBundle.P1C, false);
                             }
+                        } else {
+                            viewBundle.put(ViewBundle.P1B, false);
                         }
+                    } else {
+                        viewBundle.put(ViewBundle.P1A, false);
                     }
                     if (getView().findViewById(R.id.p2a).getVisibility() == View.VISIBLE) {
                         viewBundle.put(ViewBundle.P2A, true);
@@ -551,8 +557,14 @@ public class BattleFragment extends Fragment {
                                         ((ImageView) getView().findViewById(R.id.p2c_icon)).getDrawable());
                                 viewBundle.put(ViewBundle.P2C_STATUS,
                                         getAllChild((LinearLayout) getView().findViewById(R.id.p2c_temp_status)));
+                            } else {
+                                viewBundle.put(ViewBundle.P2C, false);
                             }
+                        } else {
+                            viewBundle.put(ViewBundle.P2B, false);
                         }
+                    } else {
+                        viewBundle.put(ViewBundle.P2A, false);
                     }
                 }
                 viewBundle.put(ViewBundle.ANIMATION_QUEUE, mAnimatorSetQueue);
