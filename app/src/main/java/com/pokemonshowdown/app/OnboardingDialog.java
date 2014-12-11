@@ -37,7 +37,7 @@ public class OnboardingDialog extends DialogFragment {
                 if (name.equals("")) {
                     getDialog().dismiss();
                 } else {
-                    Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+                    Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
                     String assertion = onboarding.verifyUsernameRegistered(name);
                     if (assertion == null) {
                         getDialog().dismiss();

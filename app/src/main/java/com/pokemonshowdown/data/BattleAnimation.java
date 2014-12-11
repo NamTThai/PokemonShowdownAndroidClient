@@ -20,7 +20,7 @@ public class BattleAnimation {
 
     public static AnimatorSet processMove(String move, View view, BattleFragment battleFragment, String[] split) {
         move = MyApplication.toId(move);
-        MoveDex.Moves animationId = MoveDex.get(battleFragment.getActivity()).getMoveAnimationEntries(move);
+        MoveDex.Moves animationId = MoveDex.get(battleFragment.getActivity()).getMoveAnimationEntry(move);
         if (view == null) {
             return null;
         }
@@ -30,175 +30,179 @@ public class BattleAnimation {
         ImageView atk = (ImageView) view.findViewById(battleFragment.getSpriteId(split[0]));
         RelativeLayout defC = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[2]));
         ImageView def = (ImageView) view.findViewById(battleFragment.getSpriteId(split[2]));
-        if (animationId == null) {
-            return fast(battleFragment.getActivity(), wrapper, atkC, atk, defC, def);
-        } else {
-            switch(animationId) {
-                case SHAKE:
-                    return shake(atkC, atk);
-                case DANCE:
-                    return dance(atkC, atk);
-                case FLIGHT:
-                    return flight(context, atkC, atk, defC);
-                case SPINATK:
-                    return spinAtk(context, atkC, atk, defC);
-                case XATK:
-                    return xatk(context, atkC, atk, defC);
-                case SELF:
-                    return self(context, atkC, atk);
-                case SELF_LIGHT:
-                    return selfLight(context, atkC, atk);
-                case SELF_DARK:
-                    return selfDark(context, atkC, atk);
-                case TRICK:
-                    return trick(context, wrapper, atkC, atk, defC, def);
-                case CHARGE:
-                    return charge(context, atkC, atk, defC, def, split);
-                case SPREAD_LIGHT:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_electroball);
-                case SPREAD_ENERGY:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_energyball);
-                case SPREAD_MIST:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_mistball);
-                case SPREAD_SHADOW:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_shadowball);
-                case SPREAD_POISON:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_poisonwisp);
-                case SPREAD_WAVE:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_waterwisp);
-                case SPREAD_FIRE:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_fireball);
-                case SPREAD_ROCK:
-                    return spread(context, wrapper, atkC, atk, R.drawable.field_rocks);
-                case SPREAD_SPIKE:
-                    return spread(context, wrapper, atkC, atk, R.drawable.field_spikes);
-                case SPREAD_TSPIKE:
-                    return spread(context, wrapper, atkC, atk, R.drawable.field_tspikes);
-                case SPREAD_WEB:
-                    return spread(context, wrapper, atkC, atk, R.drawable.battle_web);
-                case CONTACT_ENERGY:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
-                case CONTACT_CLAW:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_leftclaw);
-                case CONTACT_KICK:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_foot);
-                case CONTACT_WAVE:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
-                case CONTACT_BITE:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite);
-                case CONTACT_POISON:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
-                case CONTACT_PUNCH:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist);
-                case CONTACT_SHADOW:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
-                case CONTACT_THUNDER:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_lightning);
-                case CONTACT_FIRE:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
-                case CONTACT_NEUTRAL:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
-                case CONTACT_MIST:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
-                case CONTACT_LIGHT:
-                    return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
-                case DRAIN:
-                    return drain(context, atkC, atk, defC);
-                case FAST:
-                    return fast(context, wrapper, atkC, atk, defC, def);
-                case CONTACT_PUNCH_FIRE:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_fireball);
-                case CONTACT_PUNCH_ICE:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_icicle);
-                case CONTACT_PUNCH_THUNDER:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_lightning);
-                case CONTACT_BITE_FIRE:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_fireball);
-                case CONTACT_BITE_ICE:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_icicle);
-                case CONTACT_BITE_THUNDER:
-                    return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_lightning);
-                case STREAM_NEUTRAL:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
-                case STREAM_LIGHT:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
-                case STREAM_ENERGY:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
-                case STREAM_MIST:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
-                case STREAM_POISON:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
-                case STREAM_SHADOW:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
-                case STREAM_WATER:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
-                case STREAM_FIRE:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
-                case STREAM_ICE:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
-                case STREAM_ROCK:
-                    return stream(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
-                case EARTH:
-                    return earth(defC, def);
-                case PHAZE:
-                    return phaze(def);
-                case THUNDER_STRONG:
-                    return thunderStrong(context, defC, def);
-                case THUNDER_NEUTRAL:
-                    return thunderNeutral(context, defC, def);
-                case THUNDER_WEAK:
-                    return thunderWeak(context, atkC, atk, defC, def);
-                case STATUS_PSN:
-                    return status(context, defC, def, R.drawable.battle_poisonwisp);
-                case STATUS_PAR:
-                    return status(context, defC, def, R.drawable.battle_electroball);
-                case STATUS_SLP:
-                    return status(context, defC, def, R.drawable.battle_energyball);
-                case STATUS_BRN:
-                    return status(context, defC, def, R.drawable.battle_fireball);
-                case BALL_NEUTRAL:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
-                case BALL_LIGHT:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
-                case BALL_ENERGY:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
-                case BALL_MIST:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
-                case BALL_POISON:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
-                case BALL_SHADOW:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
-                case BALL_WATER:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
-                case BALL_FIRE:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
-                case BALL_ICE:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
-                case BALL_ROCK:
-                    return ball(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
-                case WISH:
-                    return wish(context, atkC, atk);
-                case SLASH:
-                    return slash(context, defC);
-                case BOMB_NEUTRAL:
-                    return bomb(context, defC, def, R.drawable.battle_wisp);
-                case BOMB_LIGHT:
-                    return bomb(context, defC, def, R.drawable.battle_electroball);
-                case BOMB_ENERGY:
-                    return bomb(context, defC, def, R.drawable.battle_energyball);
-                case BOMB_MIST:
-                    return bomb(context, defC, def, R.drawable.battle_mistball);
-                case BOMB_POISON:
-                    return bomb(context, defC, def, R.drawable.battle_poisonwisp);
-                case BOMB_SHADOW:
-                    return bomb(context, defC, def, R.drawable.battle_shadowball);
-                case BOMB_WATER:
-                    return bomb(context, defC, def, R.drawable.battle_waterwisp);
-                case BOMB_FIRE:
-                    return bomb(context, defC, def, R.drawable.battle_fireball);
-                default:
-                    return self(context, atkC, atk);
+        try {
+            if (animationId == null) {
+                return fast(battleFragment.getActivity(), wrapper, atkC, atk, defC, def);
+            } else {
+                switch (animationId) {
+                    case SHAKE:
+                        return shake(atkC, atk);
+                    case DANCE:
+                        return dance(atkC, atk);
+                    case FLIGHT:
+                        return flight(context, atkC, atk, defC);
+                    case SPINATK:
+                        return spinAtk(context, atkC, atk, defC);
+                    case XATK:
+                        return xatk(context, atkC, atk, defC);
+                    case SELF:
+                        return self(context, atkC, atk);
+                    case SELF_LIGHT:
+                        return selfLight(context, atkC, atk);
+                    case SELF_DARK:
+                        return selfDark(context, atkC, atk);
+                    case TRICK:
+                        return trick(context, wrapper, atkC, atk, defC, def);
+                    case CHARGE:
+                        return charge(context, atkC, atk, defC, def, split);
+                    case SPREAD_LIGHT:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_electroball);
+                    case SPREAD_ENERGY:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_energyball);
+                    case SPREAD_MIST:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_mistball);
+                    case SPREAD_SHADOW:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_shadowball);
+                    case SPREAD_POISON:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_poisonwisp);
+                    case SPREAD_WAVE:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_waterwisp);
+                    case SPREAD_FIRE:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_fireball);
+                    case SPREAD_ROCK:
+                        return spread(context, wrapper, atkC, atk, R.drawable.field_rocks);
+                    case SPREAD_SPIKE:
+                        return spread(context, wrapper, atkC, atk, R.drawable.field_spikes);
+                    case SPREAD_TSPIKE:
+                        return spread(context, wrapper, atkC, atk, R.drawable.field_tspikes);
+                    case SPREAD_WEB:
+                        return spread(context, wrapper, atkC, atk, R.drawable.battle_web);
+                    case CONTACT_ENERGY:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                    case CONTACT_CLAW:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_leftclaw);
+                    case CONTACT_KICK:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_foot);
+                    case CONTACT_WAVE:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                    case CONTACT_BITE:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite);
+                    case CONTACT_POISON:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                    case CONTACT_PUNCH:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist);
+                    case CONTACT_SHADOW:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                    case CONTACT_THUNDER:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_lightning);
+                    case CONTACT_FIRE:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                    case CONTACT_NEUTRAL:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                    case CONTACT_MIST:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                    case CONTACT_LIGHT:
+                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                    case DRAIN:
+                        return drain(context, atkC, atk, defC);
+                    case FAST:
+                        return fast(context, wrapper, atkC, atk, defC, def);
+                    case CONTACT_PUNCH_FIRE:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_fireball);
+                    case CONTACT_PUNCH_ICE:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_icicle);
+                    case CONTACT_PUNCH_THUNDER:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_lightning);
+                    case CONTACT_BITE_FIRE:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_fireball);
+                    case CONTACT_BITE_ICE:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_icicle);
+                    case CONTACT_BITE_THUNDER:
+                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_lightning);
+                    case STREAM_NEUTRAL:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                    case STREAM_LIGHT:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                    case STREAM_ENERGY:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                    case STREAM_MIST:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                    case STREAM_POISON:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                    case STREAM_SHADOW:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                    case STREAM_WATER:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                    case STREAM_FIRE:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                    case STREAM_ICE:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
+                    case STREAM_ROCK:
+                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
+                    case EARTH:
+                        return earth(defC, def);
+                    case PHAZE:
+                        return phaze(def);
+                    case THUNDER_STRONG:
+                        return thunderStrong(context, defC, def);
+                    case THUNDER_NEUTRAL:
+                        return thunderNeutral(context, defC, def);
+                    case THUNDER_WEAK:
+                        return thunderWeak(context, atkC, atk, defC, def);
+                    case STATUS_PSN:
+                        return status(context, defC, def, R.drawable.battle_poisonwisp);
+                    case STATUS_PAR:
+                        return status(context, defC, def, R.drawable.battle_electroball);
+                    case STATUS_SLP:
+                        return status(context, defC, def, R.drawable.battle_energyball);
+                    case STATUS_BRN:
+                        return status(context, defC, def, R.drawable.battle_fireball);
+                    case BALL_NEUTRAL:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                    case BALL_LIGHT:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                    case BALL_ENERGY:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                    case BALL_MIST:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                    case BALL_POISON:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                    case BALL_SHADOW:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                    case BALL_WATER:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                    case BALL_FIRE:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                    case BALL_ICE:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
+                    case BALL_ROCK:
+                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
+                    case WISH:
+                        return wish(context, atkC, atk);
+                    case SLASH:
+                        return slash(context, defC);
+                    case BOMB_NEUTRAL:
+                        return bomb(context, defC, def, R.drawable.battle_wisp);
+                    case BOMB_LIGHT:
+                        return bomb(context, defC, def, R.drawable.battle_electroball);
+                    case BOMB_ENERGY:
+                        return bomb(context, defC, def, R.drawable.battle_energyball);
+                    case BOMB_MIST:
+                        return bomb(context, defC, def, R.drawable.battle_mistball);
+                    case BOMB_POISON:
+                        return bomb(context, defC, def, R.drawable.battle_poisonwisp);
+                    case BOMB_SHADOW:
+                        return bomb(context, defC, def, R.drawable.battle_shadowball);
+                    case BOMB_WATER:
+                        return bomb(context, defC, def, R.drawable.battle_waterwisp);
+                    case BOMB_FIRE:
+                        return bomb(context, defC, def, R.drawable.battle_fireball);
+                    default:
+                        return self(context, atkC, atk);
+                }
             }
+        } catch (NullPointerException e) {
+            return null;
         }
     }
 

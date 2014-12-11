@@ -38,7 +38,7 @@ public class SignInDialog extends DialogFragment {
             public void onClick(View v) {
                 String password = passwordBox.getText().toString();
                 if (!password.equals("")) {
-                    Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+                    Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
                     String assertion = onboarding.signingIn(username, password);
                     if (assertion == null) {
                         getDialog().dismiss();

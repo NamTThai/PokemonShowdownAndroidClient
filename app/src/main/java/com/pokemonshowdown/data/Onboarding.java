@@ -37,9 +37,9 @@ public class Onboarding {
         setUsername(null);
     }
 
-    public static Onboarding getWithApplicationContext(Context c) {
+    public static Onboarding get(Context c) {
         if (sOnboarding == null) {
-            sOnboarding = new Onboarding(c);
+            sOnboarding = new Onboarding(c.getApplicationContext());
         }
         return sOnboarding;
     }

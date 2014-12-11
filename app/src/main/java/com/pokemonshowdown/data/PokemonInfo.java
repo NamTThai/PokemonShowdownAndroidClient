@@ -30,7 +30,7 @@ public class PokemonInfo implements Serializable {
         setName(pkm);
         setNickname(pkm);
         setLevel(100);
-        Pokemon defaultPkm = new Pokemon(activityContext, pkm, false);
+        Pokemon defaultPkm = new Pokemon(activityContext, pkm);
         setTypeIcon(defaultPkm.getTypeIcon());
         setGender(null);
         setShiny(false);
@@ -50,16 +50,16 @@ public class PokemonInfo implements Serializable {
         setCanMegaEvo(false);
     }
 
-    public int getIcon(Context appContext, boolean withAppContext) {
-        return Pokemon.getPokemonIcon(appContext, MyApplication.toId(mName), withAppContext);
+    public int getIcon(Context appContext) {
+        return Pokemon.getPokemonIcon(appContext, MyApplication.toId(mName));
     }
 
-    public int getSprite(Context appContext, boolean withAppContext) {
+    public int getSprite(Context appContext) {
         String gender = mGender;
         if (gender == null) {
             gender = "";
         }
-        return Pokemon.getPokemonSprite(appContext, MyApplication.toId(mName), withAppContext, false, (gender.equals("F")), mShiny);
+        return Pokemon.getPokemonSprite(appContext, MyApplication.toId(mName), false, (gender.equals("F")), mShiny);
     }
 
     public String getName() {
@@ -143,12 +143,12 @@ public class PokemonInfo implements Serializable {
     }
 
     public void setStats(int[] stats) {
-        if (stats.length == 6) {
+        if (stats != null && stats.length == 6) {
             if (mStats == null) {
                 mStats = new int[5];
             }
             System.arraycopy(stats, 1, mStats, 0, 5);
-        } else {
+        } else if (stats != null) {
             mStats = stats;
         }
     }
@@ -178,7 +178,11 @@ public class PokemonInfo implements Serializable {
     }
 
     public String getItem(Context activityContext) {
-        return ItemDex.get(activityContext).getItem(mItem);
+        if(mItem != null) {
+            return ItemDex.get(activityContext).getItemName(mItem);
+        } else {
+            return null;
+        }
     }
 
     public void setItem(String item) {

@@ -69,9 +69,9 @@ public class BattleLogDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
 
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
-        if (roomData != null) {
-            ((TextView) getView().findViewById(R.id.battlelog)).setText(roomData.getChatBox());
+        BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
+        if (battleLog != null) {
+            ((TextView) getView().findViewById(R.id.battlelog)).setText(battleLog.getChatBox());
             final ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
             scrollView.post(new Runnable() {
                 @Override
@@ -80,23 +80,23 @@ public class BattleLogDialog extends DialogFragment {
                 }
             });
 
-            ArrayList<Spannable> pendingMessages = roomData.getServerMessageOnHold();
+            ArrayList<Spannable> pendingMessages = battleLog.getServerMessageOnHold();
             for (Spannable message : pendingMessages) {
                 processServerMessage(message);
             }
 
-            roomData.setMessageListener(false);
-            roomData.setServerMessageOnHold(new ArrayList<Spannable>());
+            battleLog.setMessageListener(false);
+            battleLog.setServerMessageOnHold(new ArrayList<Spannable>());
         }
     }
 
     @Override
     public void onPause() {
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (roomData != null) {
-            roomData.setMessageListener(true);
+        BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (battleLog != null) {
+            battleLog.setMessageListener(true);
             CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
-            roomData.setChatBox(text);
+            battleLog.setChatBox(text);
         }
         super.onPause();
     }

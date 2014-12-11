@@ -70,7 +70,7 @@ public class FindBattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //first need to check if the user is logged in
-                Onboarding onboarding = Onboarding.getWithApplicationContext(getActivity().getApplicationContext());
+                Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
                 if (!onboarding.isSignedIn()) {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     OnboardingDialog fragment = new OnboardingDialog();

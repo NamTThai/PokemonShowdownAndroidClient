@@ -19,8 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -45,6 +48,24 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+
+    public enum ViewBundle {
+        PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR,
+        BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER, TEAMPREVIEW,
+        ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
+        ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
+        P1A_PREV, P1B_PREV, P1C_PREV, P1D_PREV, P1E_PREV, P1F_PREV,
+        P2A_PREV, P2B_PREV, P2C_PREV, P2D_PREV, P2E_PREV, P2F_PREV,
+        REFLECT, LIGHTSCREEN, ROCKS, SPIKE1, SPIKE2, SPIKE3, TSPIKE1, TSPIKE2,
+        REFLECT_O, LIGHTSCREEN_O, ROCKS_O, SPIKE1_O, SPIKE2_O, SPIKE3_O, TSPIKE1_O, TSPIKE2_O,
+        P1A, P1A_PKM, P1A_GENDER, P1A_HP, P1A_HP_BAR, P1A_SPRITE, P1A_STATUS,
+        P1B, P1B_PKM, P1B_GENDER, P1B_HP, P1B_HP_BAR, P1B_SPRITE, P1B_STATUS,
+        P1C, P1C_PKM, P1C_GENDER, P1C_HP, P1C_HP_BAR, P1C_SPRITE, P1C_STATUS,
+        P2A, P2A_PKM, P2A_GENDER, P2A_HP, P2A_HP_BAR, P2A_SPRITE, P2A_STATUS,
+        P2B, P2B_PKM, P2B_GENDER, P2B_HP, P2B_HP_BAR, P2B_SPRITE, P2B_STATUS,
+        P2C, P2C_PKM, P2C_GENDER, P2C_HP, P2C_HP_BAR, P2C_SPRITE, P2C_STATUS,
+        ANIMATION_QUEUE
+    }
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
@@ -65,6 +86,7 @@ public class BattleFragment extends Fragment {
     private boolean mWeatherExist;
     private int mTurnNumber;
     private boolean mMyTurn;
+    private boolean mTeamPreview = false;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -110,18 +132,445 @@ public class BattleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
-        if (animationData != null) {
-            animationData.setMessageListener(false);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            roomData.setMessageListener(false);
+
+            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
+            for (String message : pendingMessages) {
+                processServerMessage(message);
+            }
+
+            roomData.clearServerMessageOnHold();
+
+            if (getView() != null) {
+                HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
+                if (viewBundle != null) {
+                    ((TextView) getView().findViewById(R.id.username))
+                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
+                    ((ImageView) getView().findViewById(R.id.avatar))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER1_AVATAR));
+                    ((TextView) getView().findViewById(R.id.username_o))
+                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER2_NAME));
+                    ((ImageView) getView().findViewById(R.id.avatar_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER2_AVATAR));
+                    ((ImageView) getView().findViewById(R.id.battle_background))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.BATTLE_BACKGROUND));
+                    ((ImageView) getView().findViewById(R.id.weather_background))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.WEATHER_BACKGROUND));
+                    ((ImageView) getView().findViewById(R.id.icon1))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1));
+                    ((ImageView) getView().findViewById(R.id.icon2))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2));
+                    ((ImageView) getView().findViewById(R.id.icon3))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3));
+                    ((ImageView) getView().findViewById(R.id.icon4))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4));
+                    ((ImageView) getView().findViewById(R.id.icon5))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5));
+                    ((ImageView) getView().findViewById(R.id.icon6))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6));
+                    ((ImageView) getView().findViewById(R.id.icon1_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1_O));
+                    ((ImageView) getView().findViewById(R.id.icon2_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2_O));
+                    ((ImageView) getView().findViewById(R.id.icon3_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3_O));
+                    ((ImageView) getView().findViewById(R.id.icon4_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4_O));
+                    ((ImageView) getView().findViewById(R.id.icon5_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5_O));
+                    ((ImageView) getView().findViewById(R.id.icon6_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6_O));
+                    Boolean isTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAMPREVIEW);
+                    FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+                    frameLayout.removeAllViews();
+                    if (isTeamPreview) {
+                        setTeamPreview(true);
+                        getActivity().getLayoutInflater()
+                                .inflate(R.layout.fragment_battle_teampreview, frameLayout);
+                        ((ImageView) getView().findViewById(R.id.p1a_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1A_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1b_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1B_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1c_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1C_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1d_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1D_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1e_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1E_PREV));
+                        ((ImageView) getView().findViewById(R.id.p1f_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1F_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2a_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2A_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2b_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2B_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2c_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2C_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2d_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2D_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2e_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2E_PREV));
+                        ((ImageView) getView().findViewById(R.id.p2f_prev))
+                                .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2F_PREV));
+                    } else {
+                        setTeamPreview(false);
+                        getActivity().getLayoutInflater()
+                                .inflate(R.layout.fragment_battle_animation, frameLayout);
+                        getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
+                        ((TextView) getView().findViewById(R.id.turn))
+                                .setText((CharSequence) viewBundle.get(ViewBundle.TURN));
+                        ((TextView) getView().findViewById(R.id.weather))
+                                .setText((CharSequence) viewBundle.get(ViewBundle.WEATHER));
+                        setVisibility(getView().findViewById(R.id.field_reflect),
+                                (Integer) viewBundle.get(ViewBundle.REFLECT));
+                        setVisibility(getView().findViewById(R.id.field_lightscreen),
+                                (Integer) viewBundle.get(ViewBundle.LIGHTSCREEN));
+                        setVisibility(getView().findViewById(R.id.field_rocks),
+                                (Integer) viewBundle.get(ViewBundle.ROCKS));
+                        setVisibility(getView().findViewById(R.id.field_spikes1),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE1));
+                        setVisibility(getView().findViewById(R.id.field_spikes2),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE2));
+                        setVisibility(getView().findViewById(R.id.field_spikes3),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE3));
+                        setVisibility(getView().findViewById(R.id.field_tspikes1),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE1));
+                        setVisibility(getView().findViewById(R.id.field_tspikes2),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE2));
+                        setVisibility(getView().findViewById(R.id.field_reflect_o),
+                                (Integer) viewBundle.get(ViewBundle.REFLECT_O));
+                        setVisibility(getView().findViewById(R.id.field_lightscreen_o),
+                                (Integer) viewBundle.get(ViewBundle.LIGHTSCREEN_O));
+                        setVisibility(getView().findViewById(R.id.field_rocks_o),
+                                (Integer) viewBundle.get(ViewBundle.ROCKS_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes1_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE1_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes2_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE2_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes3_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE3_O));
+                        setVisibility(getView().findViewById(R.id.field_tspikes1_o),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE1_O));
+                        setVisibility(getView().findViewById(R.id.field_tspikes2_o),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE2_O));
+                        if ((Boolean) viewBundle.get(ViewBundle.P1A)) {
+                            getView().findViewById(R.id.p1a).setVisibility(View.VISIBLE);
+                            ((TextView) getView().findViewById(R.id.p1a_pkm))
+                                    .setText((CharSequence) viewBundle.get(ViewBundle.P1A_PKM));
+                            ((ImageView) getView().findViewById(R.id.p1a_gender))
+                                    .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1A_GENDER));
+                            ((TextView) getView().findViewById(R.id.p1a_hp))
+                                    .setText((CharSequence) viewBundle.get(ViewBundle.P1A_HP));
+                            ((ProgressBar) getView().findViewById(R.id.p1a_bar_hp))
+                                    .setProgress((Integer) viewBundle.get(ViewBundle.P1A_HP_BAR));
+                            ((ImageView) getView().findViewById(R.id.p1a_icon))
+                                    .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1A_SPRITE));
+                            addAllChild((LinearLayout) getView().findViewById(R.id.p1a_temp_status),
+                                    (View[]) viewBundle.get(ViewBundle.P1A_STATUS));
+                            if ((Boolean) viewBundle.get(ViewBundle.P1B)) {
+                                getView().findViewById(R.id.p1b).setVisibility(View.VISIBLE);
+                                ((TextView) getView().findViewById(R.id.p1b_pkm))
+                                        .setText((CharSequence) viewBundle.get(ViewBundle.P1B_PKM));
+                                ((ImageView) getView().findViewById(R.id.p1b_gender))
+                                        .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1B_GENDER));
+                                ((TextView) getView().findViewById(R.id.p1b_hp))
+                                        .setText((CharSequence) viewBundle.get(ViewBundle.P1B_HP));
+                                ((ProgressBar) getView().findViewById(R.id.p1b_bar_hp))
+                                        .setProgress((Integer) viewBundle.get(ViewBundle.P1B_HP_BAR));
+                                ((ImageView) getView().findViewById(R.id.p1b_icon))
+                                        .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1B_SPRITE));
+                                addAllChild((LinearLayout) getView().findViewById(R.id.p1b_temp_status),
+                                        (View[]) viewBundle.get(ViewBundle.P1B_STATUS));
+                                if ((Boolean) viewBundle.get(ViewBundle.P1C)) {
+                                    getView().findViewById(R.id.p1c).setVisibility(View.VISIBLE);
+                                    ((TextView) getView().findViewById(R.id.p1c_pkm))
+                                            .setText((CharSequence) viewBundle.get(ViewBundle.P1C_PKM));
+                                    ((ImageView) getView().findViewById(R.id.p1c_gender))
+                                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1C_GENDER));
+                                    ((TextView) getView().findViewById(R.id.p1c_hp))
+                                            .setText((CharSequence) viewBundle.get(ViewBundle.P1C_HP));
+                                    ((ProgressBar) getView().findViewById(R.id.p1c_bar_hp))
+                                            .setProgress((Integer) viewBundle.get(ViewBundle.P1C_HP_BAR));
+                                    ((ImageView) getView().findViewById(R.id.p1c_icon))
+                                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P1C_SPRITE));
+                                    addAllChild((LinearLayout) getView().findViewById(R.id.p1c_temp_status),
+                                            (View[]) viewBundle.get(ViewBundle.P1C_STATUS));
+                                }
+                            }
+                        }
+                        if ((Boolean) viewBundle.get(ViewBundle.P2A)) {
+                            getView().findViewById(R.id.p2a).setVisibility(View.VISIBLE);
+                            ((TextView) getView().findViewById(R.id.p2a_pkm))
+                                    .setText((CharSequence) viewBundle.get(ViewBundle.P2A_PKM));
+                            ((ImageView) getView().findViewById(R.id.p2a_gender))
+                                    .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2A_GENDER));
+                            ((TextView) getView().findViewById(R.id.p2a_hp))
+                                    .setText((CharSequence) viewBundle.get(ViewBundle.P2A_HP));
+                            ((ProgressBar) getView().findViewById(R.id.p2a_bar_hp))
+                                    .setProgress((Integer) viewBundle.get(ViewBundle.P2A_HP_BAR));
+                            ((ImageView) getView().findViewById(R.id.p2a_icon))
+                                    .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2A_SPRITE));
+                            addAllChild((LinearLayout) getView().findViewById(R.id.p2a_temp_status),
+                                    (View[]) viewBundle.get(ViewBundle.P2A_STATUS));
+                            if ((Boolean) viewBundle.get(ViewBundle.P2B)) {
+                                getView().findViewById(R.id.p2b).setVisibility(View.VISIBLE);
+                                ((TextView) getView().findViewById(R.id.p2b_pkm))
+                                        .setText((CharSequence) viewBundle.get(ViewBundle.P2B_PKM));
+                                ((ImageView) getView().findViewById(R.id.p2b_gender))
+                                        .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2B_GENDER));
+                                ((TextView) getView().findViewById(R.id.p2b_hp))
+                                        .setText((CharSequence) viewBundle.get(ViewBundle.P2B_HP));
+                                ((ProgressBar) getView().findViewById(R.id.p2b_bar_hp))
+                                        .setProgress((Integer) viewBundle.get(ViewBundle.P2B_HP_BAR));
+                                ((ImageView) getView().findViewById(R.id.p2b_icon))
+                                        .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2B_SPRITE));
+                                addAllChild((LinearLayout) getView().findViewById(R.id.p2b_temp_status),
+                                        (View[]) viewBundle.get(ViewBundle.P2B_STATUS));
+                                if ((Boolean) viewBundle.get(ViewBundle.P2C)) {
+                                    getView().findViewById(R.id.p2c).setVisibility(View.VISIBLE);
+                                    ((TextView) getView().findViewById(R.id.p2c_pkm))
+                                            .setText((CharSequence) viewBundle.get(ViewBundle.P2C_PKM));
+                                    ((ImageView) getView().findViewById(R.id.p2c_gender))
+                                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2C_GENDER));
+                                    ((TextView) getView().findViewById(R.id.p2c_hp))
+                                            .setText((CharSequence) viewBundle.get(ViewBundle.P2C_HP));
+                                    ((ProgressBar) getView().findViewById(R.id.p2c_bar_hp))
+                                            .setProgress((Integer) viewBundle.get(ViewBundle.P2C_HP_BAR));
+                                    ((ImageView) getView().findViewById(R.id.p2c_icon))
+                                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.P2C_SPRITE));
+                                    addAllChild((LinearLayout) getView().findViewById(R.id.p2c_temp_status),
+                                            (View[]) viewBundle.get(ViewBundle.P2C_STATUS));
+                                }
+                            }
+                        }
+                    }
+
+                    mAnimatorSetQueue = (ArrayDeque<AnimatorSet>) viewBundle.get(ViewBundle.ANIMATION_QUEUE);
+                    if (mAnimatorSetQueue != null && !mAnimatorSetQueue.isEmpty()) {
+                        mAnimatorSetQueue.peekFirst().start();
+                    }
+                    roomData.setViewBundle(null);
+                }
+            }
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
-        if (animationData != null) {
-            animationData.setMessageListener(true);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            roomData.setMessageListener(true);
+
+            if (getView() != null) {
+                HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
+                viewBundle.put(ViewBundle.PLAYER1_NAME,
+                        ((TextView) getView().findViewById(R.id.username)).getText());
+                viewBundle.put(ViewBundle.PLAYER1_AVATAR,
+                        ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
+                viewBundle.put(ViewBundle.PLAYER2_NAME,
+                        ((TextView) getView().findViewById(R.id.username_o)).getText());
+                viewBundle.put(ViewBundle.PLAYER2_AVATAR,
+                        ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
+                viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
+                        ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
+                viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
+                        ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
+                viewBundle.put(ViewBundle.ICON1,
+                        ((ImageView) getView().findViewById(R.id.icon1)).getDrawable());
+                viewBundle.put(ViewBundle.ICON2,
+                        ((ImageView) getView().findViewById(R.id.icon2)).getDrawable());
+                viewBundle.put(ViewBundle.ICON3,
+                        ((ImageView) getView().findViewById(R.id.icon3)).getDrawable());
+                viewBundle.put(ViewBundle.ICON4,
+                        ((ImageView) getView().findViewById(R.id.icon4)).getDrawable());
+                viewBundle.put(ViewBundle.ICON5,
+                        ((ImageView) getView().findViewById(R.id.icon5)).getDrawable());
+                viewBundle.put(ViewBundle.ICON6,
+                        ((ImageView) getView().findViewById(R.id.icon6)).getDrawable());
+                viewBundle.put(ViewBundle.ICON1_O,
+                        ((ImageView) getView().findViewById(R.id.icon1_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON2_O,
+                        ((ImageView) getView().findViewById(R.id.icon2_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON3_O,
+                        ((ImageView) getView().findViewById(R.id.icon3_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON4_O,
+                        ((ImageView) getView().findViewById(R.id.icon4_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON5_O,
+                        ((ImageView) getView().findViewById(R.id.icon5_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON6_O,
+                        ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
+                if (isTeamPreview()) {
+                    viewBundle.put(ViewBundle.TEAMPREVIEW, true);
+                    viewBundle.put(ViewBundle.P1A_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1a_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1B_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1b_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1C_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1c_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1D_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1d_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1E_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1e_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P1F_PREV,
+                            ((ImageView) getView().findViewById(R.id.p1f_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2A_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2a_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2B_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2b_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2C_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2c_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2D_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2d_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2E_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2e_prev)).getDrawable());
+                    viewBundle.put(ViewBundle.P2F_PREV,
+                            ((ImageView) getView().findViewById(R.id.p2f_prev)).getDrawable());
+                } else {
+                    viewBundle.put(ViewBundle.TEAMPREVIEW, false);
+                    viewBundle.put(ViewBundle.TURN,
+                            ((TextView) getView().findViewById(R.id.turn)).getText());
+                    viewBundle.put(ViewBundle.WEATHER,
+                            ((TextView) getView().findViewById(R.id.weather)).getText());
+                    viewBundle.put(ViewBundle.REFLECT,
+                            getView().findViewById(R.id.field_reflect).getVisibility());
+                    viewBundle.put(ViewBundle.LIGHTSCREEN,
+                            getView().findViewById(R.id.field_lightscreen).getVisibility());
+                    viewBundle.put(ViewBundle.ROCKS,
+                            getView().findViewById(R.id.field_rocks).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE1,
+                            getView().findViewById(R.id.field_spikes1).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE2,
+                            getView().findViewById(R.id.field_spikes2).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE3,
+                            getView().findViewById(R.id.field_spikes3).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE1,
+                            getView().findViewById(R.id.field_tspikes1).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE2,
+                            getView().findViewById(R.id.field_tspikes2).getVisibility());
+                    viewBundle.put(ViewBundle.REFLECT_O,
+                            getView().findViewById(R.id.field_reflect_o).getVisibility());
+                    viewBundle.put(ViewBundle.LIGHTSCREEN_O,
+                            getView().findViewById(R.id.field_lightscreen_o).getVisibility());
+                    viewBundle.put(ViewBundle.ROCKS_O,
+                            getView().findViewById(R.id.field_rocks_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE1_O,
+                            getView().findViewById(R.id.field_spikes1_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE2_O,
+                            getView().findViewById(R.id.field_spikes2_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE3_O,
+                            getView().findViewById(R.id.field_spikes3_o).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE1_O,
+                            getView().findViewById(R.id.field_tspikes1_o).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE2_O,
+                            getView().findViewById(R.id.field_tspikes2_o).getVisibility());
+                    if (getView().findViewById(R.id.p1a).getVisibility() == View.VISIBLE) {
+                        viewBundle.put(ViewBundle.P1A, true);
+                        viewBundle.put(ViewBundle.P1A_PKM, 
+                                ((TextView) getView().findViewById(R.id.p1a_pkm)).getText());
+                        viewBundle.put(ViewBundle.P1A_GENDER,
+                                ((ImageView) getView().findViewById(R.id.p1a_gender)).getDrawable());
+                        viewBundle.put(ViewBundle.P1A_HP,
+                                ((TextView) getView().findViewById(R.id.p1a_hp)).getText());
+                        viewBundle.put(ViewBundle.P1A_HP_BAR,
+                                ((ProgressBar) getView().findViewById(R.id.p1a_bar_hp)).getProgress());
+                        viewBundle.put(ViewBundle.P1A_SPRITE,
+                                ((ImageView) getView().findViewById(R.id.p1a_icon)).getDrawable());
+                        viewBundle.put(ViewBundle.P1A_STATUS,
+                                getAllChild((LinearLayout) getView().findViewById(R.id.p1a_temp_status)));
+                        if (getView().findViewById(R.id.p1a).getVisibility() == View.VISIBLE) {
+                            viewBundle.put(ViewBundle.P1B, true);
+                            viewBundle.put(ViewBundle.P1B_PKM,
+                                    ((TextView) getView().findViewById(R.id.p1a_pkm)).getText());
+                            viewBundle.put(ViewBundle.P1B_GENDER,
+                                    ((ImageView) getView().findViewById(R.id.p1a_gender)).getDrawable());
+                            viewBundle.put(ViewBundle.P1B_HP,
+                                    ((TextView) getView().findViewById(R.id.p1a_hp)).getText());
+                            viewBundle.put(ViewBundle.P1B_HP_BAR,
+                                    ((ProgressBar) getView().findViewById(R.id.p1a_bar_hp)).getProgress());
+                            viewBundle.put(ViewBundle.P1B_SPRITE,
+                                    ((ImageView) getView().findViewById(R.id.p1a_icon)).getDrawable());
+                            viewBundle.put(ViewBundle.P1B_STATUS,
+                                    getAllChild((LinearLayout) getView().findViewById(R.id.p1a_temp_status)));
+                            if (getView().findViewById(R.id.p1c).getVisibility() == View.VISIBLE) {
+                                viewBundle.put(ViewBundle.P1C, true);
+                                viewBundle.put(ViewBundle.P1C_PKM,
+                                        ((TextView) getView().findViewById(R.id.p1c_pkm)).getText());
+                                viewBundle.put(ViewBundle.P1C_GENDER,
+                                        ((ImageView) getView().findViewById(R.id.p1c_gender)).getDrawable());
+                                viewBundle.put(ViewBundle.P1C_HP,
+                                        ((TextView) getView().findViewById(R.id.p1c_hp)).getText());
+                                viewBundle.put(ViewBundle.P1C_HP_BAR,
+                                        ((ProgressBar) getView().findViewById(R.id.p1c_bar_hp)).getProgress());
+                                viewBundle.put(ViewBundle.P1C_SPRITE,
+                                        ((ImageView) getView().findViewById(R.id.p1c_icon)).getDrawable());
+                                viewBundle.put(ViewBundle.P1C_STATUS,
+                                        getAllChild((LinearLayout) getView().findViewById(R.id.p1c_temp_status)));
+                            } else {
+                                viewBundle.put(ViewBundle.P1C, false);
+                            }
+                        } else {
+                            viewBundle.put(ViewBundle.P1B, false);
+                        }
+                    } else {
+                        viewBundle.put(ViewBundle.P1A, false);
+                    }
+                    if (getView().findViewById(R.id.p2a).getVisibility() == View.VISIBLE) {
+                        viewBundle.put(ViewBundle.P2A, true);
+                        viewBundle.put(ViewBundle.P2A_PKM,
+                                ((TextView) getView().findViewById(R.id.p2a_pkm)).getText());
+                        viewBundle.put(ViewBundle.P2A_GENDER,
+                                ((ImageView) getView().findViewById(R.id.p2a_gender)).getDrawable());
+                        viewBundle.put(ViewBundle.P2A_HP,
+                                ((TextView) getView().findViewById(R.id.p2a_hp)).getText());
+                        viewBundle.put(ViewBundle.P2A_HP_BAR,
+                                ((ProgressBar) getView().findViewById(R.id.p2a_bar_hp)).getProgress());
+                        viewBundle.put(ViewBundle.P2A_SPRITE,
+                                ((ImageView) getView().findViewById(R.id.p2a_icon)).getDrawable());
+                        viewBundle.put(ViewBundle.P2A_STATUS,
+                                getAllChild((LinearLayout) getView().findViewById(R.id.p2a_temp_status)));
+                        if (getView().findViewById(R.id.p2a).getVisibility() == View.VISIBLE) {
+                            viewBundle.put(ViewBundle.P2B, true);
+                            viewBundle.put(ViewBundle.P2B_PKM,
+                                    ((TextView) getView().findViewById(R.id.p2a_pkm)).getText());
+                            viewBundle.put(ViewBundle.P2B_GENDER,
+                                    ((ImageView) getView().findViewById(R.id.p2a_gender)).getDrawable());
+                            viewBundle.put(ViewBundle.P2B_HP,
+                                    ((TextView) getView().findViewById(R.id.p2a_hp)).getText());
+                            viewBundle.put(ViewBundle.P2B_HP_BAR,
+                                    ((ProgressBar) getView().findViewById(R.id.p2a_bar_hp)).getProgress());
+                            viewBundle.put(ViewBundle.P2B_SPRITE,
+                                    ((ImageView) getView().findViewById(R.id.p2a_icon)).getDrawable());
+                            viewBundle.put(ViewBundle.P2B_STATUS,
+                                    getAllChild((LinearLayout) getView().findViewById(R.id.p2a_temp_status)));
+                            if (getView().findViewById(R.id.p2c).getVisibility() == View.VISIBLE) {
+                                viewBundle.put(ViewBundle.P2C, true);
+                                viewBundle.put(ViewBundle.P2C_PKM,
+                                        ((TextView) getView().findViewById(R.id.p2c_pkm)).getText());
+                                viewBundle.put(ViewBundle.P2C_GENDER,
+                                        ((ImageView) getView().findViewById(R.id.p2c_gender)).getDrawable());
+                                viewBundle.put(ViewBundle.P2C_HP,
+                                        ((TextView) getView().findViewById(R.id.p2c_hp)).getText());
+                                viewBundle.put(ViewBundle.P2C_HP_BAR,
+                                        ((ProgressBar) getView().findViewById(R.id.p2c_bar_hp)).getProgress());
+                                viewBundle.put(ViewBundle.P2C_SPRITE,
+                                        ((ImageView) getView().findViewById(R.id.p2c_icon)).getDrawable());
+                                viewBundle.put(ViewBundle.P2C_STATUS,
+                                        getAllChild((LinearLayout) getView().findViewById(R.id.p2c_temp_status)));
+                            } else {
+                                viewBundle.put(ViewBundle.P2C, false);
+                            }
+                        } else {
+                            viewBundle.put(ViewBundle.P2B, false);
+                        }
+                    } else {
+                        viewBundle.put(ViewBundle.P2A, false);
+                    }
+                }
+                viewBundle.put(ViewBundle.ANIMATION_QUEUE, mAnimatorSetQueue);
+                roomData.setViewBundle(viewBundle);
+            }
         }
     }
 
@@ -184,7 +633,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setTurnNumber(int turnNumber) {
-        this.mTurnNumber = turnNumber;
+        mTurnNumber = turnNumber;
     }
 
     public boolean isMyTurn() {
@@ -193,6 +642,14 @@ public class BattleFragment extends Fragment {
 
     public void setMyTurn(boolean myTurn) {
         this.mMyTurn = myTurn;
+    }
+
+    public boolean isTeamPreview() {
+        return mTeamPreview;
+    }
+
+    public void setTeamPreview(boolean teamPreview) {
+        mTeamPreview = teamPreview;
     }
 
     public String getRoomId() {
@@ -386,10 +843,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void addToLog(Spannable logMessage) {
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (roomData != null && roomData.isMessageListener()) {
+        BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (battleLog != null && battleLog.isMessageListener()) {
             if (logMessage.length() > 0) {
-                roomData.addServerMessageOnHold(logMessage);
+                battleLog.addServerMessageOnHold(logMessage);
             }
         } else {
             BattleLogDialog battleLogDialog =
@@ -1250,6 +1707,40 @@ public class BattleFragment extends Fragment {
         animatorSet.play(fadeOut).after(fadeIn);
 
         return animatorSet;
+    }
+    
+    public void setVisibility(View view, int visibility) {
+        switch (visibility) {
+            case View.VISIBLE:
+                view.setVisibility(View.VISIBLE);
+                break;
+            case View.INVISIBLE:
+                view.setVisibility(View.INVISIBLE);
+                break;
+            case View.GONE:
+                view.setVisibility(View.GONE);
+                break;
+            default:
+                view.setVisibility(View.GONE);
+        }
+    }
+    
+    public View[] getAllChild(LinearLayout layout) {
+        if (layout == null) {
+            return null;
+        }
+        
+        View[] childs = new View[layout.getChildCount()];
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            childs[i] = layout.getChildAt(i);
+        }
+        return childs;
+    }
+    
+    public void addAllChild(LinearLayout layout, View[] childs) {
+        for (View child : childs) {
+            layout.addView(child);
+        }
     }
 
     public void showMoves(JSONObject requestJson) {

@@ -27,6 +27,9 @@ import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
 
@@ -142,7 +145,7 @@ public class BattleFieldActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.team_building:
                 startActivity(new Intent(this, TeamBuildingActivity.class));
                 return true;
@@ -153,7 +156,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 startActivity(new Intent(this, DmgCalcActivity.class));
                 return true;
             case R.id.menu_login:
-                Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                Onboarding onboarding = Onboarding.get(getApplicationContext());
                 if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                     MyApplication.getMyApplication().getWebSocketClient();
                     runOnUiThread(new Runnable() {
@@ -208,7 +211,7 @@ public class BattleFieldActivity extends FragmentActivity {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment;
-        switch(position) {
+        switch (position) {
             case 0:
                 mPosition = 0;
                 fragment = BattleFieldFragment.newInstance();
@@ -248,6 +251,36 @@ public class BattleFieldActivity extends FragmentActivity {
     private void processBroadcastMessage(Intent intent) {
         String details = intent.getExtras().getString(MyApplication.EXTRA_DETAILS);
         switch (details) {
+            case MyApplication.EXTRA_UPDATE_SEARCH:
+                String updateSearchStatus = intent.getExtras().getString(MyApplication.EXTRA_UPDATE_SEARCH);
+                try {
+                    JSONObject updateSearchJSon = new JSONObject(updateSearchStatus);
+                    Object updateStatusObject = updateSearchJSon.get("searching");
+                    // is only boolean when search is done or maybe canceled
+                    if (updateStatusObject instanceof Boolean) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDialog != null && mDialog.isShowing()) {
+                                    mDialog.dismiss();
+                                }
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                        .setMessage(R.string.searching_battle)
+                                        .create();
+                                mDialog.show();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
             case MyApplication.EXTRA_NO_INTERNET_CONNECTION:
                 runOnUiThread(new Runnable() {
                     @Override
@@ -318,7 +351,7 @@ public class BattleFieldActivity extends FragmentActivity {
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1) {
-            CommunityLoungeData.RoomData roomData = CommunityLoungeData.getWithApplicationContext(getApplicationContext()).getRoomInstance(roomId);
+            CommunityLoungeData.RoomData roomData = CommunityLoungeData.get(getApplicationContext()).getRoomInstance(roomId);
             if (roomData != null && roomData.isMessageListener()) {
                 roomData.addServerMessageOnHold(message);
             } else {
@@ -328,9 +361,9 @@ public class BattleFieldActivity extends FragmentActivity {
                 }
             }
         } else { // channel == 0
-            BattleFieldData.AnimationData animationData = BattleFieldData.get(this).getAnimationInstance(roomId);
-            if (animationData != null && animationData.isMessageListener()) {
-                animationData.addServerMessageOnHold(message);
+            BattleFieldData.RoomData roomData = BattleFieldData.get(this).getAnimationInstance(roomId);
+            if (roomData != null && roomData.isMessageListener()) {
+                roomData.addServerMessageOnHold(message);
             } else {
                 BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (fragment != null) {

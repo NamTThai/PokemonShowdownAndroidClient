@@ -35,6 +35,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
+    public final static String EXTRA_UPDATE_SEARCH = "Search Update";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
 
@@ -61,13 +62,13 @@ public class MyApplication extends Application {
         Context appContext = getApplicationContext();
 
         mWebSocketClient = getWebSocketClient();
-        mPokedex = Pokedex.getWithApplicationContext(appContext);
-        mMoveDex = MoveDex.getWithApplicationContext(appContext);
-        mAbilityDex = AbilityDex.getWithApplicationContext(appContext);
-        mItemDex = ItemDex.getWithApplicationContext(appContext);
-        mOnboarding = Onboarding.getWithApplicationContext(appContext);
-        mBattleFieldData = BattleFieldData.getWithApplicationContext(appContext);
-        mCommunityLoungeData = CommunityLoungeData.getWithApplicationContext(appContext);
+        mPokedex = Pokedex.get(appContext);
+        mMoveDex = MoveDex.get(appContext);
+        mAbilityDex = AbilityDex.get(appContext);
+        mItemDex = ItemDex.get(appContext);
+        mOnboarding = Onboarding.get(appContext);
+        mBattleFieldData = BattleFieldData.get(appContext);
+        mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
         initiateChatRoomList();
     }
@@ -142,7 +143,7 @@ public class MyApplication extends Application {
     }
 
     public void closeActiveConnection() {
-        if(mWebSocketClient != null) {
+        if (mWebSocketClient != null) {
             mWebSocketClient.close();
         }
     }
@@ -199,17 +200,17 @@ public class MyApplication extends Application {
         } else {
             message = message.substring(1);
             int endOfCommand = message.indexOf('|');
-            String command = (endOfCommand == -1)? message : message.substring(0, endOfCommand);
-            String messageDetail = (endOfCommand == -1)? "" : message.substring(endOfCommand + 1);
+            String command = (endOfCommand == -1) ? message : message.substring(0, endOfCommand);
+            String messageDetail = (endOfCommand == -1) ? "" : message.substring(endOfCommand + 1);
 
             Onboarding onboarding;
             switch (command) {
                 case "challstr":
                     channel = -1;
-                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding = Onboarding.get(getApplicationContext());
                     onboarding.setKeyId(messageDetail.substring(0, messageDetail.indexOf('|')));
                     onboarding.setChallenge(messageDetail.substring(messageDetail.indexOf('|') + 1));
-                    String result = Onboarding.getWithApplicationContext(getApplicationContext()).attemptSignIn();
+                    String result = Onboarding.get(getApplicationContext()).attemptSignIn();
                     if (result != null) {
                         sendClientMessage("|/trn " + result);
                     }
@@ -232,7 +233,7 @@ public class MyApplication extends Application {
                             avatar = "0" + avatar;
                         }
                     }
-                    onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+                    onboarding = Onboarding.get(getApplicationContext());
                     if (guestStatus.equals("0")) {
                         onboarding.setUsername(username);
                         onboarding.setSignedIn(false);
@@ -264,7 +265,7 @@ public class MyApplication extends Application {
                             break;
                         case "roomlist":
                             String roomlist = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                            BattleFieldData.getWithApplicationContext(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
+                            BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
                             break;
                         default:
                             Log.d(MTAG, message);
@@ -272,16 +273,20 @@ public class MyApplication extends Application {
                     break;
                 case "formats":
                     channel = -1;
-                    BattleFieldData.getWithApplicationContext(getApplicationContext()).generateAvailableRoomList(messageDetail);
+                    BattleFieldData.get(getApplicationContext()).generateAvailableRoomList(messageDetail);
                     break;
                 case "popup":
                     channel = -1;
                     final String popupMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
                     LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_ERROR_MESSAGE).putExtra(EXTRA_ERROR_MESSAGE, popupMessage));
                     break;
+                case "updatesearch":
+                    channel = -1;
+                    final String searchStatus = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UPDATE_SEARCH).putExtra(EXTRA_UPDATE_SEARCH, searchStatus));
+                    break;
                 case "pm":
                 case "usercount":
-                case "updatesearch":
                 case "updatechallenges":
                 case "deinit":
                     channel = -1;
@@ -289,6 +294,7 @@ public class MyApplication extends Application {
                     break;
                 default:
                     channel = 1;
+                    break;
             }
         }
 
@@ -306,7 +312,7 @@ public class MyApplication extends Application {
             channel = 1;
         }
 
-        if (message.length() == 0 ) {
+        if (message.length() == 0) {
             return;
         }
 
@@ -322,7 +328,7 @@ public class MyApplication extends Application {
     }
 
     public boolean verifySignedInBeforeSendingMessage() {
-        Onboarding onboarding = Onboarding.getWithApplicationContext(getApplicationContext());
+        Onboarding onboarding = Onboarding.get(getApplicationContext());
         if (!onboarding.isSignedIn()) {
             if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                 getWebSocketClient();

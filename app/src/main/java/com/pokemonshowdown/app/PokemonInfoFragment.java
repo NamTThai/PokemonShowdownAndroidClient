@@ -68,7 +68,7 @@ public class PokemonInfoFragment extends DialogFragment {
 
         TextView pokemonName = (TextView) view.findViewById(R.id.pokemon_name);
         pokemonName.setText(mPokemonInfo.getName());
-        pokemonName.setCompoundDrawablesWithIntrinsicBounds(mPokemonInfo.getIcon(getActivity(), false), 0, typeIcon[0], 0);
+        pokemonName.setCompoundDrawablesWithIntrinsicBounds(mPokemonInfo.getIcon(getActivity()), 0, typeIcon[0], 0);
         pokemonName.setCompoundDrawablePadding(8);
 
         TextView pokemonLevelGender = (TextView) view.findViewById(R.id.pokemon_level_gender);
@@ -77,7 +77,7 @@ public class PokemonInfoFragment extends DialogFragment {
         pokemonLevelGender.setCompoundDrawablePadding(8);
 
         ImageView pokemonView = (ImageView) view.findViewById(R.id.pokemon_view);
-        pokemonView.setImageResource(mPokemonInfo.getSprite(getActivity(), false));
+        pokemonView.setImageResource(mPokemonInfo.getSprite(getActivity()));
 
         TextView pokemonStats = (TextView) view.findViewById(R.id.stats);
         pokemonStats.setText(getStatsString());
@@ -120,7 +120,7 @@ public class PokemonInfoFragment extends DialogFragment {
             view.findViewById(R.id.move4).setVisibility(View.GONE);
         } else {
             ((TextView) view.findViewById(R.id.move4_name)).setText(moveNames[3]);
-            ((ImageView) view.findViewById(R.id.move4_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[3], false));
+            ((ImageView) view.findViewById(R.id.move4_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[3]));
             ((TextView) view.findViewById(R.id.move4_pp)).setText(moves.get(moveNames[3]));
         }
 
@@ -128,7 +128,7 @@ public class PokemonInfoFragment extends DialogFragment {
             view.findViewById(R.id.move3).setVisibility(View.GONE);
         } else {
             ((TextView) view.findViewById(R.id.move3_name)).setText(moveNames[2]);
-            ((ImageView) view.findViewById(R.id.move3_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[2], false));
+            ((ImageView) view.findViewById(R.id.move3_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[2]));
             ((TextView) view.findViewById(R.id.move3_pp)).setText(moves.get(moveNames[2]));
         }
 
@@ -136,7 +136,7 @@ public class PokemonInfoFragment extends DialogFragment {
             view.findViewById(R.id.move2).setVisibility(View.GONE);
         } else {
             ((TextView) view.findViewById(R.id.move2_name)).setText(moveNames[1]);
-            ((ImageView) view.findViewById(R.id.move2_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[1], false));
+            ((ImageView) view.findViewById(R.id.move2_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[1]));
             ((TextView) view.findViewById(R.id.move2_pp)).setText(moves.get(moveNames[1]));
         }
 
@@ -144,7 +144,7 @@ public class PokemonInfoFragment extends DialogFragment {
             view.findViewById(R.id.move1).setVisibility(View.GONE);
         } else {
             ((TextView) view.findViewById(R.id.move1_name)).setText(moveNames[0]);
-            ((ImageView) view.findViewById(R.id.move1_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[0], false));
+            ((ImageView) view.findViewById(R.id.move1_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[0]));
             ((TextView) view.findViewById(R.id.move1_pp)).setText(moves.get(moveNames[0]));
         }
 

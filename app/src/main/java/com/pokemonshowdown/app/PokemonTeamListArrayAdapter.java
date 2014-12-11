@@ -49,7 +49,7 @@ public class PokemonTeamListArrayAdapter extends ArrayAdapter<PokemonTeam> {
         for (Pokemon pokemon : p.getPokemons()) {
             if (pokemon != null) {
                 ImageView image = new ImageView(getContext());
-                int smallIconId = pokemon.getIconSmall();
+                int smallIconId = pokemon.getIcon();
                 Drawable d = mContext.getResources().getDrawable(smallIconId);
                 image.setImageDrawable(d);
                 layout.addView(image);

@@ -3,9 +3,6 @@ package com.pokemonshowdown.data;
 import android.text.InputFilter;
 import android.text.Spanned;
 
-/**
- * Created by thain on 7/30/14.
- */
 public class InputFilterMinMax implements InputFilter {
 
     private int mMin, mMax;

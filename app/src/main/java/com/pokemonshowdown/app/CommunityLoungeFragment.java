@@ -49,9 +49,9 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mRoomList = CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).getRoomList();
+        mRoomList = CommunityLoungeData.get(getActivity().getApplicationContext()).getRoomList();
         if (mRoomList.size() == 0) {
-            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom("lobby");
+            CommunityLoungeData.get(getActivity().getApplicationContext()).joinRoom("lobby");
         }
     }
 
@@ -217,7 +217,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         if (mRoomList.contains(roomId)) {
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
         } else {
-            CommunityLoungeData.getWithApplicationContext(getActivity().getApplicationContext()).joinRoom(roomId);
+            CommunityLoungeData.get(getActivity().getApplicationContext()).joinRoom(roomId);
             mCommunityLoungePagerAdapter.notifyDataSetChanged();
             ActionBar.TabListener tabListener = new ActionBar.TabListener() {
                 @Override
