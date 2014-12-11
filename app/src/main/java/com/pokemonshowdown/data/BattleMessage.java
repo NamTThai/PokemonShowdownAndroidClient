@@ -41,7 +41,7 @@ import java.util.Random;
 public class BattleMessage {
 
     public static void processMajorAction(final BattleFragment battleFragment, final String message) {
-        BattleFieldData.AnimationData animationData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
+        BattleFieldData.RoomData roomData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
         final BattleFieldData.ViewData viewData = BattleFieldData.get(battleFragment.getActivity()).getViewData(battleFragment.getRoomId());
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
         final String messageDetails = message.substring(message.indexOf('|') + 1);
@@ -127,7 +127,7 @@ public class BattleMessage {
                     avatarResource = 0;
                 }
                 if (playerType.equals("p1")) {
-                    animationData.setPlayer1(playerName);
+                    roomData.setPlayer1(playerName);
                     battleFragment.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -144,7 +144,7 @@ public class BattleMessage {
                     });
                     battleFragment.setPlayer1(playerName);
                 } else {
-                    animationData.setPlayer2(playerName);
+                    roomData.setPlayer2(playerName);
                     battleFragment.getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

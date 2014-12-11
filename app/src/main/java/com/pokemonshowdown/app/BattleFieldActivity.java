@@ -361,9 +361,9 @@ public class BattleFieldActivity extends FragmentActivity {
                 }
             }
         } else { // channel == 0
-            BattleFieldData.AnimationData animationData = BattleFieldData.get(this).getAnimationInstance(roomId);
-            if (animationData != null && animationData.isMessageListener()) {
-                animationData.addServerMessageOnHold(message);
+            BattleFieldData.RoomData roomData = BattleFieldData.get(this).getAnimationInstance(roomId);
+            if (roomData != null && roomData.isMessageListener()) {
+                roomData.addServerMessageOnHold(message);
             } else {
                 BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (fragment != null) {

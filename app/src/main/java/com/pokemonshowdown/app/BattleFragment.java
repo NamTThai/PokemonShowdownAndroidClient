@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -44,6 +45,14 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+
+    public enum ViewBundle {
+        PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR,
+        BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER, TEAMPREVIEW,
+        ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
+        ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
+
+    }
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
@@ -109,25 +118,81 @@ public class BattleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
-        if (animationData != null) {
-            animationData.setMessageListener(false);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            roomData.setMessageListener(false);
 
-            ArrayList<String> pendingMessages = animationData.getServerMessageOnHold();
+            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
             for (String message : pendingMessages) {
                 processServerMessage(message);
             }
 
-            animationData.clearServerMessageOnHold();
+            roomData.clearServerMessageOnHold();
+
+            if (getView() != null) {
+                HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
+                if (viewBundle != null) {
+                    ((TextView) getView().findViewById(R.id.username))
+                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
+                    ((ImageView) getView().findViewById(R.id.avatar))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER1_AVATAR));
+                    ((TextView) getView().findViewById(R.id.username_o))
+                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER2_NAME));
+                    ((ImageView) getView().findViewById(R.id.avatar_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER2_AVATAR));
+                    ((ImageView) getView().findViewById(R.id.battle_background))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.BATTLE_BACKGROUND));
+                    ((ImageView) getView().findViewById(R.id.weather_background))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.WEATHER_BACKGROUND));
+                    Boolean isTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAMPREVIEW);
+                    if (isTeamPreview) {
+
+                    } else {
+                        getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
+                        ((TextView) getView().findViewById(R.id.turn))
+                                .setText((CharSequence) viewBundle.get(ViewBundle.TURN));
+                        ((TextView) getView().findViewById(R.id.weather))
+                                .setText((CharSequence) viewBundle.get(ViewBundle.WEATHER));
+                    }
+                    roomData.setViewBundle(null);
+                }
+            }
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
-        if (animationData != null) {
-            animationData.setMessageListener(true);
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            roomData.setMessageListener(true);
+
+            if (getView() != null) {
+                HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
+                viewBundle.put(ViewBundle.PLAYER1_NAME,
+                        ((TextView) getView().findViewById(R.id.username)).getText());
+                viewBundle.put(ViewBundle.PLAYER1_AVATAR,
+                        ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
+                viewBundle.put(ViewBundle.PLAYER2_NAME,
+                        ((TextView) getView().findViewById(R.id.username_o)).getText());
+                viewBundle.put(ViewBundle.PLAYER1_AVATAR,
+                        ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
+                viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
+                        ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
+                viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
+                        ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
+                View turn = getView().findViewById(R.id.turn);
+                // Check if currently in teampreviewing mode
+                if (turn.getVisibility() == View.GONE) {
+                    viewBundle.put(ViewBundle.TEAMPREVIEW, true);
+                } else {
+                    viewBundle.put(ViewBundle.TURN,
+                            ((TextView) getView().findViewById(R.id.turn)).getText());
+                    viewBundle.put(ViewBundle.WEATHER,
+                            ((TextView) getView().findViewById(R.id.weather)).getText());
+                }
+                roomData.setViewBundle(viewBundle);
+            }
         }
     }
 
@@ -392,10 +457,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void addToLog(Spannable logMessage) {
-        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (roomData != null && roomData.isMessageListener()) {
+        BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
+        if (battleLog != null && battleLog.isMessageListener()) {
             if (logMessage.length() > 0) {
-                roomData.addServerMessageOnHold(logMessage);
+                battleLog.addServerMessageOnHold(logMessage);
             }
         } else {
             BattleLogDialog battleLogDialog =

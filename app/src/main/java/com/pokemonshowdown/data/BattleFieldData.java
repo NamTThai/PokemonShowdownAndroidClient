@@ -6,6 +6,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.util.Log;
 
+import com.pokemonshowdown.app.BattleFragment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,8 +22,8 @@ public class BattleFieldData {
     private int mCurrentFormat;
     private JSONObject mAvailableBattle;
     private ArrayList<String> mRoomList;
-    private HashMap<String, RoomData> mRoomDataHashMap;
-    private HashMap<String, AnimationData> mAnimationDataHashMap;
+    private HashMap<String, BattleLog> mRoomDataHashMap;
+    private HashMap<String, RoomData> mAnimationDataHashMap;
     private HashMap<String, ViewData> mViewDataHashMap;
 
     private static BattleFieldData sBattleFieldData;
@@ -164,23 +166,23 @@ public class BattleFieldData {
         return mRoomList;
     }
 
-    public HashMap<String, RoomData> getRoomDataHashMap() {
+    public HashMap<String, BattleLog> getRoomDataHashMap() {
         return mRoomDataHashMap;
     }
 
     public void saveRoomInstance(String roomId, CharSequence chatBox, boolean messageListener) {
-        mRoomDataHashMap.put(roomId, new RoomData(roomId, chatBox, messageListener));
+        mRoomDataHashMap.put(roomId, new BattleLog(roomId, chatBox, messageListener));
     }
 
-    public RoomData getRoomInstance(String roomId) {
+    public BattleLog getRoomInstance(String roomId) {
         return mRoomDataHashMap.get(roomId);
     }
 
-    public HashMap<String, AnimationData> getAnimationDataHashMap() {
+    public HashMap<String, RoomData> getAnimationDataHashMap() {
         return mAnimationDataHashMap;
     }
 
-    public AnimationData getAnimationInstance(String roomId) {
+    public RoomData getAnimationInstance(String roomId) {
         return mAnimationDataHashMap.get(roomId);
     }
 
@@ -193,10 +195,10 @@ public class BattleFieldData {
     }
 
     public void joinRoom(String roomId, boolean watch) {
-        HashMap<String, RoomData> roomDataHashMap = getRoomDataHashMap();
+        HashMap<String, BattleLog> roomDataHashMap = getRoomDataHashMap();
         if (!roomDataHashMap.containsKey(roomId)) {
-            roomDataHashMap.put(roomId, new RoomData(roomId, "", true));
-            getAnimationDataHashMap().put(roomId, new AnimationData(roomId, true));
+            roomDataHashMap.put(roomId, new BattleLog(roomId, "", true));
+            getAnimationDataHashMap().put(roomId, new RoomData(roomId, true));
             getViewDataHashMap().put(roomId, new ViewData(roomId));
         }
         if (watch) {
@@ -218,13 +220,13 @@ public class BattleFieldData {
         }
     }
 
-    public static class RoomData {
+    public static class BattleLog {
         private String mRoomId;
         private CharSequence mChatBox;
         private boolean mMessageListener;
         private ArrayList<Spannable> mServerMessageOnHold;
 
-        public RoomData(String roomId, CharSequence chatBox, boolean messageListener) {
+        public BattleLog(String roomId, CharSequence chatBox, boolean messageListener) {
             mRoomId = roomId;
             mChatBox = chatBox;
             mServerMessageOnHold = new ArrayList<>();
@@ -264,7 +266,7 @@ public class BattleFieldData {
         }
     }
 
-    public static class AnimationData {
+    public static class RoomData {
         private String mRoomId;
         private boolean mMessageListener;
         private ArrayList<String> mServerMessageOnHold;
@@ -272,7 +274,10 @@ public class BattleFieldData {
         private String mPlayer1;
         private String mPlayer2;
 
-        public AnimationData(String roomId, boolean messageListener) {
+        private HashMap<BattleFragment.ViewBundle, Object> mViewBundle;
+
+
+        public RoomData(String roomId, boolean messageListener) {
             mRoomId = roomId;
             mServerMessageOnHold = new ArrayList<>();
             mMessageListener = messageListener;
@@ -302,6 +307,14 @@ public class BattleFieldData {
             mMessageListener = messageListener;
         }
 
+        public HashMap<BattleFragment.ViewBundle, Object> getViewBundle() {
+            return mViewBundle;
+        }
+
+        public void setViewBundle(HashMap<BattleFragment.ViewBundle, Object> viewBundle) {
+            mViewBundle = viewBundle;
+        }
+
         public String getPlayer1() {
             return mPlayer1;
         }
@@ -328,8 +341,6 @@ public class BattleFieldData {
             TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
             VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE
         }
-
-        ;
 
         public ViewData(String roomId) {
             mRoomId = roomId;
