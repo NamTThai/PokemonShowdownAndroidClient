@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/pokemon1_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/pokemon2_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
@@ -29,7 +29,7 @@
 
         <TextView
             android:id="@+id/pokemon3_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
@@ -43,7 +43,7 @@
 
         <TextView
             android:id="@+id/pokemon4_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/pokemon5_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
@@ -59,7 +59,7 @@
 
         <TextView
             android:id="@+id/pokemon6_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/editable_frame"
