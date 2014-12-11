@@ -8,28 +8,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.pokemonshowdown.data.ServerRequest;
 
 public class BattleMoveFragment extends Fragment {
     public BattleMoveFragment() {
         super();
     }
 
+    public final static String ACTIONIDTAG = "ACTIONIDTAG";
     public final static String MOVETAG = "MOVETAG";
     public final static String ROOMIDTAG = "ROOMIDTAG";
 
-    private JSONObject reqJsonObject;
+    private ServerRequest serverRequest;
     private String roomId;
+    private int actionId;
 
-    public static final BattleMoveFragment newInstance(JSONObject requestJson, String roomId) {
+    public static final BattleMoveFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
         BattleMoveFragment fragment = new BattleMoveFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MOVETAG, requestJson.toString());
+        bundle.putSerializable(MOVETAG, serverRequest);
         bundle.putSerializable(ROOMIDTAG, roomId);
-
+        bundle.putSerializable(ACTIONIDTAG, actionId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -37,72 +36,60 @@ public class BattleMoveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            reqJsonObject = new JSONObject((String) getArguments().get(MOVETAG));
-        } catch (JSONException e) {
-            // TODO
-        }
+        actionId = (Integer) getArguments().get(ACTIONIDTAG);
         roomId = (String) getArguments().get(ROOMIDTAG);
-
+        serverRequest = (ServerRequest) getArguments().get(MOVETAG);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_battle_active_moves, parent, false);
+        View view = inflater.inflate(R.layout.fragment_battle_select_moves, parent, false);
 
-        try {
-            //todo think on multiples battles (2v2 etc...)
-            final int rqId = reqJsonObject.getInt("rqid");
-            JSONArray activeMovesArray = reqJsonObject.getJSONArray("active");
+        ServerRequest.ActiveMoveInfo moves = serverRequest.getMovesToDo().get(actionId);
+        int moveId = 1;
+        for (final ServerRequest.MoveInfo moveInfo : moves.getAvailableMoves()) {
+            TextView moveTextView = null;
+            TextView ppTextView = null;
 
-            for (int i = 0; i < activeMovesArray.length(); i++) {
-                JSONArray movesArray = activeMovesArray.getJSONObject(i).getJSONArray("moves");
-                for (int j = 0; j < movesArray.length(); j++) {
-                    JSONObject move = movesArray.getJSONObject(j);
-                    final String moveName = move.getString("move");
-                    final String moveId = move.getString("id");
-                    final boolean isDisabled = move.getBoolean("disabled");
-                    final int pp = move.getInt("pp");
-                    final int maxPP = move.getInt("maxpp");
+            switch (moveId) {
+                case 1:
+                    moveTextView = (TextView) view.findViewById(R.id.active_move1_name);
+                    ppTextView = (TextView) view.findViewById(R.id.active_move1_pp);
+                    break;
 
-                    TextView moveTextView = null;
+                case 2:
+                    moveTextView = (TextView) view.findViewById(R.id.active_move2_name);
+                    ppTextView = (TextView) view.findViewById(R.id.active_move2_pp);
+                    break;
 
-                    switch (j) {
-                        case 0:
-                            moveTextView = (TextView) view.findViewById(R.id.teambuilder_move1_name);
-                            break;
-                        case 1:
-                            moveTextView = (TextView) view.findViewById(R.id.teambuilder_move2_name);
-                            break;
-                        case 2:
-                            moveTextView = (TextView) view.findViewById(R.id.teambuilder_move3_name);
-                            break;
-                        case 3:
-                            moveTextView = (TextView) view.findViewById(R.id.teambuilder_move4_name);
-                            break;
-                    }
+                case 3:
+                    moveTextView = (TextView) view.findViewById(R.id.active_move3_name);
+                    ppTextView = (TextView) view.findViewById(R.id.active_move3_pp);
+                    break;
 
-                    if (moveTextView != null) {
-                        moveTextView.setText(moveName);
-                        moveTextView.setEnabled(!isDisabled);
-                        moveTextView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose move " + moveName + "|" + rqId);
-                                getActivity().getSupportFragmentManager().beginTransaction().remove(BattleMoveFragment.this).commit();
-                            }
-                        });
-                    }
+                case 4:
+                    moveTextView = (TextView) view.findViewById(R.id.active_move4_name);
+                    ppTextView = (TextView) view.findViewById(R.id.active_move4_pp);
+                    break;
 
-
-                }
             }
 
-
-        } catch (JSONException e) {
-            // TODO
+            if (moveTextView != null && ppTextView != null) {
+                moveTextView.setText(moveInfo.getMoveName());
+                ppTextView.setText(moveInfo.getPp() + "/" + moveInfo.getMaxPp());
+                moveTextView.setEnabled(!moveInfo.isDisabled());
+                moveTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose move " + moveInfo.getMoveName() + "|" + serverRequest.getRqId());
+                        getActivity().getSupportFragmentManager().beginTransaction().remove(BattleMoveFragment.this).commit();
+                    }
+                });
+            }
+            moveId++;
         }
+
 
         return view;
     }

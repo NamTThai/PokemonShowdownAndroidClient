@@ -6,50 +6,91 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ServerRequest {
+public class ServerRequest implements Serializable {
     private int rqId;
-    private ArrayList<ActiveMoveInfo> movesToDo;
-    private ArrayList<Boolean> forceSwitch;
-    private ArrayList<PokemonInfo> pkmTeam;
+    private ArrayList<ActiveMoveInfo> movesToDo = new ArrayList<>();
+    private ArrayList<Boolean> forceSwitch = new ArrayList<>();
+    private ArrayList<PokemonInfo> pkmTeam = new ArrayList<>();
 
     public ServerRequest(BattleFragment battleFragment, JSONObject request) throws JSONException {
-        rqId = request.getInt("rqid");
+        setRqId(request.getInt("rqid"));
         JSONObject side = request.getJSONObject("side");
         JSONArray team = side.getJSONArray("pokemon");
         for (int i = 0; i < team.length(); i++) {
             JSONObject info = team.getJSONObject(i);
             PokemonInfo pkm = BattleMessage.parsePokemonInfo(battleFragment, info);
-            pkmTeam.add(pkm);
+            getPkmTeam().add(pkm);
         }
 
-        JSONArray active = side.getJSONArray("active");
+        JSONArray active = request.getJSONArray("active");
         for (int i = 0; i < active.length(); i++) {
             ActiveMoveInfo info = new ActiveMoveInfo(active.getJSONObject(i));
-            movesToDo.add(info);
+            getMovesToDo().add(info);
         }
-
-        JSONArray forceSwitchArray = side.getJSONArray("forceSwitch");
-        for (int i = 0; i < forceSwitchArray.length(); i++) {
-            forceSwitch.add(forceSwitchArray.getBoolean(i));
+        if (request.has("forceSwitch")) {
+            JSONArray forceSwitchArray = request.getJSONArray("forceSwitch");
+            for (int i = 0; i < forceSwitchArray.length(); i++) {
+                getForceSwitch().add(forceSwitchArray.getBoolean(i));
+            }
         }
     }
 
-    private class ActiveMoveInfo {
-        private ArrayList<MoveInfo> availableMoves;
+    public int getRqId() {
+        return rqId;
+    }
+
+    public void setRqId(int rqId) {
+        this.rqId = rqId;
+    }
+
+    public ArrayList<ActiveMoveInfo> getMovesToDo() {
+        return movesToDo;
+    }
+
+    public void setMovesToDo(ArrayList<ActiveMoveInfo> movesToDo) {
+        this.movesToDo = movesToDo;
+    }
+
+    public ArrayList<Boolean> getForceSwitch() {
+        return forceSwitch;
+    }
+
+    public void setForceSwitch(ArrayList<Boolean> forceSwitch) {
+        this.forceSwitch = forceSwitch;
+    }
+
+    public ArrayList<PokemonInfo> getPkmTeam() {
+        return pkmTeam;
+    }
+
+    public void setPkmTeam(ArrayList<PokemonInfo> pkmTeam) {
+        this.pkmTeam = pkmTeam;
+    }
+
+    public class ActiveMoveInfo implements Serializable {
+        private ArrayList<MoveInfo> availableMoves = new ArrayList<>();
 
         public ActiveMoveInfo(JSONObject activeArrayElement) throws JSONException {
             JSONArray moves = activeArrayElement.getJSONArray("moves");
             for (int i = 0; i < moves.length(); i++) {
                 MoveInfo moveInfo = new MoveInfo(moves.getJSONObject(i));
-                availableMoves.add(moveInfo);
+                getAvailableMoves().add(moveInfo);
             }
         }
 
+        public ArrayList<MoveInfo> getAvailableMoves() {
+            return availableMoves;
+        }
+
+        public void setAvailableMoves(ArrayList<MoveInfo> availableMoves) {
+            this.availableMoves = availableMoves;
+        }
     }
 
-    private class MoveInfo {
+    public class MoveInfo implements Serializable {
         private String target;
         private boolean isDisabled;
         private int pp;

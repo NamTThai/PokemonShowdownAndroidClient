@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.PokemonInfo;
+import com.pokemonshowdown.data.ServerRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -467,7 +468,7 @@ public class BattleFragment extends Fragment {
                             getView().findViewById(R.id.field_tspikes2_o).getVisibility());
                     if (getView().findViewById(R.id.p1a).getVisibility() == View.VISIBLE) {
                         viewBundle.put(ViewBundle.P1A, true);
-                        viewBundle.put(ViewBundle.P1A_PKM, 
+                        viewBundle.put(ViewBundle.P1A_PKM,
                                 ((TextView) getView().findViewById(R.id.p1a_pkm)).getText());
                         viewBundle.put(ViewBundle.P1A_GENDER,
                                 ((ImageView) getView().findViewById(R.id.p1a_gender)).getDrawable());
@@ -1708,7 +1709,7 @@ public class BattleFragment extends Fragment {
 
         return animatorSet;
     }
-    
+
     public void setVisibility(View view, int visibility) {
         switch (visibility) {
             case View.VISIBLE:
@@ -1724,32 +1725,49 @@ public class BattleFragment extends Fragment {
                 view.setVisibility(View.GONE);
         }
     }
-    
+
     public View[] getAllChild(LinearLayout layout) {
         if (layout == null) {
             return null;
         }
-        
+
         View[] childs = new View[layout.getChildCount()];
         for (int i = 0; i < layout.getChildCount(); i++) {
             childs[i] = layout.getChildAt(i);
         }
         return childs;
     }
-    
+
     public void addAllChild(LinearLayout layout, View[] childs) {
         for (View child : childs) {
             layout.addView(child);
         }
     }
 
-    public void showMoves(JSONObject requestJson) {
-        BattleMoveFragment fragment = BattleMoveFragment.newInstance(requestJson, getRoomId());
+    public void showPossibleActions(ServerRequest serverRequest) {
+        //todo handle doubles+ triples
+        int currentAction = 0;
+        boolean showSwitchFragment = false;
+        if (serverRequest.getForceSwitch().size() > 0) {
+            showSwitchFragment = serverRequest.getForceSwitch().get(currentAction);
+        }
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.move_fragment_container, fragment, "")
-                .commit();
+        if (showSwitchFragment) {
+            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId());
+
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+        } else {
+            BattleMoveOrSwitchFragment fragment = BattleMoveOrSwitchFragment.newInstance(serverRequest, currentAction, getRoomId());
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+
+        }
 
     }
+
 }

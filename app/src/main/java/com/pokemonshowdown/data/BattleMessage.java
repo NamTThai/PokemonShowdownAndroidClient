@@ -36,7 +36,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Random;
 
 public class BattleMessage {
@@ -272,13 +271,8 @@ public class BattleMessage {
                         battleFragment.setBattling(requestJson);
                         setDisplayTeam(battleFragment, requestJson);
                     } else {
-                        Iterator<String> keys = requestJson.keys();
-                        while (keys.hasNext()) {
-                            if (keys.next().equals("active")) {
-                                battleFragment.showMoves(requestJson);
-                                break;
-                            }
-                        }
+                        ServerRequest serverRequest = new ServerRequest(battleFragment, requestJson);
+                        battleFragment.showPossibleActions(serverRequest);
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
