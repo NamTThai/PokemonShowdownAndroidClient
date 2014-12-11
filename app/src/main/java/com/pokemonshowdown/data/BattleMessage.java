@@ -400,7 +400,9 @@ public class BattleMessage {
                             return;
                         }
                         AnimatorSet animatorSet = BattleAnimation.processMove(move, view, battleFragment, split);
-                        animatorSet.start();
+                        if (animatorSet != null) {
+                            animatorSet.start();
+                        }
                     }
 
                     @Override
