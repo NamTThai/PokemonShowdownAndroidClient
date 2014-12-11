@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.ServerRequest;
 
 public class BattleMoveFragment extends Fragment {
@@ -22,6 +24,8 @@ public class BattleMoveFragment extends Fragment {
     private ServerRequest serverRequest;
     private String roomId;
     private int actionId;
+
+    private CheckBox megaEvolutionCheckBox;
 
     public static BattleMoveFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
         BattleMoveFragment fragment = new BattleMoveFragment();
@@ -45,6 +49,13 @@ public class BattleMoveFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_battle_select_moves, parent, false);
+        megaEvolutionCheckBox = (CheckBox) view.findViewById(R.id.mega_evolution_checkbox);
+        for (PokemonInfo pokemonInfo : serverRequest.getPkmTeam()) {
+            if (pokemonInfo.isActive() && pokemonInfo.canMegaEvo()) {
+                megaEvolutionCheckBox.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
 
         ServerRequest.ActiveMoveInfo moves = serverRequest.getMovesToDo().get(actionId);
         int moveId = 1;
@@ -82,7 +93,11 @@ public class BattleMoveFragment extends Fragment {
                 moveTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose move " + moveInfo.getMoveName() + "|" + serverRequest.getRqId());
+                        if (megaEvolutionCheckBox.getVisibility() == View.VISIBLE && megaEvolutionCheckBox.isChecked()) {
+                            MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose move " + moveInfo.getMoveName() + " mega|" + serverRequest.getRqId());
+                        } else {
+                            MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose move " + moveInfo.getMoveName() + "|" + serverRequest.getRqId());
+                        }
                         getActivity().getSupportFragmentManager().beginTransaction().remove(BattleMoveFragment.this).commit();
                     }
                 });
