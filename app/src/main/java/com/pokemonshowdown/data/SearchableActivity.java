@@ -42,9 +42,11 @@ public class SearchableActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        getActionBar().setTitle(R.string.search_title);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        mSearchType = getIntent().getExtras().getInt("Search Type");
+        if (getActionBar() != null) {
+            getActionBar().setTitle(R.string.search_title);
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        mSearchType = getIntent().getExtras().getInt(SEARCH_TYPE);
 
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:

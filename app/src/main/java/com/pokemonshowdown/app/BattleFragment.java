@@ -32,7 +32,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
@@ -113,6 +112,13 @@ public class BattleFragment extends Fragment {
         BattleFieldData.AnimationData animationData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (animationData != null) {
             animationData.setMessageListener(false);
+
+            ArrayList<String> pendingMessages = animationData.getServerMessageOnHold();
+            for (String message : pendingMessages) {
+                processServerMessage(message);
+            }
+
+            animationData.clearServerMessageOnHold();
         }
     }
 
