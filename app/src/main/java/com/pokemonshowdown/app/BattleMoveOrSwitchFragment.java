@@ -64,7 +64,7 @@ public class BattleMoveOrSwitchFragment extends Fragment {
         switchTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, actionId, roomId);
+                BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, actionId, roomId, false);
 
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 fm.beginTransaction()

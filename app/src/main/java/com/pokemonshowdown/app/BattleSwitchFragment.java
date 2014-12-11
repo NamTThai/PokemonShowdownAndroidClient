@@ -15,17 +15,21 @@ public class BattleSwitchFragment extends Fragment {
     public final static String ACTIONIDTAG = "ACTIONIDTAG";
     public final static String MOVETAG = "MOVETAG";
     public final static String ROOMIDTAG = "ROOMIDTAG";
+    public final static String TEAMPREVIEWTAG = "TEAMPREVIEWTAG";
 
     private ServerRequest serverRequest;
     private String roomId;
     private int actionId;
+    private boolean isTeamPreview;
 
-    public static final BattleSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
+    public static final BattleSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId, boolean teamPreview) {
         BattleSwitchFragment fragment = new BattleSwitchFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MOVETAG, serverRequest);
         bundle.putSerializable(ROOMIDTAG, roomId);
         bundle.putSerializable(ACTIONIDTAG, actionId);
+        bundle.putSerializable(TEAMPREVIEWTAG, teamPreview);
+
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -36,6 +40,7 @@ public class BattleSwitchFragment extends Fragment {
         actionId = (Integer) getArguments().get(ACTIONIDTAG);
         roomId = (String) getArguments().get(ROOMIDTAG);
         serverRequest = (ServerRequest) getArguments().get(MOVETAG);
+        isTeamPreview = (Boolean) getArguments().get(TEAMPREVIEWTAG);
     }
 
     @Override
@@ -71,7 +76,11 @@ public class BattleSwitchFragment extends Fragment {
             pokemonTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose switch " + id + "|" + serverRequest.getRqId());
+                    if (isTeamPreview) {
+                        MyApplication.getMyApplication().sendClientMessage(roomId + "|/team " + id + "|" + serverRequest.getRqId());
+                    } else {
+                        MyApplication.getMyApplication().sendClientMessage(roomId + "|/choose switch " + id + "|" + serverRequest.getRqId());
+                    }
                     getActivity().getSupportFragmentManager().beginTransaction().remove(BattleSwitchFragment.this).commit();
                 }
             });

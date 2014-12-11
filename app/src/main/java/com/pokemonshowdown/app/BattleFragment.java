@@ -1748,12 +1748,19 @@ public class BattleFragment extends Fragment {
         //todo handle doubles+ triples
         int currentAction = 0;
         boolean showSwitchFragment = false;
+        boolean teamPreview = serverRequest.isTeamPreview();
         if (serverRequest.getForceSwitch().size() > 0) {
             showSwitchFragment = serverRequest.getForceSwitch().get(currentAction);
         }
+        if (teamPreview) {
+            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId(), teamPreview);
 
-        if (showSwitchFragment) {
-            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId());
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+        } else if (showSwitchFragment) {
+            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId(), false);
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
             fm.beginTransaction()
