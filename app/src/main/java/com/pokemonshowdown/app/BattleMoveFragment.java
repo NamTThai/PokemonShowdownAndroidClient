@@ -23,7 +23,7 @@ public class BattleMoveFragment extends Fragment {
     private String roomId;
     private int actionId;
 
-    public static final BattleMoveFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
+    public static BattleMoveFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
         BattleMoveFragment fragment = new BattleMoveFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MOVETAG, serverRequest);

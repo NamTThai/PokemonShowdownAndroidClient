@@ -22,7 +22,7 @@ public class BattleSwitchFragment extends Fragment {
     private int actionId;
     private boolean isTeamPreview;
 
-    public static final BattleSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId, boolean teamPreview) {
+    public static BattleSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId, boolean teamPreview) {
         BattleSwitchFragment fragment = new BattleSwitchFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MOVETAG, serverRequest);

@@ -12,6 +12,8 @@
         android:background="@drawable/onclick_light_red"
         android:clickable="true"
         android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/battle_attack"
         android:textColor="#FFF"
         android:textStyle="bold" />
@@ -23,6 +25,8 @@
         android:background="@drawable/onclick_green"
         android:clickable="true"
         android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/battle_switch"
         android:textStyle="bold" />
 

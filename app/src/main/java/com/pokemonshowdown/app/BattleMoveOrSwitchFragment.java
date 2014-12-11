@@ -10,9 +10,6 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.ServerRequest;
 
-/**
- * Created by clement-b on 11/12/2014.
- */
 public class BattleMoveOrSwitchFragment extends Fragment {
     public final static String ACTIONIDTAG = "ACTIONIDTAG";
     public final static String MOVETAG = "MOVETAG";
@@ -23,7 +20,7 @@ public class BattleMoveOrSwitchFragment extends Fragment {
     private int actionId;
 
 
-    public static final BattleMoveOrSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
+    public static BattleMoveOrSwitchFragment newInstance(ServerRequest serverRequest, int actionId, String roomId) {
         BattleMoveOrSwitchFragment fragment = new BattleMoveOrSwitchFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MOVETAG, serverRequest);
