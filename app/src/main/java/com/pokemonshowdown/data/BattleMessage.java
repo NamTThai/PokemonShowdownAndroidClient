@@ -4247,7 +4247,7 @@ public class BattleMessage {
         }
     }
 
-    private static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
+    public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
         PokemonInfo pkm = new PokemonInfo(battleFragment.getActivity(), name);
