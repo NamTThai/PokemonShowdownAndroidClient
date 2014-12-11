@@ -53,7 +53,9 @@ public class BattleFragment extends Fragment {
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
         ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
         P1A_PREV, P1B_PREV, P1C_PREV, P1D_PREV, P1E_PREV, P1F_PREV,
-        P2A_PREV, P2B_PREV, P2C_PREV, P2D_PREV, P2E_PREV, P2F_PREV
+        P2A_PREV, P2B_PREV, P2C_PREV, P2D_PREV, P2E_PREV, P2F_PREV,
+        REFLECT, LIGHTSCREEN, ROCKS, SPIKE1, SPIKE2, SPIKE3, TSPIKE1, TSPIKE2,
+        REFLECT_O, LIGHTSCREEN_O, ROCKS_O, SPIKE1_O, SPIKE2_O, SPIKE3_O, TSPIKE1_O, TSPIKE2_O
     }
 
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
@@ -211,6 +213,38 @@ public class BattleFragment extends Fragment {
                                 .setText((CharSequence) viewBundle.get(ViewBundle.TURN));
                         ((TextView) getView().findViewById(R.id.weather))
                                 .setText((CharSequence) viewBundle.get(ViewBundle.WEATHER));
+                        setVisibility(getView().findViewById(R.id.field_reflect),
+                                (Integer) viewBundle.get(ViewBundle.REFLECT));
+                        setVisibility(getView().findViewById(R.id.field_lightscreen),
+                                (Integer) viewBundle.get(ViewBundle.LIGHTSCREEN));
+                        setVisibility(getView().findViewById(R.id.field_rocks),
+                                (Integer) viewBundle.get(ViewBundle.ROCKS));
+                        setVisibility(getView().findViewById(R.id.field_spikes1),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE1));
+                        setVisibility(getView().findViewById(R.id.field_spikes2),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE2));
+                        setVisibility(getView().findViewById(R.id.field_spikes3),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE3));
+                        setVisibility(getView().findViewById(R.id.field_tspikes1),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE1));
+                        setVisibility(getView().findViewById(R.id.field_tspikes2),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE2));
+                        setVisibility(getView().findViewById(R.id.field_reflect_o),
+                                (Integer) viewBundle.get(ViewBundle.REFLECT_O));
+                        setVisibility(getView().findViewById(R.id.field_lightscreen_o),
+                                (Integer) viewBundle.get(ViewBundle.LIGHTSCREEN_O));
+                        setVisibility(getView().findViewById(R.id.field_rocks_o),
+                                (Integer) viewBundle.get(ViewBundle.ROCKS_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes1_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE1_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes2_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE2_O));
+                        setVisibility(getView().findViewById(R.id.field_spikes3_o),
+                                (Integer) viewBundle.get(ViewBundle.SPIKE3_O));
+                        setVisibility(getView().findViewById(R.id.field_tspikes1_o),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE1_O));
+                        setVisibility(getView().findViewById(R.id.field_tspikes2_o),
+                                (Integer) viewBundle.get(ViewBundle.TSPIKE2_O));
                     }
                     roomData.setViewBundle(null);
                 }
@@ -295,6 +329,38 @@ public class BattleFragment extends Fragment {
                             ((TextView) getView().findViewById(R.id.turn)).getText());
                     viewBundle.put(ViewBundle.WEATHER,
                             ((TextView) getView().findViewById(R.id.weather)).getText());
+                    viewBundle.put(ViewBundle.REFLECT,
+                            getView().findViewById(R.id.field_reflect).getVisibility());
+                    viewBundle.put(ViewBundle.LIGHTSCREEN,
+                            getView().findViewById(R.id.field_lightscreen).getVisibility());
+                    viewBundle.put(ViewBundle.ROCKS,
+                            getView().findViewById(R.id.field_rocks).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE1,
+                            getView().findViewById(R.id.field_spikes1).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE2,
+                            getView().findViewById(R.id.field_spikes2).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE3,
+                            getView().findViewById(R.id.field_spikes3).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE1,
+                            getView().findViewById(R.id.field_tspikes1).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE2,
+                            getView().findViewById(R.id.field_tspikes2).getVisibility());
+                    viewBundle.put(ViewBundle.REFLECT_O,
+                            getView().findViewById(R.id.field_reflect_o).getVisibility());
+                    viewBundle.put(ViewBundle.LIGHTSCREEN_O,
+                            getView().findViewById(R.id.field_lightscreen_o).getVisibility());
+                    viewBundle.put(ViewBundle.ROCKS_O,
+                            getView().findViewById(R.id.field_rocks_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE1_O,
+                            getView().findViewById(R.id.field_spikes1_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE2_O,
+                            getView().findViewById(R.id.field_spikes2_o).getVisibility());
+                    viewBundle.put(ViewBundle.SPIKE3_O,
+                            getView().findViewById(R.id.field_spikes3_o).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE1_O,
+                            getView().findViewById(R.id.field_tspikes1_o).getVisibility());
+                    viewBundle.put(ViewBundle.TSPIKE2_O,
+                            getView().findViewById(R.id.field_tspikes2_o).getVisibility());
                 }
                 roomData.setViewBundle(viewBundle);
             }
@@ -1434,6 +1500,22 @@ public class BattleFragment extends Fragment {
         animatorSet.play(fadeOut).after(fadeIn);
 
         return animatorSet;
+    }
+    
+    public void setVisibility(View view, int visibility) {
+        switch (visibility) {
+            case View.VISIBLE:
+                view.setVisibility(View.VISIBLE);
+                break;
+            case View.INVISIBLE:
+                view.setVisibility(View.INVISIBLE);
+                break;
+            case View.GONE:
+                view.setVisibility(View.GONE);
+                break;
+            default:
+                view.setVisibility(View.GONE);
+        }
     }
 
 }
