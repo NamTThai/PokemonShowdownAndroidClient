@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -73,6 +74,7 @@ public class BattleFragment extends Fragment {
     private boolean mWeatherExist;
     private int mTurnNumber;
     private boolean mMyTurn;
+    private boolean mTeamPreview = false;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -144,10 +146,41 @@ public class BattleFragment extends Fragment {
                             .setImageDrawable((Drawable) viewBundle.get(ViewBundle.BATTLE_BACKGROUND));
                     ((ImageView) getView().findViewById(R.id.weather_background))
                             .setImageDrawable((Drawable) viewBundle.get(ViewBundle.WEATHER_BACKGROUND));
+                    ((ImageView) getView().findViewById(R.id.icon1))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1));
+                    ((ImageView) getView().findViewById(R.id.icon2))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2));
+                    ((ImageView) getView().findViewById(R.id.icon3))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3));
+                    ((ImageView) getView().findViewById(R.id.icon4))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4));
+                    ((ImageView) getView().findViewById(R.id.icon5))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5));
+                    ((ImageView) getView().findViewById(R.id.icon6))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6));
+                    ((ImageView) getView().findViewById(R.id.icon1_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1_O));
+                    ((ImageView) getView().findViewById(R.id.icon2_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2_O));
+                    ((ImageView) getView().findViewById(R.id.icon3_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3_O));
+                    ((ImageView) getView().findViewById(R.id.icon4_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4_O));
+                    ((ImageView) getView().findViewById(R.id.icon5_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5_O));
+                    ((ImageView) getView().findViewById(R.id.icon6_o))
+                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6_O));
                     Boolean isTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAMPREVIEW);
+                    FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+                    frameLayout.removeAllViews();
                     if (isTeamPreview) {
-
+                        setTeamPreview(true);
+                        getActivity().getLayoutInflater()
+                                .inflate(R.layout.fragment_battle_teampreview, frameLayout);
                     } else {
+                        setTeamPreview(false);
+                        getActivity().getLayoutInflater()
+                                .inflate(R.layout.fragment_battle_animation, frameLayout);
                         getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) getView().findViewById(R.id.turn))
                                 .setText((CharSequence) viewBundle.get(ViewBundle.TURN));
@@ -175,17 +208,40 @@ public class BattleFragment extends Fragment {
                         ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
                 viewBundle.put(ViewBundle.PLAYER2_NAME,
                         ((TextView) getView().findViewById(R.id.username_o)).getText());
-                viewBundle.put(ViewBundle.PLAYER1_AVATAR,
+                viewBundle.put(ViewBundle.PLAYER2_AVATAR,
                         ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
                 viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
                         ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
                 viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
                         ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
-                View turn = getView().findViewById(R.id.turn);
-                // Check if currently in teampreviewing mode
-                if (turn.getVisibility() == View.GONE) {
+                viewBundle.put(ViewBundle.ICON1,
+                        ((ImageView) getView().findViewById(R.id.icon1)).getDrawable());
+                viewBundle.put(ViewBundle.ICON2,
+                        ((ImageView) getView().findViewById(R.id.icon2)).getDrawable());
+                viewBundle.put(ViewBundle.ICON3,
+                        ((ImageView) getView().findViewById(R.id.icon3)).getDrawable());
+                viewBundle.put(ViewBundle.ICON4,
+                        ((ImageView) getView().findViewById(R.id.icon4)).getDrawable());
+                viewBundle.put(ViewBundle.ICON5,
+                        ((ImageView) getView().findViewById(R.id.icon5)).getDrawable());
+                viewBundle.put(ViewBundle.ICON6,
+                        ((ImageView) getView().findViewById(R.id.icon6)).getDrawable());
+                viewBundle.put(ViewBundle.ICON1_O,
+                        ((ImageView) getView().findViewById(R.id.icon1_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON2_O,
+                        ((ImageView) getView().findViewById(R.id.icon2_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON3_O,
+                        ((ImageView) getView().findViewById(R.id.icon3_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON4_O,
+                        ((ImageView) getView().findViewById(R.id.icon4_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON5_O,
+                        ((ImageView) getView().findViewById(R.id.icon5_o)).getDrawable());
+                viewBundle.put(ViewBundle.ICON6_O,
+                        ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
+                if (isTeamPreview()) {
                     viewBundle.put(ViewBundle.TEAMPREVIEW, true);
                 } else {
+                    viewBundle.put(ViewBundle.TEAMPREVIEW, false);
                     viewBundle.put(ViewBundle.TURN,
                             ((TextView) getView().findViewById(R.id.turn)).getText());
                     viewBundle.put(ViewBundle.WEATHER,
@@ -255,7 +311,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setTurnNumber(int turnNumber) {
-        this.mTurnNumber = turnNumber;
+        mTurnNumber = turnNumber;
     }
 
     public boolean isMyTurn() {
@@ -264,6 +320,14 @@ public class BattleFragment extends Fragment {
 
     public void setMyTurn(boolean myTurn) {
         this.mMyTurn = myTurn;
+    }
+
+    public boolean isTeamPreview() {
+        return mTeamPreview;
+    }
+
+    public void setTeamPreview(boolean teamPreview) {
+        mTeamPreview = teamPreview;
     }
 
     public String getRoomId() {

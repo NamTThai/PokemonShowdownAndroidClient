@@ -221,6 +221,7 @@ public class BattleMessage {
                 });
                 break;
             case "teampreview":
+                battleFragment.setTeamPreview(true);
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -353,6 +354,7 @@ public class BattleMessage {
                 break;
 
             case "start":
+                battleFragment.setTeamPreview(false);
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
