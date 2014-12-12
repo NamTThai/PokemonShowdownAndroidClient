@@ -39,6 +39,10 @@ import java.util.Random;
 public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
+    public final static String PROGRESSBAR_HOLDER = "ProgressBarHolder";
+    public final static String BATTLING = "Battling";
+    public final static String CURRENT_WEATHER = "CurrentWeather";
+    public final static String WEATHER_EXIST = "WeatherExist";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
     public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
@@ -48,7 +52,7 @@ public class BattleFragment extends Fragment {
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
 
     public enum ViewBundle {
-        PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR,
+        PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
         ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
@@ -73,9 +77,6 @@ public class BattleFragment extends Fragment {
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
-    private int mTurnNumber;
-    private boolean mMyTurn;
-    private boolean mTeamPreview = false;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -86,7 +87,7 @@ public class BattleFragment extends Fragment {
     }
 
     public BattleFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -116,6 +117,14 @@ public class BattleFragment extends Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
+
+        if (savedInstanceState != null) {
+            mRoomId = savedInstanceState.getString(ROOM_ID);
+            mBattling = savedInstanceState.getInt(BATTLING);
+            progressBarHolder = savedInstanceState.getIntArray(PROGRESSBAR_HOLDER);
+            mCurrentWeather = savedInstanceState.getString(CURRENT_WEATHER);
+            mWeatherExist = savedInstanceState.getBoolean(WEATHER_EXIST);
+        }
     }
 
     @Override
@@ -137,10 +146,12 @@ public class BattleFragment extends Fragment {
                 if (viewBundle != null) {
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
+                    mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
                     ((ImageView) getView().findViewById(R.id.avatar))
                             .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER1_AVATAR));
                     ((TextView) getView().findViewById(R.id.username_o))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER2_NAME));
+                    mPlayer2 = viewBundle.get(ViewBundle.PLAYER2_NAME).toString();
                     ((ImageView) getView().findViewById(R.id.avatar_o))
                             .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER2_AVATAR));
                     ((ImageView) getView().findViewById(R.id.battle_background))
@@ -189,6 +200,10 @@ public class BattleFragment extends Fragment {
                     if (mAnimatorSetQueue != null && !mAnimatorSetQueue.isEmpty()) {
                         mAnimatorSetQueue.peekFirst().start();
                     }
+
+                    mPlayer1Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER1_TEAM);
+                    mPlayer2Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER2_TEAM);
+
                     roomData.setViewBundle(null);
                 }
             }
@@ -259,9 +274,22 @@ public class BattleFragment extends Fragment {
                 if (mAnimatorSetQueue.peekFirst() != null) {
                     mAnimatorSetQueue.peekFirst().cancel();
                 }
+
+                viewBundle.put(ViewBundle.PLAYER1_TEAM, mPlayer1Team);
+                viewBundle.put(ViewBundle.PLAYER2_TEAM, mPlayer2Team);
                 roomData.setViewBundle(viewBundle);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(ROOM_ID, mRoomId);
+        outState.putIntArray(PROGRESSBAR_HOLDER, progressBarHolder);
+        outState.putInt(BATTLING, mBattling);
+        outState.putString(CURRENT_WEATHER, mCurrentWeather);
+        outState.putBoolean(WEATHER_EXIST, mWeatherExist);
+        super.onSaveInstanceState(outState);
     }
 
     public String getPlayer1() {
@@ -316,30 +344,6 @@ public class BattleFragment extends Fragment {
 
     public void setWeatherExist(boolean weatherExist) {
         this.mWeatherExist = weatherExist;
-    }
-
-    public int getTurnNumber() {
-        return mTurnNumber;
-    }
-
-    public void setTurnNumber(int turnNumber) {
-        mTurnNumber = turnNumber;
-    }
-
-    public boolean isMyTurn() {
-        return mMyTurn;
-    }
-
-    public void setMyTurn(boolean myTurn) {
-        this.mMyTurn = myTurn;
-    }
-
-    public boolean isTeamPreview() {
-        return mTeamPreview;
-    }
-
-    public void setTeamPreview(boolean teamPreview) {
-        mTeamPreview = teamPreview;
     }
 
     public String getRoomId() {
@@ -861,60 +865,56 @@ public class BattleFragment extends Fragment {
     }
 
     public void setAddonStatus(String tag, String status) {
-        if (getView() == null) {
-            return;
+        try {
+            LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
+
+            TextView stt = new TextView(getActivity());
+            stt.setTag(status);
+            stt.setText(status.toUpperCase());
+            stt.setTextSize(10);
+            switch (status) {
+                case "slp":
+                    stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
+                    break;
+                case "psn":
+                case "tox":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
+                    break;
+                case "brn":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_red);
+                    break;
+                case "par":
+                    stt.setBackgroundResource(R.drawable.editable_frame_light_orange);
+                    break;
+                case "frz":
+                    stt.setBackgroundResource(R.drawable.editable_frame);
+                    break;
+                default:
+                    stt.setBackgroundResource(R.drawable.editable_frame);
+            }
+            stt.setPadding(2, 2, 2, 2);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            stt.setLayoutParams(layoutParams);
+
+            statusBar.addView(stt, 0);
+        } catch (NullPointerException e) {
         }
-        LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
-
-        TextView stt = new TextView(getActivity());
-        stt.setTag(status);
-        stt.setText(status.toUpperCase());
-        stt.setTextSize(10);
-        switch (status) {
-            case "slp":
-                stt.setBackgroundResource(R.drawable.editable_frame_blackwhite);
-                break;
-            case "psn":
-            case "tox":
-                stt.setBackgroundResource(R.drawable.editable_frame_light_purple);
-                break;
-            case "brn":
-                stt.setBackgroundResource(R.drawable.editable_frame_light_red);
-                break;
-            case "par":
-                stt.setBackgroundResource(R.drawable.editable_frame_light_orange);
-                break;
-            case "frz":
-                stt.setBackgroundResource(R.drawable.editable_frame);
-                break;
-            default:
-                stt.setBackgroundResource(R.drawable.editable_frame);
-        }
-        stt.setPadding(2, 2, 2, 2);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        stt.setLayoutParams(layoutParams);
-
-        statusBar.addView(stt, 0);
-
     }
 
     public void removeAddonStatus(String tag, String status) {
-        if (getView() == null) {
-            return;
-        }
-        LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
+        try {
+            LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
 
-        TextView stt = (TextView) statusBar.findViewWithTag(status);
-        if (stt != null) {
-            statusBar.removeView(stt);
+            TextView stt = (TextView) statusBar.findViewWithTag(status);
+            if (stt != null) {
+                statusBar.removeView(stt);
+            }
+        } catch (NullPointerException e) {
+
         }
     }
 
     public int getSubstitute(String tag) {
-        if (getView() == null) {
-            return R.drawable.sprites_substitute;
-        }
-
         tag = tag.substring(0, 2);
         switch (tag) {
             case "p1":
@@ -925,183 +925,183 @@ public class BattleFragment extends Fragment {
     }
 
     public int getLastVisibleSpike(String tag, boolean nextInvisible) {
-        if (getView() == null) {
-            return R.id.field_spikes1;
-        }
-
-        tag = tag.substring(0, 2);
-        switch (tag) {
-            case "p1":
-                View layer1 = getView().findViewById(R.id.field_spikes1);
-                if (layer1.getVisibility() == View.INVISIBLE) {
-                    return R.id.field_spikes1;
-                } else {
-                    View layer2 = getView().findViewById(R.id.field_spikes2);
-                    if (layer2.getVisibility() == View.INVISIBLE) {
-                        if (nextInvisible) {
-                            return R.id.field_spikes2;
-                        } else {
-                            return R.id.field_spikes1;
-                        }
+        try {
+            tag = tag.substring(0, 2);
+            switch (tag) {
+                case "p1":
+                    View layer1 = getView().findViewById(R.id.field_spikes1);
+                    if (layer1.getVisibility() == View.INVISIBLE) {
+                        return R.id.field_spikes1;
                     } else {
-                        View layer3 = getView().findViewById(R.id.field_spikes3);
-                        if (layer3.getVisibility() == View.INVISIBLE) {
+                        View layer2 = getView().findViewById(R.id.field_spikes2);
+                        if (layer2.getVisibility() == View.INVISIBLE) {
                             if (nextInvisible) {
-                                return R.id.field_spikes3;
-                            } else {
                                 return R.id.field_spikes2;
-                            }
-                        } else {
-                            return R.id.field_spikes3;
-                        }
-                    }
-                }
-            default:
-                layer1 = getView().findViewById(R.id.field_spikes1_o);
-                if (layer1.getVisibility() == View.INVISIBLE) {
-                    return R.id.field_spikes1_o;
-                } else {
-                    View layer2 = getView().findViewById(R.id.field_spikes2_o);
-                    if (layer2.getVisibility() == View.INVISIBLE) {
-                        if (nextInvisible) {
-                            return R.id.field_spikes2_o;
-                        } else {
-                            return R.id.field_spikes1_o;
-                        }
-                    } else {
-                        View layer3 = getView().findViewById(R.id.field_spikes3_o);
-                        if (layer3.getVisibility() == View.INVISIBLE) {
-                            if (nextInvisible) {
-                                return R.id.field_spikes3_o;
                             } else {
-                                return R.id.field_spikes2_o;
+                                return R.id.field_spikes1;
                             }
                         } else {
-                            return R.id.field_spikes3_o;
+                            View layer3 = getView().findViewById(R.id.field_spikes3);
+                            if (layer3.getVisibility() == View.INVISIBLE) {
+                                if (nextInvisible) {
+                                    return R.id.field_spikes3;
+                                } else {
+                                    return R.id.field_spikes2;
+                                }
+                            } else {
+                                return R.id.field_spikes3;
+                            }
                         }
                     }
-                }
+                default:
+                    layer1 = getView().findViewById(R.id.field_spikes1_o);
+                    if (layer1.getVisibility() == View.INVISIBLE) {
+                        return R.id.field_spikes1_o;
+                    } else {
+                        View layer2 = getView().findViewById(R.id.field_spikes2_o);
+                        if (layer2.getVisibility() == View.INVISIBLE) {
+                            if (nextInvisible) {
+                                return R.id.field_spikes2_o;
+                            } else {
+                                return R.id.field_spikes1_o;
+                            }
+                        } else {
+                            View layer3 = getView().findViewById(R.id.field_spikes3_o);
+                            if (layer3.getVisibility() == View.INVISIBLE) {
+                                if (nextInvisible) {
+                                    return R.id.field_spikes3_o;
+                                } else {
+                                    return R.id.field_spikes2_o;
+                                }
+                            } else {
+                                return R.id.field_spikes3_o;
+                            }
+                        }
+                    }
+            }
+        } catch (NullPointerException e) {
+            return R.id.field_spikes1;
         }
     }
 
     public int getLastVisibleTSpike(String tag, boolean nextInvisible) {
-        if (getView() == null) {
-            return R.id.field_tspikes1;
-        }
-
-        tag = tag.substring(0, 2);
-        switch (tag) {
-            case "p1":
-                View layer1 = getView().findViewById(R.id.field_tspikes1);
-                if (layer1.getVisibility() == View.INVISIBLE) {
-                    return R.id.field_tspikes1;
-                } else {
-                    View layer2 = getView().findViewById(R.id.field_tspikes2);
-                    if (layer2.getVisibility() == View.INVISIBLE) {
-                        if (nextInvisible) {
+        try {
+            tag = tag.substring(0, 2);
+            switch (tag) {
+                case "p1":
+                    View layer1 = getView().findViewById(R.id.field_tspikes1);
+                    if (layer1.getVisibility() == View.INVISIBLE) {
+                        return R.id.field_tspikes1;
+                    } else {
+                        View layer2 = getView().findViewById(R.id.field_tspikes2);
+                        if (layer2.getVisibility() == View.INVISIBLE) {
+                            if (nextInvisible) {
+                                return R.id.field_tspikes2;
+                            } else {
+                                return R.id.field_tspikes1;
+                            }
+                        } else {
                             return R.id.field_tspikes2;
-                        } else {
-                            return R.id.field_tspikes1;
                         }
-                    } else {
-                        return R.id.field_tspikes2;
                     }
-                }
-            default:
-                layer1 = getView().findViewById(R.id.field_tspikes1_o);
-                if (layer1.getVisibility() == View.INVISIBLE) {
-                    return R.id.field_tspikes1_o;
-                } else {
-                    View layer2 = getView().findViewById(R.id.field_tspikes2_o);
-                    if (layer2.getVisibility() == View.INVISIBLE) {
-                        if (nextInvisible) {
+                default:
+                    layer1 = getView().findViewById(R.id.field_tspikes1_o);
+                    if (layer1.getVisibility() == View.INVISIBLE) {
+                        return R.id.field_tspikes1_o;
+                    } else {
+                        View layer2 = getView().findViewById(R.id.field_tspikes2_o);
+                        if (layer2.getVisibility() == View.INVISIBLE) {
+                            if (nextInvisible) {
+                                return R.id.field_tspikes2_o;
+                            } else {
+                                return R.id.field_tspikes1_o;
+                            }
+                        } else {
                             return R.id.field_tspikes2_o;
-                        } else {
-                            return R.id.field_tspikes1_o;
                         }
-                    } else {
-                        return R.id.field_tspikes2_o;
                     }
-                }
+            }
+        } catch (NullPointerException e) {
+            return R.id.field_tspikes1;
         }
     }
 
     public void hidePokemon(String tag) {
-        if (getView() == null) {
-            return;
+        try {
+            RelativeLayout relativeLayout;
+            int layoutId;
+
+            tag = tag.substring(0, 3);
+            switch (tag) {
+                case "p1a":
+                    layoutId = R.id.p1a;
+                    break;
+                case "p1b":
+                    layoutId = R.id.p1b;
+                    break;
+                case "p1c":
+                    layoutId = R.id.p1c;
+                    break;
+                case "p2a":
+                    layoutId = R.id.p2a;
+                    break;
+                case "p2b":
+                    layoutId = R.id.p2b;
+                    break;
+                case "p2c":
+                    layoutId = R.id.p2c;
+                    break;
+                default:
+                    layoutId = R.id.p2c;
+            }
+
+            relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
+            relativeLayout.setVisibility(View.INVISIBLE);
+        } catch (NullPointerException e) {
+
         }
-
-        RelativeLayout relativeLayout;
-        int layoutId;
-
-        tag = tag.substring(0, 3);
-        switch (tag) {
-            case "p1a":
-                layoutId = R.id.p1a;
-                break;
-            case "p1b":
-                layoutId = R.id.p1b;
-                break;
-            case "p1c":
-                layoutId = R.id.p1c;
-                break;
-            case "p2a":
-                layoutId = R.id.p2a;
-                break;
-            case "p2b":
-                layoutId = R.id.p2b;
-                break;
-            case "p2c":
-                layoutId = R.id.p2c;
-                break;
-            default:
-                layoutId = R.id.p2c;
-        }
-
-        relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
-        relativeLayout.setVisibility(View.INVISIBLE);
     }
 
     public void displayPokemon(String tag) {
-        if (getView() == null) {
-            return;
-        }
+        try {
+            RelativeLayout relativeLayout;
+            int layoutId;
 
-        RelativeLayout relativeLayout;
-        int layoutId;
+            tag = tag.substring(0, 3);
+            switch (tag) {
+                case "p1a":
+                    layoutId = R.id.p1a;
+                    ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
+                    break;
+                case "p1b":
+                    layoutId = R.id.p1b;
+                    ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
+                    break;
+                case "p1c":
+                    layoutId = R.id.p1c;
+                    ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
+                    break;
+                case "p2a":
+                    layoutId = R.id.p2a;
+                    ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
+                    break;
+                case "p2b":
+                    layoutId = R.id.p2b;
+                    ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
+                    break;
+                default:
+                    layoutId = R.id.p2c;
+                    ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
+            }
+            relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
+            relativeLayout.setVisibility(View.VISIBLE);
+            getView().findViewById(getSpriteId(tag)).setAlpha(1f);
+            ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
+            if (sub != null) {
+                relativeLayout.removeView(sub);
+            }
+        } catch (NullPointerException e) {
 
-        tag = tag.substring(0, 3);
-        switch (tag) {
-            case "p1a":
-                layoutId = R.id.p1a;
-                ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
-                break;
-            case "p1b":
-                layoutId = R.id.p1b;
-                ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
-                break;
-            case "p1c":
-                layoutId = R.id.p1c;
-                ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
-                break;
-            case "p2a":
-                layoutId = R.id.p2a;
-                ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
-                break;
-            case "p2b":
-                layoutId = R.id.p2b;
-                ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
-                break;
-            default:
-                layoutId = R.id.p2c;
-                ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
-        }
-        relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
-        relativeLayout.setVisibility(View.VISIBLE);
-        getView().findViewById(getSpriteId(tag)).setAlpha(1f);
-        ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
-        if (sub != null) {
-            relativeLayout.removeView(sub);
         }
     }
 
@@ -1223,217 +1223,187 @@ public class BattleFragment extends Fragment {
     }
 
     public void processBoost(String playerTag, String stat, int boost) {
-        if (getView() == null) {
-            return;
-        }
-        LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
-        TextView statBoost;
-        int currentBoost;
-        int index;
-        if (tempStat.findViewWithTag(stat) == null) {
-            statBoost = new TextView(getActivity());
-            statBoost.setTag(stat);
-            statBoost.setTextSize(10);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            statBoost.setLayoutParams(layoutParams);
-            currentBoost = boost;
-            index = tempStat.getChildCount();
-        } else {
-            statBoost = (TextView) tempStat.findViewWithTag(stat);
-            index = tempStat.indexOfChild(statBoost);
-            tempStat.removeView(statBoost);
-            String boostDetail = statBoost.getText().toString();
-            currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" "))) + boost;
-        }
-        if (currentBoost == 0) {
-            return;
-        } else {
-            if (currentBoost > 0) {
-                statBoost.setBackgroundResource(R.drawable.editable_frame);
+        try {
+            LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
+            TextView statBoost;
+            int currentBoost;
+            int index;
+            if (tempStat.findViewWithTag(stat) == null) {
+                statBoost = new TextView(getActivity());
+                statBoost.setTag(stat);
+                statBoost.setTextSize(10);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                statBoost.setLayoutParams(layoutParams);
+                currentBoost = boost;
+                index = tempStat.getChildCount();
             } else {
-                statBoost.setBackgroundResource(R.drawable.editable_frame_light_orange);
+                statBoost = (TextView) tempStat.findViewWithTag(stat);
+                index = tempStat.indexOfChild(statBoost);
+                tempStat.removeView(statBoost);
+                String boostDetail = statBoost.getText().toString();
+                currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" "))) + boost;
             }
+            if (currentBoost == 0) {
+                return;
+            } else {
+                if (currentBoost > 0) {
+                    statBoost.setBackgroundResource(R.drawable.editable_frame);
+                } else {
+                    statBoost.setBackgroundResource(R.drawable.editable_frame_light_orange);
+                }
+            }
+            statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
+            statBoost.setPadding(2, 2, 2, 2);
+            tempStat.addView(statBoost, index);
+        } catch (NullPointerException e) {
+
         }
-        statBoost.setText(Integer.toString(currentBoost) + " " + stat.substring(0, 1).toUpperCase() + stat.substring(1));
-        statBoost.setPadding(2, 2, 2, 2);
-        tempStat.addView(statBoost, index);
     }
 
     public void invertBoost(String playerTag, String[] stats) {
-        if (getView() == null) {
-            return;
-        }
-        LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
-        for (String stat : stats) {
-            TextView statBoost = (TextView) tempStat.findViewWithTag(stat);
-            if (statBoost != null) {
-                String boostDetail = statBoost.getText().toString();
-                int currentBoost = -1 * Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" ")));
-                statBoost.setText(Integer.toString(currentBoost) + boostDetail.substring(boostDetail.indexOf(" ")));
+        try {
+            LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
+            for (String stat : stats) {
+                TextView statBoost = (TextView) tempStat.findViewWithTag(stat);
+                if (statBoost != null) {
+                    String boostDetail = statBoost.getText().toString();
+                    int currentBoost = -1 * Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" ")));
+                    statBoost.setText(Integer.toString(currentBoost) + boostDetail.substring(boostDetail.indexOf(" ")));
+                }
             }
+        } catch (NullPointerException e) {
+
         }
     }
 
     public void swapBoost(String org, String dest, String... stats) {
         org = org.substring(0, 3);
         dest = dest.substring(0, 3);
-        if (getView() == null) {
-            return;
-        }
 
-        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
-        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+        try {
 
-        for (String stat : stats) {
-            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
-            int orgIndex = orgTempStat.indexOfChild(orgStat);
-            TextView destStat = (TextView) destTempStat.findViewWithTag(stat);
-            int destIndex = destTempStat.indexOfChild(destStat);
-            orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount() : orgIndex;
-            orgTempStat.removeView(orgStat);
-            destIndex = (destIndex == -1) ? destTempStat.getChildCount() : destIndex;
-            destTempStat.removeView(destStat);
+            LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+            LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
 
-            if (destStat != null) {
-                orgTempStat.addView(destStat, orgIndex);
+            for (String stat : stats) {
+                TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+                int orgIndex = orgTempStat.indexOfChild(orgStat);
+                TextView destStat = (TextView) destTempStat.findViewWithTag(stat);
+                int destIndex = destTempStat.indexOfChild(destStat);
+                orgIndex = (orgIndex == -1) ? orgTempStat.getChildCount() : orgIndex;
+                orgTempStat.removeView(orgStat);
+                destIndex = (destIndex == -1) ? destTempStat.getChildCount() : destIndex;
+                destTempStat.removeView(destStat);
+
+                if (destStat != null) {
+                    orgTempStat.addView(destStat, orgIndex);
+                }
+                if (orgStat != null) {
+                    destTempStat.addView(orgStat, destIndex);
+                }
             }
-            if (orgStat != null) {
-                destTempStat.addView(orgStat, destIndex);
-            }
+        } catch (NullPointerException e) {
+
         }
     }
 
     public void copyBoost(String org, String dest) {
         org = org.substring(0, 3);
         dest = dest.substring(0, 3);
-        if (getView() == null) {
-            return;
-        }
 
-        LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
-        LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+        try {
 
-        for (String stat : STATS) {
-            TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
-            if (orgStat != null) {
-                TextView destStat = new TextView(getActivity());
-                destStat.setTag(stat);
-                destStat.setPadding(2, 2, 2, 2);
-                destStat.setTextSize(10);
-                destStat.setText(orgStat.getText());
-                destStat.setBackground(orgStat.getBackground());
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                destStat.setLayoutParams(layoutParams);
-                destTempStat.addView(destStat);
+            LinearLayout orgTempStat = (LinearLayout) getView().findViewById(getTempStatusId(org));
+            LinearLayout destTempStat = (LinearLayout) getView().findViewById(getTempStatusId(dest));
+
+            for (String stat : STATS) {
+                TextView orgStat = (TextView) orgTempStat.findViewWithTag(stat);
+                if (orgStat != null) {
+                    TextView destStat = new TextView(getActivity());
+                    destStat.setTag(stat);
+                    destStat.setPadding(2, 2, 2, 2);
+                    destStat.setTextSize(10);
+                    destStat.setText(orgStat.getText());
+                    destStat.setBackground(orgStat.getBackground());
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    destStat.setLayoutParams(layoutParams);
+                    destTempStat.addView(destStat);
+                }
             }
+        } catch (NullPointerException e) {
+
         }
     }
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
-        if (getView() == null) {
-            return null;
-        }
-        message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        final TextView flyingMessage = new TextView(getActivity());
-        flyingMessage.setText(message);
-        flyingMessage.setBackgroundResource(R.drawable.editable_frame);
-        flyingMessage.setPadding(2, 2, 2, 2);
-        flyingMessage.setAlpha(0f);
+        try {
+            message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            final TextView flyingMessage = new TextView(getActivity());
+            flyingMessage.setText(message);
+            flyingMessage.setBackgroundResource(R.drawable.editable_frame);
+            flyingMessage.setPadding(2, 2, 2, 2);
+            flyingMessage.setAlpha(0f);
 
-        toast.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (getView() == null) {
-                    return;
-                }
-                ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
+            toast.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    try {
+                        ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
 
-                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
-                layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
-                layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
-                relativeLayout.addView(flyingMessage, layoutParams);
-            }
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
+                        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
+                        layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
+                        relativeLayout.addView(flyingMessage, layoutParams);
+                    } catch (NullPointerException e) {
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (getView() == null) {
-                    return;
+                    }
                 }
 
-                RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
-                relativeLayout.removeView(flyingMessage);
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    try {
+                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                        relativeLayout.removeView(flyingMessage);
+                    } catch (NullPointerException e) {
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
+                    }
+                }
 
-            }
+                @Override
+                public void onAnimationCancel(Animator animation) {
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
+                }
 
-            }
-        });
+                @Override
+                public void onAnimationRepeat(Animator animation) {
 
-        ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", flyingMessage.getY());
-        flyingObject.setDuration(ANIMATION_SHORT);
-        flyingObject.setInterpolator(new AccelerateInterpolator());
+                }
+            });
 
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(flyingMessage, "alpha", 0f, 1f);
-        fadeIn.setInterpolator(new DecelerateInterpolator());
-        fadeIn.setDuration(ANIMATION_SHORT / 4);
+            ObjectAnimator flyingObject = ObjectAnimator.ofFloat(flyingMessage, "y", flyingMessage.getY());
+            flyingObject.setDuration(ANIMATION_SHORT);
+            flyingObject.setInterpolator(new AccelerateInterpolator());
 
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(flyingMessage, "alpha", 1f, 0f);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setStartDelay(ANIMATION_SHORT / 2);
-        fadeOut.setDuration(ANIMATION_SHORT / 4);
+            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(flyingMessage, "alpha", 0f, 1f);
+            fadeIn.setInterpolator(new DecelerateInterpolator());
+            fadeIn.setDuration(ANIMATION_SHORT / 4);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(toast);
-        animatorSet.play(fadeIn).with(toast);
-        animatorSet.play(flyingObject).after(fadeIn);
-        animatorSet.play(fadeOut).after(fadeIn);
+            ObjectAnimator fadeOut = ObjectAnimator.ofFloat(flyingMessage, "alpha", 1f, 0f);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setStartDelay(ANIMATION_SHORT / 2);
+            fadeOut.setDuration(ANIMATION_SHORT / 4);
 
-        return animatorSet;
-    }
-    
-    public void setVisibility(View view, int visibility) {
-        switch (visibility) {
-            case View.VISIBLE:
-                view.setVisibility(View.VISIBLE);
-                break;
-            case View.INVISIBLE:
-                view.setVisibility(View.INVISIBLE);
-                break;
-            case View.GONE:
-                view.setVisibility(View.GONE);
-                break;
-            default:
-                view.setVisibility(View.GONE);
-        }
-    }
-    
-    public View[] getAllChild(LinearLayout layout) {
-        if (layout == null) {
-            return null;
-        }
-        
-        View[] childs = new View[layout.getChildCount()];
-        for (int i = 0; i < layout.getChildCount(); i++) {
-            childs[i] = layout.getChildAt(0);
-            layout.removeViewAt(0);
-        }
-        return childs;
-    }
-    
-    public void addAllChild(LinearLayout layout, View[] childs) {
-        if (layout == null || childs == null || childs.length == 0) {
-            return;
-        }
-        for (View child : childs) {
-            layout.addView(child);
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.play(toast);
+            animatorSet.play(fadeIn).with(toast);
+            animatorSet.play(flyingObject).after(fadeIn);
+            animatorSet.play(fadeOut).after(fadeIn);
+
+            return animatorSet;
+        } catch (NullPointerException e) {
+            return new AnimatorSet();
         }
     }
 
