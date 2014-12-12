@@ -43,6 +43,7 @@ public class BattleFragment extends Fragment {
     public final static String BATTLING = "Battling";
     public final static String CURRENT_WEATHER = "CurrentWeather";
     public final static String WEATHER_EXIST = "WeatherExist";
+    public final static String FALSE = "false";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
     public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
@@ -56,10 +57,10 @@ public class BattleFragment extends Fragment {
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
         ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
-        ANIMATION_QUEUE, FRAME_LAYOUT
+        SERVER_MESSAGE_QUEUE, FRAME_LAYOUT
     }
-    public final static String FALSE = "false";
 
+    private ArrayDeque<String> mServerMessageQueue;
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     public int[] progressBarHolder = new int[6];
 
@@ -187,13 +188,15 @@ public class BattleFragment extends Fragment {
                     ((TextView) getView().findViewById(R.id.weather))
                             .setText((CharSequence) viewBundle.get(ViewBundle.WEATHER));
 
-                    mAnimatorSetQueue = (ArrayDeque<AnimatorSet>) viewBundle.get(ViewBundle.ANIMATION_QUEUE);
-                    if (mAnimatorSetQueue != null && !mAnimatorSetQueue.isEmpty()) {
-                        mAnimatorSetQueue.peekFirst().start();
-                    }
-
                     mPlayer1Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER1_TEAM);
                     mPlayer2Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER2_TEAM);
+
+                    ArrayDeque<String> pendingServerMessages = (ArrayDeque<String>) viewBundle.get(ViewBundle.SERVER_MESSAGE_QUEUE);
+                    if (pendingServerMessages != null) {
+                        while (!pendingServerMessages.isEmpty()) {
+                            processServerMessage(pendingServerMessages.pollFirst());
+                        }
+                    }
 
                     roomData.setViewBundle(null);
                 }
@@ -269,7 +272,7 @@ public class BattleFragment extends Fragment {
                 viewBundle.put(ViewBundle.WEATHER,
                         ((TextView) getView().findViewById(R.id.weather)).getText());
 
-                viewBundle.put(ViewBundle.ANIMATION_QUEUE, mAnimatorSetQueue);
+                viewBundle.put(ViewBundle.SERVER_MESSAGE_QUEUE, mServerMessageQueue);
                 if (mAnimatorSetQueue.peekFirst() != null) {
                     mAnimatorSetQueue.peekFirst().cancel();
                 }
@@ -492,7 +495,7 @@ public class BattleFragment extends Fragment {
         return makeToast(message, ANIMATION_LONG);
     }
 
-    public void startAnimation(final AnimatorSet animator) {
+    public void startAnimation(final AnimatorSet animator, final String serverMessage) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -505,6 +508,7 @@ public class BattleFragment extends Fragment {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mAnimatorSetQueue.pollFirst();
+                        mServerMessageQueue.pollFirst();
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
@@ -525,8 +529,12 @@ public class BattleFragment extends Fragment {
                 if (mAnimatorSetQueue == null) {
                     mAnimatorSetQueue = new ArrayDeque<>();
                 }
+                if (mServerMessageQueue == null) {
+                    mServerMessageQueue = new ArrayDeque<>();
+                }
 
                 mAnimatorSetQueue.addLast(animator);
+                mServerMessageQueue.addLast(serverMessage);
 
                 if (mAnimatorSetQueue.size() == 1) {
                     animator.start();
