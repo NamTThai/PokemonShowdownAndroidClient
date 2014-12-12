@@ -15,6 +15,7 @@ public class ServerRequest implements Serializable {
     private ArrayList<Boolean> forceSwitch = new ArrayList<>();
     private ArrayList<PokemonInfo> pkmTeam = new ArrayList<>();
     private boolean teamPreview = false;
+    private boolean wait = false;
 
     public ServerRequest(BattleFragment battleFragment, JSONObject request) throws JSONException {
         setRqId(request.getInt("rqid"));
@@ -28,6 +29,10 @@ public class ServerRequest implements Serializable {
         if (request.has("teamPreview")) {
             setTeamPreview(request.getBoolean("teamPreview"));
         }
+        if (request.has("wait")) {
+            wait = request.getBoolean("wait");
+        }
+
         if (request.has("active")) {
             JSONArray active = request.getJSONArray("active");
             for (int i = 0; i < active.length(); i++) {
@@ -81,6 +86,14 @@ public class ServerRequest implements Serializable {
 
     public void setTeamPreview(boolean teamPreview) {
         this.teamPreview = teamPreview;
+    }
+
+    public boolean isWait() {
+        return wait;
+    }
+
+    public void setWait(boolean wait) {
+        this.wait = wait;
     }
 
     public class ActiveMoveInfo implements Serializable {
