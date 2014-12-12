@@ -219,6 +219,10 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             roomData.setMessageListener(true);
 
+            if (mAnimatorSetQueue.peekFirst() != null) {
+                mAnimatorSetQueue.peekFirst().end();
+            }
+
             if (getView() != null) {
                 HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
                 viewBundle.put(ViewBundle.PLAYER1_NAME,
@@ -273,9 +277,6 @@ public class BattleFragment extends Fragment {
                         ((TextView) getView().findViewById(R.id.weather)).getText());
 
                 viewBundle.put(ViewBundle.SERVER_MESSAGE_QUEUE, mServerMessageQueue);
-                if (mAnimatorSetQueue.peekFirst() != null) {
-                    mAnimatorSetQueue.peekFirst().cancel();
-                }
 
                 viewBundle.put(ViewBundle.PLAYER1_TEAM, mPlayer1Team);
                 viewBundle.put(ViewBundle.PLAYER2_TEAM, mPlayer2Team);
