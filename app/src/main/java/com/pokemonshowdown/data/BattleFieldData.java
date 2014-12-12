@@ -276,7 +276,6 @@ public class BattleFieldData {
 
         private HashMap<BattleFragment.ViewBundle, Object> mViewBundle;
 
-
         public RoomData(String roomId, boolean messageListener) {
             mRoomId = roomId;
             mServerMessageOnHold = new ArrayList<>();
