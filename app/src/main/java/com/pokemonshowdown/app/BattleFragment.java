@@ -132,15 +132,6 @@ public class BattleFragment extends Fragment {
         super.onResume();
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (roomData != null) {
-            roomData.setMessageListener(false);
-
-            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
-            for (String message : pendingMessages) {
-                processServerMessage(message);
-            }
-
-            roomData.clearServerMessageOnHold();
-
             if (getView() != null) {
                 HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
                 if (viewBundle != null) {
@@ -207,6 +198,14 @@ public class BattleFragment extends Fragment {
                     roomData.setViewBundle(null);
                 }
             }
+            roomData.setMessageListener(false);
+
+            ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
+            for (String message : pendingMessages) {
+                processServerMessage(message);
+            }
+
+            roomData.clearServerMessageOnHold();
         }
     }
 
