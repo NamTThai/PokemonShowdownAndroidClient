@@ -160,6 +160,18 @@ public class BattleFieldFragment extends Fragment {
             }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
+        for (int i = tab.getPosition(); i < actionBar.getTabCount(); i++) {
+            fragment = (BattleFragment) getChildFragmentManager()
+                    .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + i);
+            if (fragment != null) {
+                getChildFragmentManager().beginTransaction()
+                        .remove(fragment)
+                        .commit();
+                getChildFragmentManager().beginTransaction()
+                        .add(fragment, "android:switcher:" + mViewPager.getId() + ":" + (i - 1))
+                        .commit();
+            }
+        }
         BattleFieldData.get(getActivity()).leaveRoom(roomId);
         mBattleFieldPagerAdapter.notifyDataSetChanged();
         mViewPager.setAdapter(mBattleFieldPagerAdapter);
