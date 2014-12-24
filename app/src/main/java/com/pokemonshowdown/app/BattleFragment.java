@@ -270,6 +270,7 @@ public class BattleFragment extends Fragment {
             FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
             viewBundle.put(ViewBundle.FRAME_LAYOUT,
                     frameLayout.getChildAt(0));
+
             frameLayout.removeViewAt(0);
 
             TextView turn = (TextView) getView().findViewById(R.id.turn);
