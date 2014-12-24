@@ -168,6 +168,10 @@ public class BattleFieldFragment extends Fragment {
     }
 
     public void decrementBattleFragmentTag(int start, int end) {
+        if (mRoomBundle == null) {
+            mRoomBundle = new ArrayDeque<>();
+        }
+        
         for (int i = start; i < end; i++) {
             BattleFragment fragment = (BattleFragment) getChildFragmentManager()
                     .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + i);

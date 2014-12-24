@@ -214,7 +214,7 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             roomData.setMessageListener(true);
 
-            if (mAnimatorSetQueue.peekFirst() != null) {
+            if (mAnimatorSetQueue != null && mAnimatorSetQueue.peekFirst() != null) {
                 mAnimatorSetQueue.peekFirst().end();
             }
 
