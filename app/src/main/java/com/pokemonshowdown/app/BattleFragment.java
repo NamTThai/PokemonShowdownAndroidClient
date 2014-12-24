@@ -39,10 +39,6 @@ import java.util.Random;
 public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
-    public final static String PROGRESSBAR_HOLDER = "ProgressBarHolder";
-    public final static String BATTLING = "Battling";
-    public final static String CURRENT_WEATHER = "CurrentWeather";
-    public final static String WEATHER_EXIST = "WeatherExist";
     public final static String FALSE = "false";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
@@ -53,6 +49,7 @@ public class BattleFragment extends Fragment {
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
 
     public enum ViewBundle {
+        ROOM_ID, BATTLING, PROGRESS_BAR_HOLDER, CURRENT_WEATHER, WEATHER_EXIST,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -118,14 +115,6 @@ public class BattleFragment extends Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
-
-        if (savedInstanceState != null) {
-            mRoomId = savedInstanceState.getString(ROOM_ID);
-            mBattling = savedInstanceState.getInt(BATTLING);
-            progressBarHolder = savedInstanceState.getIntArray(PROGRESSBAR_HOLDER);
-            mCurrentWeather = savedInstanceState.getString(CURRENT_WEATHER);
-            mWeatherExist = savedInstanceState.getBoolean(WEATHER_EXIST);
-        }
     }
 
     @Override
@@ -135,7 +124,13 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             if (getView() != null) {
                 HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
+                
                 if (viewBundle != null) {
+                    mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
+                    mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
+                    progressBarHolder = (int[]) viewBundle.get(ViewBundle.PROGRESS_BAR_HOLDER);
+                    mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
+                    mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -223,76 +218,76 @@ public class BattleFragment extends Fragment {
                 mAnimatorSetQueue.peekFirst().end();
             }
 
-            if (getView() != null) {
-                HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
-                viewBundle.put(ViewBundle.PLAYER1_NAME,
-                        ((TextView) getView().findViewById(R.id.username)).getText());
-                viewBundle.put(ViewBundle.PLAYER1_AVATAR,
-                        ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
-                viewBundle.put(ViewBundle.PLAYER2_NAME,
-                        ((TextView) getView().findViewById(R.id.username_o)).getText());
-                viewBundle.put(ViewBundle.PLAYER2_AVATAR,
-                        ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
-                viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
-                        ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
-                viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
-                        ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
-                viewBundle.put(ViewBundle.ICON1,
-                        ((ImageView) getView().findViewById(R.id.icon1)).getDrawable());
-                viewBundle.put(ViewBundle.ICON2,
-                        ((ImageView) getView().findViewById(R.id.icon2)).getDrawable());
-                viewBundle.put(ViewBundle.ICON3,
-                        ((ImageView) getView().findViewById(R.id.icon3)).getDrawable());
-                viewBundle.put(ViewBundle.ICON4,
-                        ((ImageView) getView().findViewById(R.id.icon4)).getDrawable());
-                viewBundle.put(ViewBundle.ICON5,
-                        ((ImageView) getView().findViewById(R.id.icon5)).getDrawable());
-                viewBundle.put(ViewBundle.ICON6,
-                        ((ImageView) getView().findViewById(R.id.icon6)).getDrawable());
-                viewBundle.put(ViewBundle.ICON1_O,
-                        ((ImageView) getView().findViewById(R.id.icon1_o)).getDrawable());
-                viewBundle.put(ViewBundle.ICON2_O,
-                        ((ImageView) getView().findViewById(R.id.icon2_o)).getDrawable());
-                viewBundle.put(ViewBundle.ICON3_O,
-                        ((ImageView) getView().findViewById(R.id.icon3_o)).getDrawable());
-                viewBundle.put(ViewBundle.ICON4_O,
-                        ((ImageView) getView().findViewById(R.id.icon4_o)).getDrawable());
-                viewBundle.put(ViewBundle.ICON5_O,
-                        ((ImageView) getView().findViewById(R.id.icon5_o)).getDrawable());
-                viewBundle.put(ViewBundle.ICON6_O,
-                        ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
-                FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
-                viewBundle.put(ViewBundle.FRAME_LAYOUT,
-                        frameLayout.getChildAt(0));
-                frameLayout.removeViewAt(0);
-
-                TextView turn = (TextView) getView().findViewById(R.id.turn);
-                if (turn.getVisibility() == View.VISIBLE) {
-                    viewBundle.put(ViewBundle.TURN, turn.getText());
-                } else {
-                    viewBundle.put(ViewBundle.TURN, FALSE);
-                }
-
-                viewBundle.put(ViewBundle.WEATHER,
-                        ((TextView) getView().findViewById(R.id.weather)).getText());
-
-                viewBundle.put(ViewBundle.SERVER_MESSAGE_QUEUE, mServerMessageQueue);
-
-                viewBundle.put(ViewBundle.PLAYER1_TEAM, mPlayer1Team);
-                viewBundle.put(ViewBundle.PLAYER2_TEAM, mPlayer2Team);
-                roomData.setViewBundle(viewBundle);
-            }
+            roomData.setViewBundle(saveViewBundle());
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(ROOM_ID, mRoomId);
-        outState.putIntArray(PROGRESSBAR_HOLDER, progressBarHolder);
-        outState.putInt(BATTLING, mBattling);
-        outState.putString(CURRENT_WEATHER, mCurrentWeather);
-        outState.putBoolean(WEATHER_EXIST, mWeatherExist);
-        super.onSaveInstanceState(outState);
+    public HashMap<ViewBundle, Object> saveViewBundle() {
+        HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
+
+        if (getView() != null) {
+            viewBundle.put(ViewBundle.ROOM_ID, mRoomId);
+            viewBundle.put(ViewBundle.PROGRESS_BAR_HOLDER, progressBarHolder);
+            viewBundle.put(ViewBundle.BATTLING, mBattling);
+            viewBundle.put(ViewBundle.CURRENT_WEATHER, mCurrentWeather);
+            viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
+            viewBundle.put(ViewBundle.PLAYER1_NAME,
+                    ((TextView) getView().findViewById(R.id.username)).getText());
+            viewBundle.put(ViewBundle.PLAYER1_AVATAR,
+                    ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
+            viewBundle.put(ViewBundle.PLAYER2_NAME,
+                    ((TextView) getView().findViewById(R.id.username_o)).getText());
+            viewBundle.put(ViewBundle.PLAYER2_AVATAR,
+                    ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
+            viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
+                    ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
+            viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
+                    ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
+            viewBundle.put(ViewBundle.ICON1,
+                    ((ImageView) getView().findViewById(R.id.icon1)).getDrawable());
+            viewBundle.put(ViewBundle.ICON2,
+                    ((ImageView) getView().findViewById(R.id.icon2)).getDrawable());
+            viewBundle.put(ViewBundle.ICON3,
+                    ((ImageView) getView().findViewById(R.id.icon3)).getDrawable());
+            viewBundle.put(ViewBundle.ICON4,
+                    ((ImageView) getView().findViewById(R.id.icon4)).getDrawable());
+            viewBundle.put(ViewBundle.ICON5,
+                    ((ImageView) getView().findViewById(R.id.icon5)).getDrawable());
+            viewBundle.put(ViewBundle.ICON6,
+                    ((ImageView) getView().findViewById(R.id.icon6)).getDrawable());
+            viewBundle.put(ViewBundle.ICON1_O,
+                    ((ImageView) getView().findViewById(R.id.icon1_o)).getDrawable());
+            viewBundle.put(ViewBundle.ICON2_O,
+                    ((ImageView) getView().findViewById(R.id.icon2_o)).getDrawable());
+            viewBundle.put(ViewBundle.ICON3_O,
+                    ((ImageView) getView().findViewById(R.id.icon3_o)).getDrawable());
+            viewBundle.put(ViewBundle.ICON4_O,
+                    ((ImageView) getView().findViewById(R.id.icon4_o)).getDrawable());
+            viewBundle.put(ViewBundle.ICON5_O,
+                    ((ImageView) getView().findViewById(R.id.icon5_o)).getDrawable());
+            viewBundle.put(ViewBundle.ICON6_O,
+                    ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
+            FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
+            viewBundle.put(ViewBundle.FRAME_LAYOUT,
+                    frameLayout.getChildAt(0));
+            frameLayout.removeViewAt(0);
+
+            TextView turn = (TextView) getView().findViewById(R.id.turn);
+            if (turn.getVisibility() == View.VISIBLE) {
+                viewBundle.put(ViewBundle.TURN, turn.getText());
+            } else {
+                viewBundle.put(ViewBundle.TURN, FALSE);
+            }
+
+            viewBundle.put(ViewBundle.WEATHER,
+                    ((TextView) getView().findViewById(R.id.weather)).getText());
+
+            viewBundle.put(ViewBundle.SERVER_MESSAGE_QUEUE, mServerMessageQueue);
+
+            viewBundle.put(ViewBundle.PLAYER1_TEAM, mPlayer1Team);
+            viewBundle.put(ViewBundle.PLAYER2_TEAM, mPlayer2Team);
+        }
+        return viewBundle;
     }
 
     public String getPlayer1() {
