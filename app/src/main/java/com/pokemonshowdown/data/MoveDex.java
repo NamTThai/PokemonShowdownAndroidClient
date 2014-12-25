@@ -33,8 +33,19 @@ public class MoveDex {
         return sMoveDex;
     }
 
+    public static String getMoveMaxPP(Context appContext, String name) {
+        try {
+            name = MyApplication.toId(name);
+            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
+            return getMaxPP(moveJson.getString("pp"));
+        } catch (JSONException e) {
+            return "0";
+        }
+    }
+
     public static String getMoveName(Context appContext, String name) {
         try {
+            name = MyApplication.toId(name);
             JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
             return moveJson.getString("name");
         } catch (JSONException e) {
@@ -43,8 +54,8 @@ public class MoveDex {
     }
 
     public static int getMoveTypeIcon(Context appContext, String move) {
-        move = MyApplication.toId(move);
         try {
+            move = MyApplication.toId(move);
             MoveDex moveDex;
             moveDex = MoveDex.get(appContext);
             String types = moveDex.getMoveJsonObject(move).getString("type");

@@ -119,33 +119,33 @@ public class PokemonInfoFragment extends DialogFragment {
         if (moveNames.length < 4) {
             view.findViewById(R.id.move4).setVisibility(View.GONE);
         } else {
-            ((TextView) view.findViewById(R.id.move4_name)).setText(moveNames[3]);
+            ((TextView) view.findViewById(R.id.move4_name)).setText(MoveDex.getMoveName(getActivity(), moveNames[3]));
             ((ImageView) view.findViewById(R.id.move4_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[3]));
-            ((TextView) view.findViewById(R.id.move4_pp)).setText(moves.get(moveNames[3]));
+            ((TextView) view.findViewById(R.id.move4_pp)).setText(Integer.toString(moves.get(moveNames[3])));
         }
 
         if (moveNames.length < 3) {
             view.findViewById(R.id.move3).setVisibility(View.GONE);
         } else {
-            ((TextView) view.findViewById(R.id.move3_name)).setText(moveNames[2]);
+            ((TextView) view.findViewById(R.id.move3_name)).setText(MoveDex.getMoveName(getActivity(), moveNames[2]));
             ((ImageView) view.findViewById(R.id.move3_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[2]));
-            ((TextView) view.findViewById(R.id.move3_pp)).setText(moves.get(moveNames[2]));
+            ((TextView) view.findViewById(R.id.move3_pp)).setText(Integer.toString(moves.get(moveNames[2])));
         }
 
         if (moveNames.length < 2) {
             view.findViewById(R.id.move2).setVisibility(View.GONE);
         } else {
-            ((TextView) view.findViewById(R.id.move2_name)).setText(moveNames[1]);
+            ((TextView) view.findViewById(R.id.move2_name)).setText(MoveDex.getMoveName(getActivity(), moveNames[1]));
             ((ImageView) view.findViewById(R.id.move2_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[1]));
-            ((TextView) view.findViewById(R.id.move2_pp)).setText(moves.get(moveNames[1]));
+            ((TextView) view.findViewById(R.id.move2_pp)).setText(Integer.toString(moves.get(moveNames[1])));
         }
 
         if (moveNames.length < 1) {
             view.findViewById(R.id.move1).setVisibility(View.GONE);
         } else {
-            ((TextView) view.findViewById(R.id.move1_name)).setText(moveNames[0]);
+            ((TextView) view.findViewById(R.id.move1_name)).setText(MoveDex.getMoveName(getActivity(), moveNames[0]));
             ((ImageView) view.findViewById(R.id.move1_type)).setImageResource(MoveDex.getMoveTypeIcon(getActivity(), moveNames[0]));
-            ((TextView) view.findViewById(R.id.move1_pp)).setText(moves.get(moveNames[0]));
+            ((TextView) view.findViewById(R.id.move1_pp)).setText(Integer.toString(moves.get(moveNames[0])));
         }
 
         TextView switchPkm = (TextView) view.findViewById(R.id.switchPkm);

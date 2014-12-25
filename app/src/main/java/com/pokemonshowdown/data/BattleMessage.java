@@ -420,19 +420,19 @@ public class BattleMessage {
                 break;
 
             case "move":
-                attacker = messageDetails.substring(5, separator);
+                attacker = split[0].substring(5);
                 toAppendBuilder = new StringBuilder();
                 if (messageDetails.startsWith("p2")) {
                     toAppendBuilder.append("The opposing's ");
                 }
                 toAppendBuilder.append(attacker).append(" used ");
-                final String move = split[1];
-                toAppendBuilder.append(move).append("!");
+                final String move = MyApplication.toId(split[1]);
+                toAppendBuilder.append(split[1]).append("!");
                 toAppend = toAppendBuilder.toString();
-                start = toAppend.indexOf(move);
+                start = toAppend.indexOf(split[1]);
                 toAppendSpannable = new SpannableString(toAppend);
                 toAppendSpannable.setSpan(new StyleSpan(Typeface.BOLD),
-                        start, start + move.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        start, start + split[1].length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = toAppendSpannable;
                 toast = battleFragment.makeToast(logMessage);
 
@@ -442,6 +442,15 @@ public class BattleMessage {
                         if (battleFragment.getView() == null) {
                             return;
                         }
+
+                        PokemonInfo pokemonInfo = battleFragment.getPokemonInfo(split[0]);
+                        HashMap<String, Integer> moves = pokemonInfo.getMoves();
+                        if (moves.containsKey(move)) {
+                            moves.put(move, moves.get(move) - 1);
+                        } else {
+                            moves.put(move, Integer.parseInt(MoveDex.getMoveMaxPP(battleFragment.getActivity(), move)) - 1);
+                        }
+
                         AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
                         if (animatorSet != null) {
                             animatorSet.start();

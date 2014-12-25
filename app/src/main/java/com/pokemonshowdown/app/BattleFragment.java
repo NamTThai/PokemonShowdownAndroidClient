@@ -3,7 +3,6 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.FragmentManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -821,6 +820,30 @@ public class BattleFragment extends Fragment {
                 return R.id.p2c_temp_status;
             default:
                 return 0;
+        }
+    }
+
+    public PokemonInfo getPokemonInfo(String tag) {
+        tag = tag.substring(0, 3);
+        try {
+            switch (tag) {
+                case "p1a":
+                    return mPlayer1Team.get(0);
+                case "p1b":
+                    return mPlayer1Team.get(1);
+                case "p1c":
+                    return mPlayer1Team.get(2);
+                case "p2a":
+                    return mPlayer2Team.get(0);
+                case "p2b":
+                    return mPlayer2Team.get(1);
+                case "p2c":
+                    return mPlayer2Team.get(2);
+                default:
+                    return null;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return null;
         }
     }
 
