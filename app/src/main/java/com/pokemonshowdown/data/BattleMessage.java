@@ -78,6 +78,7 @@ public class BattleMessage {
             case "l":
             case "L":
                 break;
+
             case "chat":
             case "c":
             case "tc":
@@ -90,19 +91,23 @@ public class BattleMessage {
                         0, user.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
+
             case "raw":
                 toast = battleFragment.makeToast(Html.fromHtml(messageDetails).toString());
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(Html.fromHtml(messageDetails).toString());
                 break;
+
             case "message":
                 toast = battleFragment.makeToast(messageDetails);
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(messageDetails);
                 break;
+
             case "gametype":
             case "gen":
                 break;
+
             case "player":
                 final String playerType;
                 final String playerName;
@@ -161,6 +166,7 @@ public class BattleMessage {
                     battleFragment.setPlayer2(playerName);
                 }
                 break;
+
             case "tier":
                 toAppend = "Format:" + "\n" + messageDetails;
                 toAppendSpannable = new SpannableString(toAppend);
@@ -200,6 +206,7 @@ public class BattleMessage {
                 team = (playerType.equals("p1")) ? team1 : team2;
                 iconId = battleFragment.getIconId(playerType, team.size());
                 pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
+                processPokemonDetailString(pokemonInfo, split[1]);
                 team.add(pokemonInfo);
 
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
@@ -219,6 +226,7 @@ public class BattleMessage {
                     }
                 });
                 break;
+
             case "teampreview":
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -410,8 +418,8 @@ public class BattleMessage {
                         0, toAppend.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
+
             case "move":
-                // todo useMove line 2747 battle.js
                 attacker = messageDetails.substring(5, separator);
                 toAppendBuilder = new StringBuilder();
                 if (messageDetails.startsWith("p2")) {
@@ -462,72 +470,28 @@ public class BattleMessage {
             case "drag":
             case "replace":
                 final int toBeSwapped;
-                final int spriteId;
 
                 //TODO need to handle roar & cie
                 toAppendBuilder = new StringBuilder();
-                attacker = messageDetails.substring(5, separator);
-                remaining = messageDetails.substring(separator + 1);
-                final boolean shiny;
-                final boolean female;
-                final boolean back = messageDetails.startsWith("p1");
-                String species, level, gender = "";
-                separator = remaining.indexOf(',');
-                if (separator == -1) {
-                    level = "";
-                    shiny = false;
-                    female = false;
-                    separator = remaining.indexOf('|');
-                    species = remaining.substring(0, separator);
-                } else {
-                    species = remaining.substring(0, separator);
-                    remaining = remaining.substring(separator + 2);
-                    if (remaining.contains("M")) {
-                        gender = "M";
-                    }
-                    if (remaining.contains("F")) {
-                        gender = "F";
-                    }
-                    shiny = remaining.contains("shiny");
-                    female = remaining.contains("F");
-                    if (remaining.contains(", L")) {
-                        level = remaining.substring(remaining.indexOf(", L") + 2);
-                        separator = level.indexOf(",");
-                        level = (separator == -1) ? level.substring(0, level.indexOf('|')) : level.substring(0, separator);
-                    } else {
-                        level = "";
-                    }
-                }
 
-                remaining = remaining.substring(remaining.indexOf('|') + 1);
-                separator = remaining.indexOf(' ');
-                final int hpInt;
-                final String hpString;
-                final String status;
-                if (separator == -1) {
-                    hpInt = processHpFraction(remaining);
-                    status = "";
-                } else {
-                    hpInt = processHpFraction(remaining.substring(0, separator));
-                    status = remaining.substring(separator + 1);
-                }
-                battleFragment.setOldHp(messageDetails, hpInt);
-                hpString = Integer.toString(hpInt);
+                final int hp = processHpFraction(split[2]);
+                final String status = processStatusFraction(split[2]);
 
+                String species = !split[1].contains(",") ? split[1] :
+                        split[1].substring(0, split[1].indexOf(","));
                 String speciesId = MyApplication.toId(species);
-
-                spriteId = Pokemon.getPokemonSprite(battleFragment.getActivity(), speciesId, back, female, shiny);
-                iconId = Pokemon.getPokemonIcon(battleFragment.getActivity(), speciesId);
+                pokemonInfo = new PokemonInfo(battleFragment.getActivity(), speciesId);
+                processPokemonDetailString(pokemonInfo, split[1]);
+                pokemonInfo.setHp(hp);
+                pokemonInfo.setStatus(status);
 
                 // Switching sprites and icons
-                final String levelFinal = attacker + " " + level;
-                final String genderFinal = gender;
-                ArrayList<PokemonInfo> playerTeam = battleFragment.getTeam(messageDetails);
+                ArrayList<PokemonInfo> playerTeam = battleFragment.getTeam(split[0]);
                 if (playerTeam == null) {
                     playerTeam = new ArrayList<>();
                 }
                 if (battleFragment.findPokemonInTeam(playerTeam, species) == -1) {
-                    playerTeam.add(playerTeam.size(), new PokemonInfo(battleFragment.getActivity(), species));
+                    playerTeam.add(playerTeam.size(), pokemonInfo);
                     toBeSwapped = playerTeam.size() - 1;
                 } else {
                     toBeSwapped = battleFragment.findPokemonInTeam(playerTeam, species);
@@ -550,10 +514,8 @@ public class BattleMessage {
                 } else {
                     if (command.equals("drag")) {
                         toAppendBuilder.append(species).append(" was dragged out!");
-                    } else { //replace, no text here (illusion mons)
                     }
                 }
-
 
                 toast = battleFragment.makeToast(new SpannableStringBuilder(toAppendBuilder));
                 toast.addListener(new Animator.AnimatorListener() {
@@ -563,45 +525,52 @@ public class BattleMessage {
                             return;
                         }
 
-                        battleFragment.displayPokemon(messageDetails.substring(0, 3));
+                        battleFragment.displayPokemon(split[0]);
 
-                        ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(messageDetails.substring(0, 3)));
+                        ImageView sprites = (ImageView) battleFragment.getView()
+                                .findViewById(battleFragment.getSpriteId(split[0]));
                         if (sprites != null) {
-                            sprites.setImageResource(spriteId);
+                            sprites.setImageResource(pokemonInfo.getSprite(battleFragment.getActivity()));
                         }
-                        ImageView iconLeader = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(messageDetails, battleFragment.getTeamSlot(messageDetails)));
+                        ImageView iconLeader = (ImageView) battleFragment.getView()
+                                .findViewById(battleFragment.getIconId(split[0], battleFragment.getTeamSlot(messageDetails)));
                         Drawable leader = iconLeader.getDrawable();
-                        ImageView iconTrailer = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(messageDetails, toBeSwapped));
+                        ImageView iconTrailer = (ImageView) battleFragment.getView()
+                                .findViewById(battleFragment.getIconId(split[0], toBeSwapped));
                         iconTrailer.setImageDrawable(leader);
-                        iconLeader.setImageResource(iconId);
+                        iconLeader.setImageResource(pokemonInfo.getIcon(battleFragment.getActivity()));
 
-                        TextView pkmName = (TextView) battleFragment.getView().findViewById(battleFragment.getSpriteNameid(messageDetails.substring(0, 3)));
+                        TextView pkmName = (TextView) battleFragment.getView()
+                                .findViewById(battleFragment.getSpriteNameid(split[0]));
                         if (pkmName != null) {
-                            pkmName.setText(levelFinal);
+                            pkmName.setText(pokemonInfo.getNickname() + " L" + pokemonInfo.getLevel() + " ");
                         }
 
-                        ImageView gender = (ImageView) battleFragment.getView().findViewById(battleFragment.getGenderId(messageDetails.substring(0, 3)));
-                        if (gender != null) {
-                            if (genderFinal.equals("M")) {
+                        ImageView gender = (ImageView) battleFragment.getView()
+                                .findViewById(battleFragment.getGenderId(split[0]));
+                        if (pokemonInfo.getGender() != null) {
+                            if (pokemonInfo.getGender().equals("M")) {
                                 gender.setImageResource(R.drawable.ic_gender_male);
                             } else {
-                                if (genderFinal.equals("F")) {
+                                if (pokemonInfo.getGender().equals("F")) {
                                     gender.setImageResource(R.drawable.ic_gender_female);
                                 }
                             }
                         }
 
-                        TextView hpText = (TextView) battleFragment.getView().findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
-                        ProgressBar hpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(messageDetails.substring(0, 3)));
+                        TextView hpText = (TextView) battleFragment.getView()
+                                .findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
+                        ProgressBar hpBar = (ProgressBar) battleFragment.getView()
+                                .findViewById(battleFragment.getHpBarId(messageDetails.substring(0, 3)));
                         if (hpText != null) {
-                            hpText.setText(hpString);
+                            hpText.setText(Integer.toString(hp));
                         }
                         if (hpBar != null) {
-                            hpBar.setProgress(hpInt);
+                            hpBar.setProgress(hp);
                         }
 
-                        if (!status.equals("")) {
-                            battleFragment.setAddonStatus(messageDetails.substring(0, 3), status.toLowerCase());
+                        if (status != null) {
+                            battleFragment.setAddonStatus(split[0], status.toLowerCase());
                         }
                     }
 
@@ -4328,6 +4297,15 @@ public class BattleMessage {
         }
     }
 
+    private static String processStatusFraction(String statusFraction) {
+        int status = statusFraction.indexOf(' ');
+        if (status == -1) {
+            return null;
+        } else {
+            return statusFraction.substring(status + 1);
+        }
+    }
+
     private static String processSpecialName(String name) {
         for (String sp : BattleFragment.MORPHS) {
             if (name.contains(sp)) {
@@ -4338,8 +4316,8 @@ public class BattleMessage {
     }
 
     private static void processPokemonDetailString(PokemonInfo pkm, String details) {
-        String[] split = details.split(" ,");
-        String name = split[0];
+        int separator = details.indexOf(",");
+        String name = (separator == -1) ? details : details.substring(0, separator);
         pkm.setName(name);
         if (details.contains(", L")) {
             String level = details.substring(details.indexOf(", L") + 3);
