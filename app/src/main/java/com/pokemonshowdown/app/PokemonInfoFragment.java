@@ -163,7 +163,7 @@ public class PokemonInfoFragment extends DialogFragment {
 
     public String getStatsString() {
         int[] stats = mPokemonInfo.getStats();
-        return ("Atk " + stats[1] + " / Def " + stats[2] + " / SpA " + stats[3] + " / SpD " + stats[4] + " / Spe " + stats[5]);
+        return ("Atk " + stats[0] + " / Def " + stats[1] + " / SpA " + stats[2] + " / SpD " + stats[3] + " / Spe " + stats[4]);
     }
 
     public void setStatus(TextView statusView, String status) {

@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.FragmentManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -115,6 +116,19 @@ public class BattleFragment extends Fragment {
                 dialogFragment.show(getActivity().getSupportFragmentManager(), mRoomId);
             }
         });
+
+        view.findViewById(R.id.icon1).setOnClickListener(new PokemonInfoListener(true, 0));
+        view.findViewById(R.id.icon2).setOnClickListener(new PokemonInfoListener(true, 1));
+        view.findViewById(R.id.icon3).setOnClickListener(new PokemonInfoListener(true, 2));
+        view.findViewById(R.id.icon4).setOnClickListener(new PokemonInfoListener(true, 3));
+        view.findViewById(R.id.icon5).setOnClickListener(new PokemonInfoListener(true, 4));
+        view.findViewById(R.id.icon6).setOnClickListener(new PokemonInfoListener(true, 5));
+        view.findViewById(R.id.icon1_o).setOnClickListener(new PokemonInfoListener(false, 0));
+        view.findViewById(R.id.icon2_o).setOnClickListener(new PokemonInfoListener(false, 1));
+        view.findViewById(R.id.icon3_o).setOnClickListener(new PokemonInfoListener(false, 2));
+        view.findViewById(R.id.icon4_o).setOnClickListener(new PokemonInfoListener(false, 3));
+        view.findViewById(R.id.icon5_o).setOnClickListener(new PokemonInfoListener(false, 4));
+        view.findViewById(R.id.icon6_o).setOnClickListener(new PokemonInfoListener(false, 5));
     }
 
     @Override
@@ -1408,6 +1422,39 @@ public class BattleFragment extends Fragment {
             return animatorSet;
         } catch (NullPointerException e) {
             return new AnimatorSet();
+        }
+    }
+    
+    public class PokemonInfoListener implements View.OnClickListener {
+        private boolean mPlayer1;
+        private int mId;
+        
+        public PokemonInfoListener(boolean player1, int id) {
+            mPlayer1 = player1;
+            mId = id;
+        }
+        
+        @Override
+        public void onClick(View v) {
+            if (v.getVisibility() != View.VISIBLE) {
+                return;
+            }
+            
+            PokemonInfo info = null;
+            if (mId > -1 && mPlayer1) {
+                if (mId < mPlayer1Team.size()) {
+                    info = mPlayer1Team.get(mId);
+                }
+            } else {
+                if (mId < mPlayer2Team.size()) {
+                    info = mPlayer2Team.get(mId);
+                }
+            }
+            
+            if (info != null) {
+                PokemonInfoFragment.newInstance(info, false)
+                        .show(getActivity().getSupportFragmentManager(), BTAG);
+            }
         }
     }
 

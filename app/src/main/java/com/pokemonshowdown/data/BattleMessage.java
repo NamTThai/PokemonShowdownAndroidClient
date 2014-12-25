@@ -242,6 +242,32 @@ public class BattleMessage {
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
+
+                        battleFragment.getView().findViewById(R.id.p1a_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 0));
+                        battleFragment.getView().findViewById(R.id.p1b_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 1));
+                        battleFragment.getView().findViewById(R.id.p1c_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 2));
+                        battleFragment.getView().findViewById(R.id.p1d_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 3));
+                        battleFragment.getView().findViewById(R.id.p1e_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 4));
+                        battleFragment.getView().findViewById(R.id.p1f_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 5));
+                        battleFragment.getView().findViewById(R.id.p2a_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
+                        battleFragment.getView().findViewById(R.id.p2b_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 1));
+                        battleFragment.getView().findViewById(R.id.p2c_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 2));
+                        battleFragment.getView().findViewById(R.id.p2d_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 3));
+                        battleFragment.getView().findViewById(R.id.p2e_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 4));
+                        battleFragment.getView().findViewById(R.id.p2f_prev)
+                                .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
+                        
                     }
                 });
                 toAppendBuilder = new StringBuilder();
@@ -363,6 +389,18 @@ public class BattleMessage {
                             frameLayout.removeAllViews();
                             battleFragment.getActivity().getLayoutInflater()
                                     .inflate(R.layout.fragment_battle_animation, frameLayout);
+                            battleFragment.getView().findViewById(R.id.p1a)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(true, 0));
+                            battleFragment.getView().findViewById(R.id.p1b)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(true, 1));
+                            battleFragment.getView().findViewById(R.id.p1c)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(true, 2));
+                            battleFragment.getView().findViewById(R.id.p2a)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
+                            battleFragment.getView().findViewById(R.id.p2b)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(false, 1));
+                            battleFragment.getView().findViewById(R.id.p2c)
+                                    .setOnClickListener(battleFragment.new PokemonInfoListener(false, 2));
                         }
                     }
                 });
