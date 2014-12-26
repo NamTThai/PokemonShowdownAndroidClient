@@ -317,7 +317,7 @@ public class Pokemon implements Serializable {
             name = MyApplication.toId(name);
             if (name.length() >= 5) {
                 String surfix = name.substring(name.length() - 5);
-                if (surfix.contains("mega")) {
+                if (surfix.contains("mega") && !name.equals("yanmega")) {
                     name = name.substring(0, name.lastIndexOf("mega"));
                 }
             }
