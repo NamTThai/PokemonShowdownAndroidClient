@@ -880,10 +880,11 @@ public class BattleMessage {
         switch (command) {
             case "-damage":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                oldHP = battleFragment.getOldHp(messageDetails);
+                PokemonInfo pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
+                oldHP = pokemonInfo.getHp();
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
                 intAmount = processHpFraction(remaining);
-                battleFragment.setOldHp(messageDetails, intAmount);
+                pokemonInfo.setHp(intAmount);
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
@@ -1025,12 +1026,11 @@ public class BattleMessage {
 
             case "-heal":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-
-                oldHP = battleFragment.getOldHp(messageDetails);
-
+                pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
+                oldHP = pokemonInfo.getHp();
                 remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
                 intAmount = processHpFraction(remaining);
-                battleFragment.setOldHp(messageDetails, intAmount);
+                pokemonInfo.setHp(intAmount);
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
@@ -4249,7 +4249,7 @@ public class BattleMessage {
         }
     }
 
-    private static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
+    public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
         PokemonInfo pkm = new PokemonInfo(battleFragment.getActivity(), name);
