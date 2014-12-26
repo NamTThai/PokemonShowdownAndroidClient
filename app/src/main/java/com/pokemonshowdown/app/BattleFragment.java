@@ -51,7 +51,7 @@ public class BattleFragment extends Fragment {
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
 
     public enum ViewBundle {
-        ROOM_ID, BATTLING, PROGRESS_BAR_HOLDER, CURRENT_WEATHER, WEATHER_EXIST,
+        ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -61,7 +61,6 @@ public class BattleFragment extends Fragment {
 
     private ArrayDeque<String> mServerMessageQueue;
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
-    public int[] progressBarHolder = new int[6];
 
     private String mRoomId;
     /**
@@ -143,7 +142,6 @@ public class BattleFragment extends Fragment {
                 if (viewBundle != null) {
                     mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
                     mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
-                    progressBarHolder = (int[]) viewBundle.get(ViewBundle.PROGRESS_BAR_HOLDER);
                     mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     ((TextView) getView().findViewById(R.id.username))
@@ -242,7 +240,6 @@ public class BattleFragment extends Fragment {
 
         if (getView() != null) {
             viewBundle.put(ViewBundle.ROOM_ID, mRoomId);
-            viewBundle.put(ViewBundle.PROGRESS_BAR_HOLDER, progressBarHolder);
             viewBundle.put(ViewBundle.BATTLING, mBattling);
             viewBundle.put(ViewBundle.CURRENT_WEATHER, mCurrentWeather);
             viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
@@ -846,50 +843,6 @@ public class BattleFragment extends Fragment {
             }
         } catch (IndexOutOfBoundsException e) {
             return null;
-        }
-    }
-
-    public int getOldHp(String tag) {
-        tag = tag.substring(0, 3);
-        switch (tag) {
-            case "p1a":
-                return progressBarHolder[0];
-            case "p1b":
-                return progressBarHolder[1];
-            case "p1c":
-                return progressBarHolder[2];
-            case "p2a":
-                return progressBarHolder[3];
-            case "p2b":
-                return progressBarHolder[4];
-            case "p2c":
-                return progressBarHolder[5];
-            default:
-                return 0;
-        }
-    }
-
-    public void setOldHp(String tag, int hp) {
-        tag = tag.substring(0, 3);
-        switch (tag) {
-            case "p1a":
-                progressBarHolder[0] = hp;
-                break;
-            case "p1b":
-                progressBarHolder[1] = hp;
-                break;
-            case "p1c":
-                progressBarHolder[2] = hp;
-                break;
-            case "p2a":
-                progressBarHolder[3] = hp;
-                break;
-            case "p2b":
-                progressBarHolder[4] = hp;
-                break;
-            case "p2c":
-                progressBarHolder[5] = hp;
-                break;
         }
     }
 

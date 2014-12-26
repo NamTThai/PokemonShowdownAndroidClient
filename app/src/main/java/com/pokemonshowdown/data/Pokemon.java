@@ -296,7 +296,7 @@ public class Pokemon implements Serializable {
             String prefix = (shiny) ? "sprshiny_" : "sprites_";
             int toReturn;
             if (female) {
-                String drawableName = prefix + name + "_f";
+                String drawableName = prefix + name + "f";
                 toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
                 if (toReturn == 0) {
                     drawableName = prefix + name;
@@ -314,8 +314,15 @@ public class Pokemon implements Serializable {
 
     public static int getPokemonIcon(Context appContext, String name) {
         try {
+            name = MyApplication.toId(name);
+            if (name.length() >= 5) {
+                String surfix = name.substring(name.length() - 5);
+                if (surfix.contains("mega") && !name.equals("yanmega")) {
+                    name = name.substring(0, name.lastIndexOf("mega"));
+                }
+            }
             int toReturn = appContext.getResources()
-                    .getIdentifier("smallicons_" + MyApplication.toId(name), "drawable", appContext.getPackageName());
+                    .getIdentifier("smallicons_" + name, "drawable", appContext.getPackageName());
             return (toReturn == 0) ? R.drawable.smallicons_0 : toReturn;
         } catch (NullPointerException e) {
             return R.drawable.smallicons_0;
@@ -432,7 +439,7 @@ public class Pokemon implements Serializable {
         return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[spdStages]);
     }
 
-    public String exportForVerification(Context appContext) {
+    public String exportForVerification() {
         StringBuilder sb = new StringBuilder();
         if (!getNickName().equals(getName())) {
             sb.append(getNickName()).append("|").append(getName());
@@ -731,12 +738,6 @@ public class Pokemon implements Serializable {
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("species");
-
-            mSprite = appContext.getResources()
-                    .getIdentifier("sprites_" + mName.toLowerCase().replace("-", "_"), "drawable", appContext.getPackageName());
-            mIcon = appContext.getResources()
-                    .getIdentifier("smallicons_" + mName.toLowerCase().replace("-", "_"), "drawable", appContext.getPackageName());
-
             setNickName(mName);
             setStats(new int[6]);
             setBaseStats(new int[6]);

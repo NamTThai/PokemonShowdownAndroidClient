@@ -38,7 +38,7 @@ public class MoveDex {
             name = MyApplication.toId(name);
             JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
             return getMaxPP(moveJson.getString("pp"));
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return "0";
         }
     }
@@ -48,7 +48,7 @@ public class MoveDex {
             name = MyApplication.toId(name);
             JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
             return moveJson.getString("name");
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class MoveDex {
             String types = moveDex.getMoveJsonObject(move).getString("type");
             return appContext.getResources()
                     .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return 0;
         }
     }
@@ -95,7 +95,7 @@ public class MoveDex {
         try {
             String move = mMoveDexEntries.get(name);
             return new JSONObject(move);
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return null;
         }
     }

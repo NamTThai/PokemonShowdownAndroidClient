@@ -93,8 +93,7 @@ public class FindBattleFragment extends Fragment {
                 // else export selected team for showdown verification
                 String currentFormatString = (String) mFormatListView.getItemAtPosition(mFormatListView.getCheckedItemPosition());
                 if (currentFormatString != null) {
-                    BattleFieldData.Format currentFormat = null;
-                    currentFormat = BattleFieldData.get(getActivity()).getFormat(currentFormatString);
+                    BattleFieldData.Format currentFormat = BattleFieldData.get(getActivity()).getFormat(currentFormatString);
                     if (currentFormat.isRandomFormat()) {
                         // we send /utm only
                         MyApplication.getMyApplication().sendClientMessage("|/utm");
@@ -117,7 +116,7 @@ public class FindBattleFragment extends Fragment {
                             return;
                         }
                         PokemonTeam pokemonTeam = (PokemonTeam) pokemonTeamObject;
-                        String teamVerificationString = pokemonTeam.exportForVerification(getActivity().getApplicationContext());
+                        String teamVerificationString = pokemonTeam.exportForVerification();
                         MyApplication.getMyApplication().sendClientMessage("|/utm " + teamVerificationString);
                         MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
                     }

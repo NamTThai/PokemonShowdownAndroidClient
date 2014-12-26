@@ -70,7 +70,7 @@ public class PokemonTeam implements Serializable {
         }
     }
 
-    public String exportForVerification(Context appContext) {
+    public String exportForVerification() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (Pokemon pokemon : mPokemons) {
@@ -78,11 +78,10 @@ public class PokemonTeam implements Serializable {
                 if (first == false) {
                     sb.append("]");
                 }
-                sb.append(pokemon.exportForVerification(appContext));
+                sb.append(pokemon.exportForVerification());
                 first = false;
             }
         }
-        Log.d(TAG, sb.toString());
         return sb.toString();
     }
 
