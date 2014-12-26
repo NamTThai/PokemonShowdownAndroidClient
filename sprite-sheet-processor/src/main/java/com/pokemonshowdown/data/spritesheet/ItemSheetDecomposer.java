@@ -1,5 +1,3 @@
-package com.pokemonshowdown.data.spritesheet;
-
 import org.json.JSONObject;
 
 import java.awt.image.BufferedImage;
@@ -19,9 +17,9 @@ public class ItemSheetDecomposer {
 
     public static void main(String[] args) {
         try {
-            BufferedImage spriteSheet = ImageIO.read(new File("/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/sprite-sheet-processor/data/itemicons-sheet.png"));
+            BufferedImage spriteSheet = ImageIO.read(new File("C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\data\\itemicons-sheet.png"));
 
-            FileReader reader = new FileReader("/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/sprite-sheet-processor/data/item.json");
+            FileReader reader = new FileReader("C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\data\\item.json");
             BufferedReader br = new BufferedReader(reader);
             StringBuilder stringBuilder = new StringBuilder();
             String line;
@@ -32,7 +30,7 @@ public class ItemSheetDecomposer {
             JSONObject itemDex = new JSONObject(line);
             Iterator itemTags = itemDex.keys();
 
-            String pre = "/Users/thain/Documents/Projects/Project0/PokemonShowdownAndroidClient/sprite-sheet-processor/img-processed/item_";
+            String pre = "C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\img-processed\\item_";
             String pos = ".png";
 
             while (itemTags.hasNext()) {
@@ -43,7 +41,7 @@ public class ItemSheetDecomposer {
                 cutSpriteSheet(spriteSheet, spritenum, pre+itemTag+pos);
             }
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
 
     }
