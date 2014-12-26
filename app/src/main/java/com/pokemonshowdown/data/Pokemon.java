@@ -738,10 +738,6 @@ public class Pokemon implements Serializable {
     private void initializePokemon(Context appContext, JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("species");
-
-            mSprite = getPokemonSprite(appContext, mName, false, false, false);
-            mIcon = getPokemonIcon(appContext, mName);
-
             setNickName(mName);
             setStats(new int[6]);
             setBaseStats(new int[6]);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.PokemonInfo;
+import com.pokemonshowdown.data.ServerRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1432,6 +1434,45 @@ public class BattleFragment extends Fragment {
                         .show(getActivity().getSupportFragmentManager(), BTAG);
             }
         }
+    }
+
+    public void showPossibleActions(ServerRequest serverRequest) {
+        //todo handle doubles+ triples
+        int currentAction = 0;
+        boolean showSwitchFragment = false;
+        boolean teamPreview = serverRequest.isTeamPreview();
+
+        if (serverRequest.isWait()) {
+            return;
+        }
+
+        if (serverRequest.getForceSwitch().size() > 0) {
+            showSwitchFragment = serverRequest.getForceSwitch().get(currentAction);
+        }
+
+        if (teamPreview) {
+            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId(), teamPreview);
+
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+        } else if (showSwitchFragment) {
+            BattleSwitchFragment fragment = BattleSwitchFragment.newInstance(serverRequest, currentAction, getRoomId(), false);
+
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+        } else {
+            BattleMoveOrSwitchFragment fragment = BattleMoveOrSwitchFragment.newInstance(serverRequest, currentAction, getRoomId());
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.beginTransaction()
+                    .replace(R.id.action_fragment_container, fragment, "")
+                    .commit();
+
+        }
+
     }
 
 }
