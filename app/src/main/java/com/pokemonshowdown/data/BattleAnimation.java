@@ -18,18 +18,18 @@ import com.pokemonshowdown.app.R;
 public class BattleAnimation {
     public final static String BTAG = BattleAnimation.class.getName();
 
-    public static AnimatorSet processMove(String move, View view, BattleFragment battleFragment, String[] split) {
+    public static AnimatorSet processMove(String move, BattleFragment battleFragment, String[] split) {
         move = MyApplication.toId(move);
         MoveDex.Moves animationId = MoveDex.get(battleFragment.getActivity()).getMoveAnimationEntry(move);
-        if (view == null) {
+        if (battleFragment.getView() == null) {
             return null;
         }
         Context context = battleFragment.getActivity();
-        RelativeLayout wrapper = (RelativeLayout) view.findViewById(R.id.animation_layout);
-        RelativeLayout atkC = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[0]));
-        ImageView atk = (ImageView) view.findViewById(battleFragment.getSpriteId(split[0]));
-        RelativeLayout defC = (RelativeLayout) view.findViewById(battleFragment.getPkmLayoutId(split[2]));
-        ImageView def = (ImageView) view.findViewById(battleFragment.getSpriteId(split[2]));
+        RelativeLayout wrapper = (RelativeLayout) battleFragment.getView().findViewById(R.id.animation_layout);
+        RelativeLayout atkC = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[0]));
+        ImageView atk = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
+        RelativeLayout defC = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[2]));
+        ImageView def = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[2]));
         try {
             if (animationId == null) {
                 return fast(battleFragment.getActivity(), wrapper, atkC, atk, defC, def);

@@ -75,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -147,6 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -219,6 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -292,6 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -365,6 +369,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -438,6 +443,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:minEms="2"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar

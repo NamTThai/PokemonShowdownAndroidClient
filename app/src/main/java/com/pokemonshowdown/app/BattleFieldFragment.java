@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +31,23 @@ public class BattleFieldFragment extends Fragment {
 
     private ArrayList<String> mRoomList;
     private int mPosition;
+
+    private ActionBar.TabListener mTabListener = new ActionBar.TabListener() {
+        @Override
+        public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+            mViewPager.setCurrentItem(tab.getPosition());
+        }
+
+        @Override
+        public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+        }
+
+        @Override
+        public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+        }
+    };
 
     public static BattleFieldFragment newInstance() {
         BattleFieldFragment fragment = new BattleFieldFragment();
@@ -118,7 +134,7 @@ public class BattleFieldFragment extends Fragment {
             }
         };
 
-        for(int i = 0; i< mRoomList.size(); i++) {
+        for (int i = 0; i < mRoomList.size(); i++) {
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(i == 0 ? mRoomList.get(i) : "battle" + i)
@@ -141,7 +157,6 @@ public class BattleFieldFragment extends Fragment {
         int index = mRoomList.indexOf(roomId);
         BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
         if (fragment != null) {
-            Log.d(BTAG, message);
             fragment.processServerMessage(message);
         }
     }
@@ -149,11 +164,13 @@ public class BattleFieldFragment extends Fragment {
     private void removeCurrentRoom() {
         ActionBar actionBar = getActivity().getActionBar();
         ActionBar.Tab tab = actionBar.getSelectedTab();
-        String roomId = mRoomList.get(tab.getPosition());
+        int tabPosition = tab.getPosition();
+        String roomId = mRoomList.get(tabPosition);
         if (roomId.equals("global")) {
             return;
         }
-        BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
+        BattleFragment fragment = (BattleFragment) getChildFragmentManager()
+                .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
             if (fragment.getBattling() != 0) {
                 MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
@@ -164,7 +181,55 @@ public class BattleFieldFragment extends Fragment {
         mBattleFieldPagerAdapter.notifyDataSetChanged();
         mViewPager.setAdapter(mBattleFieldPagerAdapter);
         actionBar.removeTab(tab);
+
+        FindBattleFragment findBattleFragment = (FindBattleFragment) getChildFragmentManager()
+                .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
+
+        if (findBattleFragment != null) {
+            findBattleFragment.setQuota(false);
+        }
+        //decrementBattleFragmentTag(tabPosition, tabCount - 1);
     }
+/*
+    public void decrementBattleFragmentTag(int start, int end) {
+        ArrayDeque<String> roomList = new ArrayDeque<>();
+        ActionBar actionBar = getActivity().getActionBar();
+
+        for (int i = start; i < end; i++) {
+            BattleFragment fragment = (BattleFragment) getChildFragmentManager()
+                    .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + i);
+
+            if (fragment != null) {
+                roomList.addLast(fragment.getRoomId());
+
+                getChildFragmentManager().beginTransaction()
+                        .remove(fragment)
+                        .commit();
+
+                mRoomList.remove(i);
+            }
+
+            actionBar.removeTabAt(i);
+        }
+
+        mBattleFieldPagerAdapter.notifyDataSetChanged();
+        mViewPager.setAdapter(mBattleFieldPagerAdapter);
+
+        while (!roomList.isEmpty()) {
+            String roomId = roomList.pollFirst();
+            mRoomList.add(roomId);
+
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText("Battle" + (mRoomList.size() - 1))
+                            .setTabListener(mTabListener)
+            );
+        }
+
+        mBattleFieldPagerAdapter.notifyDataSetChanged();
+        mViewPager.setAdapter(mBattleFieldPagerAdapter);
+
+    }*/
 
     public void processNewRoomRequest(String roomId) {
         ActionBar actionBar = getActivity().getActionBar();
@@ -174,29 +239,20 @@ public class BattleFieldFragment extends Fragment {
             mRoomList.add(roomId);
             BattleFieldData.get(getActivity()).joinRoom(roomId, false);
             mBattleFieldPagerAdapter.notifyDataSetChanged();
-            ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-                @Override
-                public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-                    mViewPager.setCurrentItem(tab.getPosition());
-                }
-
-                @Override
-                public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-                }
-
-                @Override
-                public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-                }
-            };
 
             actionBar.addTab(
                     actionBar.newTab()
                             .setText("Battle" + (mRoomList.size() - 1))
-                            .setTabListener(tabListener)
+                            .setTabListener(mTabListener)
             );
             actionBar.setSelectedNavigationItem(mRoomList.indexOf(roomId));
+
+            FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager()
+                    .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
+
+            if (fragment != null) {
+                fragment.setQuota(true);
+            }
         }
     }
 

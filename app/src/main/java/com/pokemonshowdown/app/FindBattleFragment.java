@@ -31,6 +31,7 @@ public class FindBattleFragment extends Fragment {
     private ArrayList<String> mFormatList;
     private Spinner mPokemonTeamSpinner;
     private ListView mFormatListView;
+    private boolean mQuota;
 
     private PokemonTeamListArrayAdapter mRandomTeamAdapter;
     private ArrayAdapter<String> mNoTeamsAdapter;
@@ -57,6 +58,8 @@ public class FindBattleFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mQuota = false;
+
         mNoTeamsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.empty_team_list_filler));
         mRandomTeamAdapter = new PokemonTeamListArrayAdapter(getActivity(), Arrays.asList(new PokemonTeam(RANDOM_TEAM_NAME)));
         mPokemonTeamSpinner = (Spinner) view.findViewById(R.id.teams_spinner);
@@ -69,6 +72,15 @@ public class FindBattleFragment extends Fragment {
         findBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isQuota()) {
+                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.teaser_alert)
+                            .setMessage(R.string.multiple_battle_alert)
+                            .create();
+                    dialog.show();
+                    return;
+                }
+
                 //first need to check if the user is logged in
                 Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
                 if (!onboarding.isSignedIn()) {
@@ -117,6 +129,15 @@ public class FindBattleFragment extends Fragment {
         watchBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isQuota()) {
+                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.teaser_alert)
+                            .setMessage(R.string.multiple_battle_alert)
+                            .create();
+                    dialog.show();
+                    return;
+                }
+
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
                 mWaitingDialog.setMessage(getResources().getString(R.string.download_matches_inprogress));
                 mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -140,6 +161,14 @@ public class FindBattleFragment extends Fragment {
         mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
         //we execute a click on the format view in order to select the appropriate team for the current format
         mFormatListView.performItemClick(null, mFormatListView.getCheckedItemPosition(), mFormatListView.getCheckedItemPosition());
+    }
+
+    public boolean isQuota() {
+        return mQuota;
+    }
+
+    public void setQuota(boolean quota) {
+        mQuota = quota;
     }
 
     public void setAvailableFormat() {

@@ -4,9 +4,11 @@
     <string name="app_name">Showdown!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="weak_connection">Failed to connect to server.. it needs a thing called \'Internet Connection\', brilliant</string>
+    <string name="weak_connection">Failed to connect to server… it needs a thing called \'Internet Connection\', brilliant</string>
     <string name="no_connection">Weak signal, genius.. maybe move your camp trailer to somewhere near civilization?</string>
     <string name="still_in_development">TEASER ALERT: feature still in development</string>
+    <string name="teaser_alert">Teaser Alert</string>
+    <string name="multiple_battle_alert">Focus on the current battle, dude…</string>
     <string name="server_error">Cannot connect to Showdown server. Plz try again later :(</string>
     <string name="request_error">Server error :( plz close this battle</string>
     <string name="waiting_for_server">Waiting for server…</string>

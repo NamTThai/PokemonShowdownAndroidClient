@@ -28,9 +28,9 @@ public class PokemonInfo implements Serializable {
 
     public PokemonInfo(Context activityContext, String pkm) {
         setName(pkm);
-        setNickname(pkm);
         setLevel(100);
         Pokemon defaultPkm = new Pokemon(activityContext, pkm);
+        setNickname(defaultPkm.getNickName());
         setTypeIcon(defaultPkm.getTypeIcon());
         setGender(null);
         setShiny(false);
