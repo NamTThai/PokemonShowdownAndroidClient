@@ -439,7 +439,7 @@ public class Pokemon implements Serializable {
         return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier * STAGES_MAIN_STATS[spdStages]);
     }
 
-    public String exportForVerification(Context appContext) {
+    public String exportForVerification() {
         StringBuilder sb = new StringBuilder();
         if (!getNickName().equals(getName())) {
             sb.append(getNickName()).append("|").append(getName());
