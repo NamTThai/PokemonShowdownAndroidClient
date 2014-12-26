@@ -8,42 +8,42 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/background"/>
+        android:contentDescription="@string/background"
+        android:scaleType="fitCenter" />
 
     <ImageView
         android:id="@+id/weather_background"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"
-        android:alpha="0.5"
         android:adjustViewBounds="true"
-        android:contentDescription="@string/weather"/>
+        android:alpha="0.5"
+        android:contentDescription="@string/weather"
+        android:scaleType="fitCenter" />
 
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_toLeftOf="@id/battle_background"
+        android:contentDescription="@string/avatar"
         android:padding="2dp"
-        android:src="@drawable/avatar_001"
-        android:contentDescription="@string/avatar"/>
+        android:src="@drawable/avatar_001" />
 
     <TextView
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_above="@id/avatar"
+        android:layout_centerHorizontal="true"
         android:layout_toLeftOf="@id/battle_background"
-        android:text="@string/attacker"
         android:gravity="center_horizontal"
         android:padding="2dp"
-        android:textStyle="bold"/>
+        android:text="@string/attacker"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/side"
@@ -51,8 +51,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/username"
         android:layout_toLeftOf="@id/battle_background"
-        android:orientation="horizontal"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <LinearLayout
@@ -64,17 +64,17 @@
             <ImageView
                 android:id="@+id/icon5"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon3"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon1"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
         </LinearLayout>
 
@@ -87,17 +87,17 @@
             <ImageView
                 android:id="@+id/icon6"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon4"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon2"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
         </LinearLayout>
 
@@ -107,48 +107,48 @@
         android:id="@+id/inactive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@id/battle_background"
         android:layout_alignBottom="@id/battle_background"
-        android:gravity="center_horizontal"
-        android:textStyle="bold"
-        android:visibility="gone"
+        android:layout_alignLeft="@id/battle_background"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/editable_frame_light_red"
-        android:padding="2dp"/>
+        android:gravity="center_horizontal"
+        android:padding="2dp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/username_o"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:layout_toRightOf="@id/battle_background"
         android:gravity="center_horizontal"
-        android:text="@string/defender"
         android:padding="2dp"
-        android:textStyle="bold"/>
+        android:text="@string/defender"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/avatar_o"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_toRightOf="@id/battle_background"
         android:layout_alignParentRight="true"
         android:layout_below="@id/username_o"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/battle_background"
+        android:contentDescription="@string/avatar"
         android:padding="2dp"
-        android:src="@drawable/avatar_002"
-        android:contentDescription="@string/avatar"/>
+        android:src="@drawable/avatar_002" />
 
     <LinearLayout
         android:id="@+id/side_o"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/battle_background"
         android:layout_alignParentRight="true"
         android:layout_below="@id/avatar_o"
-        android:orientation="horizontal"
+        android:layout_toRightOf="@id/battle_background"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         android:weightSum="2">
 
         <LinearLayout
@@ -160,17 +160,17 @@
             <ImageView
                 android:id="@+id/icon5_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon3_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon1_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
         </LinearLayout>
 
@@ -183,17 +183,17 @@
             <ImageView
                 android:id="@+id/icon6_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon4_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
             <ImageView
                 android:id="@+id/icon2_o"
                 style="@style/fragment_battle_side_icon"
-                android:contentDescription="@string/pokemon_icon"/>
+                android:contentDescription="@string/pokemon_icon" />
 
         </LinearLayout>
 
@@ -203,53 +203,62 @@
         android:id="@+id/inactive_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:layout_alignRight="@id/battle_background"
+        android:background="@drawable/editable_frame_light_red"
+        android:gravity="center_horizontal"
         android:padding="2dp"
         android:textStyle="bold"
-        android:visibility="gone"
-        android:background="@drawable/editable_frame_light_red"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/battlelog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/log"
-        android:clickable="true"
-        android:background="@drawable/onclick_green"
+        android:layout_margin="8dp"
         android:layout_toLeftOf="@id/battle_background"
+        android:background="@drawable/onclick_green"
+        android:clickable="true"
         android:gravity="center"
         android:padding="2dp"
-        android:layout_margin="8dp"/>
+        android:text="@string/log" />
 
     <FrameLayout
         android:id="@+id/battle_interface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/side"
-        android:layout_toLeftOf="@id/side_o" />
+        android:layout_toLeftOf="@id/side_o"
+        android:layout_toRightOf="@id/side" />
 
     <TextView
         android:id="@+id/turn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:background="@drawable/editable_frame_blackwhite"
+        android:layout_alignLeft="@id/battle_interface"
         android:layout_margin="8dp"
+        android:background="@drawable/editable_frame_blackwhite"
         android:padding="4dp"
-        android:layout_alignLeft="@id/battle_interface"/>
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/weather"
+        style="@style/text_shadow_white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textStyle="italic"
-        style="@style/text_shadow_white"
-        android:layout_marginLeft="12dp"
         android:layout_alignLeft="@id/battle_interface"
-        android:layout_below="@id/turn"/>
+        android:layout_below="@id/turn"
+        android:layout_marginLeft="12dp"
+        android:textSize="14sp"
+        android:textStyle="italic" />
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/action_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/battle_background"
+        android:layout_alignLeft="@+id/battle_background"
+        android:layout_alignRight="@+id/battle_background" />
+
 
 </RelativeLayout>

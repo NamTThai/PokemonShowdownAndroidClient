@@ -302,6 +302,9 @@ public class BattleMessage {
                     if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
                         setDisplayTeam(battleFragment, requestJson);
+                    } else {
+                        ServerRequest serverRequest = new ServerRequest(battleFragment, requestJson);
+                        battleFragment.showPossibleActions(serverRequest);
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
@@ -4249,7 +4252,7 @@ public class BattleMessage {
         }
     }
 
-    private static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
+    public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
         PokemonInfo pkm = new PokemonInfo(battleFragment.getActivity(), name);
