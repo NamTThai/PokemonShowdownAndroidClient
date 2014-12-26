@@ -31,6 +31,16 @@ public class AbilityDex {
         return sAbilityDex;
     }
 
+    public static String getAbilityName(Context appContext, String name) {
+        try {
+            name = MyApplication.toId(name);
+            JSONObject abilityJson = AbilityDex.get(appContext).getAbilityJsonObject(name);
+            return abilityJson.getString("name");
+        } catch (JSONException | NullPointerException e) {
+            return null;
+        }
+    }
+
     public HashMap<String, String> getAbilityDexEntries() {
         return mAbilityDexEntries;
     }

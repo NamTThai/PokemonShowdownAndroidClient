@@ -83,7 +83,7 @@ public class PokemonInfoFragment extends DialogFragment {
         pokemonStats.setText(getStatsString());
 
         TextView pokemonAbility = (TextView) view.findViewById(R.id.stats_abilities);
-        pokemonAbility.setText(mPokemonInfo.getAbility());
+        pokemonAbility.setText(mPokemonInfo.getAbilityName(getActivity()));
 
         TextView nature = (TextView) view.findViewById(R.id.nature);
         if (mPokemonInfo.getNature() != null) {

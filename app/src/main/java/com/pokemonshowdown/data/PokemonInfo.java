@@ -161,8 +161,9 @@ public class PokemonInfo implements Serializable {
         mMoves = moves;
     }
 
-    public String getAbility() {
-        return mAbility;
+    public String getAbilityName(Context appContext) {
+        String toReturn = AbilityDex.getAbilityName(appContext, mAbility);
+        return (toReturn == null) ? mAbility : toReturn;
     }
 
     public void setAbility(String ability) {

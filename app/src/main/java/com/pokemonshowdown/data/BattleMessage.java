@@ -15,6 +15,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -301,7 +302,38 @@ public class BattleMessage {
                     JSONObject requestJson = new JSONObject(messageDetails);
                     if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
-                        setDisplayTeam(battleFragment, requestJson);
+                        requestJson = requestJson.getJSONObject("side");
+                        JSONArray teamJson = requestJson.getJSONArray("pokemon");
+                        for (int i = 0; i < teamJson.length(); i++) {
+                            JSONObject info = teamJson.getJSONObject(i);
+                            final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
+                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                                    pkm.getName()) == -1) {
+                                battleFragment.getPlayer1Team().add(i, pkm);
+                                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                                MyApplication.toId(pkm.getName()));
+                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
+                                        if (battleFragment.getView() == null) {
+                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
+                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                                        } else {
+                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                            if (icon != null) {
+                                                icon.setImageResource(pkmIcon);
+                                            }
+                                        }
+                                    }
+                                });
+                            } else {
+                                battleFragment.getPlayer1Team().set(i, pkm);
+                            }
+                        }
+                        for (PokemonInfo pkm : battleFragment.getPlayer1Team()) {
+                            Log.d(BattleFragment.BTAG, pkm.getName());
+                        }
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
@@ -4239,16 +4271,6 @@ public class BattleMessage {
         battleFragment.addToLog(logMessage);
     }
 
-    private static void setDisplayTeam(BattleFragment battleFragment, JSONObject object) throws JSONException {
-        object = object.getJSONObject("side");
-        JSONArray team = object.getJSONArray("pokemon");
-        for (int i = 0; i < team.length(); i++) {
-            JSONObject info = team.getJSONObject(i);
-            PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-            battleFragment.getPlayer1Team().add(i, pkm);
-        }
-    }
-
     public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
@@ -4275,21 +4297,12 @@ public class BattleMessage {
                 move = move.toLowerCase().replaceAll("[^a-z]", "");
                 //dirty fix to remvoe that 60 from hiddenpower...
             }
-            JSONObject ppObject = MoveDex.get(battleFragment.getActivity()).getMoveJsonObject(move);
-            if (ppObject == null) {
-                moves.put(move, 0);
-            } else {
-                moves.put(move, ppObject.getInt("pp"));
-            }
+            moves.put(move, Integer.parseInt(MoveDex.getMoveMaxPP(battleFragment.getActivity(), move)));
         }
         pkm.setMoves(moves);
-        pkm.setAbility("baseAbility");
-        pkm.setItem("item");
-        try {
-            pkm.setCanMegaEvo(info.getBoolean("canMegaEvo"));
-        } catch (JSONException e) {
-            pkm.setCanMegaEvo(false);
-        }
+        pkm.setAbility(info.getString("baseAbility"));
+        pkm.setItem(info.getString("item"));
+        pkm.setCanMegaEvo(info.optBoolean("canMegaEvo", false));
         return pkm;
     }
 
