@@ -732,10 +732,8 @@ public class Pokemon implements Serializable {
         try {
             mName = jsonObject.getString("species");
 
-            mSprite = appContext.getResources()
-                    .getIdentifier("sprites_" + MyApplication.toId(mName), "drawable", appContext.getPackageName());
-            mIcon = appContext.getResources()
-                    .getIdentifier("smallicons_" + MyApplication.toId(mName), "drawable", appContext.getPackageName());
+            mSprite = getPokemonSprite(appContext, mName, false, false, false);
+            mIcon = getPokemonIcon(appContext, mName);
 
             setNickName(mName);
             setStats(new int[6]);
