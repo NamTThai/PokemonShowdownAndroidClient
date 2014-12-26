@@ -1129,8 +1129,7 @@ public class BattleFragment extends Fragment {
         newInfo.setHp(oldInfo.getHp());
         newInfo.setStatus(oldInfo.getStatus());
         newInfo.setMoves(oldInfo.getMoves());
-        newInfo.setName(oldInfo.getName());
-        newInfo.setItem(oldInfo.getItem(getActivity()));
+        newInfo.setItem(oldInfo.getItem());
     }
 
     public ArrayList<PokemonInfo> getTeam(String playerTag) {

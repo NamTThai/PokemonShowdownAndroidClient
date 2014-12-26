@@ -584,7 +584,11 @@ public class BattleMessage {
                         TextView pkmName = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getSpriteNameid(split[0]));
                         if (pkmName != null) {
-                            pkmName.setText(pokemonInfo.getNickname() + " L" + pokemonInfo.getLevel() + " ");
+                            if (pokemonInfo.getLevel() != 100) {
+                                pkmName.setText(pokemonInfo.getNickname() + " L" + pokemonInfo.getLevel() + " ");
+                            } else {
+                                pkmName.setText(pokemonInfo.getNickname() + " ");
+                            }
                         }
 
                         ImageView gender = (ImageView) battleFragment.getView()
@@ -642,6 +646,8 @@ public class BattleMessage {
 
                 battleFragment.formChange(position, species, forme);
 
+                pokemonInfo = battleFragment.getPokemonInfo(position);
+
                 toast = battleFragment.makeToast("Transforming", BattleFragment.ANIMATION_SHORT);
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
@@ -653,7 +659,7 @@ public class BattleMessage {
                         boolean back = split[0].startsWith("p1");
                         ImageView sprite = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(position));
                         sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
-                                MyApplication.toId(forme), back, false, false));
+                                MyApplication.toId(forme), back, pokemonInfo.isFemale(), pokemonInfo.isShiny()));
                         ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                 MyApplication.toId(forme)));
@@ -695,7 +701,7 @@ public class BattleMessage {
 
                         battleFragment.hidePokemon(position);
                         ImageView fainted = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
-                        fainted.setImageResource(R.drawable.pokeball_unavailable);
+                        fainted.getDrawable().setAlpha(125);
                     }
 
                     @Override
@@ -806,7 +812,7 @@ public class BattleMessage {
 
                     case "skydrop":
                         attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
-                        toAppendBuilder.append("Sky Drop won't let ").append(attackerOutputName).append(" is paralyzed! It can't move!");
+                        toAppendBuilder.append("Sky Drop won't let ").append(attackerOutputName);
                         break;
 
                     case "truant":
@@ -863,6 +869,7 @@ public class BattleMessage {
 
     public static void processMinorAction(final BattleFragment battleFragment, String command, final String messageDetails, final String message) {
         int separator;
+        final PokemonInfo pokemonInfo;
         Integer oldHP;
         final int lostHP;
         final int intAmount;
@@ -912,10 +919,9 @@ public class BattleMessage {
         switch (command) {
             case "-damage":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                PokemonInfo pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
+                pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
                 oldHP = pokemonInfo.getHp();
-                remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
-                intAmount = processHpFraction(remaining);
+                intAmount = processHpFraction(split[1]);
                 pokemonInfo.setHp(intAmount);
                 lostHP = intAmount - oldHP;
 
@@ -1060,8 +1066,7 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
                 oldHP = pokemonInfo.getHp();
-                remaining = (split[1].indexOf(' ') == -1) ? split[1] : split[1].substring(0, split[1].indexOf(' '));
-                intAmount = processHpFraction(remaining);
+                intAmount = processHpFraction(split[1]);
                 pokemonInfo.setHp(intAmount);
                 lostHP = intAmount - oldHP;
 
@@ -1204,8 +1209,13 @@ public class BattleMessage {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
+
+                                PokemonInfo pkmA = battleFragment.getPokemonInfo(split[0]);
                                 int pkmAHp = processHpFraction(split[1]);
+                                pkmA.setHp(pkmAHp);
+                                PokemonInfo pkmB = battleFragment.getPokemonInfo(split[2]);
                                 int pkmBHp = processHpFraction(split[3]);
+                                pkmB.setHp(pkmBHp);
 
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
@@ -1242,6 +1252,7 @@ public class BattleMessage {
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-boost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 stat = split[1];
@@ -1312,6 +1323,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-unboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 stat = split[1];
@@ -1381,6 +1393,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-setboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
@@ -1442,6 +1455,7 @@ public class BattleMessage {
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-swapboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
@@ -1530,6 +1544,7 @@ public class BattleMessage {
                     logMessage = new SpannableStringBuilder(toAppendBuilder);
                 }
                 break;
+
             case "-copyboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 defenderOutputName = battleFragment.getPrintableOutputPokemonSide(split[1], false);
@@ -1559,6 +1574,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-clearboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName).append("'s stat changes were removed!");
@@ -1594,6 +1610,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-invertboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName).append("'s stat changes were inverted!");
@@ -1622,6 +1639,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-clearallboost":
                 toAppendBuilder.append("All stat changes were eliminated!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
@@ -1659,6 +1677,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-crit":
                 toAppendSpannable = new SpannableString("It's a critical hit!");
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
@@ -1666,13 +1685,15 @@ public class BattleMessage {
                 battleFragment.startAnimation(animatorSet, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-supereffective":
                 toAppendSpannable = new SpannableString("It's super effective!");
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
-                animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Booya!"));
+                animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Super Effective!"));
                 battleFragment.startAnimation(animatorSet, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-resisted":
                 toAppendSpannable = new SpannableString("It's not very effective...");
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
@@ -1680,6 +1701,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(animatorSet, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-immune":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                 toAppendBuilder.append("It doesn't affect ");
@@ -1691,6 +1713,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(animatorSet, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
+
             case "-miss":
                 if (split.length > 1) {
                     // there was a target
@@ -1817,8 +1840,10 @@ public class BattleMessage {
                 break;
 
             case "-prepare":
-                // todo
-                logMessage = new SpannableString(command + ":" + messageDetails);
+                attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
+                logMessage = new SpannableString(attackerOutputName + " is absorbing power!");
+                toast = battleFragment.makeMinorToast(logMessage);
+                battleFragment.startAnimation(toast, message);
                 break;
 
             case "-status":
@@ -2014,12 +2039,12 @@ public class BattleMessage {
                     public void onAnimationStart(Animator animation) {
                         String[] teammate;
                         if (split[0].startsWith("p1")) {
-                            teammate = battleFragment.TEAMMATES[0];
+                            teammate = BattleFragment.TEAMMATES[0];
                         } else {
-                            teammate = battleFragment.TEAMMATES[1];
+                            teammate = BattleFragment.TEAMMATES[1];
                         }
                         for (String mate : teammate) {
-                            for (String stt : battleFragment.STTUS) {
+                            for (String stt : BattleFragment.STTUS) {
                                 battleFragment.removeAddonStatus(mate, stt);
                             }
                         }
@@ -2056,7 +2081,8 @@ public class BattleMessage {
                             break;
 
                         case "frisk":
-                            toAppendBuilder.append(attackerOutputName).append(" frisked its target and found one ").append(item).append("!");
+                            toAppendBuilder.append(battleFragment.getPrintableOutputPokemonSide(ofSource))
+                                    .append(" frisked its target and found one ").append(item).append("!");
                             break;
 
                         case "thief":
@@ -2117,6 +2143,8 @@ public class BattleMessage {
                     });
                     battleFragment.startAnimation(toast, message);
                 }
+                pokemonInfo = battleFragment.getPokemonInfo(split[0]);
+                pokemonInfo.setItem(item);
                 break;
 
             case "-enditem":
@@ -2211,6 +2239,8 @@ public class BattleMessage {
                 animatorSet.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
+                        PokemonInfo pkm = battleFragment.getPokemonInfo(split[0]);
+                        pkm.setItem(null);
                         battleFragment.removeAddonStatus(split[0], item);
                     }
 

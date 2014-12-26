@@ -93,9 +93,9 @@ public class PokemonInfoFragment extends DialogFragment {
         }
 
         TextView item = (TextView) view.findViewById(R.id.item);
-        if (mPokemonInfo.getItem(getActivity()) != null) {
-            item.setText(mPokemonInfo.getItem(getActivity()));
-            item.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getActivity(), mPokemonInfo.getItem(getActivity())), 0, 0, 0);
+        if (mPokemonInfo.getItemName(getActivity()) != null) {
+            item.setText(mPokemonInfo.getItemName(getActivity()));
+            item.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getActivity(), mPokemonInfo.getItemName(getActivity())), 0, 0, 0);
         } else {
             item.setVisibility(View.GONE);
         }
