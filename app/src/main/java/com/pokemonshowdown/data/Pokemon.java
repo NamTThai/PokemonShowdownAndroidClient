@@ -296,7 +296,7 @@ public class Pokemon implements Serializable {
             String prefix = (shiny) ? "sprshiny_" : "sprites_";
             int toReturn;
             if (female) {
-                String drawableName = prefix + name + "_f";
+                String drawableName = prefix + name + "f";
                 toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
                 if (toReturn == 0) {
                     drawableName = prefix + name;
