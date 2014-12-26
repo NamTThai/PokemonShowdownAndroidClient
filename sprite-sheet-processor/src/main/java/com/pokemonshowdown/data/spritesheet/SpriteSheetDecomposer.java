@@ -18,9 +18,9 @@ public class SpriteSheetDecomposer {
 
     public static void main(String[] args) {
         try {
-            BufferedImage spriteSheet = ImageIO.read(new File("C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\data\\icon_sheet.png"));
+            BufferedImage spriteSheet = ImageIO.read(new File("data\\bwicons-sheet-g6.png"));
 
-            FileReader reader = new FileReader("C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\data\\pokedex.json");
+            FileReader reader = new FileReader("data\\pokedex.json");
             BufferedReader br = new BufferedReader(reader);
             StringBuilder stringBuilder = new StringBuilder();
             String line;
@@ -31,7 +31,7 @@ public class SpriteSheetDecomposer {
             JSONObject pokedex = new JSONObject(line);
             Iterator pokemonTags = pokedex.keys();
 
-            String pre = "C:\\Users\\Nicky\\Documents\\GitHub\\PokemonShowdownAndroidClient\\sprite-sheet-processor\\img-processed\\smallicons_";
+            String pre = "img-processed\\smallicons_";
             String pos = ".png";
             cutSpriteSheet(spriteSheet, 0, pre+"0"+pos);
 
@@ -134,52 +134,6 @@ public class SpriteSheetDecomposer {
                         case "kyuremblack": cutSpriteSheet(spriteSheet,819, fileName); break;
                         case "kyuremwhite": cutSpriteSheet(spriteSheet,820, fileName); break;
                         case "keldeoresolute": cutSpriteSheet(spriteSheet,821, fileName); break;
-                        case "venusaurmega": cutSpriteSheet(spriteSheet,864, fileName); break;
-                        case "charizardmegax": cutSpriteSheet(spriteSheet,865, fileName); break;
-                        case "charizardmegay": cutSpriteSheet(spriteSheet,866, fileName); break;
-                        case "blastoisemega": cutSpriteSheet(spriteSheet,867, fileName); break;
-                        case "alakazammega": cutSpriteSheet(spriteSheet,868, fileName); break;
-                        case "gengarmega": cutSpriteSheet(spriteSheet,869, fileName); break;
-                        case "kangaskhanmega": cutSpriteSheet(spriteSheet,870, fileName); break;
-                        case "pinsirmega": cutSpriteSheet(spriteSheet,871, fileName); break;
-                        case "gyaradosmega": cutSpriteSheet(spriteSheet,872, fileName); break;
-                        case "aerodactylmega": cutSpriteSheet(spriteSheet,873, fileName); break;
-                        case "mewtwomegax": cutSpriteSheet(spriteSheet,874, fileName); break;
-                        case "mewtwomegay": cutSpriteSheet(spriteSheet,875, fileName); break;
-                        case "ampharosmega": cutSpriteSheet(spriteSheet,876, fileName); break;
-                        case "scizormega": cutSpriteSheet(spriteSheet,877, fileName); break;
-                        case "heracrossmega": cutSpriteSheet(spriteSheet,878, fileName); break;
-                        case "houndoommega": cutSpriteSheet(spriteSheet,879, fileName); break;
-                        case "tyranitarmega": cutSpriteSheet(spriteSheet,880, fileName); break;
-                        case "blazikenmega": cutSpriteSheet(spriteSheet,881, fileName); break;
-                        case "gardevoirmega": cutSpriteSheet(spriteSheet,882, fileName); break;
-                        case "mawilemega": cutSpriteSheet(spriteSheet,883, fileName); break;
-                        case "aggronmega": cutSpriteSheet(spriteSheet,884, fileName); break;
-                        case "medichammega": cutSpriteSheet(spriteSheet,885, fileName); break;
-                        case "manectricmega": cutSpriteSheet(spriteSheet,886, fileName); break;
-                        case "banettemega": cutSpriteSheet(spriteSheet,887, fileName); break;
-                        case "absolmega": cutSpriteSheet(spriteSheet,888, fileName); break;
-                        case "garchompmega": cutSpriteSheet(spriteSheet,889, fileName); break;
-                        case "lucariomega": cutSpriteSheet(spriteSheet,890, fileName); break;
-                        case "abomasnowmega": cutSpriteSheet(spriteSheet,891, fileName); break;
-                        case "latiasmega": cutSpriteSheet(spriteSheet,892, fileName); break;
-                        case "latiosmega": cutSpriteSheet(spriteSheet,893, fileName); break;
-                        case "beedrillmega": cutSpriteSheet(spriteSheet, 896, fileName); break;
-                        case "pidgeotmega": cutSpriteSheet(spriteSheet, 897, fileName); break;
-                        case "slowbromega": cutSpriteSheet(spriteSheet, 898, fileName); break;
-                        case "steelixmega": cutSpriteSheet(spriteSheet, 899, fileName); break;
-                        case "sceptilemega": cutSpriteSheet(spriteSheet, 900, fileName); break;
-                        case "swampertmega": cutSpriteSheet(spriteSheet, 901, fileName); break;
-                        case "sableyemega": cutSpriteSheet(spriteSheet, 902, fileName); break;
-                        case "sharpedomega": cutSpriteSheet(spriteSheet, 903, fileName); break;
-                        case "camperuptmega": cutSpriteSheet(spriteSheet, 904, fileName); break;
-                        case "altariamega": cutSpriteSheet(spriteSheet, 905, fileName); break;
-                        case "glaliemega": cutSpriteSheet(spriteSheet, 906, fileName); break;
-                        case "salamencemega": cutSpriteSheet(spriteSheet, 907, fileName); break;
-                        case "metagrossmega": cutSpriteSheet(spriteSheet, 908, fileName); break;
-                        case "kyogreprimal": cutSpriteSheet(spriteSheet, 909, fileName); break;
-                        case "groudonprimal": cutSpriteSheet(spriteSheet, 910, fileName); break;
-                        case "rayquazamega": cutSpriteSheet(spriteSheet, 911, fileName); break;
                     }
                 }
             }
@@ -190,8 +144,8 @@ public class SpriteSheetDecomposer {
     }
 
     private static void cutSpriteSheet(BufferedImage sheet, int num, String filename) {
-        int x = (num % 12) * 40;
-        int y = (num / 12) * 30;
+        int x = (num % 16) * 32;
+        int y = (num / 16) * 32;
         BufferedImage icon = sheet.getSubimage(x, y, 32, 32);
         try {
             ImageIO.write(icon, "png", new File(filename));
