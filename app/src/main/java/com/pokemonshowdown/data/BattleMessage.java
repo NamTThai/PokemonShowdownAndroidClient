@@ -2282,6 +2282,10 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append("'s Ability became Mummy!");
                             break;
                     }
+                    pokemonInfo = battleFragment.getPokemonInfo(split[0]);
+                    pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    PokemonInfo defInfo = battleFragment.getPokemonInfo(ofSource);
+                    defInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
                 } else {
                     switch (MyApplication.toId(ability)) {
                         case "pressure":
@@ -2334,6 +2338,8 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" has ").append(battleFragment.getPrintable(ability)).append("!");
                             break;
                     }
+                    pokemonInfo = battleFragment.getPokemonInfo(split[0]);
+                    pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = battleFragment.makeToast(logMessage);
@@ -2349,6 +2355,8 @@ public class BattleMessage {
                         case "mummy":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("(").append(attackerOutputName).append("'s Ability was previously ").append(battleFragment.getPrintable(ability)).append(")");
+                            pokemonInfo = battleFragment.getPokemonInfo(split[0]);
+                            pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
                             break;
 
                         default:
