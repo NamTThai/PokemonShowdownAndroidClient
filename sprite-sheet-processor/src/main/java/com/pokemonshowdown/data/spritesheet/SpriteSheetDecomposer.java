@@ -5,11 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -43,13 +39,13 @@ public class SpriteSheetDecomposer {
                 String pokemonTag = (String) pokemonTags.next();
                 org.json.JSONObject pokemonData = (org.json.JSONObject) pokedex.get(pokemonTag);
                 String pokemonName = pokemonData.getString("species").toLowerCase().replaceAll("-", "_").replaceAll(" ", "").replaceAll("\'", "").replace(Character.toString('.'), "");
-                System.out.print(pokemonName);
                 if (pokemonName.equals(pokemonTag)) {
                     int num = pokemonData.getInt("num");
                     if (num >= 0) {
                         cutSpriteSheet(spriteSheet, num, pre+pokemonName+pos);
                     }
                     String fileName = pre+pokemonName+pos;
+                    System.out.print(pokemonName);
                     switch (pokemonTag) {
                         case "unfezant": cutSpriteSheet(spriteSheet, 788, pre+pokemonName+"f"+pos); break;
                         case "frillish": cutSpriteSheet(spriteSheet, 801, pre+pokemonName+"f"+pos); break;
@@ -188,14 +184,14 @@ public class SpriteSheetDecomposer {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
 
     }
 
     private static void cutSpriteSheet(BufferedImage sheet, int num, String filename) {
-        int x = (num % 16) * 32;
-        int y = (num / 16) * 32;
+        int x = (num % 12) * 40;
+        int y = (num / 12) * 30;
         BufferedImage icon = sheet.getSubimage(x, y, 32, 32);
         try {
             ImageIO.write(icon, "png", new File(filename));
