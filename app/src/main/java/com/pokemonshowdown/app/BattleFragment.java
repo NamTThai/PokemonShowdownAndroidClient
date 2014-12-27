@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
+import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
 
 import org.json.JSONArray;
@@ -1369,8 +1370,8 @@ public class BattleFragment extends Fragment {
         }
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
-        for(PokemonInfo pokemonInfo : getPlayer1Team()) {
-            if(pokemonInfo.isActive()) {
+        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
+            if (pokemonInfo.isActive()) {
                 mTotalActivePokemon++;
             }
         }
@@ -1381,6 +1382,7 @@ public class BattleFragment extends Fragment {
             showAttackOrSwitchFrame(json);
         }
     }
+
     private void showAttackOrSwitchFrame(final JSONObject json) {
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
@@ -1419,8 +1421,17 @@ public class BattleFragment extends Fragment {
         try {
             JSONArray active = json.getJSONArray("active");
             JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
-            for (int i = 0; i < 4 ; i++) {
-                textViews[i].setText(moves.getJSONObject(i).getString("move"));
+            for (int i = 0; i < 4; i++) {
+                final String moveName = moves.getJSONObject(i).getString("move");
+                textViews[i].setText(moveName);
+                textViews[i].setEnabled(!moves.getJSONObject(i).getBoolean("disabled"));
+                textViews[i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/choose move " + moveName + "|" + getRqid());
+                        clearActionFrame();
+                    }
+                });
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1440,9 +1451,23 @@ public class BattleFragment extends Fragment {
         textViews[3] = (TextView) getView().findViewById(R.id.switch_pokemon4_name);
         textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
         textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
-        for (int i = 0; i < 6 ; i++) {
+        for (int i = 0; i < 6; i++) {
+            final int idx = i;
             textViews[i].setText(getPlayer1Team().get(i).getName());
+            textViews[i].setEnabled(!getPlayer1Team().get(i).isActive());
+            textViews[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/choose switch " + idx + "|" + getRqid());
+                    clearActionFrame();
+                }
+            });
         }
+    }
+
+    private void clearActionFrame() {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
     }
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {

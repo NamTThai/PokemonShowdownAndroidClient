@@ -89,6 +89,7 @@
             android:id="@+id/active_move4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/editable_frame"
             android:paddingBottom="8dp"
             android:paddingTop="8dp">
