@@ -19,13 +19,14 @@
             android:paddingLeft="36dp"
             android:paddingRight="36dp"/>
 
-        <ListView
+        <HorizontalScrollView
             android:id="@+id/android_contributors"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/uneditable_frame">
+            android:background="@drawable/uneditable_frame"
+            android:layout_margin="8dp">
 
-        </ListView>
+        </HorizontalScrollView>
 
     </LinearLayout>
 
@@ -43,14 +44,15 @@
             android:paddingLeft="36dp"
             android:paddingRight="36dp"/>
 
-        <ListView
-            android:id="@+id/smogon_contributors"
+        <HorizontalScrollView
+            android:id="@+id/showdown_contributors"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/uneditable_frame">
+            android:background="@drawable/uneditable_frame"
+            android:layout_margin="8dp">
 
-        </ListView>
+        </HorizontalScrollView>
 
-        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

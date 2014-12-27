@@ -2,7 +2,6 @@ package com.pokemonshowdown.app;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,18 +14,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
-import com.pokemonshowdown.data.Pokemon;
-import com.pokemonshowdown.data.PokemonTeam;
-
-import java.util.List;
 
 public class CreditsFragment extends Fragment {
     public final static String CTAG = CreditsFragment.class.getName();
+    public final static Integer[] ANDROID_AVATAR = {
+            R.drawable.avatar_001,
+            R.drawable.avatar_002
+    };
+    public final static String[][] ANDROID_CONTRIBUTOR = {
+            {"RainFountain", "Nam Thai", "PS Android Creator"},
+            {"TeTToN", "Clement", "Lead Contributor"}
+    };
+    public final static Integer[] PS_AVATAR = {
+            R.drawable.avatar_003
+    };
+    public final static String[][] PS_CONTRIBUTOR = {
+            {"Zarel", "Guangcong Luo", "Showdown Creator"}
+    };
 
     public static CreditsFragment newInstance() {
         return new CreditsFragment();
@@ -64,53 +72,11 @@ public class CreditsFragment extends Fragment {
         activeBattles.setSpan(new RelativeSizeSpan(1.2f), numBattles.length(), activeBattles.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         activeBattles.setSpan(new StyleSpan(Typeface.ITALIC), numBattles.length(), activeBattles.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ((TextView) view.findViewById(R.id.active_battle)).setText(activeBattles);
+
+        ((ListView) view.findViewById(R.id.android_contributors))
+                .setAdapter(new ContributorsArrayAdapter(getActivity(), ANDROID_AVATAR, true));
+        ((ListView) view.findViewById(R.id.showdown_contributors))
+                .setAdapter(new ContributorsArrayAdapter(getActivity(), PS_AVATAR, false));
     }
-
-    public class ContributorsArrayAdapter extends ArrayAdapter<String> {
-        private Context mContext;
-        private List<String> mContributorList;
-
-        public ContributorsArrayAdapter(Context getContext, int parent, List<String> contributorList) {
-            super(getContext, parent, R.id.team_nickname, contributorList);
-            this.mContext = getContext;
-            mContributorList = null; //userListData;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.listwidget_teampreview, null);
-            }
-            PokemonTeam p = null; // mPokemonTeamList.get(position);
-
-            TextView teamName = (TextView) convertView.findViewById(R.id.team_nickname);
-            if (p.getTier().isEmpty()) {
-                teamName.setText(p.getNickname());
-            } else {
-                teamName.setText(p.getNickname() + " (" + p.getTier() + ")");
-            }
-
-            LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.pokemon_small_icon_list);
-            layout.removeAllViews();
-
-            for (Pokemon pokemon : p.getPokemons()) {
-                if (pokemon != null) {
-                    ImageView image = new ImageView(getContext());
-                    int smallIconId = pokemon.getIcon();
-                    Drawable d = mContext.getResources().getDrawable(smallIconId);
-                    image.setImageDrawable(d);
-                    layout.addView(image);
-                }
-            }
-
-            for (int i = 0; i < 6 - p.getPokemons().size(); i++) {
-                ImageView image = new ImageView(getContext());
-                Drawable d = mContext.getResources().getDrawable(R.drawable.smallicons_0);
-                image.setImageDrawable(d);
-                layout.addView(image);
-            }
-            return convertView;
-        }
-    }
+    
 }
