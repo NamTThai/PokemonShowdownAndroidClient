@@ -12,9 +12,8 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.MyApplication;
@@ -22,11 +21,12 @@ import com.pokemonshowdown.data.MyApplication;
 public class CreditsFragment extends Fragment {
     public final static String CTAG = CreditsFragment.class.getName();
     public final static String[][] ANDROID_CONTRIBUTOR = {
-            {"RainFountain", Integer.toString(R.drawable.avatar_001), "Nam Thai", "PS Android Creator"},
-            {"TeTToN", Integer.toString(R.drawable.avatar_002), "Clement", "Lead Contributor"}
+            {"RainFountain", Integer.toString(R.drawable.coder_rainfountain), "Nam Thai", "PS Android Creator"},
+            {"TeToN", Integer.toString(R.drawable.coder_teton), "Clement", "Lead Contributor"},
+            {"LazLoz", Integer.toString(R.drawable.coder_lazloz), "", "Contributor"}
     };
     public final static String[][] PS_CONTRIBUTOR = {
-            {"Zarel", Integer.toString(R.drawable.avatar_003), "Guangcong Luo", "Showdown Creator"}
+            {"Zarel", Integer.toString(R.drawable.coder_zarel), "Guangcong Luo", "Showdown Creator"}
     };
 
     public static CreditsFragment newInstance() {
@@ -66,17 +66,27 @@ public class CreditsFragment extends Fragment {
         activeBattles.setSpan(new StyleSpan(Typeface.ITALIC), numBattles.length(), activeBattles.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ((TextView) view.findViewById(R.id.active_battle)).setText(activeBattles);
 
-        HorizontalScrollView androidContributors = (HorizontalScrollView) view.findViewById(R.id.android_contributors);
+        LinearLayout androidContributors = (LinearLayout) view.findViewById(R.id.android_contributors);
         for (String[] androidContributor : ANDROID_CONTRIBUTOR) {
-            RelativeLayout contributor = (RelativeLayout) getLayoutInflater(savedInstanceState)
-                    .inflate(R.layout.listwidget_contributors, androidContributors,false);
+            LinearLayout contributor = (LinearLayout) getLayoutInflater(savedInstanceState)
+                    .inflate(R.layout.listwidget_contributors, androidContributors,  false);
             ((TextView) contributor.findViewById(R.id.nickname)).setText(androidContributor[0]);
             ((ImageView) contributor.findViewById(R.id.avatar)).setImageResource(Integer.parseInt(androidContributor[1]));
             ((TextView) contributor.findViewById(R.id.real_name)).setText(androidContributor[2]);
             ((TextView) contributor.findViewById(R.id.title)).setText(androidContributor[3]);
+            androidContributors.addView(contributor);
         }
 
-        HorizontalScrollView showdownContributors = (HorizontalScrollView) view.findViewById(R.id.showdown_contributors);
+        LinearLayout showdownContributors = (LinearLayout) view.findViewById(R.id.showdown_contributors);
+        for (String[] showdownContributor : PS_CONTRIBUTOR) {
+            LinearLayout contributor = (LinearLayout) getLayoutInflater(savedInstanceState)
+                    .inflate(R.layout.listwidget_contributors, androidContributors, false);
+            ((TextView) contributor.findViewById(R.id.nickname)).setText(showdownContributor[0]);
+            ((ImageView) contributor.findViewById(R.id.avatar)).setImageResource(Integer.parseInt(showdownContributor[1]));
+            ((TextView) contributor.findViewById(R.id.real_name)).setText(showdownContributor[2]);
+            ((TextView) contributor.findViewById(R.id.title)).setText(showdownContributor[3]);
+            showdownContributors.addView(contributor);
+        }
 
     }
 
