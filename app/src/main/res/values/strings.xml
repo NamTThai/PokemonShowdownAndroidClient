@@ -30,6 +30,7 @@
     <string name="background">Background</string>
     <string name="battlelog">Battle Log</string>
     <string name="log">Log</string>
+    <string name="timer">Timer</string>
     <string name="pokemon_icon">Pokemon Icon</string>
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>

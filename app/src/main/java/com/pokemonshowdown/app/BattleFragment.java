@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
+import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
 
 import org.json.JSONException;
@@ -67,6 +68,7 @@ public class BattleFragment extends Fragment {
      * -1 if player is p2
      */
     private int mBattling;
+    private boolean mTimer;
     private String mPlayer1;
     private String mPlayer2;
     private ArrayList<PokemonInfo> mPlayer1Team = new ArrayList<>();
@@ -140,6 +142,9 @@ public class BattleFragment extends Fragment {
                 if (viewBundle != null) {
                     mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
                     mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
+                    if (mBattling != 0) {
+                        setUpTimer();
+                    }
                     mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     ((TextView) getView().findViewById(R.id.username))
@@ -371,6 +376,30 @@ public class BattleFragment extends Fragment {
             mBattling = -1;
             switchUpPlayer();
         }
+        setUpTimer();
+    }
+
+    private void setUpTimer() {
+        if (getView() == null) {
+            return;
+        }
+
+        final TextView timer = (TextView) getView().findViewById(R.id.timer);
+        timer.setVisibility(View.VISIBLE);
+        mTimer = false;
+        timer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTimer = !mTimer;
+                if (mTimer) {
+                    timer.setBackgroundResource(R.drawable.editable_frame_red);
+                    MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer on");
+                } else {
+                    timer.setBackgroundResource(R.drawable.uneditable_frame_red);
+                    MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer off");
+                }
+            }
+        });
     }
 
     private void switchUpPlayer() {
