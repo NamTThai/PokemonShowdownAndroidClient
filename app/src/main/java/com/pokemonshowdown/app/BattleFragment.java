@@ -392,7 +392,7 @@ public class BattleFragment extends Fragment {
             public void onClick(View v) {
                 mTimer = !mTimer;
                 if (mTimer) {
-                    timer.setBackgroundResource(R.drawable.editable_frame_red);
+                    timer.setBackgroundResource(R.drawable.editable_frame_light_red);
                     MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer on");
                 } else {
                     timer.setBackgroundResource(R.drawable.uneditable_frame_red);
