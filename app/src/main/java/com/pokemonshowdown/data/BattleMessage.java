@@ -276,7 +276,7 @@ public class BattleMessage {
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 4));
                         battleFragment.getView().findViewById(R.id.p2f_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
-                        
+
                     }
                 });
                 toAppendBuilder = new StringBuilder();
@@ -300,7 +300,7 @@ public class BattleMessage {
             case "request":
                 try {
                     JSONObject requestJson = new JSONObject(messageDetails);
-                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
+                    if (requestJson.has("side")) {
                         battleFragment.setBattling(requestJson);
                         requestJson = requestJson.getJSONObject("side");
                         JSONArray teamJson = requestJson.getJSONArray("pokemon");
@@ -335,6 +335,34 @@ public class BattleMessage {
                             Log.d(BattleFragment.BTAG, pkm.getName());
                         }
                     }
+
+                    if(requestJson.has("rqid")) {
+                        battleFragment.setRqid(requestJson.getInt("rqid"));
+                    }
+
+                    if(requestJson.has("teamPreview")) {
+                        battleFragment.setTeamPreview(requestJson.getBoolean("teamPreview"));
+                    } else {
+                        battleFragment.setTeamPreview(false);
+                    }
+
+                    if(requestJson.has("wait")) {
+                        battleFragment.setWaiting(requestJson.getBoolean("wait"));
+                    } else {
+                        battleFragment.setWaiting(false);
+                    }
+
+                    if(requestJson.has("forceSwitch")) {
+                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
+                        int forceSwitchIdx = 0;
+                        for (PokemonInfo info : battleFragment.getPlayer1Team()) {
+                            if(info.isActive()) {
+                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(forceSwitchIdx));
+                                forceSwitchIdx++;
+                            }
+                        }
+                    }
+
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
                             .setMessage(R.string.request_error)

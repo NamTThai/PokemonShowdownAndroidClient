@@ -25,6 +25,7 @@ public class PokemonInfo implements Serializable {
     private String mNature;
     private String mItem;
     private boolean mCanMegaEvo;
+    private boolean mForceSwitch;
 
     public PokemonInfo(Context activityContext, String pkm) {
         setName(pkm);
@@ -39,6 +40,7 @@ public class PokemonInfo implements Serializable {
         setStatus(null);
         setStats(defaultPkm.getBaseStats());
         setMoves(new HashMap<String, Integer>());
+        setForceSwitch(false);
         Collection<String> abilityList = defaultPkm.getAbilityList().values();
         setAbility("");
         for (String ability : abilityList) {
@@ -200,5 +202,13 @@ public class PokemonInfo implements Serializable {
 
     public void setCanMegaEvo(boolean canMegaEvo) {
         mCanMegaEvo = canMegaEvo;
+    }
+
+    public void setForceSwitch(boolean mForceSwitch) {
+        this.mForceSwitch = mForceSwitch;
+    }
+
+    public boolean isForceSwitch() {
+        return mForceSwitch;
     }
 }

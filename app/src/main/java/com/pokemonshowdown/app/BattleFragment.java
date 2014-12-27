@@ -47,6 +47,37 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+    private int mRqid;
+    private boolean mTeamPreview;
+    private boolean mWaiting;
+
+    public void setRqid(int mRqid) {
+        this.mRqid = mRqid;
+    }
+
+    public int getRqid() {
+        return mRqid;
+    }
+
+    public void setTeamPreview(boolean mTeamPreview) {
+        this.mTeamPreview = mTeamPreview;
+    }
+
+    public boolean isTeamPreview() {
+        return mTeamPreview;
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.mWaiting = waiting;
+    }
+
+    public boolean ismWaiting() {
+        return mWaiting;
+    }
+
+    public void setmWaiting(boolean mWaiting) {
+        this.mWaiting = mWaiting;
+    }
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
@@ -136,7 +167,7 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             if (getView() != null) {
                 HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
-                
+
                 if (viewBundle != null) {
                     mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
                     mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
@@ -1399,22 +1430,22 @@ public class BattleFragment extends Fragment {
             return new AnimatorSet();
         }
     }
-    
+
     public class PokemonInfoListener implements View.OnClickListener {
         private boolean mPlayer1;
         private int mId;
-        
+
         public PokemonInfoListener(boolean player1, int id) {
             mPlayer1 = player1;
             mId = id;
         }
-        
+
         @Override
         public void onClick(View v) {
             if (v.getVisibility() != View.VISIBLE) {
                 return;
             }
-            
+
             PokemonInfo info = null;
             if (mId > -1 && mPlayer1) {
                 if (mId < mPlayer1Team.size()) {
@@ -1425,7 +1456,7 @@ public class BattleFragment extends Fragment {
                     info = mPlayer2Team.get(mId);
                 }
             }
-            
+
             if (info != null) {
                 PokemonInfoFragment.newInstance(info, false)
                         .show(getActivity().getSupportFragmentManager(), BTAG);
