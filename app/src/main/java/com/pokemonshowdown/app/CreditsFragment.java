@@ -70,10 +70,10 @@ public class CreditsFragment extends Fragment {
         private Context mContext;
         private List<String> mContributorList;
 
-        public ContributorsArrayAdapter(Context getContext, List<String> userListData) {
-            super(getContext, R.layout.listwidget_teampreview, R.id.team_nickname, userListData);
+        public ContributorsArrayAdapter(Context getContext, int parent, List<String> contributorList) {
+            super(getContext, parent, R.id.team_nickname, contributorList);
             this.mContext = getContext;
-            mContributorList = userListData;
+            mContributorList = null; //userListData;
         }
 
         @Override
@@ -111,11 +111,6 @@ public class CreditsFragment extends Fragment {
                 layout.addView(image);
             }
             return convertView;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getView(position, convertView, parent);
         }
     }
 }
