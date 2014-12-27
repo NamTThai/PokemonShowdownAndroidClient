@@ -51,34 +51,6 @@ public class BattleFragment extends Fragment {
     private boolean mTeamPreview;
     private boolean mWaiting;
 
-    public void setRqid(int mRqid) {
-        this.mRqid = mRqid;
-    }
-
-    public int getRqid() {
-        return mRqid;
-    }
-
-    public void setTeamPreview(boolean mTeamPreview) {
-        this.mTeamPreview = mTeamPreview;
-    }
-
-    public boolean isTeamPreview() {
-        return mTeamPreview;
-    }
-
-    public void setWaiting(boolean waiting) {
-        this.mWaiting = waiting;
-    }
-
-    public boolean ismWaiting() {
-        return mWaiting;
-    }
-
-    public void setmWaiting(boolean mWaiting) {
-        this.mWaiting = mWaiting;
-    }
-
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
@@ -388,6 +360,34 @@ public class BattleFragment extends Fragment {
 
     public String getRoomId() {
         return mRoomId;
+    }
+
+    public void setRqid(int mRqid) {
+        this.mRqid = mRqid;
+    }
+
+    public int getRqid() {
+        return mRqid;
+    }
+
+    public void setTeamPreview(boolean mTeamPreview) {
+        this.mTeamPreview = mTeamPreview;
+    }
+
+    public boolean isTeamPreview() {
+        return mTeamPreview;
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.mWaiting = waiting;
+    }
+
+    public boolean ismWaiting() {
+        return mWaiting;
+    }
+
+    public void setmWaiting(boolean mWaiting) {
+        this.mWaiting = mWaiting;
     }
 
     public int getBattling() {
@@ -1358,6 +1358,14 @@ public class BattleFragment extends Fragment {
 
         }
     }
+
+    public void showActionFragment() {
+        if (mWaiting) {
+            return;
+        }
+        //todo
+    }
+
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
         try {

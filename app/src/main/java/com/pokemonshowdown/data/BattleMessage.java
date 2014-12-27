@@ -336,32 +336,64 @@ public class BattleMessage {
                         }
                     }
 
-                    if(requestJson.has("rqid")) {
+                    if (requestJson.has("rqid")) {
                         battleFragment.setRqid(requestJson.getInt("rqid"));
                     }
 
-                    if(requestJson.has("teamPreview")) {
+                    if (requestJson.has("teamPreview")) {
                         battleFragment.setTeamPreview(requestJson.getBoolean("teamPreview"));
                     } else {
                         battleFragment.setTeamPreview(false);
                     }
 
-                    if(requestJson.has("wait")) {
+                    if (requestJson.has("wait")) {
                         battleFragment.setWaiting(requestJson.getBoolean("wait"));
                     } else {
                         battleFragment.setWaiting(false);
                     }
 
-                    if(requestJson.has("forceSwitch")) {
+                    if (requestJson.has("forceSwitch")) {
                         JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                        int forceSwitchIdx = 0;
+                        int idx = 0;
                         for (PokemonInfo info : battleFragment.getPlayer1Team()) {
-                            if(info.isActive()) {
-                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(forceSwitchIdx));
-                                forceSwitchIdx++;
+                            if (info.isActive()) {
+                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(idx));
+                                idx++;
                             }
                         }
                     }
+
+                    if (requestJson.has("active")) {
+                        JSONArray active = requestJson.getJSONArray("active");
+                        for (int i = 0; i < active.length(); i++) {
+                            int idx = 0;
+                            PokemonInfo currentPokemonInfo = null;
+                            for (PokemonInfo info : battleFragment.getPlayer1Team()) {
+                                if (info.isActive()) {
+                                    if (idx == i) {
+                                        currentPokemonInfo = info;
+                                        break;
+                                    } else {
+                                        idx++;
+                                    }
+                                }
+                            }
+
+                            JSONArray moves = active.getJSONObject(i).getJSONArray("moves");
+                            for (int j = 0; i < moves.length(); i++) {
+                                PokemonInfo.MoveInfo moveInfo = new PokemonInfo.MoveInfo();
+                                moveInfo.setDisabled(moves.getJSONObject(i).getBoolean("disabled"));
+                                moveInfo.setMoveName(moves.getJSONObject(i).getString("move"));
+                                moveInfo.setMoveId(moves.getJSONObject(i).getString("id"));
+                                moveInfo.setPp(moves.getJSONObject(i).getInt("pp"));
+                                moveInfo.setMaxPp(moves.getJSONObject(i).getInt("maxpp"));
+                                moveInfo.setTarget(moves.getJSONObject(i).getString("target"));
+                                currentPokemonInfo.setMoveInfo(moveInfo.getMoveId(), moveInfo);
+                            }
+                        }
+                    }
+
+                    battleFragment.showActionFragment();
 
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
