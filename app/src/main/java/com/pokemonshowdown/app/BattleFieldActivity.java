@@ -220,6 +220,10 @@ public class BattleFieldActivity extends FragmentActivity {
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance();
                 break;
+            case 3:
+                mPosition = 3;
+                fragment = CreditsFragment.newInstance();
+                break;
             default:
                 mPosition = 2;
                 fragment = new PlaceHolderFragment();

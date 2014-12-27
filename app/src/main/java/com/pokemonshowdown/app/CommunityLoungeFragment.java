@@ -38,18 +38,18 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
     private ArrayList<String> mRoomList;
 
     public static CommunityLoungeFragment newInstance() {
-        CommunityLoungeFragment fragment = new CommunityLoungeFragment();
-        return fragment;
+        return new CommunityLoungeFragment();
     }
+
     public CommunityLoungeFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mRoomList = CommunityLoungeData.get(getActivity().getApplicationContext()).getRoomList();
+        mRoomList = CommunityLoungeData.get(getActivity()).getRoomList();
         if (mRoomList.size() == 0) {
             CommunityLoungeData.get(getActivity().getApplicationContext()).joinRoom("lobby");
         }

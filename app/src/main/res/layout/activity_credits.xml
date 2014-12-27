@@ -1,7 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/credits"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="2">
 
-</TextView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/users_online"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"/>
+
+        <ListView
+            android:id="@+id/android_contributors"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/uneditable_frame">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/active_battle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"/>
+
+        <ListView
+            android:id="@+id/smogon_contributors"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/uneditable_frame">
+
+        </ListView>
+
+        </LinearLayout>
+
+</LinearLayout>

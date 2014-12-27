@@ -70,7 +70,6 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
-        initiateChatRoomList();
     }
 
     @Override
@@ -115,6 +114,7 @@ public class MyApplication extends Application {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
                     Log.d(MTAG, "Opened connection");
+                    initiateChatRoomList();
                 }
 
                 @Override
@@ -264,8 +264,8 @@ public class MyApplication extends Application {
                             }
                             break;
                         case "roomlist":
-                            String roomlist = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                            BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomlist);
+                            String roomList = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomList);
                             break;
                         default:
                             Log.d(MTAG, message);

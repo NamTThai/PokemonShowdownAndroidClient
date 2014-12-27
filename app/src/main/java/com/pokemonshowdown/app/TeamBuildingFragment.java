@@ -56,7 +56,7 @@ public class TeamBuildingFragment extends Fragment {
         super();
     }
 
-    public static final TeamBuildingFragment newInstance(PokemonTeam team) {
+    public static TeamBuildingFragment newInstance(PokemonTeam team) {
         TeamBuildingFragment fragment = new TeamBuildingFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(TEAMTAG, team);
