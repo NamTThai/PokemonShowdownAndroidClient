@@ -21,7 +21,6 @@ public class PokemonInfo implements Serializable {
      */
     private int[] mStats;
     private HashMap<String, Integer> mMoves;
-    private HashMap<String, MoveInfo> mMoveInfo;
 
     private String mAbility;
     private String mNature;
@@ -213,79 +212,4 @@ public class PokemonInfo implements Serializable {
     public boolean isForceSwitch() {
         return mForceSwitch;
     }
-
-    public void setMoveInfo(String moveId, MoveInfo moveInfo) {
-        mMoveInfo.put(moveId, moveInfo);
-    }
-
-    public HashMap<String, MoveInfo> getMoveInfo() {
-        return mMoveInfo;
-    }
-
-    public static class MoveInfo implements Serializable {
-        private String target;
-        private boolean isDisabled;
-        private int pp;
-        private int maxPp;
-        private String moveName;
-        private String moveId;
-
-        public MoveInfo() {
-            setTarget(null);
-            setDisabled(false);
-            setPp(0);
-            setMaxPp(0);
-            setMoveName(null);
-            setMoveId(null);
-        }
-
-        public String getTarget() {
-            return target;
-        }
-
-        public void setTarget(String target) {
-            this.target = target;
-        }
-
-        public boolean isDisabled() {
-            return isDisabled;
-        }
-
-        public void setDisabled(boolean isDisabled) {
-            this.isDisabled = isDisabled;
-        }
-
-        public int getPp() {
-            return pp;
-        }
-
-        public void setPp(int pp) {
-            this.pp = pp;
-        }
-
-        public int getMaxPp() {
-            return maxPp;
-        }
-
-        public void setMaxPp(int maxPp) {
-            this.maxPp = maxPp;
-        }
-
-        public String getMoveName() {
-            return moveName;
-        }
-
-        public void setMoveName(String moveName) {
-            this.moveName = moveName;
-        }
-
-        public String getMoveId() {
-            return moveId;
-        }
-
-        public void setMoveId(String moveId) {
-            this.moveId = moveId;
-        }
-    }
-
 }

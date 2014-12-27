@@ -302,8 +302,8 @@ public class BattleMessage {
                     JSONObject requestJson = new JSONObject(messageDetails);
                     if (requestJson.has("side")) {
                         battleFragment.setBattling(requestJson);
-                        requestJson = requestJson.getJSONObject("side");
-                        JSONArray teamJson = requestJson.getJSONArray("pokemon");
+                        JSONObject sideJson = requestJson.getJSONObject("side");
+                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject info = teamJson.getJSONObject(i);
                             final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
@@ -363,7 +363,7 @@ public class BattleMessage {
                         }
                     }
 
-                    if (requestJson.has("active")) {
+                    /*if (requestJson.has("active")) {
                         JSONArray active = requestJson.getJSONArray("active");
                         for (int i = 0; i < active.length(); i++) {
                             int idx = 0;
@@ -391,10 +391,9 @@ public class BattleMessage {
                                 currentPokemonInfo.setMoveInfo(moveInfo.getMoveId(), moveInfo);
                             }
                         }
-                    }
+                    }*/
 
-                    battleFragment.showActionFragment();
-
+                    battleFragment.showActionFrame(requestJson);
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
                             .setMessage(R.string.request_error)

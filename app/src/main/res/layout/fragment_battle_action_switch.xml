@@ -12,7 +12,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/pokemon1_name"
+            android:id="@+id/switch_pokemon1_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -22,7 +22,7 @@
             android:paddingTop="8dp" />
 
         <TextView
-            android:id="@+id/pokemon2_name"
+            android:id="@+id/switch_pokemon2_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -32,7 +32,7 @@
             android:paddingTop="8dp" />
 
         <TextView
-            android:id="@+id/pokemon3_name"
+            android:id="@+id/switch_pokemon3_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -48,7 +48,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/pokemon4_name"
+            android:id="@+id/switch_pokemon4_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -58,7 +58,7 @@
             android:paddingTop="8dp" />
 
         <TextView
-            android:id="@+id/pokemon5_name"
+            android:id="@+id/switch_pokemon5_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -68,7 +68,7 @@
             android:paddingTop="8dp" />
 
         <TextView
-            android:id="@+id/pokemon6_name"
+            android:id="@+id/switch_pokemon6_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

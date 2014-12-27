@@ -28,6 +28,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.PokemonInfo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1359,13 +1360,90 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void showActionFragment() {
+    private int mCurrentActivePokemon = 0;
+    private int mTotalActivePokemon = 0;
+
+    public void showActionFrame(final JSONObject json) {
         if (mWaiting) {
             return;
         }
-        //todo
+        mCurrentActivePokemon = 0;
+        mTotalActivePokemon = 0;
+        for(PokemonInfo pokemonInfo : getPlayer1Team()) {
+            if(pokemonInfo.isActive()) {
+                mTotalActivePokemon++;
+            }
+        }
+
+        if (mTeamPreview) {
+            showSwitchFrame(json);
+        } else {
+            showAttackOrSwitchFrame(json);
+        }
+    }
+    private void showAttackOrSwitchFrame(final JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_move_or_switch, frameLayout);
+        getView().findViewById(R.id.battle_attack_textview)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // switch to attack layout
+                        showAttackFrame(json);
+                    }
+                });
+
+        getView().findViewById(R.id.battle_switch_textview)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // switch to switch layout
+                        showSwitchFrame(json);
+                    }
+                });
     }
 
+    private void showAttackFrame(JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
+        TextView[] textViews = new TextView[4];
+        textViews[0] = (TextView) getView().findViewById(R.id.active_move1_name);
+        textViews[1] = (TextView) getView().findViewById(R.id.active_move2_name);
+        textViews[2] = (TextView) getView().findViewById(R.id.active_move3_name);
+        textViews[3] = (TextView) getView().findViewById(R.id.active_move4_name);
+
+        try {
+            JSONArray active = json.getJSONArray("active");
+            JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
+            for (int i = 0; i < 4 ; i++) {
+                textViews[i].setText(moves.getJSONObject(i).getString("move"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showSwitchFrame(JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_switch, frameLayout);
+
+        TextView[] textViews = new TextView[6];
+        textViews[0] = (TextView) getView().findViewById(R.id.switch_pokemon1_name);
+        textViews[1] = (TextView) getView().findViewById(R.id.switch_pokemon2_name);
+        textViews[2] = (TextView) getView().findViewById(R.id.switch_pokemon3_name);
+        textViews[3] = (TextView) getView().findViewById(R.id.switch_pokemon4_name);
+        textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
+        textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
+        for (int i = 0; i < 6 ; i++) {
+            textViews[i].setText(getPlayer1Team().get(i).getName());
+        }
+    }
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
         try {

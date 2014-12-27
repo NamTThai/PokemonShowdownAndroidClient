@@ -63,11 +63,13 @@
             android:id="@+id/active_move3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
             android:layout_weight="1"
-            android:background="@drawable/editable_frame">
+            android:background="@drawable/editable_frame"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
-            <TextView
+
+        <TextView
                 android:id="@+id/active_move3_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -87,9 +89,9 @@
             android:id="@+id/active_move4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:background="@drawable/editable_frame">
+            android:background="@drawable/editable_frame"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <TextView
                 android:id="@+id/active_move4_name"

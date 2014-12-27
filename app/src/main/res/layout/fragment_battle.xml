@@ -253,7 +253,7 @@
         android:layout_below="@id/turn"/>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/action_fragment_container"
+        android:id="@+id/action_interface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/battle_background"
