@@ -79,6 +79,7 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         super.onDetach();
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         getActivity().getActionBar().removeAllTabs();
+        CommunityLoungeData.get(getActivity()).leaveAllRooms();
     }
 
     @Override
