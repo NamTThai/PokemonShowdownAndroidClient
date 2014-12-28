@@ -152,12 +152,11 @@ public class FindBattleFragment extends Fragment {
             }
         });
 
-        TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
+        final TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
         cancelSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancelSearchingButton();
-                MyApplication.getMyApplication().sendClientMessage("|/cancel search");
             }
         });
     }
@@ -168,6 +167,11 @@ public class FindBattleFragment extends Fragment {
         PokemonTeam.loadPokemonTeams(getActivity());
         mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
         mFormatListView.performItemClick(null, mFormatListView.getCheckedItemPosition(), mFormatListView.getCheckedItemPosition());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     public boolean isQuota() {
@@ -278,6 +282,8 @@ public class FindBattleFragment extends Fragment {
         getView().findViewById(R.id.find_battle).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.watch_battle).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.cancel_search).setVisibility(View.GONE);
+
+        MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
     }
 
 }
