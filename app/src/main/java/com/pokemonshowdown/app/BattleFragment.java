@@ -1363,11 +1363,49 @@ public class BattleFragment extends Fragment {
 
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
+    private ArrayList<String> actionCommands = new ArrayList<String>();
+
+    private void addCommand(String command) {
+        actionCommands.add(command);
+    }
+
+    private void sendCommands() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getRoomId() + "|/choose ");
+        int idx = 0;
+        for (String command : actionCommands) {
+            stringBuilder.append(command);
+            idx++;
+            if (idx != actionCommands.size()) {
+                stringBuilder.append(",");
+            }
+        }
+        stringBuilder.append("|" + getRqid());
+        Log.d(BTAG, stringBuilder.toString());
+        MyApplication.getMyApplication().sendClientMessage(stringBuilder.toString());
+    }
+
+    private PokemonInfo getCurrentActivePokemon() {
+        int idx = 0;
+        PokemonInfo currentPokemon = null;
+        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
+            if (pokemonInfo.isActive()) {
+                if (idx == mCurrentActivePokemon) {
+                    currentPokemon = pokemonInfo;
+                    break;
+                } else {
+                    idx++;
+                }
+            }
+        }
+        return currentPokemon;
+    }
 
     public void showActionFrame(final JSONObject json) {
         if (mWaiting) {
             return;
         }
+        actionCommands.clear();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
         for (PokemonInfo pokemonInfo : getPlayer1Team()) {
@@ -1379,7 +1417,11 @@ public class BattleFragment extends Fragment {
         if (mTeamPreview) {
             showSwitchFrame(json);
         } else {
-            showAttackOrSwitchFrame(json);
+            if (getCurrentActivePokemon().isForceSwitch()) {
+                showSwitchFrame(json);
+            } else {
+                showAttackOrSwitchFrame(json);
+            }
         }
     }
 
@@ -1405,9 +1447,13 @@ public class BattleFragment extends Fragment {
                         showSwitchFrame(json);
                     }
                 });
+        
+        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
+        TextView textView = (TextView) getView().findViewById(R.id.battle_pokemon_name_textview);
+        textView.setText(String.format(getResources().getString(R.string.battle_pokemon_name), currentPokemonInfo.getName()));
     }
 
-    private void showAttackFrame(JSONObject json) {
+    private void showAttackFrame(final JSONObject json) {
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1428,8 +1474,14 @@ public class BattleFragment extends Fragment {
                 textViews[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/choose move " + moveName + "|" + getRqid());
+                        addCommand("move " + moveName);
                         clearActionFrame();
+                        mCurrentActivePokemon++;
+                        if (mCurrentActivePokemon < mTotalActivePokemon) {
+                            showAttackOrSwitchFrame(json);
+                        } else {
+                            sendCommands();
+                        }
                     }
                 });
             }
@@ -1438,7 +1490,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void showSwitchFrame(JSONObject json) {
+    private void showSwitchFrame(final JSONObject json) {
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1458,8 +1510,14 @@ public class BattleFragment extends Fragment {
             textViews[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/choose switch " + idx + "|" + getRqid());
+                    addCommand("switch " + idx);
                     clearActionFrame();
+                    mCurrentActivePokemon++;
+                    if (mCurrentActivePokemon < mTotalActivePokemon) {
+                        showAttackOrSwitchFrame(json);
+                    } else {
+                        sendCommands();
+                    }
                 }
             });
         }

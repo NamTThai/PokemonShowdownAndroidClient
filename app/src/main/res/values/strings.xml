@@ -35,6 +35,7 @@
     <string name="weather">Normal Weather</string>
     <string name="battle_switch">Switch</string>
     <string name="battle_attack">Attack</string>
+    <string name="battle_pokemon_name">What will %s do?</string>
     <string name="download_matches_inprogress">Ticket sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
     <string name="searching_battle">Searching for a battle…</string>
