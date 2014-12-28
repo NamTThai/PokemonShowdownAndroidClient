@@ -151,6 +151,15 @@ public class FindBattleFragment extends Fragment {
                 });
             }
         });
+
+        TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
+        cancelSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelSearchingButton();
+                MyApplication.getMyApplication().sendClientMessage("|/cancel search");
+            }
+        });
     }
 
     @Override
