@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1503,14 +1504,19 @@ public class BattleFragment extends Fragment {
         try {
             JSONArray active = json.getJSONArray("active");
             JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < moves.length(); i++) {
                 final String moveName = moves.getJSONObject(i).getString("move");
                 textViews[i].setText(moveName);
                 textViews[i].setEnabled(!moves.getJSONObject(i).getBoolean("disabled"));
                 textViews[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addCommand("move " + moveName);
+                        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+                        if(checkBox.isChecked()) {
+                            addCommand("move " + moveName + " mega");
+                        } else {
+                            addCommand("move " + moveName);
+                        }
                         clearActionFrame();
                         mCurrentActivePokemon++;
                         if (mCurrentActivePokemon < mTotalActivePokemon) {
@@ -1523,6 +1529,15 @@ public class BattleFragment extends Fragment {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+
+        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
+        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+
+        if(currentPokemonInfo.canMegaEvo()) {
+            checkBox.setVisibility(View.VISIBLE);
+        } else {
+            checkBox.setVisibility(View.GONE);
         }
     }
 
@@ -1539,14 +1554,17 @@ public class BattleFragment extends Fragment {
         textViews[3] = (TextView) getView().findViewById(R.id.switch_pokemon4_name);
         textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
         textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < getPlayer1Team().size(); i++) {
             final int idx = i + 1;
             textViews[i].setText(getPlayer1Team().get(i).getName());
-            textViews[i].setEnabled(!getPlayer1Team().get(i).isActive());
             textViews[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    addCommand("switch " + idx);
+                    if(!isTeamPreview()) {
+                        addCommand("switch " + idx);
+                    } else {
+                        addCommand("team " + idx);
+                    }
                     clearActionFrame();
                     mCurrentActivePokemon++;
                     if (mCurrentActivePokemon < mTotalActivePokemon) {
