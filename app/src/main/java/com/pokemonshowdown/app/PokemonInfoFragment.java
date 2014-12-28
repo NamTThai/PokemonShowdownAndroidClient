@@ -173,20 +173,20 @@ public class PokemonInfoFragment extends DialogFragment {
         
         statusView.setText(status.toUpperCase());
         switch (status) {
-            case "slp":
+            case PokemonInfo.STATUS_SLEEP:
                 statusView.setBackgroundResource(R.drawable.editable_frame_blackwhite);
                 break;
-            case "psn":
-            case "tox":
+            case PokemonInfo.STATUS_POISON:
+            case PokemonInfo.STATUS_TOXIC:
                 statusView.setBackgroundResource(R.drawable.editable_frame_light_purple);
                 break;
-            case "brn":
+            case PokemonInfo.STATUS_BURN:
                 statusView.setBackgroundResource(R.drawable.editable_frame_light_red);
                 break;
-            case "par":
+            case PokemonInfo.STATUS_PARALYZE:
                 statusView.setBackgroundResource(R.drawable.editable_frame_light_orange);
                 break;
-            case "frz":
+            case PokemonInfo.STATUS_FREEZE:
                 statusView.setBackgroundResource(R.drawable.editable_frame);
                 break;
             default:

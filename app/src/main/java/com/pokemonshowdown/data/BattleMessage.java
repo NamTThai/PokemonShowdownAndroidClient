@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class BattleMessage {
@@ -940,8 +941,13 @@ public class BattleMessage {
                         case "psn":
                             toAppendBuilder.append(attackerOutputName).append(" was hurt by poison!");
                             break;
-                        case "lifeorb":
+                        case "itemlifeorb":
                             toAppendBuilder.append(attackerOutputName).append(" lost some of its HP!");
+                            pokemonInfo.setItem("Life Orb");
+                            break;
+                        case "abilityironbarbs":
+                            PokemonInfo barbPokemon = battleFragment.getPokemonInfo(split[3]);
+                            barbPokemon.setAbility("Iron Barbs");
                             break;
                         case "recoil":
                             toAppendBuilder.append(attackerOutputName).append(" is damaged by recoil!");
@@ -974,6 +980,11 @@ public class BattleMessage {
                         case "jumpkick":
                         case "highjumpkick":
                             toAppendBuilder.append(attackerOutputName).append(" kept going and crashed!");
+                            break;
+                        case "itemrockyhelmet":
+                            PokemonInfo helmetPokemon = battleFragment.getPokemonInfo(split[3]);
+                            helmetPokemon.setItem("Rocky Helmet");
+                            toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Rocky Helmet!");
                             break;
                         default:
                             if (ofSource != null) {
@@ -1083,6 +1094,7 @@ public class BattleMessage {
                         case "dryskin":
                         case "icebody":
                             toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" heals it!");
+                            pokemonInfo.setAbility(battleFragment.getPrintable(fromEffect));
                             break;
                         case "healingwish":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
@@ -1113,9 +1125,11 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" drained health!");
                             break;
 
-                        case "leftovers":
-                        case "shellbell":
+                        case "itemleftovers":
+                        case "itemshellbell":
+                        case "itemblacksludge":
                             toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(battleFragment.getPrintable(fromEffect)).append("!");
+                            pokemonInfo.setItem(battleFragment.getPrintable(fromEffect));
                             break;
                         default:
                             toAppendBuilder.append(attackerOutputName).append(" restored HP using its ").append(battleFragment.getPrintable(fromEffect)).append("!");
@@ -1772,9 +1786,8 @@ public class BattleMessage {
                             }
                             break;
                         case "unboost":
-                            toAppendBuilder.append(attackerOutputName).append("'s BattleFragment.stats were not lowered!");
+                            toAppendBuilder.append(attackerOutputName).append("'s stats were not lowered!");
                             break;
-
                         default:
                             toAppendBuilder.append("But it failed!");
                             break;
@@ -1850,25 +1863,39 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName);
                 remaining = split[1];
+                pokemonInfo = battleFragment.getPokemonInfo(messageDetails);
                 switch (remaining) {
                     case "brn":
                         toAppendBuilder.append(" was burned");
                         if (fromEffect != null) {
                             toAppendBuilder.append(" by the ").append(battleFragment.getPrintable(fromEffect));
+
+                            if("Item: Flame Orb".equals(fromEffect)) {
+                                pokemonInfo.setItem("Flame Orb");
+                            }
+
                         }
                         toAppendBuilder.append("!");
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_BURN);
                         break;
 
                     case "tox":
                         toAppendBuilder.append(" was badly poisoned");
                         if (fromEffect != null) {
                             toAppendBuilder.append(" by the ").append(battleFragment.getPrintable(fromEffect));
+
+                            if("Item: Toxic Orb".equals(fromEffect)) {
+                                pokemonInfo.setItem("Toxic Orb");
+                            }
+
                         }
                         toAppendBuilder.append("!");
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_TOXIC);
                         break;
 
                     case "psn":
                         toAppendBuilder.append(" was poisoned!");
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_POISON);
                         break;
 
                     case "slp":
@@ -1877,14 +1904,17 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append(" fell asleep!");
                         }
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_SLEEP);
                         break;
 
                     case "par":
                         toAppendBuilder.append(" is paralyzed! It may be unable to move!");
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_PARALYZE);
                         break;
 
                     case "frz":
                         toAppendBuilder.append(" was frozen solid!");
+                        pokemonInfo.setStatus(PokemonInfo.STATUS_FREEZE);
                         break;
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
@@ -1918,6 +1948,7 @@ public class BattleMessage {
             case "-curestatus":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 flag = false;
+                battleFragment.getPokemonInfo(split[0]).setStatus(null);
                 if (fromEffectId != null) {
                     fromEffectId = battleFragment.getPrintable(fromEffectId);
                     switch (battleFragment.getPrintable(fromEffectId)) {
@@ -2038,15 +2069,22 @@ public class BattleMessage {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         String[] teammate;
+                        List<PokemonInfo> curedTeam;
                         if (split[0].startsWith("p1")) {
                             teammate = BattleFragment.TEAMMATES[0];
+                            curedTeam = battleFragment.getPlayer1Team();
                         } else {
                             teammate = BattleFragment.TEAMMATES[1];
+                            curedTeam = battleFragment.getPlayer2Team();
                         }
                         for (String mate : teammate) {
                             for (String stt : BattleFragment.STTUS) {
                                 battleFragment.removeAddonStatus(mate, stt);
                             }
+                        }
+
+                        for(PokemonInfo info : curedTeam) {
+                            info.setStatus(null);
                         }
                     }
 
@@ -2083,6 +2121,7 @@ public class BattleMessage {
                         case "frisk":
                             toAppendBuilder.append(battleFragment.getPrintableOutputPokemonSide(ofSource))
                                     .append(" frisked its target and found one ").append(item).append("!");
+
                             break;
 
                         case "thief":
@@ -2104,6 +2143,7 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" obtained one ").append(item).append(".");
                             break;
                     }
+                    battleFragment.getPokemonInfo(split[0]).setItem(item);
                     logMessage = new SpannableString(toAppendBuilder);
                     toast = battleFragment.makeMinorToast(logMessage);
                     animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString(item));
@@ -2118,12 +2158,15 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append("has ").append(item).append("!");
                             break;
                     }
+                    final String finalAttackerOutputName = attackerOutputName;
+
                     logMessage = new SpannableString(toAppendBuilder);
                     toast = battleFragment.makeMinorToast(logMessage);
                     toast.addListener(new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animation) {
                             battleFragment.setAddonStatus(split[0], item);
+                            battleFragment.getPokemonInfo(split[0]).setItem(item);
                         }
 
                         @Override
@@ -3284,7 +3327,8 @@ public class BattleMessage {
             case "-activate":
                 attacker = split[0];
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                String activatedEffect = battleFragment.getPrintable(MyApplication.toId(split[1]));
+                    switch (activatedEffect) {
                     case "confusion":
                         toAppendBuilder.append(attackerOutputName).append(" is confused!");
                         break;
@@ -3400,6 +3444,9 @@ public class BattleMessage {
                         if (ofSource != null) {
                             toAppendBuilder.append("\n").append(attackerOutputName).append(" acquired ").append(battleFragment.getPrintable(split[2])).append("!");
                             toAppendBuilder.append("\n").append(battleFragment.getPrintable(ofSource)).append(" acquired ").append(battleFragment.getPrintable(split[3])).append("!");
+
+                            battleFragment.getPokemonInfo(split[0]).setAbility(battleFragment.getPrintable(split[2]));
+                            battleFragment.getPokemonInfo(split[1]).setAbility(battleFragment.getPrintable(split[3]));
                         }
                         break;
 
@@ -3478,31 +3525,38 @@ public class BattleMessage {
                     //abilities
                     case "sturdy":
                         toAppendBuilder.append(attackerOutputName).append(" held on thanks to Sturdy!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Sturdy");
                         break;
 
                     case "magicbounce":
                     case "magiccoat":
                     case "rebound":
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Wonder Guard");
                         break;
 
                     case "wonderguard":
                         toAppendBuilder.append(attackerOutputName).append("'s Wonder Guard evades the attack!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Wonder Guard");
                         break;
 
                     case "speedboost":
                         toAppendBuilder.append(attackerOutputName).append("'s' Speed Boost increases its speed!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Speed Boost");
                         break;
 
                     case "forewarn":
                         toAppendBuilder.append(attackerOutputName).append("'s Forewarn alerted it to ").append(battleFragment.getPrintable(split[2])).append("!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Forewarn");
                         break;
 
                     case "anticipation":
                         toAppendBuilder.append(attackerOutputName).append(" shuddered!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Anticipation");
                         break;
 
                     case "telepathy":
                         toAppendBuilder.append(attackerOutputName).append(" avoids attacks by its ally Pok&#xE9;mon!");
+                        battleFragment.getPokemonInfo(split[0]).setAbility("Telepathy");
                         break;
 
                     case "suctioncups":
@@ -3518,10 +3572,12 @@ public class BattleMessage {
                     case "custapberry":
                     case "quickclaw":
                         toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(split[1])).append(" let it move first!");
+                        battleFragment.getPokemonInfo(split[0]).setItem(battleFragment.getPrintable(split[1]));
                         break;
 
                     case "leppaberry":
                         toAppendBuilder.append(attackerOutputName).append(" restored ").append(battleFragment.getPrintable(split[2])).append("'s PP using its Leppa Berry!");
+                        battleFragment.getPokemonInfo(split[0]).setItem("Leppa Berry");
                         break;
 
                     default:

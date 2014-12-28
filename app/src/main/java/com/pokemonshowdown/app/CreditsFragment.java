@@ -23,7 +23,7 @@ public class CreditsFragment extends Fragment {
     public final static String[][] ANDROID_CONTRIBUTOR = {
             {"RainFountain", Integer.toString(R.drawable.coder_rainfountain), "Nam Thai", "PS Android Creator"},
             {"TeToN", Integer.toString(R.drawable.coder_teton), "Clement", "Lead Contributor"},
-            {"LazLoz", Integer.toString(R.drawable.coder_lazloz), "", "Contributor"}
+            {"Lazloz", Integer.toString(R.drawable.coder_lazloz), "", "Contributor"}
     };
     public final static String[][] PS_CONTRIBUTOR = {
             {"Zarel", Integer.toString(R.drawable.coder_zarel), "Guangcong Luo", "Showdown Creator"}
