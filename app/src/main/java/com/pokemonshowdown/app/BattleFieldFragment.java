@@ -285,6 +285,7 @@ public class BattleFieldFragment extends Fragment {
 
             if (fragment != null) {
                 fragment.setQuota(true);
+                fragment.cancelSearchingButton();
             }
         }
     }
