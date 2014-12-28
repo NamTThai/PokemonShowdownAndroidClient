@@ -237,13 +237,18 @@ public class FindBattleFragment extends Fragment {
         listView.performItemClick(null, 0, 0);
     }
 
-    public void dismissWaitingDialog() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mWaitingDialog.dismiss();
-            }
-        });
+    public boolean dismissWaitingDialog() {
+        if (mWaitingDialog.isShowing()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mWaitingDialog.dismiss();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void showSearchingButton() {
