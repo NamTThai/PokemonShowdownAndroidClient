@@ -3,6 +3,8 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +16,9 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -129,6 +134,31 @@ public class BattleFragment extends Fragment {
         view.findViewById(R.id.icon4_o).setOnClickListener(new PokemonInfoListener(false, 3));
         view.findViewById(R.id.icon5_o).setOnClickListener(new PokemonInfoListener(false, 4));
         view.findViewById(R.id.icon6_o).setOnClickListener(new PokemonInfoListener(false, 5));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem roomId = menu.findItem(R.id.room_id);
+        roomId.setVisible(true);
+        roomId.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.bar_room_id)
+                        .setMessage(mRoomId)
+                        .setPositiveButton(R.string.clipboard,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        
+                                    }
+                                })
+                        .create()
+                        .show();
+                return true;
+            }
+        });
     }
 
     @Override

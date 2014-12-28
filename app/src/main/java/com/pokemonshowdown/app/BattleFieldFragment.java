@@ -50,11 +50,10 @@ public class BattleFieldFragment extends Fragment {
     };
 
     public static BattleFieldFragment newInstance() {
-        BattleFieldFragment fragment = new BattleFieldFragment();
-        return fragment;
+        return new BattleFieldFragment();
     }
     public BattleFieldFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
