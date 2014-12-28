@@ -260,4 +260,17 @@
         android:layout_alignLeft="@+id/battle_background"
         android:layout_alignRight="@+id/battle_background" />
 
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/timer"
+        android:background="@drawable/uneditable_frame_red"
+        android:layout_toRightOf="@id/battle_background"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:padding="2dp"
+        android:visibility="invisible"
+        android:layout_margin="8dp"/>
+
 </RelativeLayout>

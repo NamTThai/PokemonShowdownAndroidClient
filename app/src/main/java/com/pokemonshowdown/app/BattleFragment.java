@@ -3,6 +3,11 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +19,9 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -72,6 +80,7 @@ public class BattleFragment extends Fragment {
      * -1 if player is p2
      */
     private int mBattling;
+    private boolean mTimer;
     private String mPlayer1;
     private String mPlayer2;
     private ArrayList<PokemonInfo> mPlayer1Team = new ArrayList<>();
@@ -145,6 +154,9 @@ public class BattleFragment extends Fragment {
                 if (viewBundle != null) {
                     mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
                     mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
+                    if (mBattling != 0) {
+                        setUpTimer();
+                    }
                     mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     ((TextView) getView().findViewById(R.id.username))
@@ -404,6 +416,30 @@ public class BattleFragment extends Fragment {
             mBattling = -1;
             switchUpPlayer();
         }
+        setUpTimer();
+    }
+
+    private void setUpTimer() {
+        if (getView() == null) {
+            return;
+        }
+
+        final TextView timer = (TextView) getView().findViewById(R.id.timer);
+        timer.setVisibility(View.VISIBLE);
+        mTimer = false;
+        timer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTimer = !mTimer;
+                if (mTimer) {
+                    timer.setBackgroundResource(R.drawable.editable_frame_light_red);
+                    MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer on");
+                } else {
+                    timer.setBackgroundResource(R.drawable.uneditable_frame_red);
+                    MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer off");
+                }
+            }
+        });
     }
 
     private void switchUpPlayer() {

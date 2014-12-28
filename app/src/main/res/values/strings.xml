@@ -26,10 +26,12 @@
     <!-- These are for BattleField -->
     <string name="find_battle">Find Battle</string>
     <string name="watch_battle">Watch Battle</string>
+    <string name="cancel_search">Chicken Out</string>
     <string name="no_available_battle">There is no active battle in this format</string>
     <string name="background">Background</string>
     <string name="battlelog">Battle Log</string>
     <string name="log">Log</string>
+    <string name="timer">Timer</string>
     <string name="pokemon_icon">Pokemon Icon</string>
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>
@@ -38,7 +40,7 @@
     <string name="battle_pokemon_name">What will %s do?</string>
     <string name="download_matches_inprogress">Ticket sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
-    <string name="searching_battle">Searching for a battle…</string>
+    <string name="searching_battle">Prepare for trouble, and make it double…</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
@@ -51,6 +53,8 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="bar_room">Room</string>
+    <string name="bar_room_id">Show Room Id</string>
+    <string name="clipboard">Copy to Clipboard</string>
     <string name="bar_cancel">Cancel</string>
     <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>

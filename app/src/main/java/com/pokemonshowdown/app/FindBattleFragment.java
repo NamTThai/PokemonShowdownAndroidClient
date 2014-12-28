@@ -23,7 +23,6 @@ import com.pokemonshowdown.data.PokemonTeam;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 public class FindBattleFragment extends Fragment {
     public final static String FTAG = FindBattleFragment.class.getName();
     public final static String RANDOM_TEAM_NAME = "Random Team";
@@ -38,19 +37,16 @@ public class FindBattleFragment extends Fragment {
     private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
 
     public static FindBattleFragment newInstance() {
-        FindBattleFragment fragment = new FindBattleFragment();
-
-        return fragment;
+        return new FindBattleFragment();
     }
 
     public FindBattleFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_find_battle, container, false);
     }
 
@@ -89,6 +85,9 @@ public class FindBattleFragment extends Fragment {
                     fragment.show(fm, OnboardingDialog.OTAG);
                     return;
                 }
+
+                showSearchingButton();
+
                 // first we look the select format. if random -> send empty /utm
                 // else export selected team for showdown verification
                 String currentFormatString = (String) mFormatListView.getItemAtPosition(mFormatListView.getCheckedItemPosition());
@@ -137,6 +136,8 @@ public class FindBattleFragment extends Fragment {
                     return;
                 }
 
+                showSearchingButton();
+
                 MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
                 mWaitingDialog.setMessage(getResources().getString(R.string.download_matches_inprogress));
                 mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -150,16 +151,27 @@ public class FindBattleFragment extends Fragment {
                 });
             }
         });
+
+        final TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
+        cancelSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelSearchingButton();
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // we relaod the pokemon teams
         PokemonTeam.loadPokemonTeams(getActivity());
         mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
-        //we execute a click on the format view in order to select the appropriate team for the current format
         mFormatListView.performItemClick(null, mFormatListView.getCheckedItemPosition(), mFormatListView.getCheckedItemPosition());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     public boolean isQuota() {
@@ -200,7 +212,7 @@ public class FindBattleFragment extends Fragment {
                     return;
                 }
                 String currentFormatString = (String) listView.getItemAtPosition(position);
-                BattleFieldData.Format currentFormat = null;
+                BattleFieldData.Format currentFormat;
                 if (currentFormatString != null) {
                     currentFormat = BattleFieldData.get(getActivity()).getFormat(currentFormatString);
                     if (currentFormat != null) {
@@ -234,18 +246,44 @@ public class FindBattleFragment extends Fragment {
                 }
             }
         });
-        //this will call the onitemclick listener to set the ocrrect team according to the format at position 0
+        //this will call the onitemclick listener to set the correct team according to the format at position 0
         listView.performItemClick(null, 0, 0);
     }
 
-    public void dismissWaitingDialog() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mWaitingDialog.dismiss();
-            }
-        });
+    public boolean dismissWaitingDialog() {
+        if (mWaitingDialog.isShowing()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mWaitingDialog.dismiss();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    public void showSearchingButton() {
+        if (getView() == null) {
+            return;
+        }
+
+        getView().findViewById(R.id.find_battle).setVisibility(View.GONE);
+        getView().findViewById(R.id.watch_battle).setVisibility(View.GONE);
+        getView().findViewById(R.id.cancel_search).setVisibility(View.VISIBLE);
+    }
+
+    public void cancelSearchingButton() {
+        if (getView() == null) {
+            return;
+        }
+
+        getView().findViewById(R.id.find_battle).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.watch_battle).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.cancel_search).setVisibility(View.GONE);
+
+        MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
     }
 
 }
