@@ -2,6 +2,9 @@ package com.pokemonshowdown.app;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -94,15 +97,39 @@ public class BattleFieldFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        MenuItem cancel = menu.findItem(R.id.cancel);
-        cancel.setVisible(true);
-        cancel.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                removeCurrentRoom();
-                return true;
-            }
-        });
+        menu.findItem(R.id.room_id)
+                .setVisible(true)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        final String roomId = getCurrentRoomId();
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(R.string.bar_room_id)
+                                .setMessage(roomId)
+                                .setPositiveButton(R.string.clipboard,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ClipboardManager clipboardManager = (ClipboardManager)
+                                                        getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                                ClipData clip = ClipData.newPlainText(BattleFragment.ROOM_ID, roomId);
+                                                clipboardManager.setPrimaryClip(clip);
+                                            }
+                                        })
+                                .create()
+                                .show();
+                        return true;
+                    }
+                });
+        menu.findItem(R.id.cancel)
+                .setVisible(true)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        removeCurrentRoom();
+                        return true;
+                    }
+                });
     }
 
     @Override
@@ -158,6 +185,13 @@ public class BattleFieldFragment extends Fragment {
         if (fragment != null) {
             fragment.processServerMessage(message);
         }
+    }
+
+    private String getCurrentRoomId() {
+        ActionBar actionBar = getActivity().getActionBar();
+        ActionBar.Tab tab = actionBar.getSelectedTab();
+        int tabPosition = tab.getPosition();
+        return mRoomList.get(tabPosition);
     }
 
     private void removeCurrentRoom() {
