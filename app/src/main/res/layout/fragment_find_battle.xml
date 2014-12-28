@@ -56,6 +56,20 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/cancel_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/onclick_light_blue"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/cancel_search"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 

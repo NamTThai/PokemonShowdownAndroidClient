@@ -26,6 +26,7 @@
     <!-- These are for BattleField -->
     <string name="find_battle">Find Battle</string>
     <string name="watch_battle">Watch Battle</string>
+    <string name="cancel_search">Chicken Out</string>
     <string name="no_available_battle">There is no active battle in this format</string>
     <string name="background">Background</string>
     <string name="battlelog">Battle Log</string>
