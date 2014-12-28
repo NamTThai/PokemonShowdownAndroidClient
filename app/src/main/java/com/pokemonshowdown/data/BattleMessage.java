@@ -304,37 +304,31 @@ public class BattleMessage {
                         battleFragment.setBattling(requestJson);
                         JSONObject sideJson = requestJson.getJSONObject("side");
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                        ArrayList<PokemonInfo> updatedP1Team = new ArrayList<>();
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject info = teamJson.getJSONObject(i);
                             final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
-                                    pkm.getName()) == -1) {
-                                battleFragment.getPlayer1Team().add(i, pkm);
-                                battleFragment.getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                                MyApplication.toId(pkm.getName()));
-                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
-                                        if (battleFragment.getView() == null) {
-                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
-                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                                        } else {
-                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                                            if (icon != null) {
-                                                icon.setImageResource(pkmIcon);
-                                            }
-                                        }
-                                    }
-                                });
-                            } else {
-                                battleFragment.getPlayer1Team().set(i, pkm);
-                            }
+                            updatedP1Team.add(pkm);
                         }
+                        battleFragment.setPlayer1Team(updatedP1Team);
                         for (PokemonInfo pkm : battleFragment.getPlayer1Team()) {
                             Log.d(BattleFragment.BTAG, pkm.getName());
+                            int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                    MyApplication.toId(pkm.getName()));
+                            int newIconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().indexOf(pkm));
+                            if (battleFragment.getView() == null) {
+                                viewData.addViewSetterOnHold(newIconId, pkmIcon,
+                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            } else {
+                                ImageView icon = (ImageView) battleFragment.getView().findViewById(newIconId);
+                                if (icon != null) {
+                                    icon.setImageResource(pkmIcon);
+                                }
+                            }
+
                         }
                     }
+
 
                     if (requestJson.has("rqid")) {
                         battleFragment.setRqid(requestJson.getInt("rqid"));
@@ -362,37 +356,6 @@ public class BattleMessage {
                             }
                         }
                     }
-
-                    /*if (requestJson.has("active")) {
-                        JSONArray active = requestJson.getJSONArray("active");
-                        for (int i = 0; i < active.length(); i++) {
-                            int idx = 0;
-                            PokemonInfo currentPokemonInfo = null;
-                            for (PokemonInfo info : battleFragment.getPlayer1Team()) {
-                                if (info.isActive()) {
-                                    if (idx == i) {
-                                        currentPokemonInfo = info;
-                                        break;
-                                    } else {
-                                        idx++;
-                                    }
-                                }
-                            }
-
-                            JSONArray moves = active.getJSONObject(i).getJSONArray("moves");
-                            for (int j = 0; i < moves.length(); i++) {
-                                PokemonInfo.MoveInfo moveInfo = new PokemonInfo.MoveInfo();
-                                moveInfo.setDisabled(moves.getJSONObject(i).getBoolean("disabled"));
-                                moveInfo.setMoveName(moves.getJSONObject(i).getString("move"));
-                                moveInfo.setMoveId(moves.getJSONObject(i).getString("id"));
-                                moveInfo.setPp(moves.getJSONObject(i).getInt("pp"));
-                                moveInfo.setMaxPp(moves.getJSONObject(i).getInt("maxpp"));
-                                moveInfo.setTarget(moves.getJSONObject(i).getString("target"));
-                                currentPokemonInfo.setMoveInfo(moveInfo.getMoveId(), moveInfo);
-                            }
-                        }
-                    }*/
-
                     battleFragment.showActionFrame(requestJson);
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())

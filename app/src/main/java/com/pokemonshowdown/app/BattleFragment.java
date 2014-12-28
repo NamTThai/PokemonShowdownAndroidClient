@@ -56,7 +56,7 @@ public class BattleFragment extends Fragment {
     public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
-    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
     private int mRqid;
     private boolean mTeamPreview;
     private boolean mWaiting;
@@ -1540,7 +1540,7 @@ public class BattleFragment extends Fragment {
         textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
         textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
         for (int i = 0; i < 6; i++) {
-            final int idx = i;
+            final int idx = i + 1;
             textViews[i].setText(getPlayer1Team().get(i).getName());
             textViews[i].setEnabled(!getPlayer1Team().get(i).isActive());
             textViews[i].setOnClickListener(new View.OnClickListener() {
