@@ -26,6 +26,13 @@ public class PokemonInfo implements Serializable {
     private String mItem;
     private boolean mCanMegaEvo;
 
+    public final static String STATUS_BURN = "brn";
+    public final static String STATUS_FREEZE = "frz";
+    public final static String STATUS_TOXIC = "tox";
+    public final static String STATUS_POISON = "psn";
+    public final static String STATUS_PARALYZE = "par";
+    public final static String STATUS_SLEEP = "slp";
+
     public PokemonInfo(Context activityContext, String pkm) {
         setName(pkm);
         setLevel(100);
