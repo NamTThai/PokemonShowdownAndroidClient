@@ -3,11 +3,6 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,9 +14,6 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -89,6 +81,10 @@ public class BattleFragment extends Fragment {
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
+
+    private int mCurrentActivePokemon = 0;
+    private int mTotalActivePokemon = 0;
+    private ArrayList<String> mActionCommands = new ArrayList<String>();
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -377,16 +373,16 @@ public class BattleFragment extends Fragment {
         return mRoomId;
     }
 
-    public void setRqid(int mRqid) {
-        this.mRqid = mRqid;
+    public void setRqid(int rqid) {
+        this.mRqid = rqid;
     }
 
     public int getRqid() {
         return mRqid;
     }
 
-    public void setTeamPreview(boolean mTeamPreview) {
-        this.mTeamPreview = mTeamPreview;
+    public void setTeamPreview(boolean teamPreview) {
+        this.mTeamPreview = teamPreview;
     }
 
     public boolean isTeamPreview() {
@@ -395,14 +391,6 @@ public class BattleFragment extends Fragment {
 
     public void setWaiting(boolean waiting) {
         this.mWaiting = waiting;
-    }
-
-    public boolean ismWaiting() {
-        return mWaiting;
-    }
-
-    public void setmWaiting(boolean mWaiting) {
-        this.mWaiting = mWaiting;
     }
 
     public int getBattling() {
@@ -1398,22 +1386,18 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private int mCurrentActivePokemon = 0;
-    private int mTotalActivePokemon = 0;
-    private ArrayList<String> actionCommands = new ArrayList<String>();
-
     private void addCommand(String command) {
-        actionCommands.add(command);
+        mActionCommands.add(command);
     }
 
     private void sendCommands() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getRoomId() + "|/choose ");
         int idx = 0;
-        for (String command : actionCommands) {
+        for (String command : mActionCommands) {
             stringBuilder.append(command);
             idx++;
-            if (idx != actionCommands.size()) {
+            if (idx != mActionCommands.size()) {
                 stringBuilder.append(",");
             }
         }
@@ -1423,26 +1407,14 @@ public class BattleFragment extends Fragment {
     }
 
     private PokemonInfo getCurrentActivePokemon() {
-        int idx = 0;
-        PokemonInfo currentPokemon = null;
-        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
-            if (pokemonInfo.isActive()) {
-                if (idx == mCurrentActivePokemon) {
-                    currentPokemon = pokemonInfo;
-                    break;
-                } else {
-                    idx++;
-                }
-            }
-        }
-        return currentPokemon;
+        return getPlayer1Team().get(mCurrentActivePokemon);
     }
 
     public void showActionFrame(final JSONObject json) {
         if (mWaiting) {
             return;
         }
-        actionCommands.clear();
+        mActionCommands.clear();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
         for (PokemonInfo pokemonInfo : getPlayer1Team()) {
@@ -1557,6 +1529,7 @@ public class BattleFragment extends Fragment {
         for (int i = 0; i < getPlayer1Team().size(); i++) {
             final int idx = i + 1;
             textViews[i].setText(getPlayer1Team().get(i).getName());
+            textViews[i].setCompoundDrawablesWithIntrinsicBounds(getPlayer1Team().get(i).getIcon(getActivity()),0,0,0);
             textViews[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
