@@ -3525,13 +3525,13 @@ public class BattleMessage {
                     //abilities
                     case "sturdy":
                         toAppendBuilder.append(attackerOutputName).append(" held on thanks to Sturdy!");
-                        battleFragment.getPokemonInfo(split[0]).setAbility("Sturdy");
+                        battleFragment.getPokemonInfo(split[0]).setAbility(battleFragment.getPrintable(fromEffectId));
                         break;
 
                     case "magicbounce":
                     case "magiccoat":
                     case "rebound":
-                        battleFragment.getPokemonInfo(split[0]).setAbility("Wonder Guard");
+                        battleFragment.getPokemonInfo(split[0]).setAbility(battleFragment.getPrintable(fromEffectId));
                         break;
 
                     case "wonderguard":
@@ -3569,15 +3569,14 @@ public class BattleMessage {
                         break;
 
                     //items
-                    case "custapberry":
                     case "quickclaw":
+                        battleFragment.getPokemonInfo(split[0]).setItem(battleFragment.getPrintable(fromEffectId));
+                    case "custapberry":
                         toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(split[1])).append(" let it move first!");
-                        battleFragment.getPokemonInfo(split[0]).setItem(battleFragment.getPrintable(split[1]));
                         break;
 
                     case "leppaberry":
                         toAppendBuilder.append(attackerOutputName).append(" restored ").append(battleFragment.getPrintable(split[2])).append("'s PP using its Leppa Berry!");
-                        battleFragment.getPokemonInfo(split[0]).setItem("Leppa Berry");
                         break;
 
                     default:
