@@ -1443,9 +1443,9 @@ public class BattleFragment extends Fragment {
                 if (!chosen.contains(idx)) {
                     mChooseCommand.append(idx);
                 }
-                mChooseCommand.insert(0, "|/team ");
-                sendCommands(mChooseCommand);
             }
+            mChooseCommand.insert(0, "|/team ");
+            sendCommands(mChooseCommand);
         }
     }
 

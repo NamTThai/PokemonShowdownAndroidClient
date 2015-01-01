@@ -15,7 +15,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -300,31 +299,36 @@ public class BattleMessage {
             case "request":
                 try {
                     JSONObject requestJson = new JSONObject(messageDetails);
-                    if (requestJson.has("side")) {
+                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
                         JSONObject sideJson = requestJson.getJSONObject("side");
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        ArrayList<PokemonInfo> updatedP1Team = new ArrayList<>();
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject info = teamJson.getJSONObject(i);
                             final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                            updatedP1Team.add(pkm);
-                        }
-                        battleFragment.setPlayer1Team(updatedP1Team);
-                        for (PokemonInfo pkm : battleFragment.getPlayer1Team()) {
-                            int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                    MyApplication.toId(pkm.getName()));
-                            int newIconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().indexOf(pkm));
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(newIconId, pkmIcon,
-                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                            } else {
-                                ImageView icon = (ImageView) battleFragment.getView().findViewById(newIconId);
-                                if (icon != null) {
-                                    icon.setImageResource(pkmIcon);
+                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                                    pkm.getName()) == -1) {
+                                battleFragment.getPlayer1Team().add(i, pkm);
+                                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                                MyApplication.toId(pkm.getName()));
+                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
+                                        if (battleFragment.getView() == null) {
+                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
+                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                                        } else {
+                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                            if (icon != null) {
+                                                icon.setImageResource(pkmIcon);
+                                                }
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    battleFragment.getPlayer1Team().set(i, pkm);
                                 }
-                            }
-
                         }
                     }
 
