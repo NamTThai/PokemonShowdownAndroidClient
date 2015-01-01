@@ -1476,9 +1476,12 @@ public class BattleFragment extends Fragment {
                 lineUpChar[i] = (char) (((int) '0') + idx);
                 lineUpChar[idx] = (char) (((int) '0') + i);
             }
-            
+
+
+
             setTeamPreview(false);
-            mChooseCommand.insert(0, "|/team ");
+            mChooseCommand = new StringBuilder();
+            mChooseCommand.append("|/team ").append(lineUpChar);
             sendCommands(mChooseCommand);
         }
     }
