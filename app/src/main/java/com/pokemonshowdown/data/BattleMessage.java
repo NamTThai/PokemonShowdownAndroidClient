@@ -355,7 +355,7 @@ public class BattleMessage {
                     }
 
                     if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
-                        battleFragment.showActionFrame(requestJson);
+                        battleFragment.startAction(requestJson);
                     }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())

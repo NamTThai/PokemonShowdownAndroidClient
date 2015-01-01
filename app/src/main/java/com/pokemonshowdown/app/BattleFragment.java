@@ -1441,6 +1441,14 @@ public class BattleFragment extends Fragment {
         return getPlayer1Team().get(mCurrentActivePokemon);
     }
 
+    public void processSwitch(int id) {
+        if (isTeamPreview()) {
+            chooseLeadInTeamPreview(id);
+        } else {
+            chooseSwitch(id);
+        }
+    }
+
     public void chooseLeadInTeamPreview(int id) {
         PokemonInfo toSwitch = getPlayer1Team().remove(id);
         getPlayer1Team().add(mCurrentActivePokemon, toSwitch);
@@ -1453,12 +1461,15 @@ public class BattleFragment extends Fragment {
                 String idx = Integer.toString(i + 1);
                 if (!chosen.contains(idx)) {
                     mChooseCommand.append(idx);
+                    setTeamPreview(false);
                 }
             }
             mChooseCommand.insert(0, "|/team ");
             sendCommands(mChooseCommand);
-            Log.d(BTAG, getTeamString(getPlayer1Team()));
         }
+    }
+
+    public void chooseSwitch(int id) {
     }
 
     public void resetChooseCommand() {
@@ -1473,24 +1484,18 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void showActionFrame(final JSONObject json) {
+    public void startAction(final JSONObject json) {
         if (mWaiting) {
             return;
         }
 
-        mActionCommands.clear();
-        mCurrentActivePokemon = 0;
-        mTotalActivePokemon = 0;
-        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
-            if (pokemonInfo.isActive()) {
-                mTotalActivePokemon++;
-            }
-        }
+        resetChooseCommand();
 
         if (getCurrentActivePokemon().isForceSwitch()) {
-            showSwitchFrame(json);
+            triggerSwitch(true);
         } else {
-            showAttackOrSwitchFrame(json);
+            //showAttackOrSwitchFrame(json);
+            triggerSwitch(true);
         }
     }
 
@@ -1516,7 +1521,7 @@ public class BattleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         // switch to switch layout
-                        showSwitchFrame(json);
+                        //triggerSwitch(json);
                     }
                 });
         
@@ -1579,44 +1584,23 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void showSwitchFrame(final JSONObject json) {
+    private void triggerSwitch(boolean on) {
         if (getView() == null) {
             return;
         }
 
-        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
-        frameLayout.removeAllViews();
-
-        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_switch, frameLayout);
-
-        TextView[] textViews = new TextView[6];
-        textViews[0] = (TextView) getView().findViewById(R.id.switch_pokemon1_name);
-        textViews[1] = (TextView) getView().findViewById(R.id.switch_pokemon2_name);
-        textViews[2] = (TextView) getView().findViewById(R.id.switch_pokemon3_name);
-        textViews[3] = (TextView) getView().findViewById(R.id.switch_pokemon4_name);
-        textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
-        textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
         for (int i = 0; i < getPlayer1Team().size(); i++) {
-            final int idx = i + 1;
-            textViews[i].setText(getPlayer1Team().get(i).getName());
-            textViews[i].setCompoundDrawablesWithIntrinsicBounds(getPlayer1Team().get(i).getIcon(getActivity()),0,0,0);
-            textViews[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(!isTeamPreview()) {
-                        addCommand("switch " + idx);
-                    } else {
-                        addCommand("team " + idx);
-                    }
-                    clearActionFrame();
-                    mCurrentActivePokemon++;
-                    if (mCurrentActivePokemon < mTotalActivePokemon) {
-                        showAttackOrSwitchFrame(json);
-                    } else {
-                        sendCommands();
-                    }
+            PokemonInfo pkm = getPlayer1Team().get(i);
+            ImageView icon = (ImageView) getView().findViewById(getIconId("p1", i));
+            if (on) {
+                if (!pkm.isActive() && pkm.getHp() > 0) {
+                    icon.setBackgroundResource(R.drawable.editable_frame);
+                    icon.setOnClickListener(new PokemonSwitchListener(true, i));
                 }
-            });
+            } else {
+                icon.setBackgroundResource(0);
+                icon.setOnClickListener(new PokemonInfoListener(true, i));
+            }
         }
     }
 
