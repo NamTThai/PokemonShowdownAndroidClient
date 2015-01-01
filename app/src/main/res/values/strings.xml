@@ -36,6 +36,8 @@
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>
     <string name="battle_switch">Switch</string>
+    <string name="battle_attack">Attack</string>
+    <string name="battle_pokemon_name">What will %s do?</string>
     <string name="download_matches_inprogress">Ticket sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
@@ -180,4 +182,5 @@
     <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mega_evolution">Mega-evolve</string>
 </resources>
