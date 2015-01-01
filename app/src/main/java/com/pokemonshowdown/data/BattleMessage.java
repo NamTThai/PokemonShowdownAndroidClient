@@ -212,24 +212,24 @@ public class BattleMessage {
                 if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
                         pokemonInfo.getName()) == -1) {
                     team.add(pokemonInfo);
-                }
 
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                MyApplication.toId(pokeName));
-                        if (battleFragment.getView() == null) {
-                            viewData.addViewSetterOnHold(iconId, imageResource,
-                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                        } else {
-                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                            if (icon != null) {
-                                icon.setImageResource(imageResource);
+                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                    MyApplication.toId(pokeName));
+                            if (battleFragment.getView() == null) {
+                                viewData.addViewSetterOnHold(iconId, imageResource,
+                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            } else {
+                                ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                if (icon != null) {
+                                    icon.setImageResource(imageResource);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
                 break;
 
             case "teampreview":
