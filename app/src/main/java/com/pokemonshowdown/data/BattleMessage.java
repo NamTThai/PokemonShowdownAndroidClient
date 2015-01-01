@@ -339,6 +339,16 @@ public class BattleMessage {
                         }
                     }
 
+                    if (requestJson.has("side")) {
+                        JSONObject sideJson = requestJson.getJSONObject("side");
+                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                        for (int i = 0; i < teamJson.length(); i++) {
+                            JSONObject pkm = teamJson.getJSONObject(i);
+                            battleFragment.getPlayer1Team().get(i)
+                                    .setActive(pkm.getBoolean("active"));
+                        }
+                    }
+
                     battleFragment.setRqid(requestJson.optInt("rqid", 0));
                     battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));

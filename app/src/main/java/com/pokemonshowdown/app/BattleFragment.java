@@ -1474,7 +1474,21 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseSwitch(int id) {
+        String chosen = mChooseCommand.toString();
+        if (chosen.length() != 0) {
+            mChooseCommand.insert(0, ",");
+        }
+        if (chosen.contains("switch " + (id + 1))) {
+            return;
+        }
+        mChooseCommand.append("switch ").append(Integer.toString(id + 1));
+        mCurrentActivePokemon++;
 
+        if (mCurrentActivePokemon == mTotalActivePokemon) {
+            mChooseCommand.insert(0, "|/choose ");
+            sendCommands(mChooseCommand);
+            triggerSwitch(false);
+        }
     }
 
     public void resetChooseCommand() {
