@@ -1411,7 +1411,11 @@ public class BattleFragment extends Fragment {
     }
 
     private void addCommand(String command) {
-        mActionCommands.add(command);
+        String chosen = mChooseCommand.toString();
+        if (chosen.length() != 0) {
+            mChooseCommand.append(",");
+        }
+        mChooseCommand.append(command);
     }
 
     private void sendCommands(StringBuilder command) {
@@ -1475,19 +1479,16 @@ public class BattleFragment extends Fragment {
 
     public void chooseSwitch(int id) {
         String chosen = mChooseCommand.toString();
-        if (chosen.length() != 0) {
-            mChooseCommand.insert(0, ",");
-        }
         if (chosen.contains("switch " + (id + 1))) {
             return;
         }
-        mChooseCommand.append("switch ").append(Integer.toString(id + 1));
+        addCommand("switch " + Integer.toString(id + 1));
         mCurrentActivePokemon++;
 
         if (mCurrentActivePokemon == mTotalActivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
             sendCommands(mChooseCommand);
-            triggerSwitch(false);
+            triggerSwitchOptions(false);
         }
     }
 
@@ -1511,48 +1512,18 @@ public class BattleFragment extends Fragment {
         resetChooseCommand();
 
         if (getCurrentActivePokemon().isForceSwitch()) {
-            triggerSwitch(true);
+            triggerSwitchOptions(true);
         } else {
-            //showAttackOrSwitchFrame(json);
-            triggerSwitch(true);
+            triggerAttackOptions(json);
+            triggerSwitchOptions(true);
         }
     }
 
-    private void showAttackOrSwitchFrame(final JSONObject json) {
+    private void triggerAttackOptions(final JSONObject json) {
         if (getView() == null) {
             return;
         }
-        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
-        frameLayout.removeAllViews();
 
-        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_move_or_switch, frameLayout);
-        getView().findViewById(R.id.battle_attack_textview)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // switch to attack layout
-                        showAttackFrame(json);
-                    }
-                });
-
-        getView().findViewById(R.id.battle_switch_textview)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // switch to switch layout
-                        //triggerSwitch(json);
-                    }
-                });
-        
-        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
-        TextView textView = (TextView) getView().findViewById(R.id.battle_pokemon_name_textview);
-        textView.setText(String.format(getResources().getString(R.string.battle_pokemon_name), currentPokemonInfo.getName()));
-    }
-
-    private void showAttackFrame(final JSONObject json) {
-        if (getView() == null) {
-            return;
-        }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1582,9 +1553,10 @@ public class BattleFragment extends Fragment {
                         clearActionFrame();
                         mCurrentActivePokemon++;
                         if (mCurrentActivePokemon < mTotalActivePokemon) {
-                            showAttackOrSwitchFrame(json);
+                            startAction(json);
                         } else {
-                            sendCommands();
+                            mChooseCommand.insert(0, "|/choose ");
+                            sendCommands(mChooseCommand);
                         }
                     }
                 });
@@ -1603,7 +1575,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void triggerSwitch(boolean on) {
+    private void triggerSwitchOptions(boolean on) {
         if (getView() == null) {
             return;
         }
