@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
+    public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
 
     private int mPosition;
     private DrawerLayout mDrawerLayout;

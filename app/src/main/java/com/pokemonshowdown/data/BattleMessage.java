@@ -312,7 +312,6 @@ public class BattleMessage {
                         }
                         battleFragment.setPlayer1Team(updatedP1Team);
                         for (PokemonInfo pkm : battleFragment.getPlayer1Team()) {
-                            Log.d(BattleFragment.BTAG, pkm.getName());
                             int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()));
                             int newIconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().indexOf(pkm));

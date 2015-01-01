@@ -213,10 +213,12 @@ public class PokemonInfoFragment extends DialogFragment {
     }
 
     private void switchPkm() {
-        BattleFragment fragment = (BattleFragment) getChildFragmentManager()
+        BattleFieldFragment battleFieldFragment = (BattleFieldFragment) getActivity().getSupportFragmentManager()
+                .findFragmentByTag(BattleFieldActivity.BATTLE_FIELD_FRAGMENT_TAG);
+        BattleFragment fragment = (BattleFragment) battleFieldFragment.getChildFragmentManager()
                 .findFragmentByTag(mFragmentTag);
         if (fragment != null) {
-            fragment.setUpTeamPreview();
+            fragment.chooseLeadInTeamPreview(mId);
         }
         this.dismiss();
     }
