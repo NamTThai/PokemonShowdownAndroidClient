@@ -278,6 +278,8 @@ public class BattleMessage {
 
                     }
                 });
+                battleFragment.resetChooseCommand();
+
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
                 String[] p1Team = battleFragment.getTeamNameStringArray(team1);

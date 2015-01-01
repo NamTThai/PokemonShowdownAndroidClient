@@ -1433,9 +1433,9 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseLeadInTeamPreview(int id) {
-        mCurrentActivePokemon++;
         if (mCurrentActivePokemon < mTotalActivePokemon) {
             mChooseCommand.append(id + 1);
+            mCurrentActivePokemon++;
         } else {
             for (int i = 0; i < mPlayer1Team.size(); i++) {
                 String chosen = mChooseCommand.toString();
@@ -1446,6 +1446,18 @@ public class BattleFragment extends Fragment {
             }
             mChooseCommand.insert(0, "|/team ");
             sendCommands(mChooseCommand);
+        }
+    }
+
+    public void resetChooseCommand() {
+        mChooseCommand = new StringBuilder();
+        mActionCommands.clear();
+        mCurrentActivePokemon = 0;
+        mTotalActivePokemon = 0;
+        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
+            if (pokemonInfo.isActive()) {
+                mTotalActivePokemon++;
+            }
         }
     }
 
