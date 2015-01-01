@@ -783,8 +783,8 @@ public class BattleFragment extends Fragment {
                     case 5:
                         return R.id.icon6;
                     default:
-                        Log.d(BTAG, mPlayer1Team.toString());
-                        Log.d(BTAG, mPlayer2Team.toString());
+                        Log.d(BTAG, getTeamString(mPlayer1Team));
+                        Log.d(BTAG, getTeamString(mPlayer2Team));
                         return R.id.icon1;
                 }
             case "p2":
@@ -802,13 +802,13 @@ public class BattleFragment extends Fragment {
                     case 5:
                         return R.id.icon6_o;
                     default:
-                        Log.d(BTAG, mPlayer1Team.toString());
-                        Log.d(BTAG, mPlayer2Team.toString());
+                        Log.d(BTAG, getTeamString(mPlayer1Team));
+                        Log.d(BTAG, getTeamString(mPlayer2Team));
                         return R.id.icon1_o;
                 }
             default:
-                Log.d(BTAG, mPlayer1Team.toString());
-                Log.d(BTAG, mPlayer2Team.toString());
+                Log.d(BTAG, getTeamString(mPlayer1Team));
+                Log.d(BTAG, getTeamString(mPlayer2Team));
                 return R.id.icon1;
         }
     }
@@ -1129,6 +1129,15 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public String getTeamString(ArrayList<PokemonInfo> team) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        for (PokemonInfo pkm : team) {
+            stringBuilder.append(pkm.getName()).append("|");
+        }
+        return stringBuilder.toString();
+    }
+
     public void displayPokemon(String tag) {
         try {
             RelativeLayout relativeLayout;
@@ -1433,6 +1442,8 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseLeadInTeamPreview(int id) {
+        PokemonInfo toSwitch = getPlayer1Team().remove(id);
+        getPlayer1Team().add(mCurrentActivePokemon, toSwitch);
         mChooseCommand.append(id + 1);
         mCurrentActivePokemon++;
 
@@ -1446,6 +1457,7 @@ public class BattleFragment extends Fragment {
             }
             mChooseCommand.insert(0, "|/team ");
             sendCommands(mChooseCommand);
+            Log.d(BTAG, getTeamString(getPlayer1Team()));
         }
     }
 
