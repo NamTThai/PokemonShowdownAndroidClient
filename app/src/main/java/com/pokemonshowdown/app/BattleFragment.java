@@ -370,7 +370,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setCurrentWeather(String currentWeather) {
-        this.mCurrentWeather = currentWeather;
+        mCurrentWeather = currentWeather;
     }
 
     public boolean isWeatherExist() {
@@ -378,7 +378,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setWeatherExist(boolean weatherExist) {
-        this.mWeatherExist = weatherExist;
+        mWeatherExist = weatherExist;
     }
 
     public String getRoomId() {
@@ -386,7 +386,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setRqid(int rqid) {
-        this.mRqid = rqid;
+        mRqid = rqid;
     }
 
     public int getRqid() {
@@ -394,7 +394,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setTeamPreview(boolean teamPreview) {
-        this.mTeamPreview = teamPreview;
+        mTeamPreview = teamPreview;
     }
 
     public boolean isTeamPreview() {
@@ -402,7 +402,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setWaiting(boolean waiting) {
-        this.mWaiting = waiting;
+        mWaiting = waiting;
     }
 
     public int getBattling() {
@@ -1404,7 +1404,7 @@ public class BattleFragment extends Fragment {
 
     private void sendCommands() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getRoomId() + "|/choose ");
+        stringBuilder.append(getRoomId()).append("|/choose ");
         int idx = 0;
         for (String command : mActionCommands) {
             stringBuilder.append(command);
@@ -1413,7 +1413,7 @@ public class BattleFragment extends Fragment {
                 stringBuilder.append(",");
             }
         }
-        stringBuilder.append("|" + getRqid());
+        stringBuilder.append("|").append(getRqid());
         Log.d(BTAG, stringBuilder.toString());
         MyApplication.getMyApplication().sendClientMessage(stringBuilder.toString());
     }
@@ -1426,6 +1426,7 @@ public class BattleFragment extends Fragment {
         if (mWaiting) {
             return;
         }
+
         mActionCommands.clear();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
@@ -1447,6 +1448,9 @@ public class BattleFragment extends Fragment {
     }
 
     private void showAttackOrSwitchFrame(final JSONObject json) {
+        if (getView() == null) {
+            return;
+        }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1475,6 +1479,9 @@ public class BattleFragment extends Fragment {
     }
 
     private void showAttackFrame(final JSONObject json) {
+        if (getView() == null) {
+            return;
+        }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1526,6 +1533,10 @@ public class BattleFragment extends Fragment {
     }
 
     private void showSwitchFrame(final JSONObject json) {
+        if (getView() == null) {
+            return;
+        }
+
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
@@ -1563,6 +1574,9 @@ public class BattleFragment extends Fragment {
     }
 
     private void clearActionFrame() {
+        if (getView() == null) {
+            return;
+        }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
     }
