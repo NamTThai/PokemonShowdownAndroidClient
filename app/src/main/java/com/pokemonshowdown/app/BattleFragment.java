@@ -1450,6 +1450,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseLeadInTeamPreview(int id) {
+        String chosen = mChooseCommand.toString();
+        if (chosen.contains(Integer.toString(id + 1))) {
+            return;
+        }
         PokemonInfo toSwitch = getPlayer1Team().remove(id);
         getPlayer1Team().add(mCurrentActivePokemon, toSwitch);
         mChooseCommand.append(id + 1);
@@ -1457,7 +1461,7 @@ public class BattleFragment extends Fragment {
 
         if (mCurrentActivePokemon == mTotalActivePokemon) {
             for (int i = 0; i < mPlayer1Team.size(); i++) {
-                String chosen = mChooseCommand.toString();
+                chosen = mChooseCommand.toString();
                 String idx = Integer.toString(i + 1);
                 if (!chosen.contains(idx)) {
                     mChooseCommand.append(idx);
@@ -1470,6 +1474,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseSwitch(int id) {
+
     }
 
     public void resetChooseCommand() {
