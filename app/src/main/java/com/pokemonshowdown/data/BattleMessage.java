@@ -253,17 +253,17 @@ public class BattleMessage {
                         }
 
                         battleFragment.getView().findViewById(R.id.p1a_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 0));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 0));
                         battleFragment.getView().findViewById(R.id.p1b_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 1));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 1));
                         battleFragment.getView().findViewById(R.id.p1c_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 2));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 2));
                         battleFragment.getView().findViewById(R.id.p1d_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 3));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 3));
                         battleFragment.getView().findViewById(R.id.p1e_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 4));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 4));
                         battleFragment.getView().findViewById(R.id.p1f_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 5));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 5));
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -329,22 +329,9 @@ public class BattleMessage {
                         }
                     }
 
-
-                    if (requestJson.has("rqid")) {
-                        battleFragment.setRqid(requestJson.getInt("rqid"));
-                    }
-
-                    if (requestJson.has("teamPreview")) {
-                        battleFragment.setTeamPreview(requestJson.getBoolean("teamPreview"));
-                    } else {
-                        battleFragment.setTeamPreview(false);
-                    }
-
-                    if (requestJson.has("wait")) {
-                        battleFragment.setWaiting(requestJson.getBoolean("wait"));
-                    } else {
-                        battleFragment.setWaiting(false);
-                    }
+                    battleFragment.setRqid(requestJson.optInt("rqid", 0));
+                    battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
+                    battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
                     if (requestJson.has("forceSwitch")) {
                         JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
@@ -356,7 +343,10 @@ public class BattleMessage {
                             }
                         }
                     }
-                    battleFragment.showActionFrame(requestJson);
+
+                    if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
+                        battleFragment.showActionFrame(requestJson);
+                    }
                 } catch (JSONException e) {
                     new AlertDialog.Builder(battleFragment.getActivity())
                             .setMessage(R.string.request_error)

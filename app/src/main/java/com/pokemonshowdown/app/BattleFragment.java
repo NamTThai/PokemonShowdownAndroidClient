@@ -1422,6 +1422,10 @@ public class BattleFragment extends Fragment {
         return getPlayer1Team().get(mCurrentActivePokemon);
     }
 
+    public void setUpTeamPreview() {
+        Log.d(BTAG, "Switching");
+    }
+
     public void showActionFrame(final JSONObject json) {
         if (mWaiting) {
             return;
@@ -1436,14 +1440,10 @@ public class BattleFragment extends Fragment {
             }
         }
 
-        if (mTeamPreview) {
+        if (getCurrentActivePokemon().isForceSwitch()) {
             showSwitchFrame(json);
         } else {
-            if (getCurrentActivePokemon().isForceSwitch()) {
-                showSwitchFrame(json);
-            } else {
-                showAttackOrSwitchFrame(json);
-            }
+            showAttackOrSwitchFrame(json);
         }
     }
 
@@ -1681,6 +1681,39 @@ public class BattleFragment extends Fragment {
 
             if (info != null) {
                 PokemonInfoFragment.newInstance(info, false)
+                        .show(getActivity().getSupportFragmentManager(), BTAG);
+            }
+        }
+    }
+
+    public class PokemonSwitchListener implements View.OnClickListener {
+        private boolean mPlayer1;
+        private int mId;
+
+        public PokemonSwitchListener(boolean player1, int id) {
+            mPlayer1 = player1;
+            mId = id;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getVisibility() != View.VISIBLE) {
+                return;
+            }
+
+            PokemonInfo info = null;
+            if (mId > -1 && mPlayer1) {
+                if (mId < mPlayer1Team.size()) {
+                    info = mPlayer1Team.get(mId);
+                }
+            } else {
+                if (mId < mPlayer2Team.size()) {
+                    info = mPlayer2Team.get(mId);
+                }
+            }
+
+            if (info != null) {
+                PokemonInfoFragment.newInstance(info, true, mRoomId, mId)
                         .show(getActivity().getSupportFragmentManager(), BTAG);
             }
         }

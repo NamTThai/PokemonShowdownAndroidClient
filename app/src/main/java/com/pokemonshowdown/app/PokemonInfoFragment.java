@@ -23,15 +23,30 @@ public class PokemonInfoFragment extends DialogFragment {
     public final static String PTAG = PokemonInfoFragment.class.getName();
     public final static String POKEMON_INFO = "PokemonInfo";
     public final static String SWITCH = "Switch";
+    public final static String FRAGMENT_TAG = "Fragment Tag";
+    public final static String ID = "Id";
 
     private PokemonInfo mPokemonInfo;
     private boolean mSwitch;
+    private String mFragmentTag;
+    private int mId;
 
     public static PokemonInfoFragment newInstance(PokemonInfo pkm, boolean switchPkm) {
         PokemonInfoFragment fragment = new PokemonInfoFragment();
         Bundle args = new Bundle();
         args.putSerializable(POKEMON_INFO, pkm);
         args.putBoolean(SWITCH, switchPkm);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static PokemonInfoFragment newInstance(PokemonInfo pkm, boolean switchPkm, String tag, int id) {
+        PokemonInfoFragment fragment = new PokemonInfoFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(POKEMON_INFO, pkm);
+        args.putBoolean(SWITCH, switchPkm);
+        args.putString(FRAGMENT_TAG, tag);
+        args.putInt(ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,6 +60,8 @@ public class PokemonInfoFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         mPokemonInfo = (PokemonInfo) getArguments().getSerializable(POKEMON_INFO);
         mSwitch = getArguments().getBoolean(SWITCH);
+        mFragmentTag = getArguments().getString(FRAGMENT_TAG);
+        mId = getArguments().getInt(ID);
     }
 
     @Override
@@ -196,7 +213,12 @@ public class PokemonInfoFragment extends DialogFragment {
     }
 
     private void switchPkm() {
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        BattleFragment fragment = (BattleFragment) getChildFragmentManager()
+                .findFragmentByTag(mFragmentTag);
+        if (fragment != null) {
+            fragment.setUpTeamPreview();
+        }
+        this.dismiss();
     }
 
 }
