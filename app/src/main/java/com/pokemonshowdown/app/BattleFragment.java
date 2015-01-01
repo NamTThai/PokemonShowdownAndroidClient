@@ -1465,23 +1465,25 @@ public class BattleFragment extends Fragment {
         chosen = mChooseCommand.toString();
 
         if (mCurrentActivePokemon == mTotalActivePokemon) {
-            String lineUp = "";
-            for (int i = 1; i <= mPlayer1Team.size(); i++) {
-                lineUp += i;
+            int[] lineUp = new int[mPlayer1Team.size()];
+            for (int i = 0; i < mPlayer1Team.size(); i++) {
+                lineUp[i] = i;
             }
-            char[] lineUpChar = lineUp.toCharArray();
 
             for (int i = 0; i < chosen.length(); i++) {
-                int idx = Integer.parseInt(Character.toString(lineUpChar[i])) - 1;
-                lineUpChar[i] = (char) (((int) '0') + idx);
-                lineUpChar[idx] = (char) (((int) '0') + i);
+                int idx = Integer.parseInt(Character.toString(chosen.charAt(i))) - 1;
+                lineUp[i] = idx;
+                lineUp[idx] = i;
             }
 
-
+            mChooseCommand = new StringBuilder();
+            mChooseCommand.append("|/team ");
+            for (int i = 0; i < mPlayer1Team.size(); i++) {
+                lineUp[i]++;
+                mChooseCommand.append(Integer.toString(lineUp[i]));
+            }
 
             setTeamPreview(false);
-            mChooseCommand = new StringBuilder();
-            mChooseCommand.append("|/team ").append(lineUpChar);
             sendCommands(mChooseCommand);
         }
     }
