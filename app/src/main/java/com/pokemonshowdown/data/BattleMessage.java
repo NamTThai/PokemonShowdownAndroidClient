@@ -360,6 +360,8 @@ public class BattleMessage {
                             if (info.isActive()) {
                                 info.setForceSwitch(forceSwitchJsonArray.getBoolean(idx));
                                 idx++;
+                            } else {
+                                break;
                             }
                         }
                     }
