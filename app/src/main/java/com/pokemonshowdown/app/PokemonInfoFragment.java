@@ -218,7 +218,7 @@ public class PokemonInfoFragment extends DialogFragment {
         BattleFragment fragment = (BattleFragment) battleFieldFragment.getChildFragmentManager()
                 .findFragmentByTag(mFragmentTag);
         if (fragment != null) {
-            fragment.chooseLeadInTeamPreview(mId);
+            fragment.processSwitch(mId);
         }
         this.dismiss();
     }
