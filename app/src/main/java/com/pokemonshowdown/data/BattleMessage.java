@@ -195,7 +195,9 @@ public class BattleMessage {
                 break;
 
             case "clearpoke":
-                battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
+                if (battleFragment.getPlayer1Team() == null) {
+                    battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
+                }
                 battleFragment.setPlayer2Team(new ArrayList<PokemonInfo>());
                 break;
 
@@ -207,7 +209,10 @@ public class BattleMessage {
                 iconId = battleFragment.getIconId(playerType, team.size());
                 pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
                 processPokemonDetailString(pokemonInfo, split[1]);
-                team.add(pokemonInfo);
+                if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                        pokemonInfo.getName()) == -1) {
+                    team.add(pokemonInfo);
+                }
 
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override

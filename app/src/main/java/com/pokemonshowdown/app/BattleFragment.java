@@ -1433,10 +1433,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseLeadInTeamPreview(int id) {
-        if (mCurrentActivePokemon < mTotalActivePokemon) {
-            mChooseCommand.append(id + 1);
-            mCurrentActivePokemon++;
-        } else {
+        mChooseCommand.append(id + 1);
+        mCurrentActivePokemon++;
+
+        if (mCurrentActivePokemon == mTotalActivePokemon) {
             for (int i = 0; i < mPlayer1Team.size(); i++) {
                 String chosen = mChooseCommand.toString();
                 String idx = Integer.toString(i + 1);
