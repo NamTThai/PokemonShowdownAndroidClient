@@ -1458,20 +1458,26 @@ public class BattleFragment extends Fragment {
         if (chosen.contains(Integer.toString(id + 1))) {
             return;
         }
-        PokemonInfo toSwitch = getPlayer1Team().remove(id);
-        getPlayer1Team().add(mCurrentActivePokemon, toSwitch);
+
         mChooseCommand.append(id + 1);
         mCurrentActivePokemon++;
 
+        chosen = mChooseCommand.toString();
+
         if (mCurrentActivePokemon == mTotalActivePokemon) {
-            for (int i = 0; i < mPlayer1Team.size(); i++) {
-                chosen = mChooseCommand.toString();
-                String idx = Integer.toString(i + 1);
-                if (!chosen.contains(idx)) {
-                    mChooseCommand.append(idx);
-                    setTeamPreview(false);
-                }
+            String lineUp = "";
+            for (int i = 1; i <= mPlayer1Team.size(); i++) {
+                lineUp += i;
             }
+            char[] lineUpChar = lineUp.toCharArray();
+
+            for (int i = 0; i < chosen.length(); i++) {
+                int idx = Integer.parseInt(Character.toString(lineUpChar[i])) - 1;
+                lineUpChar[i] = (char) (((int) '0') + idx);
+                lineUpChar[idx] = (char) (((int) '0') + i);
+            }
+            
+            setTeamPreview(false);
             mChooseCommand.insert(0, "|/team ");
             sendCommands(mChooseCommand);
         }
