@@ -58,15 +58,17 @@
 
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:weightSum="2">
 
             <LinearLayout
                 android:id="@+id/active_move3"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/editable_frame"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
+                android:paddingBottom="2dp"
+                android:paddingTop="2dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -83,8 +85,9 @@
 
             <LinearLayout
                 android:id="@+id/active_move4"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/editable_frame"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
