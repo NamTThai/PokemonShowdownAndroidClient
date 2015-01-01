@@ -53,7 +53,7 @@ public class BattleFragment extends Fragment {
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, ACTION_COMMAND,
+        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -85,7 +85,6 @@ public class BattleFragment extends Fragment {
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
     private StringBuilder mChooseCommand = new StringBuilder();
-    private ArrayList<String> mActionCommands = new ArrayList<>();
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -163,7 +162,6 @@ public class BattleFragment extends Fragment {
                     mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
                     mChooseCommand = (StringBuilder) viewBundle.get(ViewBundle.CHOOSE_COMMAND);
-                    mActionCommands = (ArrayList<String>) viewBundle.get(ViewBundle.ACTION_COMMAND);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -269,7 +267,6 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
             viewBundle.put(ViewBundle.CHOOSE_COMMAND, mChooseCommand);
-            viewBundle.put(ViewBundle.ACTION_COMMAND, mActionCommands);
             viewBundle.put(ViewBundle.PLAYER1_NAME,
                     ((TextView) getView().findViewById(R.id.username)).getText());
             viewBundle.put(ViewBundle.PLAYER1_AVATAR,
@@ -1425,22 +1422,6 @@ public class BattleFragment extends Fragment {
         MyApplication.getMyApplication().sendClientMessage(command.toString());
     }
 
-    private void sendCommands() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getRoomId()).append("|/choose ");
-        int idx = 0;
-        for (String command : mActionCommands) {
-            stringBuilder.append(command);
-            idx++;
-            if (idx != mActionCommands.size()) {
-                stringBuilder.append(",");
-            }
-        }
-        stringBuilder.append("|").append(getRqid());
-        Log.d(BTAG, stringBuilder.toString());
-        MyApplication.getMyApplication().sendClientMessage(stringBuilder.toString());
-    }
-
     private PokemonInfo getCurrentActivePokemon() {
         return getPlayer1Team().get(mCurrentActivePokemon);
     }
@@ -1499,13 +1480,11 @@ public class BattleFragment extends Fragment {
         if (mCurrentActivePokemon == mTotalActivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
             sendCommands(mChooseCommand);
-            triggerSwitchOptions(false);
         }
     }
 
     public void resetChooseCommand() {
         mChooseCommand = new StringBuilder();
-        mActionCommands.clear();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
         for (PokemonInfo pokemonInfo : getPlayer1Team()) {
@@ -1612,6 +1591,7 @@ public class BattleFragment extends Fragment {
         }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
+        triggerSwitchOptions(false);
     }
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
