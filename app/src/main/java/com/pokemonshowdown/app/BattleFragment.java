@@ -50,12 +50,10 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
-    private int mRqid;
-    private boolean mTeamPreview;
-    private boolean mWaiting;
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
+        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, ACTION_COMMAND,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -81,10 +79,12 @@ public class BattleFragment extends Fragment {
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
-
+    private int mRqid;
+    private boolean mTeamPreview;
+    private boolean mWaiting;
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
-    private ArrayList<String> mActionCommands = new ArrayList<String>();
+    private ArrayList<String> mActionCommands = new ArrayList<>();
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -156,6 +156,12 @@ public class BattleFragment extends Fragment {
                     }
                     mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
+                    mRqid = (Integer) viewBundle.get(ViewBundle.REQUEST_ID);
+                    mTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAM_PREVIEW);
+                    mWaiting = (Boolean) viewBundle.get(ViewBundle.WAITING);
+                    mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
+                    mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
+                    mActionCommands = (ArrayList<String>) viewBundle.get(ViewBundle.ACTION_COMMAND);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -255,6 +261,12 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.BATTLING, mBattling);
             viewBundle.put(ViewBundle.CURRENT_WEATHER, mCurrentWeather);
             viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
+            viewBundle.put(ViewBundle.REQUEST_ID, mRqid);
+            viewBundle.put(ViewBundle.TEAM_PREVIEW, mTeamPreview);
+            viewBundle.put(ViewBundle.WAITING, mWaiting);
+            viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
+            viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
+            viewBundle.put(ViewBundle.ACTION_COMMAND, mActionCommands);
             viewBundle.put(ViewBundle.PLAYER1_NAME,
                     ((TextView) getView().findViewById(R.id.username)).getText());
             viewBundle.put(ViewBundle.PLAYER1_AVATAR,
