@@ -354,10 +354,6 @@ public class BattleMessage {
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
                     battleFragment.setRequestJson(requestJson);
-                    if (battleFragment.getAnimatorSetQueue().isEmpty()) {
-                        battleFragment.startRequest();
-                    }
-
                 } catch (JSONException e) {
                     ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
                     break;

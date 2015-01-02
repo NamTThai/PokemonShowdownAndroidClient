@@ -1529,6 +1529,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void startRequest() {
+        if (getRequestJson() == null) {
+            return;
+        }
+
         try {
             if (getRqid() != 0 && !isTeamPreview()) {
                 resetChooseCommand();
