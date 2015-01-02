@@ -3,7 +3,6 @@ package com.pokemonshowdown.data;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -26,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pokemonshowdown.app.BattleFieldActivity;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
@@ -339,45 +339,29 @@ public class BattleMessage {
                         }
                     }
 
+                    if (requestJson.has("side")) {
+                        JSONObject sideJson = requestJson.getJSONObject("side");
+                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                        for (int i = 0; i < teamJson.length(); i++) {
+                            JSONObject pkm = teamJson.getJSONObject(i);
+                            battleFragment.getPlayer1Team().get(i)
+                                    .setActive(pkm.getBoolean("active"));
+                        }
+                    }
+
                     battleFragment.setRqid(requestJson.optInt("rqid", 0));
                     battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
-                    if (requestJson.has("forceSwitch")) {
-                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                        int idx = 0;
-                        for (PokemonInfo info : battleFragment.getPlayer1Team()) {
-                            if (info.isActive()) {
-                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(idx));
-                                idx++;
-                            }
-                        }
-                    }
-
-                    if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
-                        battleFragment.startAction(requestJson);
-                    }
+                    battleFragment.setRequestJson(requestJson);
                 } catch (JSONException e) {
-                    new AlertDialog.Builder(battleFragment.getActivity())
-                            .setMessage(R.string.request_error)
-                            .create()
-                            .show();
-                    return;
+                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
+                    break;
                 }
                 break;
 
             case "inactive":
                 final String inactive;
-                final String player;
-                if ((messageDetails.startsWith(battleFragment.getPlayer1())) || (messageDetails.startsWith("Player 1"))) {
-                    player = "p1";
-                } else {
-                    if ((messageDetails.startsWith(battleFragment.getPlayer2())) || (messageDetails.startsWith("Player 2"))) {
-                        player = "p2";
-                    } else {
-                        break;
-                    }
-                }
                 if (messageDetails.contains(" seconds left")) {
                     remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
                     inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
@@ -387,28 +371,15 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (player.equals("p1")) {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                        if (battleFragment.getView() == null) {
+                            viewData.addViewSetterOnHold(R.id.inactive, inactive,
+                                    BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                            viewData.addViewSetterOnHold(R.id.inactive, null,
+                                    BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
                         } else {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive_o, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive_o);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
+                            textView.setVisibility(View.VISIBLE);
+                            textView.setText(inactive);
                         }
                     }
                 });
@@ -425,11 +396,8 @@ public class BattleMessage {
                         if (battleFragment.getView() == null) {
                             viewData.addViewSetterOnHold(R.id.inactive, null,
                                     BattleFieldData.ViewData.SetterType.VIEW_GONE);
-                            viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                    BattleFieldData.ViewData.SetterType.VIEW_GONE);
                         } else {
                             battleFragment.getView().findViewById(R.id.inactive).setVisibility(View.GONE);
-                            battleFragment.getView().findViewById(R.id.inactive_o).setVisibility(View.GONE);
                         }
                     }
                 });
@@ -762,7 +730,6 @@ public class BattleMessage {
                         battleFragment.getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) battleFragment.getView().findViewById(R.id.turn)).setText(toAppend);
                         (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        (battleFragment.getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
 
                     @Override
@@ -4003,6 +3970,39 @@ public class BattleMessage {
                             });
                         }
                         break;
+                    case "PrimordalSea":
+                        if (upkeep) {
+                            toAppendBuilder.append("There's no relief from this heavy rain!");
+                        } else {
+                            toAppendBuilder.append("A heavy rain began to fall!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
                     case "Sandstorm":
                         if (upkeep) {
                             toAppendBuilder.append("The sandstorm rages.");
@@ -4070,6 +4070,39 @@ public class BattleMessage {
                             });
                         }
                         break;
+                    case "DesolateLand":
+                        if (upkeep) {
+                            toAppendBuilder.append("The extremely harsh sunlight was not lessened at all!");
+                        } else {
+                            toAppendBuilder.append("The sunlight turned extremely harsh!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
                     case "Hail":
                         if (upkeep) {
                             toAppendBuilder.append("The hail crashes down.");
@@ -4103,14 +4136,52 @@ public class BattleMessage {
                             });
                         }
                         break;
+                    case "DeltaStream":
+                        if (upkeep) {
+                            toAppendBuilder.append("The mysterious air current blows on regardless!");
+                        } else {
+                            toAppendBuilder.append("A mysterious air current starts to blow!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
                     case "none":
                         if (battleFragment.isWeatherExist()) {
                             switch (battleFragment.getCurrentWeather()) {
                                 case "RainDance":
                                     toAppendBuilder.append("The rain stopped.");
                                     break;
+                                case "PrimordalSea":
+                                    toAppendBuilder.append("The heavy rain has lifted!");
+                                    break;
                                 case "SunnyDay":
                                     toAppendBuilder.append("The sunlight faded.");
+                                    break;
+                                case "DesolateLand":
+                                    toAppendBuilder.append("The harsh sunlight faded.");
                                     break;
                                 case "Sandstorm":
                                     toAppendBuilder.append("The sandstorm subsided.");
@@ -4118,6 +4189,8 @@ public class BattleMessage {
                                 case "Hail":
                                     toAppendBuilder.append("The hail stopped.");
                                     break;
+                                case "DeltaStream":
+                                    toAppendBuilder.append("The mysterious wind stopped.");
                             }
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
@@ -4154,7 +4227,6 @@ public class BattleMessage {
                 animatorSet.play(toast);
                 battleFragment.startAnimation(animatorSet, message);
                 break;
-
 
             case "-fieldstart":
                 attackerOutputName = ofSource;
@@ -4209,7 +4281,7 @@ public class BattleMessage {
                         break;
 
                     default:
-                        toAppendBuilder.append(battleFragment.getPrintable(split[1])).append(" started!");
+                        toAppendBuilder.append(battleFragment.getPrintable(split[0])).append(" started!");
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
@@ -4271,7 +4343,7 @@ public class BattleMessage {
                         break;
 
                     default:
-                        toAppendBuilder.append(battleFragment.getPrintable(split[1])).append(" ended!");
+                        toAppendBuilder.append(battleFragment.getPrintable(split[0])).append(" ended!");
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
@@ -4368,7 +4440,7 @@ public class BattleMessage {
 
     private static int processHpFraction(String hpFraction) {
         int status = hpFraction.indexOf(' ');
-        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
+        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(0, status);
         int fraction = hpFraction.indexOf('/');
         if (fraction == -1) {
             return 0;

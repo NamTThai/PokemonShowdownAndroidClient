@@ -26,10 +26,10 @@ public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
     private Pokemon mPokemon;
 
-    public final static String ARGUMENT_POKEMON = "Pokemon";
-    public final static String ARGUMENT_SEARCH = "Search";
-    public final static String ARGUMENT_SEARCH_CODE = "Search Code";
-    public final static String ARGUMENT_USE_STAGES = "Stages";
+    public final static String POKEMON = "Pokemon";
+    public final static String SEARCH = "Search";
+    public final static String SEARCH_CODE = "Search Code";
+    public final static String STAGES = "Stages";
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -47,7 +47,7 @@ public class PokemonFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPokemon = (Pokemon) getArguments().getSerializable(ARGUMENT_POKEMON);
+        mPokemon = (Pokemon) getArguments().getSerializable(POKEMON);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
-        if (getArguments().getBoolean("Search")) {
+        if (getArguments().getBoolean(SEARCH)) {
             addSearchWidget(view);
         }
 
@@ -100,8 +100,8 @@ public class PokemonFragment extends DialogFragment {
                 bundle.putFloatArray(StatsDialog.ARGUMENT_NATURE_MULTIPLIER, getPokemon().getNatureMultiplier());
                 bundle.putIntArray(StatsDialog.ARGUMENT_STAGES, getPokemon().getStages());
 
-                if (getArguments().containsKey(ARGUMENT_USE_STAGES)) {
-                    bundle.putBoolean(StatsDialog.ARGUMENT_SHOW_STAGES, getArguments().getBoolean(ARGUMENT_USE_STAGES));
+                if (getArguments().containsKey(STAGES)) {
+                    bundle.putBoolean(StatsDialog.ARGUMENT_SHOW_STAGES, getArguments().getBoolean(STAGES));
                 }
 
                 statsDialog.setArguments(bundle);
@@ -216,7 +216,7 @@ public class PokemonFragment extends DialogFragment {
                 closeFragment();
                 Intent intent = new Intent(getActivity(), SearchableActivity.class);
                 intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
-                getActivity().startActivityForResult(intent, getArguments().getInt("Search Code"));
+                getActivity().startActivityForResult(intent, getArguments().getInt(SEARCH_CODE));
             }
         });
     }

@@ -3,6 +3,8 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
+import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
 
@@ -53,7 +56,7 @@ public class BattleFragment extends Fragment {
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, ACTION_COMMAND,
+        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -85,7 +88,7 @@ public class BattleFragment extends Fragment {
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
     private StringBuilder mChooseCommand = new StringBuilder();
-    private ArrayList<String> mActionCommands = new ArrayList<>();
+    private JSONObject mRequestJson;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -163,7 +166,6 @@ public class BattleFragment extends Fragment {
                     mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
                     mChooseCommand = (StringBuilder) viewBundle.get(ViewBundle.CHOOSE_COMMAND);
-                    mActionCommands = (ArrayList<String>) viewBundle.get(ViewBundle.ACTION_COMMAND);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -269,7 +271,6 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
             viewBundle.put(ViewBundle.CHOOSE_COMMAND, mChooseCommand);
-            viewBundle.put(ViewBundle.ACTION_COMMAND, mActionCommands);
             viewBundle.put(ViewBundle.PLAYER1_NAME,
                     ((TextView) getView().findViewById(R.id.username)).getText());
             viewBundle.put(ViewBundle.PLAYER1_AVATAR,
@@ -446,6 +447,18 @@ public class BattleFragment extends Fragment {
         });
     }
 
+    public JSONObject getRequestJson() {
+        return mRequestJson;
+    }
+
+    public void setRequestJson(JSONObject getRequestJson) {
+        mRequestJson = getRequestJson;
+    }
+
+    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
+        return mAnimatorSetQueue;
+    }
+
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
@@ -455,6 +468,8 @@ public class BattleFragment extends Fragment {
         String holderString = mPlayer1;
         mPlayer1 = mPlayer2;
         mPlayer2 = holderString;
+        ((TextView) getView().findViewById(R.id.username)).setText(mPlayer1);
+        ((TextView) getView().findViewById(R.id.username_o)).setText(mPlayer2);
 
         ArrayList<PokemonInfo> holderTeam = mPlayer1Team;
         mPlayer1Team = mPlayer2Team;
@@ -467,10 +482,14 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(String message) {
-        if (mBattling == -1) {
-            message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+        try {
+            if (mBattling == -1) {
+                message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+            }
+            BattleMessage.processMajorAction(this, message);
+        } catch (Exception e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
         }
-        BattleMessage.processMajorAction(this, message);
     }
 
     public AnimatorSet makeMinorToast(final Spannable message) {
@@ -592,6 +611,8 @@ public class BattleFragment extends Fragment {
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
+                        } else {
+                            startRequest();
                         }
                     }
 
@@ -1410,8 +1431,12 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void addCommand(String command) {
-        mActionCommands.add(command);
+    public void addCommand(String command) {
+        String chosen = mChooseCommand.toString();
+        if (chosen.length() != 0) {
+            mChooseCommand.append(",");
+        }
+        mChooseCommand.append(command);
     }
 
     private void sendCommands(StringBuilder command) {
@@ -1419,22 +1444,6 @@ public class BattleFragment extends Fragment {
         command.append("|").append(getRqid());
         Log.d(BTAG, command.toString());
         MyApplication.getMyApplication().sendClientMessage(command.toString());
-    }
-
-    private void sendCommands() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getRoomId()).append("|/choose ");
-        int idx = 0;
-        for (String command : mActionCommands) {
-            stringBuilder.append(command);
-            idx++;
-            if (idx != mActionCommands.size()) {
-                stringBuilder.append(",");
-            }
-        }
-        stringBuilder.append("|").append(getRqid());
-        Log.d(BTAG, stringBuilder.toString());
-        MyApplication.getMyApplication().sendClientMessage(stringBuilder.toString());
     }
 
     private PokemonInfo getCurrentActivePokemon() {
@@ -1454,32 +1463,68 @@ public class BattleFragment extends Fragment {
         if (chosen.contains(Integer.toString(id + 1))) {
             return;
         }
-        PokemonInfo toSwitch = getPlayer1Team().remove(id);
-        getPlayer1Team().add(mCurrentActivePokemon, toSwitch);
+
         mChooseCommand.append(id + 1);
         mCurrentActivePokemon++;
 
+        chosen = mChooseCommand.toString();
+
         if (mCurrentActivePokemon == mTotalActivePokemon) {
+            int[] lineUp = new int[mPlayer1Team.size()];
             for (int i = 0; i < mPlayer1Team.size(); i++) {
-                chosen = mChooseCommand.toString();
-                String idx = Integer.toString(i + 1);
-                if (!chosen.contains(idx)) {
-                    mChooseCommand.append(idx);
-                    setTeamPreview(false);
-                }
+                lineUp[i] = i;
             }
-            mChooseCommand.insert(0, "|/team ");
+
+            for (int i = 0; i < chosen.length(); i++) {
+                int idx = Integer.parseInt(Character.toString(chosen.charAt(i))) - 1;
+                lineUp[i] = idx;
+                lineUp[idx] = i;
+            }
+
+            mChooseCommand = new StringBuilder();
+            mChooseCommand.append("|/team ");
+            for (int i = 0; i < mPlayer1Team.size(); i++) {
+                lineUp[i]++;
+                mChooseCommand.append(Integer.toString(lineUp[i]));
+            }
+
+            setTeamPreview(false);
             sendCommands(mChooseCommand);
         }
     }
 
-    public void chooseSwitch(int id) {
+    public void chooseForceSwitch(JSONArray forceSwitch) throws JSONException {
+        for (int i = 0; i < forceSwitch.length(); i++) {
+            if (forceSwitch.getBoolean(i)) {
+                triggerSwitchOptions(true);
+            } else {
+                mCurrentActivePokemon++;
+                addCommand("pass");
 
+                if (mCurrentActivePokemon == mTotalActivePokemon) {
+                    mChooseCommand.insert(0, "|/choose ");
+                    sendCommands(mChooseCommand);
+                }
+            }
+        }
+    }
+
+    public void chooseSwitch(int id) {
+        String chosen = mChooseCommand.toString();
+        if (chosen.contains("switch " + (id + 1))) {
+            return;
+        }
+        addCommand("switch " + Integer.toString(id + 1));
+        mCurrentActivePokemon++;
+
+        if (mCurrentActivePokemon == mTotalActivePokemon) {
+            mChooseCommand.insert(0, "|/choose ");
+            sendCommands(mChooseCommand);
+        }
     }
 
     public void resetChooseCommand() {
         mChooseCommand = new StringBuilder();
-        mActionCommands.clear();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
         for (PokemonInfo pokemonInfo : getPlayer1Team()) {
@@ -1489,94 +1534,85 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void startAction(final JSONObject json) {
+    public void startRequest() {
+        if (getRequestJson() == null) {
+            return;
+        }
+
+        try {
+            if (getRqid() != 0 && !isTeamPreview()) {
+                resetChooseCommand();
+                if (getRequestJson().has("forceSwitch")) {
+                    JSONArray forceSwitchJsonArray = getRequestJson().getJSONArray("forceSwitch");
+                    chooseForceSwitch(forceSwitchJsonArray);
+                } else {
+                    startAction(getRequestJson().getJSONArray("active"));
+                }
+            }
+            setRequestJson(null);
+        } catch (JSONException e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+        }
+    }
+
+    public void startAction(final JSONArray active) {
         if (mWaiting) {
             return;
         }
 
-        resetChooseCommand();
-
-        if (getCurrentActivePokemon().isForceSwitch()) {
-            triggerSwitch(true);
-        } else {
-            //showAttackOrSwitchFrame(json);
-            triggerSwitch(true);
-        }
+        triggerAttackOptions(active);
+        triggerSwitchOptions(true);
     }
 
-    private void showAttackOrSwitchFrame(final JSONObject json) {
+    private void triggerAttackOptions(final JSONArray active) {
         if (getView() == null) {
             return;
         }
-        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
-        frameLayout.removeAllViews();
 
-        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_move_or_switch, frameLayout);
-        getView().findViewById(R.id.battle_attack_textview)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // switch to attack layout
-                        showAttackFrame(json);
-                    }
-                });
-
-        getView().findViewById(R.id.battle_switch_textview)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // switch to switch layout
-                        //triggerSwitch(json);
-                    }
-                });
-        
-        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
-        TextView textView = (TextView) getView().findViewById(R.id.battle_pokemon_name_textview);
-        textView.setText(String.format(getResources().getString(R.string.battle_pokemon_name), currentPokemonInfo.getName()));
-    }
-
-    private void showAttackFrame(final JSONObject json) {
-        if (getView() == null) {
-            return;
-        }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
 
         getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
-        TextView[] textViews = new TextView[4];
-        textViews[0] = (TextView) getView().findViewById(R.id.active_move1_name);
-        textViews[1] = (TextView) getView().findViewById(R.id.active_move2_name);
-        textViews[2] = (TextView) getView().findViewById(R.id.active_move3_name);
-        textViews[3] = (TextView) getView().findViewById(R.id.active_move4_name);
+        RelativeLayout[] moveViews = new RelativeLayout[4];
+        moveViews[0] = (RelativeLayout) getView().findViewById(R.id.active_move1);
+        moveViews[1] = (RelativeLayout) getView().findViewById(R.id.active_move2);
+        moveViews[2] = (RelativeLayout) getView().findViewById(R.id.active_move3);
+        moveViews[3] = (RelativeLayout) getView().findViewById(R.id.active_move4);
+        TextView[] moveNames = new TextView[4];
+        moveNames[0] = (TextView) getView().findViewById(R.id.active_move1_name);
+        moveNames[1] = (TextView) getView().findViewById(R.id.active_move2_name);
+        moveNames[2] = (TextView) getView().findViewById(R.id.active_move3_name);
+        moveNames[3] = (TextView) getView().findViewById(R.id.active_move4_name);
+        TextView[] movePps = new TextView[4];
+        movePps[0] = (TextView) getView().findViewById(R.id.active_move1_pp);
+        movePps[1] = (TextView) getView().findViewById(R.id.active_move2_pp);
+        movePps[2] = (TextView) getView().findViewById(R.id.active_move3_pp);
+        movePps[3] = (TextView) getView().findViewById(R.id.active_move4_pp);
+        ImageView[] moveIcons = new ImageView[4];
+        moveIcons[0] = (ImageView) getView().findViewById(R.id.active_move1_icon);
+        moveIcons[1] = (ImageView) getView().findViewById(R.id.active_move2_icon);
+        moveIcons[2] = (ImageView) getView().findViewById(R.id.active_move3_icon);
+        moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
         try {
-            JSONArray active = json.getJSONArray("active");
             JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
             for (int i = 0; i < moves.length(); i++) {
-                final String moveName = moves.getJSONObject(i).getString("move");
-                textViews[i].setText(moveName);
-                textViews[i].setEnabled(!moves.getJSONObject(i).getBoolean("disabled"));
-                textViews[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
-                        if(checkBox.isChecked()) {
-                            addCommand("move " + moveName + " mega");
-                        } else {
-                            addCommand("move " + moveName);
-                        }
-                        clearActionFrame();
-                        mCurrentActivePokemon++;
-                        if (mCurrentActivePokemon < mTotalActivePokemon) {
-                            showAttackOrSwitchFrame(json);
-                        } else {
-                            sendCommands();
-                        }
-                    }
-                });
+                JSONObject moveJson = moves.getJSONObject(i);
+                moveNames[i].setText(moveJson.getString("move"));
+                movePps[i].setText(moveJson.getString("pp"));
+                int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
+                moveIcons[i].setImageResource(typeIcon);
+                moveViews[i].setOnClickListener(parseMoveTarget(active, i));
+                if (moveJson.getBoolean("disabled")) {
+                    moveViews[i].setOnClickListener(null);
+                    moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
+                }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(e.toString())
+                    .create()
+                    .show();
         }
 
         PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
@@ -1589,7 +1625,221 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void triggerSwitch(boolean on) {
+    private View.OnClickListener parseMoveTarget(final JSONArray active, final int moveId) throws JSONException {
+        if (getView() == null) {
+            return null;
+        }
+
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
+                    if (targetDialog == null) {
+                        parseMoveCommandAndSend(active, moveId, 0);
+                    } else {
+                        targetDialog.show();
+                    }
+                } catch (JSONException e) {
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                }
+            }
+        };
+    }
+
+    private AlertDialog parseMoveTargetDialog(final JSONArray active, final int moveId) throws JSONException {
+        final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
+                .getJSONArray("moves")
+                .getJSONObject(moveId);
+        String target = moveJson.getString("target");
+
+        int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
+        int endFoe = (mCurrentActivePokemon + 1 >=  getPlayer2Team().size()) ?
+                getPlayer2Team().size() - 1 : mCurrentActivePokemon + 1;
+        int endAlly = (mCurrentActivePokemon + 1 >=  getPlayer1Team().size()) ?
+                getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
+
+        final String[] foes = new String[3];
+        final int[] foeIcons = new int[3];
+        int foeIndex = 0;
+        for (int i = start; i <= endFoe; i++) {
+            PokemonInfo pkm = getPlayer2Team().get(i);
+            if (checkSwitchedOut(false, i)) {
+                foes[foeIndex] = pkm.getName();
+                foeIcons[foeIndex] = pkm.getIcon(getActivity());
+                foeIndex++;
+            }
+        }
+
+        final String[] allyOrSelf = new String[3];
+        final int[] aosIcons = new int[3];
+        int aosIndex = 0;
+        for (int i = start; i <= endAlly; i++) {
+            PokemonInfo pkm = getPlayer1Team().get(i);
+            if (checkSwitchedOut(true, i)) {
+                allyOrSelf[aosIndex] = pkm.getName();
+                aosIcons[aosIndex] = pkm.getIcon(getActivity());
+                aosIndex++;
+            }
+        }
+
+        final String[] allies = new String[2];
+        final int[] allyIcons = new int[2];
+        int allyIndex = 0;
+        for (int i = start; i <= endAlly; i++) {
+            PokemonInfo pkm = getPlayer1Team().get(i);
+            if (i != mCurrentActivePokemon && checkSwitchedOut(true, i)) {
+                allies[allyIndex] = pkm.getName();
+                allyIcons[allyIndex] = pkm.getIcon(getActivity());
+                allyIndex++;
+            }
+        }
+
+        String[] allTargets;
+        final int numFoes = foeIndex;
+        final int currentActive = mCurrentActivePokemon;
+        switch(target) {
+            case "normal":
+                if ((foeIndex + allyIndex) < 2) {
+                    return null;
+                }
+
+                allTargets = new String[foeIndex + allyIndex];
+                System.arraycopy(foes, 0, allTargets, 0, foeIndex);
+                System.arraycopy(allies, 0, allTargets, foeIndex, allyIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which < numFoes) {
+                                    parseMoveCommandAndSend(active, moveId, which + 1);
+                                } else {
+                                    parseMoveCommandAndSend(active, moveId, (which - numFoes + 1) * -1);
+                                }
+                                dialog.dismiss();
+                            }
+                        }).create();
+            case "adjacentFoe":
+                if (foeIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[foeIndex];
+                System.arraycopy(foes, 0, allTargets, 0, foeIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                parseMoveCommandAndSend(active, moveId, which + 1);
+                                dialog.dismiss();
+                            }
+                        }).create();
+            case "adjacentAlly":
+                if (allyIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[allyIndex];
+                System.arraycopy(allies, 0, allTargets, 0, allyIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int pos = (which < currentActive) ? which : which + 1;
+                                parseMoveCommandAndSend(active, moveId, (pos + 1) * -1);
+                                dialog.dismiss();
+                            }
+                        }).create();
+            case "adjacentAllyOrSelf":
+                if (aosIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[aosIndex];
+                System.arraycopy(allyOrSelf, 0, allTargets, 0, aosIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                parseMoveCommandAndSend(active, moveId, (which + 1) * -1);
+                                dialog.dismiss();
+                            }
+                        }).create();
+            default:
+                return null;
+        }
+    }
+
+    private boolean checkSwitchedOut(boolean player1, int pos) {
+        if (getView() == null) {
+            return false;
+        }
+
+        if (player1) {
+            switch (pos) {
+                case 0:
+                    return getView().findViewById(R.id.p1a).getVisibility() == View.VISIBLE;
+                case 1:
+                    return getView().findViewById(R.id.p1b).getVisibility() == View.VISIBLE;
+                case 2:
+                    return getView().findViewById(R.id.p1c).getVisibility() == View.VISIBLE;
+                default:
+                    return false;
+            }
+        } else {
+            switch (pos) {
+                case 0:
+                    return getView().findViewById(R.id.p2a).getVisibility() == View.VISIBLE;
+                case 1:
+                    return getView().findViewById(R.id.p2b).getVisibility() == View.VISIBLE;
+                case 2:
+                    return getView().findViewById(R.id.p2c).getVisibility() == View.VISIBLE;
+                default:
+                    return false;
+            }
+        }
+    }
+
+    private void parseMoveCommandAndSend(JSONArray active, int moveId, int position){
+        if (getView() == null) {
+            return;
+        }
+
+        try {
+            JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
+                    .getJSONArray("moves")
+                    .getJSONObject(moveId);
+
+            String moveName = moveJson.getString("move");
+            String command;
+
+            CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+            if (checkBox.isChecked()) {
+                command = "move " + moveName + " mega";
+            } else {
+                command = "move " + moveName;
+            }
+
+            if (position != 0) {
+                command += " " + position;
+            }
+
+            addCommand(command);
+            clearActionFrame();
+            mCurrentActivePokemon++;
+
+            if (mCurrentActivePokemon < mTotalActivePokemon) {
+                startAction(active);
+            } else {
+                mChooseCommand.insert(0, "|/choose ");
+                sendCommands(mChooseCommand);
+            }
+        } catch (JSONException e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+        }
+    }
+
+    private void triggerSwitchOptions(boolean on) {
         if (getView() == null) {
             return;
         }
@@ -1599,6 +1849,7 @@ public class BattleFragment extends Fragment {
             ImageView icon = (ImageView) getView().findViewById(getIconId("p1", i));
             if (on) {
                 if (!pkm.isActive() && pkm.getHp() > 0) {
+                    Log.d(BTAG, pkm.getName() + " has HP " + pkm.getHp());
                     icon.setBackgroundResource(R.drawable.editable_frame);
                     icon.setOnClickListener(new PokemonSwitchListener(true, i));
                 }
@@ -1615,6 +1866,7 @@ public class BattleFragment extends Fragment {
         }
         FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
         frameLayout.removeAllViews();
+        triggerSwitchOptions(false);
     }
 
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
