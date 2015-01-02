@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -1542,12 +1543,16 @@ public class BattleFragment extends Fragment {
                 JSONObject moveJson = moves.getJSONObject(i);
                 moveNames[i].setText(moveJson.getString("move"));
                 movePps[i].setText(moveJson.getString("pp"));
-                //moveNames[i].setEnabled(!moves.getJSONObject(i).getBoolean("disabled"));
                 moveViews[i].setOnClickListener(parseMoveTarget(moveJson));
+                if (moveJson.getBoolean("disabled")) {
+                    moveViews[i].setOnClickListener(null);
+                    moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
+                }
             }
         } catch (JSONException e) {
             new AlertDialog.Builder(getActivity())
                     .setMessage(e.toString())
+                    .create()
                     .show();
         }
 
@@ -1561,36 +1566,178 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private View.OnClickListener parseMoveTarget(final JSONObject json) throws JSONException{
+    private View.OnClickListener parseMoveTarget(final JSONObject json) throws JSONException {
         if (getView() == null) {
             return null;
         }
 
+        final AlertDialog targetDialog = parseMoveTargetDialog(json);
+
+        if (targetDialog == null) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parseMoveCommandAndSend(json, 0);
+                }
+            };
+        } else {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    targetDialog.show();
+                }
+            };
+        }
+    }
+
+    private AlertDialog parseMoveTargetDialog(final JSONObject json) throws JSONException {
         String target = json.getString("target");
-        final String moveName = json.getString("move");
-        switch (target) {
+
+        int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
+        int endFoe = (mCurrentActivePokemon + 1 >=  getPlayer2Team().size()) ?
+                getPlayer2Team().size() : mCurrentActivePokemon + 1;
+        int endAlly = (mCurrentActivePokemon + 1 >=  getPlayer1Team().size()) ?
+                getPlayer1Team().size() : mCurrentActivePokemon + 1;
+
+        final String[] foes = new String[3];
+        final int[] foeIcons = new int[3];
+        int foeIndex = 0;
+        for (int i = start; i < endFoe; i++) {
+            PokemonInfo pkm = getPlayer2Team().get(i);
+            if (pkm.isActive()) {
+                foes[foeIndex] = pkm.getName();
+                foeIcons[foeIndex] = pkm.getIcon(getActivity());
+                foeIndex++;
+            }
+        }
+
+        final String[] allyOrSelf = new String[3];
+        final int[] aosIcons = new int[3];
+        int aosIndex = 0;
+        for (int i = start; i < endAlly; i++) {
+            PokemonInfo pkm = getPlayer1Team().get(i);
+            if (pkm.isActive()) {
+                allyOrSelf[aosIndex] = pkm.getName();
+                aosIcons[aosIndex] = pkm.getIcon(getActivity());
+                aosIndex++;
+            }
+        }
+
+        final String[] allies = new String[2];
+        final int[] allyIcons = new int[2];
+        int allyIndex = 0;
+        for (int i = start; i < endAlly; i++) {
+            PokemonInfo pkm = getPlayer1Team().get(i);
+            if (i != mCurrentActivePokemon && pkm.isActive()) {
+                allies[allyIndex] = pkm.getName();
+                allyIcons[allyIndex] = pkm.getIcon(getActivity());
+                allyIndex++;
+            }
+        }
+
+        String[] allTargets;
+        final int numFoes = foeIndex;
+        final int currentActive = mCurrentActivePokemon;
+        switch(target) {
             case "normal":
-                return null;
+                if ((foeIndex + allyIndex) < 2) {
+                    return null;
+                }
+
+                allTargets = new String[foeIndex + allyIndex];
+                System.arraycopy(allTargets, 0, foes, 0, foeIndex);
+                System.arraycopy(allTargets, foeIndex, allies, 0, allyIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which < numFoes) {
+                                    parseMoveCommandAndSend(json, which + 1);
+                                } else {
+                                    parseMoveCommandAndSend(json, (which - numFoes + 1) * -1);
+                                }
+                            }
+                        }).create();
+            case "adjacentFoe":
+                if (foeIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[foeIndex];
+                System.arraycopy(allTargets, 0, foes, 0, foeIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                parseMoveCommandAndSend(json, which + 1);
+                            }
+                        }).create();
+            case "adjacentAlly":
+                if (allyIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[allyIndex];
+                System.arraycopy(allTargets, 0, allies, 0, allyIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int pos = (which < currentActive) ? which : which + 1;
+                                parseMoveCommandAndSend(json, (pos + 1) * -1);
+                            }
+                        }).create();
+            case "adjacentAllyOrSelf":
+                if (aosIndex < 2) {
+                    return null;
+                }
+
+                allTargets = new String[aosIndex];
+                System.arraycopy(allTargets, 0, allyOrSelf, 0, aosIndex);
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                parseMoveCommandAndSend(json, (which + 1) * -1);
+                            }
+                        }).create();
             default:
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
-                        if (checkBox.isChecked()) {
-                            addCommand("move " + moveName + " mega");
-                        } else {
-                            addCommand("move " + moveName);
-                        }
-                        clearActionFrame();
-                        mCurrentActivePokemon++;
-                        if (mCurrentActivePokemon < mTotalActivePokemon) {
-                            startAction(json);
-                        } else {
-                            mChooseCommand.insert(0, "|/choose ");
-                            sendCommands(mChooseCommand);
-                        }
-                    }
-                };
+                return null;
+        }
+    }
+
+    private void parseMoveCommandAndSend(JSONObject json, int position) {
+        if (getView() == null) {
+            return;
+        }
+
+        try {
+            String moveName = json.getString("move");
+            String command;
+
+            CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+            if (checkBox.isChecked()) {
+                command = "move " + moveName + " mega";
+            } else {
+                command = "move " + moveName;
+            }
+
+            if (position != 0) {
+                command += " " + position;
+            }
+
+            addCommand(command);
+            clearActionFrame();
+            mCurrentActivePokemon++;
+
+            if (mCurrentActivePokemon < mTotalActivePokemon) {
+                startAction(json);
+            } else {
+                mChooseCommand.insert(0, "|/choose ");
+                sendCommands(mChooseCommand);
+            }
+        } catch (JSONException e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
         }
     }
 

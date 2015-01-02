@@ -379,4 +379,15 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
+    public AlertDialog createErrorAlert(String message) {
+        return new AlertDialog.Builder(this)
+                .setMessage(message)
+                .create();
+    }
+
+    public void showErrorAlert(String message) {
+        AlertDialog alertDialog = createErrorAlert(message);
+        alertDialog.show();
+    }
+
 }
