@@ -455,10 +455,6 @@ public class BattleFragment extends Fragment {
         mRequestJson = getRequestJson;
     }
 
-    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
-        return mAnimatorSetQueue;
-    }
-
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {

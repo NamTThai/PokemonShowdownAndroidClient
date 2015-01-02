@@ -2181,7 +2181,7 @@ public class BattleMessage {
                             break;
 
                         default:
-                            toAppendBuilder.append(attackerOutputName).append(" lost its").append(item).append("!");
+                            toAppendBuilder.append(attackerOutputName).append(" lost its ").append(item).append("!");
                             break;
                     }
                 } else {
