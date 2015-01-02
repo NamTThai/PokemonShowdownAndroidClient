@@ -344,8 +344,10 @@ public class BattleMessage {
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject pkm = teamJson.getJSONObject(i);
-                            battleFragment.getPlayer1Team().get(i)
-                                    .setActive(pkm.getBoolean("active"));
+                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkm.getString("ident").substring(4));
+                            if (idx != -1) {
+                                battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
+                            }
                         }
                     }
 
