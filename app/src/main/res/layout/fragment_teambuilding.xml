@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:id="@+id/lisview_pokemonteamlist">
 
-    </ListView>
+        <!-- filled in code -->
 
+    </ListView>
 </LinearLayout>
