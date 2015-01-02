@@ -340,11 +340,8 @@ public class BattleMessage {
                         }
                     }
 
-                    battleFragment.setRqid(requestJson.optInt("rqid", 0));
-                    battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
-                    battleFragment.setWaiting(requestJson.optBoolean("wait", false));
-
                     battleFragment.setRequestJson(requestJson);
+                    battleFragment.setUndoMessage(requestJson);
                 } catch (JSONException e) {
                     ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
                     break;

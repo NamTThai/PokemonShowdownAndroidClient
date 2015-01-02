@@ -56,7 +56,7 @@ public class BattleFragment extends Fragment {
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND,
+        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -89,6 +89,7 @@ public class BattleFragment extends Fragment {
     private int mTotalActivePokemon = 0;
     private StringBuilder mChooseCommand = new StringBuilder();
     private JSONObject mRequestJson;
+    private JSONObject mUndoMessage;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -142,6 +143,18 @@ public class BattleFragment extends Fragment {
         view.findViewById(R.id.icon4_o).setOnClickListener(new PokemonInfoListener(false, 3));
         view.findViewById(R.id.icon5_o).setOnClickListener(new PokemonInfoListener(false, 4));
         view.findViewById(R.id.icon6_o).setOnClickListener(new PokemonInfoListener(false, 5));
+
+        view.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getView() != null) {
+                    getView().findViewById(R.id.back).setVisibility(View.GONE);
+                }
+                MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/undo");
+                setRequestJson(getUndoMessage());
+                startRequest();
+            }
+        });
     }
 
     @Override
@@ -166,6 +179,7 @@ public class BattleFragment extends Fragment {
                     mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
                     mChooseCommand = (StringBuilder) viewBundle.get(ViewBundle.CHOOSE_COMMAND);
+                    mUndoMessage = (JSONObject) viewBundle.get(ViewBundle.UNDO_MESSAGE);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -271,6 +285,7 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
             viewBundle.put(ViewBundle.CHOOSE_COMMAND, mChooseCommand);
+            viewBundle.put(ViewBundle.UNDO_MESSAGE, mUndoMessage);
             viewBundle.put(ViewBundle.PLAYER1_NAME,
                     ((TextView) getView().findViewById(R.id.username)).getText());
             viewBundle.put(ViewBundle.PLAYER1_AVATAR,
@@ -455,6 +470,14 @@ public class BattleFragment extends Fragment {
         mRequestJson = getRequestJson;
     }
 
+    public JSONObject getUndoMessage() {
+        return mUndoMessage;
+    }
+
+    public void setUndoMessage(JSONObject undoMessage) {
+        mUndoMessage = undoMessage;
+    }
+
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
@@ -593,7 +616,19 @@ public class BattleFragment extends Fragment {
                 animator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
+                        if (getView() != null) {
+                            View back = getView().findViewById(R.id.back);
+                            if (back.getVisibility() == View.VISIBLE) {
+                                back.setVisibility(View.GONE);
+                            }
+                        }
 
+                        try {
+                            triggerTeamPreview(false);
+                        } catch (NullPointerException e) {
+                            clearActionFrame();
+                            triggerSwitchOptions(false);
+                        }
                     }
 
                     @Override
@@ -1437,6 +1472,10 @@ public class BattleFragment extends Fragment {
         command.append("|").append(getRqid());
         Log.d(BTAG, command.toString());
         MyApplication.getMyApplication().sendClientMessage(command.toString());
+
+        if (getView() != null) {
+            getView().findViewById(R.id.back).setVisibility(View.VISIBLE);
+        }
     }
 
     private PokemonInfo getCurrentActivePokemon() {
@@ -1534,13 +1573,19 @@ public class BattleFragment extends Fragment {
         }
 
         try {
+            JSONObject requestJson = getRequestJson();
+            
+            setRqid(requestJson.optInt("rqid", 0));
+            setTeamPreview(requestJson.optBoolean("teamPreview", false));
+            setWaiting(requestJson.optBoolean("wait", false));
+            
             if (getRqid() != 0 && !isTeamPreview()) {
                 resetChooseCommand();
-                if (getRequestJson().has("forceSwitch")) {
-                    JSONArray forceSwitchJsonArray = getRequestJson().getJSONArray("forceSwitch");
+                if (requestJson.has("forceSwitch")) {
+                    JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
                     chooseForceSwitch(forceSwitchJsonArray);
                 } else {
-                    startAction(getRequestJson().getJSONArray("active"));
+                    startAction(requestJson.getJSONArray("active"));
                 }
             }
             setRequestJson(null);
@@ -1844,7 +1889,6 @@ public class BattleFragment extends Fragment {
             ImageView icon = (ImageView) getView().findViewById(getIconId("p1", i));
             if (on) {
                 if (!pkm.isActive() && pkm.getHp() > 0) {
-                    Log.d(BTAG, pkm.getName() + " has HP " + pkm.getHp());
                     icon.setBackgroundResource(R.drawable.editable_frame);
                     icon.setOnClickListener(new PokemonSwitchListener(true, i));
                 }

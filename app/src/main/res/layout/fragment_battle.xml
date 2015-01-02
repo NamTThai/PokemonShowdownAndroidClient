@@ -239,13 +239,26 @@
         android:layout_alignLeft="@id/battle_interface"
         android:layout_below="@id/turn"/>
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:id="@+id/action_interface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/battle_background"
-        android:layout_alignLeft="@+id/battle_background"
-        android:layout_alignRight="@+id/battle_background" />
+        android:layout_alignBottom="@id/battle_background"
+        android:layout_alignLeft="@id/battle_background"
+        android:layout_alignRight="@id/battle_background" />
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:padding="4dp"
+        android:text="@string/back"
+        android:clickable="true"
+        android:background="@drawable/onclick_editable"
+        android:layout_alignLeft="@id/battle_background"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/timer"
