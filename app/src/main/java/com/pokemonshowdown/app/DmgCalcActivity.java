@@ -283,10 +283,10 @@ public class DmgCalcActivity extends FragmentActivity {
     private void loadPokemon(Pokemon pokemon, int searchCode) {
         PokemonFragment fragment = new PokemonFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(PokemonFragment.ARGUMENT_POKEMON, pokemon);
-        bundle.putBoolean(PokemonFragment.ARGUMENT_SEARCH, true);
-        bundle.putInt(PokemonFragment.ARGUMENT_SEARCH_CODE, searchCode);
-        bundle.putBoolean(PokemonFragment.ARGUMENT_USE_STAGES, true);
+        bundle.putSerializable(PokemonFragment.POKEMON, pokemon);
+        bundle.putBoolean(PokemonFragment.SEARCH, true);
+        bundle.putInt(PokemonFragment.SEARCH_CODE, searchCode);
+        bundle.putBoolean(PokemonFragment.STAGES, true);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PTAG);

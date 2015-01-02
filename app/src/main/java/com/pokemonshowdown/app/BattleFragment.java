@@ -1497,6 +1497,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void startAction(final JSONObject json) {
+        /*
         if (mWaiting) {
             return;
         }
@@ -1509,6 +1510,7 @@ public class BattleFragment extends Fragment {
             triggerAttackOptions(json);
             triggerSwitchOptions(true);
         }
+        */
     }
 
     private void triggerAttackOptions(final JSONObject json) {
