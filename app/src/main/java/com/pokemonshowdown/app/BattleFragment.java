@@ -1429,6 +1429,7 @@ public class BattleFragment extends Fragment {
             mChooseCommand.append(",");
         }
         mChooseCommand.append(command);
+        clearActionFrame();
     }
 
     private void sendCommands(StringBuilder command) {
@@ -1819,7 +1820,6 @@ public class BattleFragment extends Fragment {
             }
 
             addCommand(command);
-            clearActionFrame();
             mCurrentActivePokemon++;
 
             if (mCurrentActivePokemon < mTotalActivePokemon) {
