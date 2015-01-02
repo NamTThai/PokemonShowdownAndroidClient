@@ -39,7 +39,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -1618,8 +1617,6 @@ public class BattleFragment extends Fragment {
         int endAlly = (mCurrentActivePokemon + 1 >=  getPlayer1Team().size()) ?
                 getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
 
-        Log.d(BTAG, "start " + start + " endFoe " + endFoe + " endAlly " + endAlly);
-
         final String[] foes = new String[3];
         final int[] foeIcons = new int[3];
         int foeIndex = 0;
@@ -1656,10 +1653,6 @@ public class BattleFragment extends Fragment {
             }
         }
 
-        Log.d(BTAG, Arrays.toString(foes));
-        Log.d(BTAG, Arrays.toString(allyOrSelf));
-        Log.d(BTAG, Arrays.toString(allies));
-
         String[] allTargets;
         final int numFoes = foeIndex;
         final int currentActive = mCurrentActivePokemon;
@@ -1672,7 +1665,6 @@ public class BattleFragment extends Fragment {
                 allTargets = new String[foeIndex + allyIndex];
                 System.arraycopy(foes, 0, allTargets, 0, foeIndex);
                 System.arraycopy(allies, 0, allTargets, foeIndex, allyIndex);
-                Log.d(BTAG, "normal " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -1692,7 +1684,6 @@ public class BattleFragment extends Fragment {
 
                 allTargets = new String[foeIndex];
                 System.arraycopy(foes, 0, allTargets, 0, foeIndex);
-                Log.d(BTAG, "adjFoe " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -1708,7 +1699,6 @@ public class BattleFragment extends Fragment {
 
                 allTargets = new String[allyIndex];
                 System.arraycopy(allies, 0, allTargets, 0, allyIndex);
-                Log.d(BTAG, "adjAlly " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -1725,7 +1715,6 @@ public class BattleFragment extends Fragment {
 
                 allTargets = new String[aosIndex];
                 System.arraycopy(allyOrSelf, 0, allTargets, 0, aosIndex);
-                Log.d(BTAG, "allyOrSelf " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -1818,6 +1807,7 @@ public class BattleFragment extends Fragment {
             ImageView icon = (ImageView) getView().findViewById(getIconId("p1", i));
             if (on) {
                 if (!pkm.isActive() && pkm.getHp() > 0) {
+                    Log.d(BTAG, pkm.getName() + " has HP " + pkm.getHp());
                     icon.setBackgroundResource(R.drawable.editable_frame);
                     icon.setOnClickListener(new PokemonSwitchListener(true, i));
                 }

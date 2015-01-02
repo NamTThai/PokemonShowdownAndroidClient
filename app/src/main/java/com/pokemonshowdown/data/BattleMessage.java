@@ -353,33 +353,55 @@ public class BattleMessage {
                     battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
-                    if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
-                        battleFragment.resetChooseCommand();
-                        if (requestJson.has("forceSwitch")) {
-                            JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                            battleFragment.chooseForceSwitch(forceSwitchJsonArray);
-                        } else {
-                            battleFragment.startAction(requestJson.getJSONArray("active"));
+                    toast = battleFragment.makeToast("Action!");
+
+                    final JSONObject requestFinal = requestJson;
+                    toast.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            if (battleFragment.getView() == null) {
+                                return;
+                            }
+
+                            try {
+                                if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
+                                    battleFragment.resetChooseCommand();
+                                    if (requestFinal.has("forceSwitch")) {
+                                        JSONArray forceSwitchJsonArray = requestFinal.getJSONArray("forceSwitch");
+                                        battleFragment.chooseForceSwitch(forceSwitchJsonArray);
+                                    } else {
+                                        battleFragment.startAction(requestFinal.getJSONArray("active"));
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
+                            }
                         }
-                    }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    battleFragment.startAnimation(toast, message);
                 } catch (JSONException e) {
                     ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
-                    return;
+                    break;
                 }
                 break;
 
             case "inactive":
                 final String inactive;
-                final String player;
-                if ((messageDetails.startsWith(battleFragment.getPlayer1())) || (messageDetails.startsWith("Player 1"))) {
-                    player = "p1";
-                } else {
-                    if ((messageDetails.startsWith(battleFragment.getPlayer2())) || (messageDetails.startsWith("Player 2"))) {
-                        player = "p2";
-                    } else {
-                        break;
-                    }
-                }
                 if (messageDetails.contains(" seconds left")) {
                     remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
                     inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
@@ -389,28 +411,15 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (player.equals("p1")) {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                        if (battleFragment.getView() == null) {
+                            viewData.addViewSetterOnHold(R.id.inactive, inactive,
+                                    BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                            viewData.addViewSetterOnHold(R.id.inactive, null,
+                                    BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
                         } else {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive_o, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive_o);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
+                            textView.setVisibility(View.VISIBLE);
+                            textView.setText(inactive);
                         }
                     }
                 });
@@ -427,11 +436,8 @@ public class BattleMessage {
                         if (battleFragment.getView() == null) {
                             viewData.addViewSetterOnHold(R.id.inactive, null,
                                     BattleFieldData.ViewData.SetterType.VIEW_GONE);
-                            viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                    BattleFieldData.ViewData.SetterType.VIEW_GONE);
                         } else {
                             battleFragment.getView().findViewById(R.id.inactive).setVisibility(View.GONE);
-                            battleFragment.getView().findViewById(R.id.inactive_o).setVisibility(View.GONE);
                         }
                     }
                 });
