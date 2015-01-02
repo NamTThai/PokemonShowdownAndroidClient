@@ -79,7 +79,7 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
-        if (getArguments().getBoolean("Search")) {
+        if (getArguments().getBoolean(SEARCH)) {
             addSearchWidget(view);
         }
 
@@ -216,7 +216,7 @@ public class PokemonFragment extends DialogFragment {
                 closeFragment();
                 Intent intent = new Intent(getActivity(), SearchableActivity.class);
                 intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
-                getActivity().startActivityForResult(intent, getArguments().getInt("Search Code"));
+                getActivity().startActivityForResult(intent, getArguments().getInt(SEARCH_CODE));
             }
         });
     }

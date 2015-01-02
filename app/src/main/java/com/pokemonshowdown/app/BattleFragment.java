@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
+import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
 
@@ -1520,11 +1521,11 @@ public class BattleFragment extends Fragment {
         frameLayout.removeAllViews();
 
         getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
-        LinearLayout[] moveViews = new LinearLayout[4];
-        moveViews[0] = (LinearLayout) getView().findViewById(R.id.active_move1);
-        moveViews[1] = (LinearLayout) getView().findViewById(R.id.active_move2);
-        moveViews[2] = (LinearLayout) getView().findViewById(R.id.active_move3);
-        moveViews[3] = (LinearLayout) getView().findViewById(R.id.active_move4);
+        RelativeLayout[] moveViews = new RelativeLayout[4];
+        moveViews[0] = (RelativeLayout) getView().findViewById(R.id.active_move1);
+        moveViews[1] = (RelativeLayout) getView().findViewById(R.id.active_move2);
+        moveViews[2] = (RelativeLayout) getView().findViewById(R.id.active_move3);
+        moveViews[3] = (RelativeLayout) getView().findViewById(R.id.active_move4);
         TextView[] moveNames = new TextView[4];
         moveNames[0] = (TextView) getView().findViewById(R.id.active_move1_name);
         moveNames[1] = (TextView) getView().findViewById(R.id.active_move2_name);
@@ -1535,6 +1536,11 @@ public class BattleFragment extends Fragment {
         movePps[1] = (TextView) getView().findViewById(R.id.active_move2_pp);
         movePps[2] = (TextView) getView().findViewById(R.id.active_move3_pp);
         movePps[3] = (TextView) getView().findViewById(R.id.active_move4_pp);
+        ImageView[] moveIcons = new ImageView[4];
+        moveIcons[0] = (ImageView) getView().findViewById(R.id.active_move1_icon);
+        moveIcons[1] = (ImageView) getView().findViewById(R.id.active_move2_icon);
+        moveIcons[2] = (ImageView) getView().findViewById(R.id.active_move3_icon);
+        moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
         try {
             JSONArray active = json.getJSONArray("active");
@@ -1543,6 +1549,8 @@ public class BattleFragment extends Fragment {
                 JSONObject moveJson = moves.getJSONObject(i);
                 moveNames[i].setText(moveJson.getString("move"));
                 movePps[i].setText(moveJson.getString("pp"));
+                int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
+                moveIcons[i].setImageResource(typeIcon);
                 moveViews[i].setOnClickListener(parseMoveTarget(moveJson));
                 if (moveJson.getBoolean("disabled")) {
                     moveViews[i].setOnClickListener(null);
