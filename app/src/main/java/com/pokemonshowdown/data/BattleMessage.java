@@ -353,22 +353,14 @@ public class BattleMessage {
                     battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
-                    if (requestJson.has("forceSwitch")) {
-                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                        int idx = 0;
-                        for (PokemonInfo info : battleFragment.getPlayer1Team()) {
-                            if (info.isActive()) {
-                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(idx));
-                                idx++;
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-
                     if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
                         battleFragment.resetChooseCommand();
-                        battleFragment.startAction(requestJson.getJSONArray("active"));
+                        if (requestJson.has("forceSwitch")) {
+                            JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
+                            battleFragment.chooseForceSwitch(forceSwitchJsonArray);
+                        } else {
+                            battleFragment.startAction(requestJson.getJSONArray("active"));
+                        }
                     }
                 } catch (JSONException e) {
                     ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());

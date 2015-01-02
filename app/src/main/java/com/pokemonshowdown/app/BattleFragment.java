@@ -1411,7 +1411,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void addCommand(String command) {
+    public void addCommand(String command) {
         String chosen = mChooseCommand.toString();
         if (chosen.length() != 0) {
             mChooseCommand.append(",");
@@ -1473,6 +1473,22 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public void chooseForceSwitch(JSONArray forceSwitch) throws JSONException {
+        for (int i = 0; i < forceSwitch.length(); i++) {
+            if (forceSwitch.getBoolean(i)) {
+                triggerSwitchOptions(true);
+            } else {
+                mCurrentActivePokemon++;
+                addCommand("pass");
+
+                if (mCurrentActivePokemon == mTotalActivePokemon) {
+                    mChooseCommand.insert(0, "|/choose ");
+                    sendCommands(mChooseCommand);
+                }
+            }
+        }
+    }
+
     public void chooseSwitch(int id) {
         String chosen = mChooseCommand.toString();
         if (chosen.contains("switch " + (id + 1))) {
@@ -1503,12 +1519,8 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        if (getCurrentActivePokemon().isForceSwitch()) {
-            triggerSwitchOptions(true);
-        } else {
-            triggerAttackOptions(active);
-            triggerSwitchOptions(true);
-        }
+        triggerAttackOptions(active);
+        triggerSwitchOptions(true);
     }
 
     private void triggerAttackOptions(final JSONArray active) {
