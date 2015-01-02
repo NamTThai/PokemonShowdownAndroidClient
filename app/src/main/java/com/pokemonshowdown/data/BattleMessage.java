@@ -920,7 +920,7 @@ public class BattleMessage {
                         case "psn":
                             toAppendBuilder.append(attackerOutputName).append(" was hurt by poison!");
                             break;
-                        case "lifeorb":
+                        case "itemlifeorb":
                             toAppendBuilder.append(attackerOutputName).append(" lost some of its HP!");
                             break;
                         case "recoil":
@@ -1752,7 +1752,7 @@ public class BattleMessage {
                             }
                             break;
                         case "unboost":
-                            toAppendBuilder.append(attackerOutputName).append("'s BattleFragment.stats were not lowered!");
+                            toAppendBuilder.append(attackerOutputName).append("'s stats were not lowered!");
                             break;
 
                         default:

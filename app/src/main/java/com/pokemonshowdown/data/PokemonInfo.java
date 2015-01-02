@@ -7,6 +7,13 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class PokemonInfo implements Serializable {
+    public final static String STATUS_BURN = "brn";
+    public final static String STATUS_FREEZE = "frz";
+    public final static String STATUS_TOXIC = "tox";
+    public final static String STATUS_POISON = "psn";
+    public final static String STATUS_PARALYZE = "par";
+    public final static String STATUS_SLEEP = "slp";
+
     private String mName;
     private String mNickname;
     private int[] mTypeIcon;

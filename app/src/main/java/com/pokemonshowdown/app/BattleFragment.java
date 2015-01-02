@@ -907,7 +907,7 @@ public class BattleFragment extends Fragment {
     }
 
     public PokemonInfo getPokemonInfo(String tag) {
-        tag = tag.substring(0, 3);
+        tag = tag.replaceFirst("\\[(.*?)\\] ", "").substring(0, 3);
         try {
             switch (tag) {
                 case "p1a":

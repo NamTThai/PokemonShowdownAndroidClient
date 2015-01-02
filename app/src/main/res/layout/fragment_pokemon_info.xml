@@ -20,7 +20,7 @@
             android:contentDescription="@string/battle_switch"
             android:src="@drawable/ic_action_repeat"
             android:paddingLeft="8dp"
-            android:paddingRight="24dp"/>
+            android:paddingRight="12dp"/>
 
         <TextView
             android:id="@+id/pokemon_name"
