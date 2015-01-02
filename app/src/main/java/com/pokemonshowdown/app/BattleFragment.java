@@ -88,6 +88,7 @@ public class BattleFragment extends Fragment {
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
     private StringBuilder mChooseCommand = new StringBuilder();
+    private JSONObject mRequestJson;
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -446,6 +447,18 @@ public class BattleFragment extends Fragment {
         });
     }
 
+    public JSONObject getRequestJson() {
+        return mRequestJson;
+    }
+
+    public void setRequestJson(JSONObject getRequestJson) {
+        mRequestJson = getRequestJson;
+    }
+
+    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
+        return mAnimatorSetQueue;
+    }
+
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
@@ -592,6 +605,8 @@ public class BattleFragment extends Fragment {
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
+                        } else {
+                            startRequest();
                         }
                     }
 
@@ -1510,6 +1525,23 @@ public class BattleFragment extends Fragment {
             if (pokemonInfo.isActive()) {
                 mTotalActivePokemon++;
             }
+        }
+    }
+
+    public void startRequest() {
+        try {
+            if (getRqid() != 0 && !isTeamPreview()) {
+                resetChooseCommand();
+                if (getRequestJson().has("forceSwitch")) {
+                    JSONArray forceSwitchJsonArray = getRequestJson().getJSONArray("forceSwitch");
+                    chooseForceSwitch(forceSwitchJsonArray);
+                } else {
+                    startAction(getRequestJson().getJSONArray("active"));
+                }
+            }
+            setRequestJson(null);
+        } catch (JSONException e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
         }
     }
 

@@ -353,47 +353,11 @@ public class BattleMessage {
                     battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
                     battleFragment.setWaiting(requestJson.optBoolean("wait", false));
 
-                    toast = battleFragment.makeToast("Action!");
+                    battleFragment.setRequestJson(requestJson);
+                    if (battleFragment.getAnimatorSetQueue().isEmpty()) {
+                        battleFragment.startRequest();
+                    }
 
-                    final JSONObject requestFinal = requestJson;
-                    toast.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            if (battleFragment.getView() == null) {
-                                return;
-                            }
-
-                            try {
-                                if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
-                                    battleFragment.resetChooseCommand();
-                                    if (requestFinal.has("forceSwitch")) {
-                                        JSONArray forceSwitchJsonArray = requestFinal.getJSONArray("forceSwitch");
-                                        battleFragment.chooseForceSwitch(forceSwitchJsonArray);
-                                    } else {
-                                        battleFragment.startAction(requestFinal.getJSONArray("active"));
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
-                            }
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    });
-                    battleFragment.startAnimation(toast, message);
                 } catch (JSONException e) {
                     ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
                     break;
@@ -770,7 +734,6 @@ public class BattleMessage {
                         battleFragment.getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) battleFragment.getView().findViewById(R.id.turn)).setText(toAppend);
                         (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        (battleFragment.getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
 
                     @Override
