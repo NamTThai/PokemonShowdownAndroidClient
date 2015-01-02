@@ -33,6 +33,7 @@ import org.json.JSONObject;
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
+    public final static String DRAWER_POSITION = "Drawer Position";
 
     private int mPosition;
     private DrawerLayout mDrawerLayout;
@@ -95,7 +96,7 @@ public class BattleFieldActivity extends FragmentActivity {
             mPosition = 0;
             selectItem(0);
         } else {
-            mPosition = savedInstanceState.getInt("Drawer Position");
+            mPosition = savedInstanceState.getInt(DRAWER_POSITION);
             selectItem(mPosition);
         }
     }
@@ -129,7 +130,7 @@ public class BattleFieldActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("Drawer Position", mPosition);
+        outState.putInt(DRAWER_POSITION, mPosition);
     }
 
     @Override
@@ -184,6 +185,12 @@ public class BattleFieldActivity extends FragmentActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 OnboardingDialog fragment = new OnboardingDialog();
                 fragment.show(fm, OnboardingDialog.OTAG);
+                return true;
+            case R.id.menu_settings:
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.teaser_alert)
+                        .create()
+                        .show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

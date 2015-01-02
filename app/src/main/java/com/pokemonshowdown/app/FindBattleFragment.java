@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
@@ -86,6 +87,7 @@ public class FindBattleFragment extends Fragment {
                     return;
                 }
 
+                Toast.makeText(getActivity(), R.string.request_sent, Toast.LENGTH_SHORT).show();
                 showSearchingButton();
 
                 // first we look the select format. if random -> send empty /utm
