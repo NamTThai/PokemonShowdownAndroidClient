@@ -455,10 +455,6 @@ public class BattleFragment extends Fragment {
         mRequestJson = getRequestJson;
     }
 
-    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
-        return mAnimatorSetQueue;
-    }
-
     private void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
@@ -482,14 +478,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(String message) {
-        try {
-            if (mBattling == -1) {
-                message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
-            }
-            BattleMessage.processMajorAction(this, message);
-        } catch (Exception e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+        if (mBattling == -1) {
+            message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
         }
+        BattleMessage.processMajorAction(this, message);
     }
 
     public AnimatorSet makeMinorToast(final Spannable message) {
@@ -1437,6 +1429,7 @@ public class BattleFragment extends Fragment {
             mChooseCommand.append(",");
         }
         mChooseCommand.append(command);
+        clearActionFrame();
     }
 
     private void sendCommands(StringBuilder command) {
@@ -1489,6 +1482,7 @@ public class BattleFragment extends Fragment {
             }
 
             setTeamPreview(false);
+            triggerTeamPreview(false);
             sendCommands(mChooseCommand);
         }
     }
@@ -1552,6 +1546,8 @@ public class BattleFragment extends Fragment {
             setRequestJson(null);
         } catch (JSONException e) {
             ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            Log.d(BTAG, "StartRequest error", e);
+            setRequestJson(null);
         }
     }
 
@@ -1825,7 +1821,6 @@ public class BattleFragment extends Fragment {
             }
 
             addCommand(command);
-            clearActionFrame();
             mCurrentActivePokemon++;
 
             if (mCurrentActivePokemon < mTotalActivePokemon) {
@@ -1857,6 +1852,40 @@ public class BattleFragment extends Fragment {
                 icon.setBackgroundResource(0);
                 icon.setOnClickListener(new PokemonInfoListener(true, i));
             }
+        }
+    }
+    
+    public void triggerTeamPreview(boolean on) {
+        if (getView() == null) {
+            return;
+        }
+        
+        if (on) {
+            getView().findViewById(R.id.p1a_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 0));
+            getView().findViewById(R.id.p1b_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 1));
+            getView().findViewById(R.id.p1c_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 2));
+            getView().findViewById(R.id.p1d_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 3));
+            getView().findViewById(R.id.p1e_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 4));
+            getView().findViewById(R.id.p1f_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 5));
+        } else {
+            getView().findViewById(R.id.p1a_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 0));
+            getView().findViewById(R.id.p1b_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 1));
+            getView().findViewById(R.id.p1c_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 2));
+            getView().findViewById(R.id.p1d_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 3));
+            getView().findViewById(R.id.p1e_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 4));
+            getView().findViewById(R.id.p1f_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 5));
         }
     }
 

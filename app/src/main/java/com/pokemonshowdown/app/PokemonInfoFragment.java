@@ -165,7 +165,7 @@ public class PokemonInfoFragment extends DialogFragment {
             ((TextView) view.findViewById(R.id.move1_pp)).setText(Integer.toString(moves.get(moveNames[0])));
         }
 
-        TextView switchPkm = (TextView) view.findViewById(R.id.switchPkm);
+        ImageView switchPkm = (ImageView) view.findViewById(R.id.switchPkm);
         if (mSwitch) {
             switchPkm.setOnClickListener(new View.OnClickListener() {
                 @Override

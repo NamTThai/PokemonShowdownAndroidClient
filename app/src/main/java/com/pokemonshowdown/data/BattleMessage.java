@@ -256,18 +256,7 @@ public class BattleMessage {
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
 
-                        battleFragment.getView().findViewById(R.id.p1a_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 0));
-                        battleFragment.getView().findViewById(R.id.p1b_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 1));
-                        battleFragment.getView().findViewById(R.id.p1c_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 2));
-                        battleFragment.getView().findViewById(R.id.p1d_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 3));
-                        battleFragment.getView().findViewById(R.id.p1e_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 4));
-                        battleFragment.getView().findViewById(R.id.p1f_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 5));
+                        battleFragment.triggerTeamPreview(true);
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -344,8 +333,10 @@ public class BattleMessage {
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject pkm = teamJson.getJSONObject(i);
-                            battleFragment.getPlayer1Team().get(i)
-                                    .setActive(pkm.getBoolean("active"));
+                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkm.getString("ident").substring(4));
+                            if (idx != -1) {
+                                battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
+                            }
                         }
                     }
 
@@ -2181,7 +2172,7 @@ public class BattleMessage {
                             break;
 
                         default:
-                            toAppendBuilder.append(attackerOutputName).append(" lost its").append(item).append("!");
+                            toAppendBuilder.append(attackerOutputName).append(" lost its ").append(item).append("!");
                             break;
                     }
                 } else {
