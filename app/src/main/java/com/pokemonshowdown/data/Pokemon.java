@@ -272,7 +272,9 @@ public class Pokemon implements Serializable {
                     break;
                 }
             } else if (currentString.contains("Shiny")) {
-                p.setShiny(true);
+                if (!p.isShiny()) {
+                    p.switchShiny(appContext);
+                }
             }
         }
         return p;

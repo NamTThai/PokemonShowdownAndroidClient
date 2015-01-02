@@ -22,7 +22,7 @@ public class CreditsFragment extends Fragment {
     public final static String CTAG = CreditsFragment.class.getName();
     public final static String[][] ANDROID_CONTRIBUTOR = {
             {"RainFountain", Integer.toString(R.drawable.coder_rainfountain), "Nam Thai", "PS Android Creator"},
-            {"TeToN", Integer.toString(R.drawable.coder_teton), "Clement", "Lead Contributor"},
+            {"TeToN", Integer.toString(R.drawable.coder_teton), "Clément", "Lead Contributor"},
             {"Lazloz", Integer.toString(R.drawable.coder_lazloz), "", "Contributor"}
     };
     public final static String[][] PS_CONTRIBUTOR = {
