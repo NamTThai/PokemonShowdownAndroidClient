@@ -43,16 +43,46 @@ public class PokemonTeam implements Serializable {
         return mPokemonTeamList;
     }
 
-    public static void loadPokemonTeams(Context c) {
+    public static void loadPokemonTeams(Context appContext) {
         FileInputStream fos;
         try {
-            fos = c.openFileInput(pokemonTeamStorageName);
-            ObjectInputStream oos = new ObjectInputStream(fos);
-            mPokemonTeamList = (ArrayList<PokemonTeam>) oos.readObject();
-            oos.close();
-        } catch (IOException e) {
             mPokemonTeamList = new ArrayList<>();
-        } catch (ClassNotFoundException e) {
+            fos = appContext.openFileInput(pokemonTeamStorageName);
+            StringBuffer fileContent = new StringBuffer("");
+            byte[] buffer = new byte[1024];
+            int n;
+            while ((n = fos.read(buffer)) != -1) {
+                fileContent.append(new String(buffer, 0, n));
+            }
+            fos.close();
+
+            String fileContentString = fileContent.toString();
+            fileContentString = fileContentString.replace("\r\n", "\n");
+            String fileContentStringArray[] = fileContentString.split("\n");
+
+            StringBuffer pokemonTeamBuffer = new StringBuffer("");
+            String currentNickname = null;
+            for (String s : fileContentStringArray) {
+                if (s.startsWith("===") && s.endsWith("===")) {
+                    if (pokemonTeamBuffer.length() > 0) {
+                        PokemonTeam pt = PokemonTeam.importPokemonTeam(pokemonTeamBuffer.toString(), appContext, true);
+                        pt.setNickname(currentNickname);
+                        mPokemonTeamList.add(pt);
+                    }
+                    pokemonTeamBuffer.setLength(0);
+                    currentNickname = s.replace("=", "").trim();
+                } else {
+                    pokemonTeamBuffer.append(s).append("\n");
+                }
+            }
+
+            if (pokemonTeamBuffer.length() > 0 && currentNickname != null) {
+                PokemonTeam pt = PokemonTeam.importPokemonTeam(pokemonTeamBuffer.toString(), appContext, true);
+                pt.setNickname(currentNickname);
+                mPokemonTeamList.add(pt);
+            }
+
+        } catch (IOException e) {
             mPokemonTeamList = new ArrayList<>();
         }
     }
@@ -61,10 +91,15 @@ public class PokemonTeam implements Serializable {
         FileOutputStream fos = null;
         try {
             fos = c.openFileOutput(pokemonTeamStorageName, Context.MODE_PRIVATE);
+            StringBuilder sb = new StringBuilder();
 
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(mPokemonTeamList);
-            oos.close();
+            for (PokemonTeam pokemonTeam : mPokemonTeamList) {
+                sb.append("=== ").append(pokemonTeam.getNickname()).append(" ===\n");
+                sb.append(pokemonTeam.exportPokemonTeam(c));
+            }
+
+            fos.write(sb.toString().getBytes());
+            fos.close();
         } catch (IOException e) {
             Log.e(TAG, e.toString());
         }

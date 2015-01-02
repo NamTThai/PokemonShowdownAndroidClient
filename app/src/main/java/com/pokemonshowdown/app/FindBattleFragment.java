@@ -166,7 +166,7 @@ public class FindBattleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        PokemonTeam.loadPokemonTeams(getActivity());
+        PokemonTeam.loadPokemonTeams(getActivity().getApplicationContext());
         mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getActivity(), PokemonTeam.getPokemonTeamList());
         mFormatListView.performItemClick(null, mFormatListView.getCheckedItemPosition(), mFormatListView.getCheckedItemPosition());
     }
