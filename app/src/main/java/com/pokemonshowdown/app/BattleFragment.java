@@ -1497,7 +1497,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void startAction(final JSONObject json) {
+    public void startAction(final JSONArray active) {
         if (mWaiting) {
             return;
         }
@@ -1507,12 +1507,12 @@ public class BattleFragment extends Fragment {
         if (getCurrentActivePokemon().isForceSwitch()) {
             triggerSwitchOptions(true);
         } else {
-            triggerAttackOptions(json);
+            triggerAttackOptions(active);
             triggerSwitchOptions(true);
         }
     }
 
-    private void triggerAttackOptions(final JSONObject json) {
+    private void triggerAttackOptions(final JSONArray active) {
         if (getView() == null) {
             return;
         }
@@ -1543,7 +1543,6 @@ public class BattleFragment extends Fragment {
         moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
         try {
-            JSONArray active = json.getJSONArray("active");
             JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
             for (int i = 0; i < moves.length(); i++) {
                 JSONObject moveJson = moves.getJSONObject(i);
@@ -1551,7 +1550,7 @@ public class BattleFragment extends Fragment {
                 movePps[i].setText(moveJson.getString("pp"));
                 int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
                 moveIcons[i].setImageResource(typeIcon);
-                moveViews[i].setOnClickListener(parseMoveTarget(moveJson));
+                moveViews[i].setOnClickListener(parseMoveTarget(active, i));
                 if (moveJson.getBoolean("disabled")) {
                     moveViews[i].setOnClickListener(null);
                     moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
@@ -1574,18 +1573,18 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private View.OnClickListener parseMoveTarget(final JSONObject json) throws JSONException {
+    private View.OnClickListener parseMoveTarget(final JSONArray active, final int moveId) throws JSONException {
         if (getView() == null) {
             return null;
         }
 
-        final AlertDialog targetDialog = parseMoveTargetDialog(json);
+        final AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
 
         if (targetDialog == null) {
             return new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    parseMoveCommandAndSend(json, 0);
+                    parseMoveCommandAndSend(active, moveId, 0);
                 }
             };
         } else {
@@ -1598,8 +1597,9 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private AlertDialog parseMoveTargetDialog(final JSONObject json) throws JSONException {
-        String target = json.getString("target");
+    private AlertDialog parseMoveTargetDialog(final JSONArray active, final int moveId) throws JSONException {
+        final JSONObject moveJson = active.getJSONObject(moveId);
+        String target = moveJson.getString("target");
 
         int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
         int endFoe = (mCurrentActivePokemon + 1 >=  getPlayer2Team().size()) ?
@@ -1660,9 +1660,9 @@ public class BattleFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which < numFoes) {
-                                    parseMoveCommandAndSend(json, which + 1);
+                                    parseMoveCommandAndSend(active, moveId, which + 1);
                                 } else {
-                                    parseMoveCommandAndSend(json, (which - numFoes + 1) * -1);
+                                    parseMoveCommandAndSend(active, moveId, (which - numFoes + 1) * -1);
                                 }
                             }
                         }).create();
@@ -1677,7 +1677,7 @@ public class BattleFragment extends Fragment {
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                parseMoveCommandAndSend(json, which + 1);
+                                parseMoveCommandAndSend(active, moveId, which + 1);
                             }
                         }).create();
             case "adjacentAlly":
@@ -1692,7 +1692,7 @@ public class BattleFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int pos = (which < currentActive) ? which : which + 1;
-                                parseMoveCommandAndSend(json, (pos + 1) * -1);
+                                parseMoveCommandAndSend(active, moveId, (pos + 1) * -1);
                             }
                         }).create();
             case "adjacentAllyOrSelf":
@@ -1706,7 +1706,7 @@ public class BattleFragment extends Fragment {
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                parseMoveCommandAndSend(json, (which + 1) * -1);
+                                parseMoveCommandAndSend(active, moveId, (which + 1) * -1);
                             }
                         }).create();
             default:
@@ -1714,13 +1714,15 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void parseMoveCommandAndSend(JSONObject json, int position) {
+    private void parseMoveCommandAndSend(JSONArray active, int moveId, int position){
         if (getView() == null) {
             return;
         }
 
         try {
-            String moveName = json.getString("move");
+            JSONObject moveJson = active.getJSONObject(moveId);
+
+            String moveName = moveJson.getString("move");
             String command;
 
             CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
@@ -1739,7 +1741,7 @@ public class BattleFragment extends Fragment {
             mCurrentActivePokemon++;
 
             if (mCurrentActivePokemon < mTotalActivePokemon) {
-                startAction(json);
+                startAction(active);
             } else {
                 mChooseCommand.insert(0, "|/choose ");
                 sendCommands(mChooseCommand);
