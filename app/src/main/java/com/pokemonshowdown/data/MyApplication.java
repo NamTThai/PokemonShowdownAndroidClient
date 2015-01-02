@@ -145,7 +145,6 @@ public class MyApplication extends Application {
     public void closeActiveConnection() {
         if (mWebSocketClient != null) {
             mWebSocketClient.close();
-            Log.w(MTAG, "");
         }
     }
 
@@ -189,7 +188,6 @@ public class MyApplication extends Application {
                 message = message.substring(newLine + 1);
                 newLine = message.indexOf('\n');
             }
-            Log.d("Text", message);
             processRoomMessage(roomId, message);
         }
     }

@@ -3929,7 +3929,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(animatorSet, message);
                 break;
 
-            case "-weather":
+            case "-weatherf":
                 final String weather = split[0];
                 boolean upkeep = false;
                 if (split.length > 1) {
@@ -4176,7 +4176,7 @@ public class BattleMessage {
                         break;
 
                     default:
-                        toAppendBuilder.append(battleFragment.getPrintable(split[1])).append(" started!");
+                        toAppendBuilder.append(battleFragment.getPrintable(split[0])).append(" started!");
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);
@@ -4238,7 +4238,7 @@ public class BattleMessage {
                         break;
 
                     default:
-                        toAppendBuilder.append(battleFragment.getPrintable(split[1])).append(" ended!");
+                        toAppendBuilder.append(battleFragment.getPrintable(split[0])).append(" ended!");
                         break;
                 }
                 logMessage = new SpannableString(toAppendBuilder);

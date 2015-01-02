@@ -480,10 +480,14 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(String message) {
-        if (mBattling == -1) {
-            message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+        try {
+            if (mBattling == -1) {
+                message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+            }
+            BattleMessage.processMajorAction(this, message);
+        } catch (Exception e) {
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
         }
-        BattleMessage.processMajorAction(this, message);
     }
 
     public AnimatorSet makeMinorToast(final Spannable message) {
