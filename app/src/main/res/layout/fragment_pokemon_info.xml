@@ -13,6 +13,15 @@
         android:orientation="horizontal"
         >
 
+        <ImageView
+            android:id="@+id/switchPkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/battle_switch"
+            android:src="@drawable/ic_action_repeat"
+            android:paddingLeft="8dp"
+            android:paddingRight="24dp"/>
+
         <TextView
             android:id="@+id/pokemon_name"
             android:layout_width="wrap_content"
@@ -255,15 +264,5 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-    <View style="@style/divider" />
-
-    <TextView
-        android:id="@+id/switchPkm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/battle_switch"
-        android:padding="16dp"/>
 
 </LinearLayout>

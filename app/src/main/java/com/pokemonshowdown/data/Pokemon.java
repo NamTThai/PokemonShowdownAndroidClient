@@ -315,7 +315,7 @@ public class Pokemon implements Serializable {
     public static int getPokemonIcon(Context appContext, String name) {
         try {
             name = MyApplication.toId(name);
-            if (name.length() >= 5) {
+            if (name.length() >= 6) {
                 String surfix = name.substring(name.length() - 6);
                 if ((surfix.contains("mega") || surfix.contains("primal"))
                         && !name.equals("yanmega")) {
