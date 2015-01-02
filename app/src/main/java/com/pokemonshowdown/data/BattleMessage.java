@@ -256,18 +256,7 @@ public class BattleMessage {
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
 
-                        battleFragment.getView().findViewById(R.id.p1a_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 0));
-                        battleFragment.getView().findViewById(R.id.p1b_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 1));
-                        battleFragment.getView().findViewById(R.id.p1c_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 2));
-                        battleFragment.getView().findViewById(R.id.p1d_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 3));
-                        battleFragment.getView().findViewById(R.id.p1e_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 4));
-                        battleFragment.getView().findViewById(R.id.p1f_prev)
-                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 5));
+                        battleFragment.triggerTeamPreview(true);
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)

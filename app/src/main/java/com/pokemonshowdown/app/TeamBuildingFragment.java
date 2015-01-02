@@ -44,17 +44,13 @@ import java.util.List;
 public class TeamBuildingFragment extends Fragment {
     public static final String TAG = TeamBuildingFragment.class.getName();
     public final static String TEAMTAG = "team";
-    private PokemonTeam pokemonTeam;
-    private PokemonListAdapter pokemonListAdapter;
-    private Button footerButton;
+    private PokemonTeam mPokemonTeam;
+    private PokemonListAdapter mPokemonListAdapter;
+    private Button mFooterButton;
 
     /* Used for onactivityresult */
-    private int selectedPos;
-    private int selectedMove;
-
-    public TeamBuildingFragment() {
-        super();
-    }
+    private int mSelectedPos;
+    private int mSelectedMove;
 
     public static TeamBuildingFragment newInstance(PokemonTeam team) {
         TeamBuildingFragment fragment = new TeamBuildingFragment();
@@ -64,18 +60,22 @@ public class TeamBuildingFragment extends Fragment {
         return fragment;
     }
 
+    public TeamBuildingFragment() {
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        pokemonListAdapter.notifyDataSetChanged();
-        // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
+        mPokemonListAdapter.notifyDataSetChanged();
+        // Notify parent activity that the mPokemonTeam changed (so to reprint in the drawer)
         ((TeamBuildingActivity) getActivity()).updateList();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pokemonTeam = (PokemonTeam) getArguments().get(TEAMTAG);
+        mPokemonTeam = (PokemonTeam) getArguments().get(TEAMTAG);
     }
 
     @Override
@@ -84,34 +84,34 @@ public class TeamBuildingFragment extends Fragment {
         ListView lv = (ListView) view.findViewById(R.id.lisview_pokemonteamlist);
 
         // add pokemon button
-        footerButton = new Button(getActivity().getApplicationContext());
-        footerButton.setText(R.string.add_pokemon_button_text);
-        footerButton.setTextColor(Color.BLACK);
-        footerButton.setBackgroundColor(Color.WHITE);
-        footerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);
-        footerButton.setOnClickListener(new View.OnClickListener() {
+        mFooterButton = new Button(getActivity().getApplicationContext());
+        mFooterButton.setText(R.string.add_pokemon_button_text);
+        mFooterButton.setTextColor(Color.BLACK);
+        mFooterButton.setBackgroundColor(Color.WHITE);
+        mFooterButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);
+        mFooterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!pokemonTeam.isFull()) {
-                    selectedPos = -1;
+                if (!mPokemonTeam.isFull()) {
+                    mSelectedPos = -1;
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 }
             }
         });
-        lv.addFooterView(footerButton);
+        lv.addFooterView(mFooterButton);
 
         registerForContextMenu(lv);
 
         // pokemon list adapter
-        pokemonListAdapter = new PokemonListAdapter(getActivity().getApplicationContext(), pokemonTeam.getPokemons());
-        lv.setAdapter(pokemonListAdapter);
+        mPokemonListAdapter = new PokemonListAdapter(getActivity().getApplicationContext(), mPokemonTeam.getPokemons());
+        lv.setAdapter(mPokemonListAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Pokemon pkmn = pokemonTeam.getPokemon(position);
-                selectedPos = position;
+                Pokemon pkmn = mPokemonTeam.getPokemon(position);
+                mSelectedPos = position;
                 PokemonFragment fragment = new PokemonFragment();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(PokemonFragment.POKEMON, pkmn);
@@ -145,14 +145,14 @@ public class TeamBuildingFragment extends Fragment {
 
         switch (item.getItemId()) {
             case 1:
-                pokemonTeam.removePokemon(info.position);
-                pokemonListAdapter.notifyDataSetChanged();
-                // Notify parent activity that the pokemonTeam changed (so to reprint in the drawer)
+                mPokemonTeam.removePokemon(info.position);
+                mPokemonListAdapter.notifyDataSetChanged();
+                // Notify parent activity that the mPokemonTeam changed (so to reprint in the drawer)
                 ((TeamBuildingActivity) getActivity()).updateList();
                 return true;
 
             case 2:
-                selectedPos = info.position;
+                mSelectedPos = info.position;
                 Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                 intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
@@ -174,32 +174,32 @@ public class TeamBuildingFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_POKEMON) {
                 Pokemon pokemon = new Pokemon(getActivity(), data.getExtras().getString("Search"));
-                if (selectedPos != -1) {
-                    pokemonTeam.replacePokemon(selectedPos, pokemon);
+                if (mSelectedPos != -1) {
+                    mPokemonTeam.replacePokemon(mSelectedPos, pokemon);
                 } else {
-                    pokemonTeam.addPokemon(pokemon);
+                    mPokemonTeam.addPokemon(pokemon);
                 }
 
-                if (pokemonTeam.isFull()) {
-                    footerButton.setVisibility(View.GONE);
+                if (mPokemonTeam.isFull()) {
+                    mFooterButton.setVisibility(View.GONE);
                 } else {
-                    footerButton.setVisibility(View.VISIBLE);
+                    mFooterButton.setVisibility(View.VISIBLE);
                 }
 
-                pokemonListAdapter.notifyDataSetChanged();
+                mPokemonListAdapter.notifyDataSetChanged();
                 ((TeamBuildingActivity) getActivity()).updateList();
             } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
                 String item = data.getExtras().getString("Search");
 
-                Pokemon pkmn = pokemonTeam.getPokemon(selectedPos);
+                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
                 pkmn.setItem(item);
 
-                pokemonListAdapter.notifyDataSetChanged();
+                mPokemonListAdapter.notifyDataSetChanged();
             } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_MOVES) {
                 String move = data.getExtras().getString("Search");
 
-                Pokemon pkmn = pokemonTeam.getPokemon(selectedPos);
-                switch (selectedMove) {
+                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
+                switch (mSelectedMove) {
                     case 1:
                         pkmn.setMove1(move);
                         break;
@@ -215,7 +215,7 @@ public class TeamBuildingFragment extends Fragment {
                     default:
                         break;
                 }
-                pokemonListAdapter.notifyDataSetChanged();
+                mPokemonListAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -235,7 +235,7 @@ public class TeamBuildingFragment extends Fragment {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.listwidget_detailledpokemon, null);
             }
 
-            final Pokemon pokemon = pokemonTeam.getPokemon(position);
+            final Pokemon pokemon = mPokemonTeam.getPokemon(position);
 
 
             TextView pokemonNickNameTextView = (TextView) convertView.findViewById(R.id.teambuilder_pokemonNickName);
@@ -307,7 +307,7 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
-                    selectedPos = position;
+                    mSelectedPos = position;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
                 }
             });
@@ -420,8 +420,8 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
-                    selectedPos = position;
-                    selectedMove = 1;
+                    mSelectedPos = position;
+                    mSelectedMove = 1;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                 }
             });
@@ -432,8 +432,8 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
-                    selectedPos = position;
-                    selectedMove = 2;
+                    mSelectedPos = position;
+                    mSelectedMove = 2;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                 }
             });
@@ -445,8 +445,8 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
-                    selectedPos = position;
-                    selectedMove = 3;
+                    mSelectedPos = position;
+                    mSelectedMove = 3;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                 }
             });
@@ -458,8 +458,8 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
-                    selectedPos = position;
-                    selectedMove = 4;
+                    mSelectedPos = position;
+                    mSelectedMove = 4;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
                 }
             });
@@ -469,6 +469,6 @@ public class TeamBuildingFragment extends Fragment {
     }
 
     public void updateList() {
-        pokemonListAdapter.notifyDataSetChanged();
+        mPokemonListAdapter.notifyDataSetChanged();
     }
 }

@@ -1482,6 +1482,7 @@ public class BattleFragment extends Fragment {
             }
 
             setTeamPreview(false);
+            triggerTeamPreview(false);
             sendCommands(mChooseCommand);
         }
     }
@@ -1851,6 +1852,40 @@ public class BattleFragment extends Fragment {
                 icon.setBackgroundResource(0);
                 icon.setOnClickListener(new PokemonInfoListener(true, i));
             }
+        }
+    }
+    
+    public void triggerTeamPreview(boolean on) {
+        if (getView() == null) {
+            return;
+        }
+        
+        if (on) {
+            getView().findViewById(R.id.p1a_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 0));
+            getView().findViewById(R.id.p1b_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 1));
+            getView().findViewById(R.id.p1c_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 2));
+            getView().findViewById(R.id.p1d_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 3));
+            getView().findViewById(R.id.p1e_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 4));
+            getView().findViewById(R.id.p1f_prev)
+                    .setOnClickListener(new PokemonSwitchListener(true, 5));
+        } else {
+            getView().findViewById(R.id.p1a_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 0));
+            getView().findViewById(R.id.p1b_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 1));
+            getView().findViewById(R.id.p1c_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 2));
+            getView().findViewById(R.id.p1d_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 3));
+            getView().findViewById(R.id.p1e_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 4));
+            getView().findViewById(R.id.p1f_prev)
+                    .setOnClickListener(new PokemonInfoListener(true, 5));
         }
     }
 
