@@ -145,6 +145,7 @@ public class MyApplication extends Application {
     public void closeActiveConnection() {
         if (mWebSocketClient != null) {
             mWebSocketClient.close();
+            Log.w(MTAG, "");
         }
     }
 

@@ -3,7 +3,6 @@ package com.pokemonshowdown.data;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -15,7 +14,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -27,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pokemonshowdown.app.BattleFieldActivity;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
@@ -196,7 +195,9 @@ public class BattleMessage {
                 break;
 
             case "clearpoke":
-                battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
+                if (battleFragment.getPlayer1Team() == null) {
+                    battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
+                }
                 battleFragment.setPlayer2Team(new ArrayList<PokemonInfo>());
                 break;
 
@@ -208,24 +209,27 @@ public class BattleMessage {
                 iconId = battleFragment.getIconId(playerType, team.size());
                 pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
                 processPokemonDetailString(pokemonInfo, split[1]);
-                team.add(pokemonInfo);
+                if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                        pokemonInfo.getName()) == -1) {
+                    team.add(pokemonInfo);
 
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                MyApplication.toId(pokeName));
-                        if (battleFragment.getView() == null) {
-                            viewData.addViewSetterOnHold(iconId, imageResource,
-                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                        } else {
-                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                            if (icon != null) {
-                                icon.setImageResource(imageResource);
+                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                    MyApplication.toId(pokeName));
+                            if (battleFragment.getView() == null) {
+                                viewData.addViewSetterOnHold(iconId, imageResource,
+                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                            } else {
+                                ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                if (icon != null) {
+                                    icon.setImageResource(imageResource);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
                 break;
 
             case "teampreview":
@@ -253,17 +257,17 @@ public class BattleMessage {
                         }
 
                         battleFragment.getView().findViewById(R.id.p1a_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 0));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 0));
                         battleFragment.getView().findViewById(R.id.p1b_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 1));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 1));
                         battleFragment.getView().findViewById(R.id.p1c_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 2));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 2));
                         battleFragment.getView().findViewById(R.id.p1d_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 3));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 3));
                         battleFragment.getView().findViewById(R.id.p1e_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 4));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 4));
                         battleFragment.getView().findViewById(R.id.p1f_prev)
-                                .setOnClickListener(battleFragment.new PokemonInfoListener(true, 5));
+                                .setOnClickListener(battleFragment.new PokemonSwitchListener(true, 5));
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -279,6 +283,8 @@ public class BattleMessage {
 
                     }
                 });
+                battleFragment.resetChooseCommand();
+
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
                 String[] p1Team = battleFragment.getTeamNameStringArray(team1);
@@ -300,84 +306,62 @@ public class BattleMessage {
             case "request":
                 try {
                     JSONObject requestJson = new JSONObject(messageDetails);
-                    if (requestJson.has("side")) {
+                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                         battleFragment.setBattling(requestJson);
                         JSONObject sideJson = requestJson.getJSONObject("side");
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        ArrayList<PokemonInfo> updatedP1Team = new ArrayList<>();
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject info = teamJson.getJSONObject(i);
                             final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                            updatedP1Team.add(pkm);
-                        }
-                        battleFragment.setPlayer1Team(updatedP1Team);
-                        for (PokemonInfo pkm : battleFragment.getPlayer1Team()) {
-                            Log.d(BattleFragment.BTAG, pkm.getName());
-                            int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                    MyApplication.toId(pkm.getName()));
-                            int newIconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().indexOf(pkm));
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(newIconId, pkmIcon,
-                                        BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                            } else {
-                                ImageView icon = (ImageView) battleFragment.getView().findViewById(newIconId);
-                                if (icon != null) {
-                                    icon.setImageResource(pkmIcon);
+                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                                    pkm.getName()) == -1) {
+                                battleFragment.getPlayer1Team().add(i, pkm);
+                                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                                MyApplication.toId(pkm.getName()));
+                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
+                                        if (battleFragment.getView() == null) {
+                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
+                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                                        } else {
+                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                            if (icon != null) {
+                                                icon.setImageResource(pkmIcon);
+                                                }
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    battleFragment.getPlayer1Team().set(i, pkm);
                                 }
-                            }
-
                         }
                     }
 
-
-                    if (requestJson.has("rqid")) {
-                        battleFragment.setRqid(requestJson.getInt("rqid"));
-                    }
-
-                    if (requestJson.has("teamPreview")) {
-                        battleFragment.setTeamPreview(requestJson.getBoolean("teamPreview"));
-                    } else {
-                        battleFragment.setTeamPreview(false);
-                    }
-
-                    if (requestJson.has("wait")) {
-                        battleFragment.setWaiting(requestJson.getBoolean("wait"));
-                    } else {
-                        battleFragment.setWaiting(false);
-                    }
-
-                    if (requestJson.has("forceSwitch")) {
-                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                        int idx = 0;
-                        for (PokemonInfo info : battleFragment.getPlayer1Team()) {
-                            if (info.isActive()) {
-                                info.setForceSwitch(forceSwitchJsonArray.getBoolean(idx));
-                                idx++;
-                            }
+                    if (requestJson.has("side")) {
+                        JSONObject sideJson = requestJson.getJSONObject("side");
+                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                        for (int i = 0; i < teamJson.length(); i++) {
+                            JSONObject pkm = teamJson.getJSONObject(i);
+                            battleFragment.getPlayer1Team().get(i)
+                                    .setActive(pkm.getBoolean("active"));
                         }
                     }
-                    battleFragment.showActionFrame(requestJson);
+
+                    battleFragment.setRqid(requestJson.optInt("rqid", 0));
+                    battleFragment.setTeamPreview(requestJson.optBoolean("teamPreview", false));
+                    battleFragment.setWaiting(requestJson.optBoolean("wait", false));
+
+                    battleFragment.setRequestJson(requestJson);
                 } catch (JSONException e) {
-                    new AlertDialog.Builder(battleFragment.getActivity())
-                            .setMessage(R.string.request_error)
-                            .create()
-                            .show();
-                    return;
+                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
+                    break;
                 }
                 break;
 
             case "inactive":
                 final String inactive;
-                final String player;
-                if ((messageDetails.startsWith(battleFragment.getPlayer1())) || (messageDetails.startsWith("Player 1"))) {
-                    player = "p1";
-                } else {
-                    if ((messageDetails.startsWith(battleFragment.getPlayer2())) || (messageDetails.startsWith("Player 2"))) {
-                        player = "p2";
-                    } else {
-                        break;
-                    }
-                }
                 if (messageDetails.contains(" seconds left")) {
                     remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
                     inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
@@ -387,28 +371,15 @@ public class BattleMessage {
                 battleFragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (player.equals("p1")) {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                        if (battleFragment.getView() == null) {
+                            viewData.addViewSetterOnHold(R.id.inactive, inactive,
+                                    BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                            viewData.addViewSetterOnHold(R.id.inactive, null,
+                                    BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
                         } else {
-                            if (battleFragment.getView() == null) {
-                                viewData.addViewSetterOnHold(R.id.inactive_o, inactive,
-                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                                viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                            } else {
-                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive_o);
-                                textView.setVisibility(View.VISIBLE);
-                                textView.setText(inactive);
-                            }
+                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
+                            textView.setVisibility(View.VISIBLE);
+                            textView.setText(inactive);
                         }
                     }
                 });
@@ -425,11 +396,8 @@ public class BattleMessage {
                         if (battleFragment.getView() == null) {
                             viewData.addViewSetterOnHold(R.id.inactive, null,
                                     BattleFieldData.ViewData.SetterType.VIEW_GONE);
-                            viewData.addViewSetterOnHold(R.id.inactive_o, null,
-                                    BattleFieldData.ViewData.SetterType.VIEW_GONE);
                         } else {
                             battleFragment.getView().findViewById(R.id.inactive).setVisibility(View.GONE);
-                            battleFragment.getView().findViewById(R.id.inactive_o).setVisibility(View.GONE);
                         }
                     }
                 });
@@ -762,7 +730,6 @@ public class BattleMessage {
                         battleFragment.getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) battleFragment.getView().findViewById(R.id.turn)).setText(toAppend);
                         (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                        (battleFragment.getView().findViewById(R.id.inactive_o)).setVisibility(View.GONE);
                     }
 
                     @Override
@@ -4368,7 +4335,7 @@ public class BattleMessage {
 
     private static int processHpFraction(String hpFraction) {
         int status = hpFraction.indexOf(' ');
-        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
+        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(0, status);
         int fraction = hpFraction.indexOf('/');
         if (fraction == -1) {
             return 0;

@@ -104,19 +104,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/inactive"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@id/battle_background"
-        android:layout_alignBottom="@id/battle_background"
-        android:gravity="center_horizontal"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:background="@drawable/editable_frame_light_red"
-        android:padding="2dp"/>
-
-    <TextView
         android:id="@+id/username_o"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -200,7 +187,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/inactive_o"
+        android:id="@+id/inactive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
+    public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
 
     private int mPosition;
     private DrawerLayout mDrawerLayout;
@@ -376,6 +377,17 @@ public class BattleFieldActivity extends FragmentActivity {
                 }
             }
         }
+    }
+
+    public AlertDialog createErrorAlert(String message) {
+        return new AlertDialog.Builder(this)
+                .setMessage(message)
+                .create();
+    }
+
+    public void showErrorAlert(String message) {
+        AlertDialog alertDialog = createErrorAlert(message);
+        alertDialog.show();
     }
 
 }
