@@ -3929,7 +3929,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(animatorSet, message);
                 break;
 
-            case "-weatherf":
+            case "-weather":
                 final String weather = split[0];
                 boolean upkeep = false;
                 if (split.length > 1) {
@@ -3942,6 +3942,39 @@ public class BattleMessage {
                             toAppendBuilder.append("Rain continues to fall!");
                         } else {
                             toAppendBuilder.append("It started to rain!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
+                    case "PrimordalSea":
+                        if (upkeep) {
+                            toAppendBuilder.append("There's no relief from this heavy rain!");
+                        } else {
+                            toAppendBuilder.append("A heavy rain began to fall!");
                             battleFragment.setWeatherExist(true);
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
@@ -4037,6 +4070,39 @@ public class BattleMessage {
                             });
                         }
                         break;
+                    case "DesolateLand":
+                        if (upkeep) {
+                            toAppendBuilder.append("The extremely harsh sunlight was not lessened at all!");
+                        } else {
+                            toAppendBuilder.append("The sunlight turned extremely harsh!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
                     case "Hail":
                         if (upkeep) {
                             toAppendBuilder.append("The hail crashes down.");
@@ -4070,14 +4136,52 @@ public class BattleMessage {
                             });
                         }
                         break;
+                    case "DeltaStream":
+                        if (upkeep) {
+                            toAppendBuilder.append("The mysterious air current blows on regardless!");
+                        } else {
+                            toAppendBuilder.append("A mysterious air current starts to blow!");
+                            battleFragment.setWeatherExist(true);
+                            animatorSet.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    if (battleFragment.getView() == null) {
+                                        return;
+                                    }
+                                    ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                        }
+                        break;
                     case "none":
                         if (battleFragment.isWeatherExist()) {
                             switch (battleFragment.getCurrentWeather()) {
                                 case "RainDance":
                                     toAppendBuilder.append("The rain stopped.");
                                     break;
+                                case "PrimordalSea":
+                                    toAppendBuilder.append("The heavy rain has lifted!");
+                                    break;
                                 case "SunnyDay":
                                     toAppendBuilder.append("The sunlight faded.");
+                                    break;
+                                case "DesolateLand":
+                                    toAppendBuilder.append("The harsh sunlight faded.");
                                     break;
                                 case "Sandstorm":
                                     toAppendBuilder.append("The sandstorm subsided.");
@@ -4085,6 +4189,8 @@ public class BattleMessage {
                                 case "Hail":
                                     toAppendBuilder.append("The hail stopped.");
                                     break;
+                                case "DeltaStream":
+                                    toAppendBuilder.append("The mysterious wind stopped.");
                             }
                             animatorSet.addListener(new Animator.AnimatorListener() {
                                 @Override
@@ -4121,7 +4227,6 @@ public class BattleMessage {
                 animatorSet.play(toast);
                 battleFragment.startAnimation(animatorSet, message);
                 break;
-
 
             case "-fieldstart":
                 attackerOutputName = ofSource;
