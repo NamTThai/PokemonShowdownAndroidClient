@@ -4370,7 +4370,7 @@ public class BattleMessage {
 
     private static int processHpFraction(String hpFraction) {
         int status = hpFraction.indexOf(' ');
-        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(status);
+        hpFraction = (status == -1) ? hpFraction : hpFraction.substring(0, status);
         int fraction = hpFraction.indexOf('/');
         if (fraction == -1) {
             return 0;
