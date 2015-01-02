@@ -3,11 +3,6 @@ package com.pokemonshowdown.app;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,13 +14,11 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +30,7 @@ import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +49,10 @@ public class BattleFragment extends Fragment {
     public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
-    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo"};
+    public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
+    private int mRqid;
+    private boolean mTeamPreview;
+    private boolean mWaiting;
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
@@ -84,6 +81,10 @@ public class BattleFragment extends Fragment {
 
     private String mCurrentWeather;
     private boolean mWeatherExist;
+
+    private int mCurrentActivePokemon = 0;
+    private int mTotalActivePokemon = 0;
+    private ArrayList<String> mActionCommands = new ArrayList<String>();
 
     public static BattleFragment newInstance(String roomId) {
         BattleFragment fragment = new BattleFragment();
@@ -146,7 +147,7 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             if (getView() != null) {
                 HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
-                
+
                 if (viewBundle != null) {
                     mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
                     mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
@@ -370,6 +371,26 @@ public class BattleFragment extends Fragment {
 
     public String getRoomId() {
         return mRoomId;
+    }
+
+    public void setRqid(int rqid) {
+        this.mRqid = rqid;
+    }
+
+    public int getRqid() {
+        return mRqid;
+    }
+
+    public void setTeamPreview(boolean teamPreview) {
+        this.mTeamPreview = teamPreview;
+    }
+
+    public boolean isTeamPreview() {
+        return mTeamPreview;
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.mWaiting = waiting;
     }
 
     public int getBattling() {
@@ -1365,6 +1386,175 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    private void addCommand(String command) {
+        mActionCommands.add(command);
+    }
+
+    private void sendCommands() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getRoomId() + "|/choose ");
+        int idx = 0;
+        for (String command : mActionCommands) {
+            stringBuilder.append(command);
+            idx++;
+            if (idx != mActionCommands.size()) {
+                stringBuilder.append(",");
+            }
+        }
+        stringBuilder.append("|" + getRqid());
+        Log.d(BTAG, stringBuilder.toString());
+        MyApplication.getMyApplication().sendClientMessage(stringBuilder.toString());
+    }
+
+    private PokemonInfo getCurrentActivePokemon() {
+        return getPlayer1Team().get(mCurrentActivePokemon);
+    }
+
+    public void showActionFrame(final JSONObject json) {
+        if (mWaiting) {
+            return;
+        }
+        mActionCommands.clear();
+        mCurrentActivePokemon = 0;
+        mTotalActivePokemon = 0;
+        for (PokemonInfo pokemonInfo : getPlayer1Team()) {
+            if (pokemonInfo.isActive()) {
+                mTotalActivePokemon++;
+            }
+        }
+
+        if (mTeamPreview) {
+            showSwitchFrame(json);
+        } else {
+            if (getCurrentActivePokemon().isForceSwitch()) {
+                showSwitchFrame(json);
+            } else {
+                showAttackOrSwitchFrame(json);
+            }
+        }
+    }
+
+    private void showAttackOrSwitchFrame(final JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_move_or_switch, frameLayout);
+        getView().findViewById(R.id.battle_attack_textview)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // switch to attack layout
+                        showAttackFrame(json);
+                    }
+                });
+
+        getView().findViewById(R.id.battle_switch_textview)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // switch to switch layout
+                        showSwitchFrame(json);
+                    }
+                });
+        
+        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
+        TextView textView = (TextView) getView().findViewById(R.id.battle_pokemon_name_textview);
+        textView.setText(String.format(getResources().getString(R.string.battle_pokemon_name), currentPokemonInfo.getName()));
+    }
+
+    private void showAttackFrame(final JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
+        TextView[] textViews = new TextView[4];
+        textViews[0] = (TextView) getView().findViewById(R.id.active_move1_name);
+        textViews[1] = (TextView) getView().findViewById(R.id.active_move2_name);
+        textViews[2] = (TextView) getView().findViewById(R.id.active_move3_name);
+        textViews[3] = (TextView) getView().findViewById(R.id.active_move4_name);
+
+        try {
+            JSONArray active = json.getJSONArray("active");
+            JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
+            for (int i = 0; i < moves.length(); i++) {
+                final String moveName = moves.getJSONObject(i).getString("move");
+                textViews[i].setText(moveName);
+                textViews[i].setEnabled(!moves.getJSONObject(i).getBoolean("disabled"));
+                textViews[i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+                        if(checkBox.isChecked()) {
+                            addCommand("move " + moveName + " mega");
+                        } else {
+                            addCommand("move " + moveName);
+                        }
+                        clearActionFrame();
+                        mCurrentActivePokemon++;
+                        if (mCurrentActivePokemon < mTotalActivePokemon) {
+                            showAttackOrSwitchFrame(json);
+                        } else {
+                            sendCommands();
+                        }
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
+        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+
+        if(currentPokemonInfo.canMegaEvo()) {
+            checkBox.setVisibility(View.VISIBLE);
+        } else {
+            checkBox.setVisibility(View.GONE);
+        }
+    }
+
+    private void showSwitchFrame(final JSONObject json) {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_switch, frameLayout);
+
+        TextView[] textViews = new TextView[6];
+        textViews[0] = (TextView) getView().findViewById(R.id.switch_pokemon1_name);
+        textViews[1] = (TextView) getView().findViewById(R.id.switch_pokemon2_name);
+        textViews[2] = (TextView) getView().findViewById(R.id.switch_pokemon3_name);
+        textViews[3] = (TextView) getView().findViewById(R.id.switch_pokemon4_name);
+        textViews[4] = (TextView) getView().findViewById(R.id.switch_pokemon5_name);
+        textViews[5] = (TextView) getView().findViewById(R.id.switch_pokemon6_name);
+        for (int i = 0; i < getPlayer1Team().size(); i++) {
+            final int idx = i + 1;
+            textViews[i].setText(getPlayer1Team().get(i).getName());
+            textViews[i].setCompoundDrawablesWithIntrinsicBounds(getPlayer1Team().get(i).getIcon(getActivity()),0,0,0);
+            textViews[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!isTeamPreview()) {
+                        addCommand("switch " + idx);
+                    } else {
+                        addCommand("team " + idx);
+                    }
+                    clearActionFrame();
+                    mCurrentActivePokemon++;
+                    if (mCurrentActivePokemon < mTotalActivePokemon) {
+                        showAttackOrSwitchFrame(json);
+                    } else {
+                        sendCommands();
+                    }
+                }
+            });
+        }
+    }
+
+    private void clearActionFrame() {
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+    }
+
     public AnimatorSet createFlyingMessage(final String tag, AnimatorSet toast, final Spannable message) {
         try {
             message.setSpan(new RelativeSizeSpan(0.8f), 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -1436,22 +1626,22 @@ public class BattleFragment extends Fragment {
             return new AnimatorSet();
         }
     }
-    
+
     public class PokemonInfoListener implements View.OnClickListener {
         private boolean mPlayer1;
         private int mId;
-        
+
         public PokemonInfoListener(boolean player1, int id) {
             mPlayer1 = player1;
             mId = id;
         }
-        
+
         @Override
         public void onClick(View v) {
             if (v.getVisibility() != View.VISIBLE) {
                 return;
             }
-            
+
             PokemonInfo info = null;
             if (mId > -1 && mPlayer1) {
                 if (mId < mPlayer1Team.size()) {
@@ -1462,7 +1652,7 @@ public class BattleFragment extends Fragment {
                     info = mPlayer2Team.get(mId);
                 }
             }
-            
+
             if (info != null) {
                 PokemonInfoFragment.newInstance(info, false)
                         .show(getActivity().getSupportFragmentManager(), BTAG);
