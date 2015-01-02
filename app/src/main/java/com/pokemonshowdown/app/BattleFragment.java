@@ -468,6 +468,8 @@ public class BattleFragment extends Fragment {
         String holderString = mPlayer1;
         mPlayer1 = mPlayer2;
         mPlayer2 = holderString;
+        ((TextView) getView().findViewById(R.id.username)).setText(mPlayer1);
+        ((TextView) getView().findViewById(R.id.username_o)).setText(mPlayer2);
 
         ArrayList<PokemonInfo> holderTeam = mPlayer1Team;
         mPlayer1Team = mPlayer2Team;
