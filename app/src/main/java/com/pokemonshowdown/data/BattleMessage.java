@@ -3,7 +3,6 @@ package com.pokemonshowdown.data;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -26,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pokemonshowdown.app.BattleFieldActivity;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
@@ -367,13 +367,11 @@ public class BattleMessage {
                     }
 
                     if (battleFragment.getRqid() != 0 && !battleFragment.isTeamPreview()) {
+                        battleFragment.resetChooseCommand();
                         battleFragment.startAction(requestJson.getJSONArray("active"));
                     }
                 } catch (JSONException e) {
-                    new AlertDialog.Builder(battleFragment.getActivity())
-                            .setMessage(R.string.request_error)
-                            .create()
-                            .show();
+                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
                     return;
                 }
                 break;

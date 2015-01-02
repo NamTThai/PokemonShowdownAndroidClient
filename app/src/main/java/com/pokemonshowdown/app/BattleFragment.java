@@ -39,6 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -1502,8 +1503,6 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        resetChooseCommand();
-
         if (getCurrentActivePokemon().isForceSwitch()) {
             triggerSwitchOptions(true);
         } else {
@@ -1578,23 +1577,21 @@ public class BattleFragment extends Fragment {
             return null;
         }
 
-        final AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
-
-        if (targetDialog == null) {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    parseMoveCommandAndSend(active, moveId, 0);
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
+                    if (targetDialog == null) {
+                        parseMoveCommandAndSend(active, moveId, 0);
+                    } else {
+                        targetDialog.show();
+                    }
+                } catch (JSONException e) {
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
                 }
-            };
-        } else {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    targetDialog.show();
-                }
-            };
-        }
+            }
+        };
     }
 
     private AlertDialog parseMoveTargetDialog(final JSONArray active, final int moveId) throws JSONException {
@@ -1605,16 +1602,18 @@ public class BattleFragment extends Fragment {
 
         int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
         int endFoe = (mCurrentActivePokemon + 1 >=  getPlayer2Team().size()) ?
-                getPlayer2Team().size() : mCurrentActivePokemon + 1;
+                getPlayer2Team().size() - 1 : mCurrentActivePokemon + 1;
         int endAlly = (mCurrentActivePokemon + 1 >=  getPlayer1Team().size()) ?
-                getPlayer1Team().size() : mCurrentActivePokemon + 1;
+                getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
+
+        Log.d(BTAG, "start " + start + " endFoe " + endFoe + " endAlly " + endAlly);
 
         final String[] foes = new String[3];
         final int[] foeIcons = new int[3];
         int foeIndex = 0;
-        for (int i = start; i < endFoe; i++) {
+        for (int i = start; i <= endFoe; i++) {
             PokemonInfo pkm = getPlayer2Team().get(i);
-            if (pkm.isActive()) {
+            if (checkSwitchedOut(false, i)) {
                 foes[foeIndex] = pkm.getName();
                 foeIcons[foeIndex] = pkm.getIcon(getActivity());
                 foeIndex++;
@@ -1624,9 +1623,9 @@ public class BattleFragment extends Fragment {
         final String[] allyOrSelf = new String[3];
         final int[] aosIcons = new int[3];
         int aosIndex = 0;
-        for (int i = start; i < endAlly; i++) {
+        for (int i = start; i <= endAlly; i++) {
             PokemonInfo pkm = getPlayer1Team().get(i);
-            if (pkm.isActive()) {
+            if (checkSwitchedOut(true, i)) {
                 allyOrSelf[aosIndex] = pkm.getName();
                 aosIcons[aosIndex] = pkm.getIcon(getActivity());
                 aosIndex++;
@@ -1636,14 +1635,18 @@ public class BattleFragment extends Fragment {
         final String[] allies = new String[2];
         final int[] allyIcons = new int[2];
         int allyIndex = 0;
-        for (int i = start; i < endAlly; i++) {
+        for (int i = start; i <= endAlly; i++) {
             PokemonInfo pkm = getPlayer1Team().get(i);
-            if (i != mCurrentActivePokemon && pkm.isActive()) {
+            if (i != mCurrentActivePokemon && checkSwitchedOut(true, i)) {
                 allies[allyIndex] = pkm.getName();
                 allyIcons[allyIndex] = pkm.getIcon(getActivity());
                 allyIndex++;
             }
         }
+
+        Log.d(BTAG, Arrays.toString(foes));
+        Log.d(BTAG, Arrays.toString(allyOrSelf));
+        Log.d(BTAG, Arrays.toString(allies));
 
         String[] allTargets;
         final int numFoes = foeIndex;
@@ -1655,8 +1658,9 @@ public class BattleFragment extends Fragment {
                 }
 
                 allTargets = new String[foeIndex + allyIndex];
-                System.arraycopy(allTargets, 0, foes, 0, foeIndex);
-                System.arraycopy(allTargets, foeIndex, allies, 0, allyIndex);
+                System.arraycopy(foes, 0, allTargets, 0, foeIndex);
+                System.arraycopy(allies, 0, allTargets, foeIndex, allyIndex);
+                Log.d(BTAG, "normal " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
@@ -1666,6 +1670,7 @@ public class BattleFragment extends Fragment {
                                 } else {
                                     parseMoveCommandAndSend(active, moveId, (which - numFoes + 1) * -1);
                                 }
+                                dialog.dismiss();
                             }
                         }).create();
             case "adjacentFoe":
@@ -1674,12 +1679,14 @@ public class BattleFragment extends Fragment {
                 }
 
                 allTargets = new String[foeIndex];
-                System.arraycopy(allTargets, 0, foes, 0, foeIndex);
+                System.arraycopy(foes, 0, allTargets, 0, foeIndex);
+                Log.d(BTAG, "adjFoe " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 parseMoveCommandAndSend(active, moveId, which + 1);
+                                dialog.dismiss();
                             }
                         }).create();
             case "adjacentAlly":
@@ -1688,13 +1695,15 @@ public class BattleFragment extends Fragment {
                 }
 
                 allTargets = new String[allyIndex];
-                System.arraycopy(allTargets, 0, allies, 0, allyIndex);
+                System.arraycopy(allies, 0, allTargets, 0, allyIndex);
+                Log.d(BTAG, "adjAlly " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int pos = (which < currentActive) ? which : which + 1;
                                 parseMoveCommandAndSend(active, moveId, (pos + 1) * -1);
+                                dialog.dismiss();
                             }
                         }).create();
             case "adjacentAllyOrSelf":
@@ -1703,16 +1712,48 @@ public class BattleFragment extends Fragment {
                 }
 
                 allTargets = new String[aosIndex];
-                System.arraycopy(allTargets, 0, allyOrSelf, 0, aosIndex);
+                System.arraycopy(allyOrSelf, 0, allTargets, 0, aosIndex);
+                Log.d(BTAG, "allyOrSelf " + Arrays.toString(allTargets));
                 return new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 parseMoveCommandAndSend(active, moveId, (which + 1) * -1);
+                                dialog.dismiss();
                             }
                         }).create();
             default:
                 return null;
+        }
+    }
+
+    private boolean checkSwitchedOut(boolean player1, int pos) {
+        if (getView() == null) {
+            return false;
+        }
+
+        if (player1) {
+            switch (pos) {
+                case 0:
+                    return getView().findViewById(R.id.p1a).getVisibility() == View.VISIBLE;
+                case 1:
+                    return getView().findViewById(R.id.p1b).getVisibility() == View.VISIBLE;
+                case 2:
+                    return getView().findViewById(R.id.p1c).getVisibility() == View.VISIBLE;
+                default:
+                    return false;
+            }
+        } else {
+            switch (pos) {
+                case 0:
+                    return getView().findViewById(R.id.p2a).getVisibility() == View.VISIBLE;
+                case 1:
+                    return getView().findViewById(R.id.p2b).getVisibility() == View.VISIBLE;
+                case 2:
+                    return getView().findViewById(R.id.p2c).getVisibility() == View.VISIBLE;
+                default:
+                    return false;
+            }
         }
     }
 
