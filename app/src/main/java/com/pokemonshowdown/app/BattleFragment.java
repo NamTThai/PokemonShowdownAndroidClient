@@ -1598,7 +1598,9 @@ public class BattleFragment extends Fragment {
     }
 
     private AlertDialog parseMoveTargetDialog(final JSONArray active, final int moveId) throws JSONException {
-        final JSONObject moveJson = active.getJSONObject(moveId);
+        final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
+                .getJSONArray("moves")
+                .getJSONObject(moveId);
         String target = moveJson.getString("target");
 
         int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
@@ -1720,7 +1722,9 @@ public class BattleFragment extends Fragment {
         }
 
         try {
-            JSONObject moveJson = active.getJSONObject(moveId);
+            JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
+                    .getJSONArray("moves")
+                    .getJSONObject(moveId);
 
             String moveName = moveJson.getString("move");
             String command;

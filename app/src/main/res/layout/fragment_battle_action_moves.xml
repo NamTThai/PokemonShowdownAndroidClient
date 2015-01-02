@@ -18,8 +18,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:id="@+id/active_move1_name"
@@ -52,8 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:id="@+id/active_move2_name"
@@ -91,8 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -126,8 +126,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:id="@+id/active_move4_name"
