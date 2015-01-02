@@ -12,15 +12,14 @@
         <TableRow
             android:weightSum="2">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/active_move1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
                 android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:orientation="vertical">
+                android:paddingTop="2dp">
 
                 <TextView
                     android:id="@+id/active_move1_name"
@@ -30,19 +29,30 @@
                 <TextView
                     android:id="@+id/active_move1_pp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/move_type"
+                    android:layout_alignTop="@id/active_move1_name"
+                    android:layout_alignBottom="@id/active_move1_name"
+                    android:scaleType="center"
+                    android:adjustViewBounds="true"
+                    android:layout_toLeftOf="@id/active_move1_pp"
+                    android:paddingRight="16dp"/>
 
-            <LinearLayout
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/active_move2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
                 android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:orientation="vertical">
+                android:paddingTop="2dp">
 
                 <TextView
                     android:id="@+id/active_move2_name"
@@ -52,16 +62,28 @@
                 <TextView
                     android:id="@+id/active_move2_pp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/move_type"
+                    android:layout_alignTop="@id/active_move2_name"
+                    android:layout_alignBottom="@id/active_move2_name"
+                    android:scaleType="center"
+                    android:adjustViewBounds="true"
+                    android:layout_toLeftOf="@id/active_move2_pp"
+                    android:paddingRight="16dp"/>
+
+            </RelativeLayout>
 
         </TableRow>
 
         <TableRow
             android:weightSum="2">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/active_move3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -79,19 +101,30 @@
                 <TextView
                     android:id="@+id/active_move3_pp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"/>
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/move_type"
+                    android:layout_alignTop="@id/active_move3_name"
+                    android:layout_alignBottom="@id/active_move3_name"
+                    android:scaleType="center"
+                    android:adjustViewBounds="true"
+                    android:layout_toLeftOf="@id/active_move3_pp"
+                    android:paddingRight="16dp"/>
 
-            <LinearLayout
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/active_move4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/editable_frame"
                 android:paddingBottom="2dp"
-                android:paddingTop="2dp"
-                android:orientation="vertical">
+                android:paddingTop="2dp">
 
                 <TextView
                     android:id="@+id/active_move4_name"
@@ -103,7 +136,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/move_type"
+                    android:layout_alignTop="@id/active_move4_name"
+                    android:layout_alignBottom="@id/active_move4_name"
+                    android:scaleType="center"
+                    android:adjustViewBounds="true"
+                    android:layout_toLeftOf="@id/active_move4_pp"
+                    android:paddingRight="16dp"/>
+
+            </RelativeLayout>
 
         </TableRow>
 

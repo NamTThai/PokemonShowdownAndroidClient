@@ -92,9 +92,7 @@ public class TeamBuildingFragment extends Fragment {
         footerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (pokemonTeam.isFull()) {
-                    return;
-                } else {
+                if (!pokemonTeam.isFull()) {
                     selectedPos = -1;
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
@@ -116,8 +114,8 @@ public class TeamBuildingFragment extends Fragment {
                 selectedPos = position;
                 PokemonFragment fragment = new PokemonFragment();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("Pokemon", pkmn);
-                bundle.putBoolean("Search", false);
+                bundle.putSerializable(PokemonFragment.POKEMON, pkmn);
+                bundle.putBoolean(PokemonFragment.SEARCH, false);
                 fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragment.show(fragmentManager, PokemonFragment.PTAG);
