@@ -3211,14 +3211,10 @@ public class BattleMessage {
                         break;
 
                     case "confusion":
-                        if (fromEffect.contains("item:")) {
-                            toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" snapped out of its confusion!");
+                        if (attacker.startsWith("p2")) {
+                            toAppendBuilder.append(attackerOutputName).append(" snapped out of confusion!");
                         } else {
-                            if (attacker.startsWith("p2")) {
-                                toAppendBuilder.append(attackerOutputName).append(" snapped out of confusion!");
-                            } else {
-                                toAppendBuilder.append(attackerOutputName).append(" snapped out of its confusion.");
-                            }
+                            toAppendBuilder.append(attackerOutputName).append(" snapped out of its confusion.");
                         }
                         break;
 
