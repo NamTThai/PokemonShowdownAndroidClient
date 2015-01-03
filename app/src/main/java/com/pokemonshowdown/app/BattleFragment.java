@@ -1586,14 +1586,19 @@ public class BattleFragment extends Fragment {
             setRqid(requestJson.optInt("rqid", 0));
             setTeamPreview(requestJson.optBoolean("teamPreview", false));
             setWaiting(requestJson.optBoolean("wait", false));
-            
-            if (getRqid() != 0 && !isTeamPreview()) {
+
+            if (isTeamPreview()) {
                 resetChooseCommand();
-                if (requestJson.has("forceSwitch")) {
-                    JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                    chooseForceSwitch(forceSwitchJsonArray);
-                } else {
-                    startAction(requestJson.getJSONArray("active"));
+                triggerTeamPreview(true);
+            } else {
+                if (getRqid() != 0) {
+                    resetChooseCommand();
+                    if (requestJson.has("forceSwitch")) {
+                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
+                        chooseForceSwitch(forceSwitchJsonArray);
+                    } else {
+                        startAction(requestJson.getJSONArray("active"));
+                    }
                 }
             }
         } catch (JSONException e) {

@@ -257,7 +257,6 @@ public class BattleMessage {
                         }
 
                         battleFragment.startRequest();
-                        battleFragment.triggerTeamPreview(true);
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -273,7 +272,6 @@ public class BattleMessage {
 
                     }
                 });
-                battleFragment.resetChooseCommand();
 
                 toAppendBuilder = new StringBuilder();
                 toAppendBuilder.append(battleFragment.getPlayer1()).append("'s Team: ");
