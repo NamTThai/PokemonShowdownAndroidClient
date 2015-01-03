@@ -1422,6 +1422,24 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public void restoreBoost(String playerTag) {
+        try {
+            LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
+            for (String stat : STATS) {
+                TextView statBoost = (TextView) tempStat.findViewWithTag(stat);
+                if (statBoost != null) {
+                    String boostDetail = statBoost.getText().toString();
+                    int currentBoost = Integer.parseInt(boostDetail.substring(0, boostDetail.indexOf(" ")));
+                    if (currentBoost < 0) {
+                        tempStat.removeView(statBoost);
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+
+        }
+    }
+
     public void swapBoost(String org, String dest, String... stats) {
         org = org.substring(0, 3);
         dest = dest.substring(0, 3);
