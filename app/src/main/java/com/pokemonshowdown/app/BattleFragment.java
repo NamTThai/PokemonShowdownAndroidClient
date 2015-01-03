@@ -1476,6 +1476,8 @@ public class BattleFragment extends Fragment {
         if (getView() != null) {
             getView().findViewById(R.id.back).setVisibility(View.VISIBLE);
         }
+
+        setRequestJson(null);
     }
 
     private PokemonInfo getCurrentActivePokemon() {
@@ -1553,6 +1555,12 @@ public class BattleFragment extends Fragment {
         if (mCurrentActivePokemon == mTotalActivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
             sendCommands(mChooseCommand);
+        } else {
+            try {
+                startAction(getRequestJson().getJSONArray("active"));
+            } catch (JSONException e) {
+                ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            }
         }
     }
 
@@ -1588,11 +1596,9 @@ public class BattleFragment extends Fragment {
                     startAction(requestJson.getJSONArray("active"));
                 }
             }
-            setRequestJson(null);
         } catch (JSONException e) {
             ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
             Log.d(BTAG, "StartRequest error", e);
-            setRequestJson(null);
         }
     }
 

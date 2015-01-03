@@ -927,7 +927,9 @@ public class BattleMessage {
                             break;
                         case "abilityironbarbs":
                             PokemonInfo barbTarget = battleFragment.getPokemonInfo(split[3]);
-                            barbTarget.setAbility("ironbarbs");
+                            if (barbTarget != null) {
+                                barbTarget.setAbility("ironbarbs");
+                            }
                             toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Iron Barbs!");
                         case "sandstorm":
                             toAppendBuilder.append(attackerOutputName).append(" is buffeted by the sandstorm!");
@@ -960,7 +962,9 @@ public class BattleMessage {
                             break;
                         case "itemrockyhelmet":
                             PokemonInfo helmetPokemon = battleFragment.getPokemonInfo(split[3]);
-                            helmetPokemon.setItem("rockyhelmet");
+                            if (helmetPokemon != null) {
+                                helmetPokemon.setItem("rockyhelmet");
+                            }
                             toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Rocky Helmet!");
                             break;
                         default:
@@ -1071,7 +1075,9 @@ public class BattleMessage {
                         case "dryskin":
                         case "icebody":
                             toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" heals it!");
-                            pokemonInfo.setAbility(battleFragment.getPrintable(fromEffect));
+                            if (pokemonInfo != null) {
+                                pokemonInfo.setAbility(battleFragment.getPrintable(fromEffect));
+                            }
                             break;
                         case "healingwish":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
@@ -1388,7 +1394,7 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
                     switch (battleFragment.getPrintable(fromEffectId)) {
-                        case "bellydrum":
+                        case "movebellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
                             toast.addListener(new Animator.AnimatorListener() {
@@ -1415,7 +1421,7 @@ public class BattleMessage {
                             battleFragment.startAnimation(toast, message);
                             break;
 
-                        case "angerpoint":
+                        case "abilityangerpoint":
                             toAppendBuilder.append(attackerOutputName).append(" maxed its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
                             toast.addListener(new Animator.AnimatorListener() {
@@ -2273,9 +2279,13 @@ public class BattleMessage {
                             break;
                     }
                     pokemonInfo = battleFragment.getPokemonInfo(split[0]);
-                    pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
-                    PokemonInfo defInfo = battleFragment.getPokemonInfo(ofSource);
-                    defInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    if (pokemonInfo != null) {
+                        pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    }
+                    PokemonInfo defInfo = battleFragment.getPokemonInfo(fromEffect);
+                    if (defInfo != null) {
+                        defInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    }
                 } else {
                     switch (MyApplication.toId(ability)) {
                         case "pressure":
@@ -2329,7 +2339,9 @@ public class BattleMessage {
                             break;
                     }
                     pokemonInfo = battleFragment.getPokemonInfo(split[0]);
-                    pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    if (pokemonInfo != null) {
+                        pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                    }
                 }
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = battleFragment.makeToast(logMessage);
@@ -2346,7 +2358,9 @@ public class BattleMessage {
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("(").append(attackerOutputName).append("'s Ability was previously ").append(battleFragment.getPrintable(ability)).append(")");
                             pokemonInfo = battleFragment.getPokemonInfo(split[0]);
-                            pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                            if (pokemonInfo != null) {
+                                pokemonInfo.setAbility(MyApplication.toId(battleFragment.getPrintable(ability)));
+                            }
                             break;
 
                         default:
