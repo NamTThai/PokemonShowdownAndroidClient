@@ -294,28 +294,28 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private void setMove1(String move) {
         mAttacker.setMove1(move);
-        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? "--" : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move1)).setText(moveName);
         calculateDamage(1);
     }
 
     private void setMove2(String move) {
         mAttacker.setMove2(move);
-        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? "--" : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move2)).setText(moveName);
         calculateDamage(2);
     }
 
     private void setMove3(String move) {
         mAttacker.setMove3(move);
-        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? "--" : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move3)).setText(moveName);
         calculateDamage(3);
     }
 
     private void setMove4(String move) {
         mAttacker.setMove4(move);
-        String moveName = (move.equals("")) ? move : MoveDex.getMoveName(getApplicationContext(), move);
+        String moveName = (move.equals("")) ? "--" : MoveDex.getMoveName(getApplicationContext(), move);
         ((TextView) findViewById(R.id.move4)).setText(moveName);
         calculateDamage(4);
     }

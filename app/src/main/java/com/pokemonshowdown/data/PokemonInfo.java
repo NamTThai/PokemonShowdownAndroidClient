@@ -175,7 +175,7 @@ public class PokemonInfo implements Serializable {
     }
 
     public void setAbility(String ability) {
-        mAbility = ability;
+        mAbility = MyApplication.toId(ability);
     }
 
     public String getNature() {
@@ -199,7 +199,7 @@ public class PokemonInfo implements Serializable {
     }
 
     public void setItem(String item) {
-        mItem = item;
+        mItem = MyApplication.toId(item);
     }
 
     public boolean canMegaEvo() {

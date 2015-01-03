@@ -919,10 +919,15 @@ public class BattleMessage {
                             break;
                         case "itemlifeorb":
                             toAppendBuilder.append(attackerOutputName).append(" lost some of its HP!");
+                            pokemonInfo.setItem("lifeorb");
                             break;
                         case "recoil":
                             toAppendBuilder.append(attackerOutputName).append(" is damaged by recoil!");
                             break;
+                        case "abilityironbarbs":
+                            PokemonInfo barbTarget = battleFragment.getPokemonInfo(split[3]);
+                            barbTarget.setAbility("ironbarbs");
+                            toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Iron Barbs!");
                         case "sandstorm":
                             toAppendBuilder.append(attackerOutputName).append(" is buffeted by the sandstorm!");
                             break;
@@ -951,6 +956,11 @@ public class BattleMessage {
                         case "jumpkick":
                         case "highjumpkick":
                             toAppendBuilder.append(attackerOutputName).append(" kept going and crashed!");
+                            break;
+                        case "itemrockyhelmet":
+                            PokemonInfo helmetPokemon = battleFragment.getPokemonInfo(split[3]);
+                            helmetPokemon.setItem("rockyhelmet");
+                            toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Rocky Helmet!");
                             break;
                         default:
                             if (ofSource != null) {
@@ -1060,6 +1070,7 @@ public class BattleMessage {
                         case "dryskin":
                         case "icebody":
                             toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" heals it!");
+                            pokemonInfo.setAbility(battleFragment.getPrintable(fromEffect));
                             break;
                         case "healingwish":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
@@ -1090,8 +1101,9 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" drained health!");
                             break;
 
-                        case "leftovers":
-                        case "shellbell":
+                        case "itemleftovers":
+                        case "itemshellbell":
+                        case "itemblacksludge":
                             toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(battleFragment.getPrintable(fromEffect)).append("!");
                             break;
                         default:
