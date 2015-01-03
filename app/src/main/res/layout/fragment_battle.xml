@@ -40,7 +40,6 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@id/avatar"
         android:layout_toLeftOf="@id/battle_background"
-        android:text="@string/attacker"
         android:gravity="center_horizontal"
         android:padding="2dp"
         android:textStyle="bold"/>
@@ -111,7 +110,6 @@
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/battle_background"
         android:gravity="center_horizontal"
-        android:text="@string/defender"
         android:padding="2dp"
         android:textStyle="bold"/>
 

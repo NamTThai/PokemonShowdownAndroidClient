@@ -474,9 +474,11 @@ public class BattleMessage {
                             }
                         }
 
-                        AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
-                        if (animatorSet != null) {
-                            animatorSet.start();
+                        if (!messageDetails.contains("[still]")) {
+                            AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
+                            if (animatorSet != null) {
+                                animatorSet.start();
+                            }
                         }
                     }
 

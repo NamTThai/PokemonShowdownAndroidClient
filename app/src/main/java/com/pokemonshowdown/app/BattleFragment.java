@@ -655,7 +655,6 @@ public class BattleFragment extends Fragment {
                             triggerTeamPreview(false);
                         } catch (NullPointerException e) {
                             clearActionFrame();
-                            triggerSwitchOptions(false);
                         }
                     }
 
@@ -1688,8 +1687,8 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        triggerAttackOptions(active);
         triggerSwitchOptions(true);
+        triggerAttackOptions(active);
     }
 
     private void triggerAttackOptions(final JSONArray active) {
@@ -1722,27 +1721,6 @@ public class BattleFragment extends Fragment {
         moveIcons[2] = (ImageView) getView().findViewById(R.id.active_move3_icon);
         moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
-        try {
-            JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
-            for (int i = 0; i < moves.length(); i++) {
-                JSONObject moveJson = moves.getJSONObject(i);
-                moveNames[i].setText(moveJson.getString("move"));
-                movePps[i].setText(moveJson.optString("pp", "0"));
-                int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
-                moveIcons[i].setImageResource(typeIcon);
-                moveViews[i].setOnClickListener(parseMoveTarget(active, i));
-                if (moveJson.optBoolean("disabled", false)) {
-                    moveViews[i].setOnClickListener(null);
-                    moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
-                }
-            }
-        } catch (JSONException e) {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(e.toString())
-                    .create()
-                    .show();
-        }
-
         PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
         CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
 
@@ -1750,6 +1728,31 @@ public class BattleFragment extends Fragment {
             checkBox.setVisibility(View.VISIBLE);
         } else {
             checkBox.setVisibility(View.GONE);
+        }
+
+        try {
+            JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
+            if (!active.getJSONObject(mCurrentActivePokemon).optBoolean("trapped", false)) {
+                for (int i = 0; i < moves.length(); i++) {
+                    JSONObject moveJson = moves.getJSONObject(i);
+                    moveNames[i].setText(moveJson.getString("move"));
+                    movePps[i].setText(moveJson.optString("pp", "0"));
+                    int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
+                    moveIcons[i].setImageResource(typeIcon);
+                    moveViews[i].setOnClickListener(parseMoveTarget(active, i));
+                    if (moveJson.optBoolean("disabled", false)) {
+                        moveViews[i].setOnClickListener(null);
+                        moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
+                    }
+                }
+            } else {
+                parseMoveCommandAndSend(active, 0, 0);
+            }
+        } catch (JSONException e) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage(e.toString())
+                    .create()
+                    .show();
         }
     }
 
