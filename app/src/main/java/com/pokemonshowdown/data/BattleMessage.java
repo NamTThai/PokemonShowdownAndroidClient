@@ -352,7 +352,7 @@ public class BattleMessage {
                     battleFragment.setRequestJson(requestJson);
                     battleFragment.setUndoMessage(requestJson);
                 } catch (JSONException e) {
-                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e.toString());
+                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e);
                     break;
                 }
                 break;
