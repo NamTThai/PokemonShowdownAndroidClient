@@ -71,12 +71,26 @@ public class BattleMessage {
         Spannable logMessage = new SpannableString("");
         switch (command) {
             case "title":
+            case "J":
+            case "L":
+            case "spectator":
+            case "spectatorLeave":
+                break;
+
             case "join":
             case "j":
-            case "J":
+                toAppend = split[0] + "joined!";
+                toast = battleFragment.makeToast(toAppend);
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableString(toAppend);
+                break;
+
             case "leave":
             case "l":
-            case "L":
+                toAppend = split[0] + "left!";
+                toast = battleFragment.makeToast(toAppend);
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableString(toAppend);
                 break;
 
             case "chat":
@@ -93,6 +107,10 @@ public class BattleMessage {
                 break;
 
             case "raw":
+            case "variation":
+            case "chatmsg":
+            case "chatmsg-raw":
+            case "html":
                 toast = battleFragment.makeToast(Html.fromHtml(messageDetails).toString());
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(Html.fromHtml(messageDetails).toString());
@@ -752,6 +770,13 @@ public class BattleMessage {
 
             case "win":
                 toAppend = messageDetails + " has won the battle!";
+                toast = battleFragment.makeToast(new SpannableString(toAppend));
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableString(toAppend);
+                break;
+
+            case "tie":
+                toAppend ="The battle is a tie!";
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
@@ -4483,6 +4508,7 @@ public class BattleMessage {
                 break;
 
             case "-message":
+            case "-hint":
                 logMessage = new SpannableString(messageDetails);
                 toast = battleFragment.makeMinorToast(logMessage);
                 battleFragment.startAnimation(toast, message);
