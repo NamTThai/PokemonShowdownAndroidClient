@@ -56,7 +56,7 @@ public class BattleFragment extends Fragment {
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
+        REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -84,6 +84,7 @@ public class BattleFragment extends Fragment {
     private boolean mWeatherExist;
     private int mRqid;
     private boolean mTeamPreview;
+    private boolean mForceSwitch;
     private boolean mWaiting;
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
@@ -175,6 +176,7 @@ public class BattleFragment extends Fragment {
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     mRqid = (Integer) viewBundle.get(ViewBundle.REQUEST_ID);
                     mTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAM_PREVIEW);
+                    mForceSwitch = (Boolean) viewBundle.get(ViewBundle.FORCE_SWITCH);
                     mWaiting = (Boolean) viewBundle.get(ViewBundle.WAITING);
                     mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
@@ -281,6 +283,7 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
             viewBundle.put(ViewBundle.REQUEST_ID, mRqid);
             viewBundle.put(ViewBundle.TEAM_PREVIEW, mTeamPreview);
+            viewBundle.put(ViewBundle.FORCE_SWITCH, mForceSwitch);
             viewBundle.put(ViewBundle.WAITING, mWaiting);
             viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
@@ -418,6 +421,14 @@ public class BattleFragment extends Fragment {
 
     public boolean isTeamPreview() {
         return mTeamPreview;
+    }
+
+    public boolean isForceSwitch() {
+        return mForceSwitch;
+    }
+
+    public void setForceSwitch(boolean forceSwitch) {
+        mForceSwitch = forceSwitch;
     }
 
     public void setWaiting(boolean waiting) {
@@ -1345,6 +1356,13 @@ public class BattleFragment extends Fragment {
         return (separator == -1) ? split.trim() : split.substring(separator + 1).trim();
     }
 
+    public String trimOrigin(String fromEffectOfSource) {
+        if (fromEffectOfSource == null) {
+            return null;
+        }
+        return getPrintable(fromEffectOfSource.replaceFirst("\\[(.*?)\\] ", ""));
+    }
+
     public void processBoost(String playerTag, String stat, int boost) {
         try {
             LinearLayout tempStat = (LinearLayout) getView().findViewById(getTempStatusId(playerTag));
@@ -1529,18 +1547,19 @@ public class BattleFragment extends Fragment {
     }
 
     public void chooseForceSwitch(JSONArray forceSwitch) throws JSONException {
-        for (int i = 0; i < forceSwitch.length(); i++) {
-            if (forceSwitch.getBoolean(i)) {
-                triggerSwitchOptions(true);
-            } else {
-                mCurrentActivePokemon++;
-                addCommand("pass");
+        if (mCurrentActivePokemon == mTotalActivePokemon) {
+            mChooseCommand.insert(0, "|/choose ");
+            sendCommands(mChooseCommand);
+            setForceSwitch(false);
+            return;
+        }
 
-                if (mCurrentActivePokemon == mTotalActivePokemon) {
-                    mChooseCommand.insert(0, "|/choose ");
-                    sendCommands(mChooseCommand);
-                }
-            }
+        if (forceSwitch.getBoolean(mCurrentActivePokemon)) {
+            triggerSwitchOptions(true);
+        } else {
+            mCurrentActivePokemon++;
+            addCommand("pass");
+            chooseForceSwitch(forceSwitch);
         }
     }
 
@@ -1556,10 +1575,18 @@ public class BattleFragment extends Fragment {
             mChooseCommand.insert(0, "|/choose ");
             sendCommands(mChooseCommand);
         } else {
-            try {
-                startAction(getRequestJson().getJSONArray("active"));
-            } catch (JSONException e) {
-                ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            if (isForceSwitch()) {
+                try {
+                    chooseForceSwitch(getRequestJson().getJSONArray("forceSwitch"));
+                } catch (JSONException e) {
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                }
+            } else {
+                try {
+                    startAction(getRequestJson().getJSONArray("active"));
+                } catch (JSONException e) {
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                }
             }
         }
     }
@@ -1594,6 +1621,7 @@ public class BattleFragment extends Fragment {
                 if (getRqid() != 0) {
                     resetChooseCommand();
                     if (requestJson.has("forceSwitch")) {
+                        setForceSwitch(true);
                         JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
                         chooseForceSwitch(forceSwitchJsonArray);
                     } else {

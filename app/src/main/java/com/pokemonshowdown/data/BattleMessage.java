@@ -902,7 +902,7 @@ public class BattleMessage {
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "stealthrock":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("Pointed stones dug into ").append(attackerOutputName).append("!");
@@ -916,14 +916,14 @@ public class BattleMessage {
                         case "psn":
                             toAppendBuilder.append(attackerOutputName).append(" was hurt by poison!");
                             break;
-                        case "itemlifeorb":
+                        case "lifeorb":
                             toAppendBuilder.append(attackerOutputName).append(" lost some of its HP!");
                             pokemonInfo.setItem("lifeorb");
                             break;
                         case "recoil":
                             toAppendBuilder.append(attackerOutputName).append(" is damaged by recoil!");
                             break;
-                        case "abilityironbarbs":
+                        case "ironbarbs":
                             PokemonInfo barbTarget = battleFragment.getPokemonInfo(split[3]);
                             if (barbTarget != null) {
                                 barbTarget.setAbility("ironbarbs");
@@ -958,7 +958,7 @@ public class BattleMessage {
                         case "highjumpkick":
                             toAppendBuilder.append(attackerOutputName).append(" kept going and crashed!");
                             break;
-                        case "itemrockyhelmet":
+                        case "rockyhelmet":
                             PokemonInfo helmetPokemon = battleFragment.getPokemonInfo(split[3]);
                             if (helmetPokemon != null) {
                                 helmetPokemon.setItem("rockyhelmet");
@@ -1106,9 +1106,9 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" drained health!");
                             break;
 
-                        case "itemleftovers":
-                        case "itemshellbell":
-                        case "itemblacksludge":
+                        case "leftovers":
+                        case "shellbell":
+                        case "blacksludge":
                             toAppendBuilder.append(attackerOutputName).append(" restored a little HP using its ").append(battleFragment.getPrintable(fromEffect)).append("!");
                             break;
                         default:
