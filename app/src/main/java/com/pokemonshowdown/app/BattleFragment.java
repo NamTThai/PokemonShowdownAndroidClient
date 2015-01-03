@@ -530,7 +530,7 @@ public class BattleFragment extends Fragment {
             }
             BattleMessage.processMajorAction(this, message);
         } catch (Exception e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
             Log.d(BTAG, "error server message: " + message);
         }
     }
@@ -1626,13 +1626,13 @@ public class BattleFragment extends Fragment {
                 try {
                     chooseForceSwitch(getRequestJson().getJSONArray("forceSwitch"));
                 } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
                 }
             } else {
                 try {
                     startAction(getRequestJson().getJSONArray("active"));
                 } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
                 }
             }
         }
@@ -1677,7 +1677,7 @@ public class BattleFragment extends Fragment {
                 }
             }
         } catch (JSONException e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
             Log.d(BTAG, "StartRequest error", e);
         }
     }
@@ -1772,7 +1772,7 @@ public class BattleFragment extends Fragment {
                         targetDialog.show();
                     }
                 } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
                 }
             }
         };
@@ -1965,7 +1965,7 @@ public class BattleFragment extends Fragment {
                 sendCommands(mChooseCommand);
             }
         } catch (JSONException e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e.toString());
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
         }
     }
 
