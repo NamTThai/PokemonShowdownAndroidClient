@@ -79,18 +79,10 @@ public class BattleMessage {
 
             case "join":
             case "j":
-                toAppend = split[0] + "joined!";
-                toast = battleFragment.makeToast(toAppend);
-                battleFragment.startAnimation(toast, message);
-                logMessage = new SpannableString(toAppend);
                 break;
 
             case "leave":
             case "l":
-                toAppend = split[0] + "left!";
-                toast = battleFragment.makeToast(toAppend);
-                battleFragment.startAnimation(toast, message);
-                logMessage = new SpannableString(toAppend);
                 break;
 
             case "chat":
@@ -570,13 +562,13 @@ public class BattleMessage {
                         ImageView iconLeader = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getIconId(split[0], battleFragment.getTeamSlot(messageDetails)));
                         Drawable leader = iconLeader.getDrawable();
-                        float alphaLeader = iconLeader.getAlpha();
                         ImageView iconTrailer = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getIconId(split[0], toBeSwapped));
-                        iconLeader.setImageResource(pokemonInfo.getIcon(battleFragment.getActivity()));
-                        iconLeader.setAlpha(iconTrailer.getAlpha());
+                        float alphaTrailer = iconTrailer.getAlpha();
                         iconTrailer.setImageDrawable(leader);
-                        iconTrailer.setAlpha(alphaLeader);
+                        iconTrailer.setAlpha(iconLeader.getAlpha());
+                        iconLeader.setImageResource(pokemonInfo.getIcon(battleFragment.getActivity()));
+                        iconLeader.setAlpha(alphaTrailer);
 
                         TextView pkmName = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getSpriteNameid(split[0]));
