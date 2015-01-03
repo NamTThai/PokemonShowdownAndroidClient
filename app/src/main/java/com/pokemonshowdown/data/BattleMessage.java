@@ -1065,7 +1065,7 @@ public class BattleMessage {
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "ingrain":
                             toAppendBuilder.append(attackerOutputName).append(" absorbed nutrients with its roots!");
                             break;
@@ -1196,7 +1196,7 @@ public class BattleMessage {
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-sethp":
-                switch (battleFragment.getPrintable(fromEffectId)) {
+                switch (battleFragment.trimOrigin(fromEffectId)) {
                     case "painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
                         toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
@@ -1395,8 +1395,8 @@ public class BattleMessage {
             case "-setboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
-                        case "movebellydrum":
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                        case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
                             toast.addListener(new Animator.AnimatorListener() {
@@ -1423,13 +1423,14 @@ public class BattleMessage {
                             battleFragment.startAnimation(toast, message);
                             break;
 
-                        case "abilityangerpoint":
+                        case "angerpoint":
                             toAppendBuilder.append(attackerOutputName).append(" maxed its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
                             toast.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
                                     battleFragment.processBoost(split[0], "atk", 6);
+                                    battleFragment.getPokemonInfo(split[0]).setAbility("angerpoint");
                                 }
 
                                 @Override
@@ -1457,7 +1458,7 @@ public class BattleMessage {
             case "-swapboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
                             toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
@@ -1541,6 +1542,38 @@ public class BattleMessage {
                     }
                     logMessage = new SpannableStringBuilder(toAppendBuilder);
                 }
+                break;
+
+            case "-restoreboost":
+                attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attackerOutputName).append("'s negative stat changes were removed!");
+                toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (battleFragment.getView() == null) {
+                            return;
+                        }
+                        battleFragment.restoreBoost(split[0]);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
 
             case "-copyboost":
@@ -1755,6 +1788,12 @@ public class BattleMessage {
                         case "frz":
                             toAppendBuilder.append(attackerOutputName).append(" is already frozen.");
                             break;
+                        case "hyperspacefury":
+                            toAppendBuilder.append(attackerOutputName).append(" can't use the move!");
+                            break;
+                        case "magikarpsrevenge":
+                            toAppendBuilder.append("But ").append(attackerOutputName).append(" can't use the move!");
+                            break;
                         case "substitute":
                             if (messageDetails.contains("[weak]")) {
                                 toAppendBuilder.append(attackerOutputName).append("It was too weak to make a substitute!");
@@ -1769,12 +1808,39 @@ public class BattleMessage {
                                 toAppendBuilder.append("But it failed!");
                             }
                             break;
+                        case "sunnyday":
+                        case "raindance":
+                        case "sandstorm":
+                        case "hail":
+                            switch (battleFragment.trimOrigin(fromEffectId)) {
+                                case "desolateland":
+                                    toAppendBuilder.append("The extremely harsh sunlight was not lessened at all!");
+                                    break;
+                                case "primordialsea":
+                                    toAppendBuilder.append("There's no relief from this heavy rain!");
+                                    break;
+                                case "deltastream":
+                                    toAppendBuilder.append("The mysterious air current blows on regardless!");
+                                    break;
+                                default:
+                                    toAppendBuilder.append("But it failed!");
+                            }
+                            break;
                         case "unboost":
                             toAppendBuilder.append(attackerOutputName).append("'s stats were not lowered!");
                             break;
 
                         default:
-                            toAppendBuilder.append("But it failed!");
+                            switch (battleFragment.trimOrigin(fromEffectId)) {
+                                case "desolateland":
+                                    toAppendBuilder.append("The Water-type attack evaporated in the harsh sunlight!");
+                                    break;
+                                case "primordialsea":
+                                    toAppendBuilder.append("The Fire-type attack fizzled out in the heavy rain!");
+                                    break;
+                                default:
+                                    toAppendBuilder.append("But it failed!");
+                            }
                             break;
                     }
                 } else {
@@ -1988,29 +2054,27 @@ public class BattleMessage {
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
-                if (!flag) {
-                    toast.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            battleFragment.removeAddonStatus(split[0], split[1]);
-                        }
+                toast.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        battleFragment.removeAddonStatus(split[0], split[1]);
+                    }
 
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
 
-                        }
-                    });
-                }
+                    }
+                });
                 battleFragment.startAnimation(toast, message);
                 break;
 
@@ -3987,7 +4051,7 @@ public class BattleMessage {
                             });
                         }
                         break;
-                    case "PrimordalSea":
+                    case "PrimordialSea":
                         if (upkeep) {
                             toAppendBuilder.append("There's no relief from this heavy rain!");
                         } else {
@@ -4191,7 +4255,7 @@ public class BattleMessage {
                                 case "RainDance":
                                     toAppendBuilder.append("The rain stopped.");
                                     break;
-                                case "PrimordalSea":
+                                case "PrimordialSea":
                                     toAppendBuilder.append("The heavy rain has lifted!");
                                     break;
                                 case "SunnyDay":
@@ -4464,6 +4528,9 @@ public class BattleMessage {
         } else {
             int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
             int total = Integer.parseInt(hpFraction.substring(fraction + 1));
+            if (remaining == 1) {
+                return 1;
+            }
             return (int) (((float) remaining / (float) total) * 100);
         }
     }
