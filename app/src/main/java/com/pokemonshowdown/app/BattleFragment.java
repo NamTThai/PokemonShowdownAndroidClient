@@ -56,7 +56,8 @@ public class BattleFragment extends Fragment {
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, WAITING, CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
+        REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, BATON_PASS, WAITING,
+        CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
@@ -85,6 +86,7 @@ public class BattleFragment extends Fragment {
     private int mRqid;
     private boolean mTeamPreview;
     private boolean mForceSwitch;
+    private boolean mBatonPass;
     private boolean mWaiting;
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
@@ -177,6 +179,7 @@ public class BattleFragment extends Fragment {
                     mRqid = (Integer) viewBundle.get(ViewBundle.REQUEST_ID);
                     mTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAM_PREVIEW);
                     mForceSwitch = (Boolean) viewBundle.get(ViewBundle.FORCE_SWITCH);
+                    mBatonPass = (Boolean) viewBundle.get(ViewBundle.BATON_PASS);
                     mWaiting = (Boolean) viewBundle.get(ViewBundle.WAITING);
                     mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
@@ -284,6 +287,7 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.REQUEST_ID, mRqid);
             viewBundle.put(ViewBundle.TEAM_PREVIEW, mTeamPreview);
             viewBundle.put(ViewBundle.FORCE_SWITCH, mForceSwitch);
+            viewBundle.put(ViewBundle.BATON_PASS, mBatonPass);
             viewBundle.put(ViewBundle.WAITING, mWaiting);
             viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
@@ -429,6 +433,14 @@ public class BattleFragment extends Fragment {
 
     public void setForceSwitch(boolean forceSwitch) {
         mForceSwitch = forceSwitch;
+    }
+
+    public boolean isBatonPass() {
+        return mBatonPass;
+    }
+
+    public void setBatonPass(boolean batonPass) {
+        mBatonPass = batonPass;
     }
 
     public void setWaiting(boolean waiting) {
@@ -1211,35 +1223,48 @@ public class BattleFragment extends Fragment {
             switch (tag) {
                 case "p1a":
                     layoutId = R.id.p1a;
-                    ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
+                    }
                     break;
                 case "p1b":
                     layoutId = R.id.p1b;
-                    ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
+                    }
                     break;
                 case "p1c":
                     layoutId = R.id.p1c;
-                    ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
+                    }
                     break;
                 case "p2a":
                     layoutId = R.id.p2a;
-                    ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
+                    }
                     break;
                 case "p2b":
                     layoutId = R.id.p2b;
-                    ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
+                    }
                     break;
                 default:
                     layoutId = R.id.p2c;
-                    ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
+                    if (!isBatonPass()) {
+                        ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
+                    }
             }
             relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
             relativeLayout.setVisibility(View.VISIBLE);
             getView().findViewById(getSpriteId(tag)).setAlpha(1f);
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
-            if (sub != null) {
+            if (sub != null && !isBatonPass()) {
                 relativeLayout.removeView(sub);
             }
+            setBatonPass(false);
         } catch (NullPointerException e) {
 
         }
@@ -1702,11 +1727,11 @@ public class BattleFragment extends Fragment {
             for (int i = 0; i < moves.length(); i++) {
                 JSONObject moveJson = moves.getJSONObject(i);
                 moveNames[i].setText(moveJson.getString("move"));
-                movePps[i].setText(moveJson.getString("pp"));
+                movePps[i].setText(moveJson.optString("pp", "0"));
                 int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
                 moveIcons[i].setImageResource(typeIcon);
                 moveViews[i].setOnClickListener(parseMoveTarget(active, i));
-                if (moveJson.getBoolean("disabled")) {
+                if (moveJson.optBoolean("disabled", false)) {
                     moveViews[i].setOnClickListener(null);
                     moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
                 }
