@@ -553,10 +553,13 @@ public class BattleMessage {
                         ImageView iconLeader = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getIconId(split[0], battleFragment.getTeamSlot(messageDetails)));
                         Drawable leader = iconLeader.getDrawable();
+                        float alphaLeader = iconLeader.getAlpha();
                         ImageView iconTrailer = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getIconId(split[0], toBeSwapped));
-                        iconTrailer.setImageDrawable(leader);
                         iconLeader.setImageResource(pokemonInfo.getIcon(battleFragment.getActivity()));
+                        iconLeader.setAlpha(iconTrailer.getAlpha());
+                        iconTrailer.setImageDrawable(leader);
+                        iconTrailer.setAlpha(alphaLeader);
 
                         TextView pkmName = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getSpriteNameid(split[0]));
@@ -676,9 +679,10 @@ public class BattleMessage {
                             return;
                         }
 
+                        PokemonInfo faintedPokemon = battleFragment.getPokemonInfo(split[0]);
+                        faintedPokemon.setHp(0);
                         battleFragment.hidePokemon(position);
-                        ImageView fainted = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
-                        fainted.getDrawable().setAlpha(125);
+                        battleFragment.getView().findViewById(battleFragment.getIconId(position)).setAlpha(0.5f);
                     }
 
                     @Override
