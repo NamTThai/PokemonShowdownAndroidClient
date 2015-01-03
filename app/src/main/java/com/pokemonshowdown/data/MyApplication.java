@@ -396,6 +396,9 @@ public class MyApplication extends Application {
     }
 
     public static String toId(String name) {
+        if (name == null) {
+            return null;
+        }
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }

@@ -256,6 +256,7 @@ public class BattleMessage {
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
 
+                        battleFragment.startRequest();
                         battleFragment.triggerTeamPreview(true);
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
