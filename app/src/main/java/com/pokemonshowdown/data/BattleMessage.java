@@ -445,6 +445,9 @@ public class BattleMessage {
                 }
                 toAppendBuilder.append(attacker).append(" used ");
                 final String move = MyApplication.toId(split[1]);
+                if (move.equals("batonpass")) {
+                    battleFragment.setBatonPass(true);
+                }
                 toAppendBuilder.append(split[1]).append("!");
                 toAppend = toAppendBuilder.toString();
                 start = toAppend.indexOf(split[1]);
@@ -462,11 +465,13 @@ public class BattleMessage {
                         }
 
                         PokemonInfo pokemonInfo = battleFragment.getPokemonInfo(split[0]);
-                        HashMap<String, Integer> moves = pokemonInfo.getMoves();
-                        if (moves.containsKey(move)) {
-                            moves.put(move, moves.get(move) - 1);
-                        } else {
-                            moves.put(move, Integer.parseInt(MoveDex.getMoveMaxPP(battleFragment.getActivity(), move)) - 1);
+                        if (!move.equals("struggle")) {
+                            HashMap<String, Integer> moves = pokemonInfo.getMoves();
+                            if (moves.containsKey(move)) {
+                                moves.put(move, moves.get(move) - 1);
+                            } else {
+                                moves.put(move, Integer.parseInt(MoveDex.getMoveMaxPP(battleFragment.getActivity(), move)) - 1);
+                            }
                         }
 
                         AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
@@ -531,8 +536,6 @@ public class BattleMessage {
                 battleFragment.setTeam(messageDetails, playerTeam);
 
                 if (command.equals("switch")) {
-                    //TODO need to buffer batonpass/uturn/voltswitch for switching out message
-                    //then we switch in
                     if (messageDetails.startsWith("p2")) {
                         toAppendBuilder.append(battleFragment.getPlayer2()).append(" sent out ").append(species).append("!");
                     } else {
