@@ -157,6 +157,9 @@ public class TeamBuildingActivity extends FragmentActivity {
         if (scanResult != null) {
             //  here weh ave the url read from the barcode
             String url = scanResult.getContents();
+            if(url == null) {
+                return;
+            }
             new PastebinTask(PastebinTaskId.IMPORT).execute(url);
         } else {
             //passing to the fragment below (for searchable pokemons/moves ...  etc etc)
@@ -478,9 +481,6 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
 
         private void importFromPastebin(String url) {
-            if(url == null) {
-                return;
-            }
             if (url.startsWith("http://")) {
                 url = url.substring("http://".length());
             }
