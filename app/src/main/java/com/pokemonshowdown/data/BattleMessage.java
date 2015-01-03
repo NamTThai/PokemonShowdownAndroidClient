@@ -209,7 +209,7 @@ public class BattleMessage {
                 iconId = battleFragment.getIconId(playerType, team.size());
                 pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
                 processPokemonDetailString(pokemonInfo, split[1]);
-                if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                if (battleFragment.findPokemonInTeam(team,
                         pokemonInfo.getName()) == -1) {
                     team.add(pokemonInfo);
 
@@ -352,24 +352,23 @@ public class BattleMessage {
                 if (messageDetails.contains(" seconds left")) {
                     remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
                     inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
-                } else {
-                    break;
-                }
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (battleFragment.getView() == null) {
-                            viewData.addViewSetterOnHold(R.id.inactive, inactive,
-                                    BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
-                            viewData.addViewSetterOnHold(R.id.inactive, null,
-                                    BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
-                        } else {
-                            TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
-                            textView.setVisibility(View.VISIBLE);
-                            textView.setText(inactive);
+
+                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (battleFragment.getView() == null) {
+                                viewData.addViewSetterOnHold(R.id.inactive, inactive,
+                                        BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
+                                viewData.addViewSetterOnHold(R.id.inactive, null,
+                                        BattleFieldData.ViewData.SetterType.VIEW_VISIBLE);
+                            } else {
+                                TextView textView = (TextView) battleFragment.getView().findViewById(R.id.inactive);
+                                textView.setVisibility(View.VISIBLE);
+                                textView.setText(inactive);
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 toAppendSpannable = new SpannableString(messageDetails);
                 toAppendSpannable.setSpan(new ForegroundColorSpan(R.color.dark_red),
                         0, messageDetails.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -1984,7 +1983,7 @@ public class BattleMessage {
                 flag = false;
                 if (fromEffectId != null) {
                     fromEffectId = battleFragment.getPrintable(fromEffectId);
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "psychoshift":
                             defenderOutputName = battleFragment.getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" moved its status onto ").append(defenderOutputName);
@@ -2080,7 +2079,7 @@ public class BattleMessage {
 
             case "-cureteam":
                 if (fromEffectId != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "aromatherapy":
                             toAppendBuilder.append("A soothing aroma wafted through the area!");
                             break;
@@ -2136,7 +2135,7 @@ public class BattleMessage {
                 item = battleFragment.getPrintable(split[1]);
                 if (fromEffect != null) {
                     // not to deal with item: or ability: or move:
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "recycle":
                         case "pickup":
                             toAppendBuilder.append(attackerOutputName).append(" found one ").append(item).append("!");
@@ -2220,7 +2219,7 @@ public class BattleMessage {
                 } else if (weaken) {
                     toAppendBuilder.append(attackerOutputName).append(" weakened the damage to ").append(item).append("!");
                 } else if (fromEffect != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "fling":
                             toAppendBuilder.append(attackerOutputName).append(" flung its ").append(item).append("!");
                             break;
@@ -2329,7 +2328,7 @@ public class BattleMessage {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "trace":
                             defenderOutputName = battleFragment.getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" traced ").append(defenderOutputName).append("'s ").append(battleFragment.getPrintable(ability)).append("!");
@@ -2342,6 +2341,26 @@ public class BattleMessage {
 
                         case "mummy":
                             toAppendBuilder.append(attackerOutputName).append("'s Ability became Mummy!");
+                            break;
+
+                        case "desolateland":
+                            if (messageDetails.contains("[fail]")) {
+                                toAppendBuilder.append("[").append(attackerOutputName).append("'s ").append(ability).append("] The extremely harsh sunlight was not lessened at all!");
+                            }
+                            break;
+                        case "primordialsea":
+                            if (messageDetails.contains("[fail]")) {
+                                toAppendBuilder.append("[").append(attackerOutputName).append("'s ").append(ability).append("] There's no relief from this heavy rain!");
+                            }
+                            break;
+                        case "deltastream":
+                            if (messageDetails.contains("[fail]")) {
+                                toAppendBuilder.append("[").append(attackerOutputName).append("'s ").append(ability).append("] The mysterious air current blows on regardless!");
+                            }
+                            break;
+
+                        default:
+                            toAppendBuilder.append(attackerOutputName).append(" acquired ").append(ability).append("!");
                             break;
                     }
                     pokemonInfo = battleFragment.getPokemonInfo(split[0]);
@@ -2419,7 +2438,7 @@ public class BattleMessage {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (battleFragment.getPrintable(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffectId)) {
                         case "mummy":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("(").append(attackerOutputName).append("'s Ability was previously ").append(battleFragment.getPrintable(ability)).append(")");
@@ -2476,8 +2495,15 @@ public class BattleMessage {
                 break;
 
             case "-formechange":
-                // nothing here
-                logMessage = new SpannableString("");
+                logMessage = new SpannableString("Forme Change");
+                break;
+
+            case "-mega":
+                attacker = battleFragment.getPrintableOutputPokemonSide(split[0]);
+                toAppendBuilder.append(attacker).append(" has Mega Evolved into Mega ").append(split[2]).append("!");
+                logMessage = new SpannableString(toAppendBuilder);
+                toast = battleFragment.makeMinorToast(logMessage);
+                battleFragment.startAnimation(toast, message);
                 break;
 
             case "-start":
@@ -2488,7 +2514,7 @@ public class BattleMessage {
                 switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
                     case "typechange":
                         if (fromEffect != null) {
-                            if (battleFragment.getPrintable(fromEffectId).equals("reflecttype")) {
+                            if (battleFragment.trimOrigin(fromEffectId).equals("reflecttype")) {
                                 toAppendBuilder.append(attackerOutputName).append("'s type changed to match ").append(battleFragment.getPrintable(ofSource)).append("'s!");
                             } else {
                                 toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" made it the ").append(battleFragment.getPrintable(split[2])).append(" type!");
@@ -3612,7 +3638,7 @@ public class BattleMessage {
                 }
 
                 fromEffect = split[1];
-                fromEffectId = battleFragment.getPrintable(MyApplication.toId(fromEffect));
+                fromEffectId = MyApplication.toId(battleFragment.getPrintable(fromEffect));
                 animatorSet = new AnimatorSet();
                 switch (fromEffectId) {
                     case "stealthrock":
