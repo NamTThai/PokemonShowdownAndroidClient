@@ -478,6 +478,9 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
 
         private void importFromPastebin(String url) {
+            if(url == null) {
+                return;
+            }
             if (url.startsWith("http://")) {
                 url = url.substring("http://".length());
             }
