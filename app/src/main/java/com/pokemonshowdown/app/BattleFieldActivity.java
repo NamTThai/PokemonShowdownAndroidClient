@@ -257,9 +257,7 @@ public class BattleFieldActivity extends FragmentActivity {
         }
         if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
             mDrawerLayout.closeDrawer(mDrawerList);
-            return;
         }
-        super.onBackPressed();
     }
 
     private void processBroadcastMessage(Intent intent) {

@@ -1227,43 +1227,30 @@ public class BattleFragment extends Fragment {
             switch (tag) {
                 case "p1a":
                     layoutId = R.id.p1a;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p1a_temp_status)).removeAllViews();
-                    }
                     break;
                 case "p1b":
                     layoutId = R.id.p1b;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p1b_temp_status)).removeAllViews();
-                    }
                     break;
                 case "p1c":
                     layoutId = R.id.p1c;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p1c_temp_status)).removeAllViews();
-                    }
                     break;
                 case "p2a":
                     layoutId = R.id.p2a;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p2a_temp_status)).removeAllViews();
-                    }
                     break;
                 case "p2b":
                     layoutId = R.id.p2b;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p2b_temp_status)).removeAllViews();
-                    }
                     break;
                 default:
                     layoutId = R.id.p2c;
-                    if (!isBatonPass()) {
-                        ((LinearLayout) getView().findViewById(R.id.p2c_temp_status)).removeAllViews();
-                    }
             }
             relativeLayout = (RelativeLayout) getView().findViewById(layoutId);
             relativeLayout.setVisibility(View.VISIBLE);
             getView().findViewById(getSpriteId(tag)).setAlpha(1f);
+            if (!isBatonPass()) {
+                ((LinearLayout) getView().findViewById(getTempStatusId(tag))).removeAllViews();
+            } else {
+                getView().findViewById(getSpriteId(tag)).setAlpha(0.2f);
+            }
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
             if (sub != null && !isBatonPass()) {
                 relativeLayout.removeView(sub);
