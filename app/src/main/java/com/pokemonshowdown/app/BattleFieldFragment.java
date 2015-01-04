@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.MyApplication;
@@ -207,6 +208,7 @@ public class BattleFieldFragment extends Fragment {
         if (fragment != null) {
             if (fragment.getBattling() != 0) {
                 MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
+                Toast.makeText(getActivity(), R.string.forfeit, Toast.LENGTH_SHORT).show();
             }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }

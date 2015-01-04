@@ -118,7 +118,7 @@ public class BattleFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toast.makeText(getActivity(), "loading", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.loading, Toast.LENGTH_SHORT).show();
 
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
@@ -1729,8 +1729,11 @@ public class BattleFragment extends Fragment {
         }
 
         try {
-            JSONArray moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
-            if (!active.getJSONObject(mCurrentActivePokemon).optBoolean("trapped", false)) {
+            JSONObject currentActive = active.getJSONObject(mCurrentActivePokemon);
+            JSONArray moves = currentActive.getJSONArray("moves");
+            boolean trapped = currentActive.optBoolean("trapped", false) ||
+                    currentActive.optBoolean("maybeTrapped");
+            if (!trapped || moves.length() != 1) {
                 for (int i = 0; i < moves.length(); i++) {
                     JSONObject moveJson = moves.getJSONObject(i);
                     moveNames[i].setText(moveJson.getString("move"));
@@ -1742,6 +1745,10 @@ public class BattleFragment extends Fragment {
                         moveViews[i].setOnClickListener(null);
                         moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
                     }
+                }
+
+                if (trapped) {
+                    triggerSwitchOptions(false);
                 }
             } else {
                 parseMoveCommandAndSend(active, 0, 0);
