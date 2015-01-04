@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="request_sent">Request sent!</string>
-    <string name="forfeit">Forfeited!</string>
+    <string name="forfeit">Left/Forfeited!</string>
     <string name="loading">Loading…</string>
     <string name="weak_connection">Failed to connect to server… it needs a thing called \'Internet Connection\', brilliant</string>
     <string name="no_connection">Weak signal, genius.. maybe move your camp trailer to somewhere near civilization?</string>

@@ -957,6 +957,7 @@ public class BattleMessage {
                                 barbTarget.setAbility("ironbarbs");
                             }
                             toAppendBuilder.append(attackerOutputName).append(" is hurt by ").append(battleFragment.getPrintable(ofSource)).append("'s ").append(" Iron Barbs!");
+                            break;
                         case "sandstorm":
                             toAppendBuilder.append(attackerOutputName).append(" is buffeted by the sandstorm!");
                             break;
