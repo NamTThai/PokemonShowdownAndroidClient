@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -30,6 +31,8 @@ import com.pokemonshowdown.data.Onboarding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
@@ -353,6 +356,51 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
+                break;
+
+            case MyApplication.EXTRA_UPDATE_CHALLENGE:
+                String updateChallengeStatus = intent.getExtras().getString(MyApplication.EXTRA_UPDATE_CHALLENGE);
+                try {
+                    JSONObject updateChallengeJSon = new JSONObject(updateChallengeStatus);
+                    //seems like we can receive multiple challenges, but only send one
+                    JSONObject from = (JSONObject) updateChallengeJSon.get("challengesFrom");
+                    Iterator<?> fromKeys = from.keys();
+                    while (fromKeys.hasNext()) {
+                        String userName = (String) fromKeys.next();
+                        String format = from.getString(userName);
+                        Log.d(BTAG, "Challenge from " + userName + ", format:" + format);
+                    }
+
+                    if (updateChallengeJSon.getString("challengeTo") == "null") {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                    } else {
+                        JSONObject to = (JSONObject) updateChallengeJSon.get("challengeTo");
+                        //"challengeTo":{"to":"tetonator","format":"randombattle"}
+                        final String userName = to.getString("to");
+                        String format = to.getString("format");
+                        Log.d(BTAG, "Challenge to " + userName + ", format:" + format);
+
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage(String.format(getResources().getString(R.string.waiting_challenge_dialog), userName, format))
+                                .create();
+                        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialogInterface) {
+                                MyApplication.getMyApplication().sendClientMessage("|/cancelchallenge " + userName);
+                            }
+                        });
+                        mDialog.setCancelable(true);
+                        mDialog.show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
@@ -362,6 +410,7 @@ public class BattleFieldActivity extends FragmentActivity {
      * 0: battle
      * 1: chatroom
      */
+
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1) {

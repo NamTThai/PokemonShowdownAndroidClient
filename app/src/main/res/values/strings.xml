@@ -30,6 +30,7 @@
     <string name="find_battle">Find Battle</string>
     <string name="watch_battle">Watch Battle</string>
     <string name="challenge_battle">Challenge</string>
+    <string name="waiting_challenge_dialog">Challenging %1$s in %2$s</string>
     <string name="cancel_search">Chicken Out</string>
     <string name="no_available_battle">There is no active battle in this format</string>
     <string name="background">Background</string>
@@ -41,7 +42,6 @@
     <string name="weather">Normal Weather</string>
     <string name="battle_switch">Switch</string>
     <string name="battle_attack">Attack</string>
-    <string name="battle_pokemon_name">What will %s do?</string>
     <string name="download_matches_inprogress">Tickets sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
