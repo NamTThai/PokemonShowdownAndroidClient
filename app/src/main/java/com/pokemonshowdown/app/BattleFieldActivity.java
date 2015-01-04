@@ -369,6 +369,10 @@ public class BattleFieldActivity extends FragmentActivity {
                         String userName = (String) fromKeys.next();
                         String format = from.getString(userName);
                         Log.d(BTAG, "Challenge from " + userName + ", format:" + format);
+                        ChallengeDialog cd = ChallengeDialog.newInstance(userName, format);
+                        cd.show(getSupportFragmentManager(), userName);
+                        // we pop challenges 1 by 1
+                        break;
                     }
 
                     if (updateChallengeJSon.getString("challengeTo") == "null") {

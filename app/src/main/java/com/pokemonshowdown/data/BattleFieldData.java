@@ -77,6 +77,18 @@ public class BattleFieldData {
         }
         return null;
     }
+
+    public Format getFormatUsingId(String formatNameId) {
+        for (FormatType formatType : mFormatTypes) {
+            for (Format format : formatType.getFormatList()) {
+                if(MyApplication.toId(format.getName()).equals(formatNameId)) {
+                    return format;
+                }
+            }
+        }
+        return null;
+    }
+
     public String getCurrentFormatName() {
         int currentFormat = getCurrentFormat();
         int count = 0;
