@@ -68,7 +68,7 @@ public class ChallengeDialog extends DialogFragment {
 
 
         TextView challengerTextView = (TextView) view.findViewById(R.id.challenger_name);
-        challengerTextView.setText(mChallengerName);
+        challengerTextView.setText(String.format(getResources().getString(R.string.challenged_by), mChallengerName));
 
         TextView formatTextView = (TextView) view.findViewById(R.id.challenger_format);
         formatTextView.setText(mFormat.getName());

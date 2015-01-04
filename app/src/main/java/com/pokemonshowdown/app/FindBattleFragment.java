@@ -193,7 +193,7 @@ public class FindBattleFragment extends Fragment {
         }
 
         AlertDialog.Builder renameDialog = new AlertDialog.Builder(getActivity());
-        renameDialog.setTitle(R.string.challengedName);
+        renameDialog.setTitle(R.string.challenge_dialog_title);
         final EditText teamNameEditText = new EditText(getActivity());
         renameDialog.setView(teamNameEditText);
 

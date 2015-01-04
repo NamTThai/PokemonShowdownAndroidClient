@@ -44,7 +44,8 @@
     <string name="battle_attack">Attack</string>
     <string name="download_matches_inprogress">Tickets sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
-    <string name="challengedName">User to challenge</string>
+    <string name="challenge_dialog_title">User to challenge</string>
+    <string name="challenged_by"><b>%1$s</b> challenged you to</string>
     <string name="accept_challenge">Accept</string>
     <string name="reject_challenge">Reject</string>
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
