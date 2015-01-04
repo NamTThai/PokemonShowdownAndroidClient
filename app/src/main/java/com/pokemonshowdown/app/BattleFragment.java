@@ -1387,7 +1387,7 @@ public class BattleFragment extends Fragment {
         if (fromEffectOfSource == null) {
             return null;
         }
-        return getPrintable(fromEffectOfSource.replaceFirst("\\[(.*?)\\] ", ""));
+        return MyApplication.toId(getPrintable(fromEffectOfSource.replaceFirst("\\[(.*?)\\] ", "")));
     }
 
     public void processBoost(String playerTag, String stat, int boost) {
@@ -1624,7 +1624,7 @@ public class BattleFragment extends Fragment {
                 try {
                     chooseForceSwitch(getRequestJson().getJSONArray("forceSwitch"));
                 } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
+                    return;
                 }
             } else {
                 try {
@@ -1676,7 +1676,6 @@ public class BattleFragment extends Fragment {
             }
         } catch (JSONException e) {
             ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-            Log.d(BTAG, "StartRequest error", e);
         }
     }
 

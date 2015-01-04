@@ -930,7 +930,7 @@ public class BattleMessage {
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "stealthrock":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("Pointed stones dug into ").append(attackerOutputName).append("!");
@@ -1089,7 +1089,7 @@ public class BattleMessage {
                 lostHP = intAmount - oldHP;
 
                 if (fromEffectId != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "ingrain":
                             toAppendBuilder.append(attackerOutputName).append(" absorbed nutrients with its roots!");
                             break;
@@ -1220,7 +1220,7 @@ public class BattleMessage {
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 break;
             case "-sethp":
-                switch (battleFragment.trimOrigin(fromEffectId)) {
+                switch (battleFragment.trimOrigin(fromEffect)) {
                     case "painsplit":
                         toAppendBuilder.append("The battlers shared their pain!");
                         toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
@@ -1419,7 +1419,7 @@ public class BattleMessage {
             case "-setboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
@@ -1482,7 +1482,7 @@ public class BattleMessage {
             case "-swapboost":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 if (fromEffect != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
                             toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
@@ -1836,7 +1836,7 @@ public class BattleMessage {
                         case "raindance":
                         case "sandstorm":
                         case "hail":
-                            switch (battleFragment.trimOrigin(fromEffectId)) {
+                            switch (battleFragment.trimOrigin(fromEffect)) {
                                 case "desolateland":
                                     toAppendBuilder.append("The extremely harsh sunlight was not lessened at all!");
                                     break;
@@ -1855,7 +1855,7 @@ public class BattleMessage {
                             break;
 
                         default:
-                            switch (battleFragment.trimOrigin(fromEffectId)) {
+                            switch (battleFragment.trimOrigin(fromEffect)) {
                                 case "desolateland":
                                     toAppendBuilder.append("The Water-type attack evaporated in the harsh sunlight!");
                                     break;
@@ -2016,7 +2016,7 @@ public class BattleMessage {
                 flag = false;
                 if (fromEffectId != null) {
                     fromEffectId = battleFragment.getPrintable(fromEffectId);
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "psychoshift":
                             defenderOutputName = battleFragment.getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" moved its status onto ").append(defenderOutputName);
@@ -2112,7 +2112,7 @@ public class BattleMessage {
 
             case "-cureteam":
                 if (fromEffectId != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "aromatherapy":
                             toAppendBuilder.append("A soothing aroma wafted through the area!");
                             break;
@@ -2168,7 +2168,7 @@ public class BattleMessage {
                 item = battleFragment.getPrintable(split[1]);
                 if (fromEffect != null) {
                     // not to deal with item: or ability: or move:
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "recycle":
                         case "pickup":
                             toAppendBuilder.append(attackerOutputName).append(" found one ").append(item).append("!");
@@ -2252,7 +2252,7 @@ public class BattleMessage {
                 } else if (weaken) {
                     toAppendBuilder.append(attackerOutputName).append(" weakened the damage to ").append(item).append("!");
                 } else if (fromEffect != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "fling":
                             toAppendBuilder.append(attackerOutputName).append(" flung its ").append(item).append("!");
                             break;
@@ -2361,7 +2361,7 @@ public class BattleMessage {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "trace":
                             defenderOutputName = battleFragment.getPrintableOutputPokemonSide(ofSource, false);
                             toAppendBuilder.append(attackerOutputName).append(" traced ").append(defenderOutputName).append("'s ").append(battleFragment.getPrintable(ability)).append("!");
@@ -2471,7 +2471,7 @@ public class BattleMessage {
                 ability = split[1];
 
                 if (fromEffect != null) {
-                    switch (battleFragment.trimOrigin(fromEffectId)) {
+                    switch (battleFragment.trimOrigin(fromEffect)) {
                         case "mummy":
                             attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                             toAppendBuilder.append("(").append(attackerOutputName).append("'s Ability was previously ").append(battleFragment.getPrintable(ability)).append(")");
@@ -2547,7 +2547,7 @@ public class BattleMessage {
                 switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "typechange":
                         if (fromEffect != null) {
-                            if (battleFragment.trimOrigin(fromEffectId).equals("reflecttype")) {
+                            if (battleFragment.trimOrigin(fromEffect).equals("reflecttype")) {
                                 toAppendBuilder.append(attackerOutputName).append("'s type changed to match ").append(battleFragment.getPrintable(ofSource)).append("'s!");
                             } else {
                                 toAppendBuilder.append(attackerOutputName).append("'s ").append(battleFragment.getPrintable(fromEffect)).append(" made it the ").append(battleFragment.getPrintable(split[2])).append(" type!");
