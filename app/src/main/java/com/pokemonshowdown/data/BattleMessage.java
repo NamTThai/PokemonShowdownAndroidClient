@@ -342,7 +342,10 @@ public class BattleMessage {
                         JSONArray teamJson = sideJson.getJSONArray("pokemon");
                         for (int i = 0; i < teamJson.length(); i++) {
                             JSONObject pkm = teamJson.getJSONObject(i);
-                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkm.getString("ident").substring(4));
+                            String pkmName = pkm.getString("details");
+                            separator = pkmName.indexOf(",");
+                            pkmName = (separator == -1) ? pkmName : pkmName.substring(0, separator);
+                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
                             if (idx != -1) {
                                 battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
                             }
@@ -782,7 +785,7 @@ public class BattleMessage {
             case "cant":
                 String attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder = new StringBuilder();
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "taunt":
                         toAppendBuilder.append(attackerOutputName).append(" can't use ").append(battleFragment.getPrintable(split[2])).append(" after the taunt!");
                         break;
@@ -1957,7 +1960,7 @@ public class BattleMessage {
                         break;
 
                     case "slp":
-                        if (fromEffect != null && fromEffectId.equals("move:rest")) {
+                        if (fromEffect != null && fromEffectId.equals("moverest")) {
                             toAppendBuilder.append(" slept and became healthy!");
                         } else {
                             toAppendBuilder.append(" fell asleep!");
@@ -1976,10 +1979,18 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(logMessage);
                 final String status;
                 status = remaining;
+                final boolean rest = (fromEffectId != null && fromEffectId.equals("moverest"));
                 toast.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         battleFragment.setAddonStatus(split[0], status);
+                        if (rest) {
+                            for (String stt : BattleFragment.STTUS) {
+                                if (!stt.equals("slp")) {
+                                    battleFragment.removeAddonStatus(split[0], stt);
+                                }
+                            }
+                        }
                     }
 
                     @Override
@@ -2522,7 +2533,7 @@ public class BattleMessage {
 
             case "-mega":
                 attacker = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                toAppendBuilder.append(attacker).append(" has Mega Evolved into Mega ").append(split[2]).append("!");
+                toAppendBuilder.append(attacker).append(" has Mega Evolved into Mega ").append(split[1]).append("!");
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
                 battleFragment.startAnimation(toast, message);
@@ -2533,7 +2544,7 @@ public class BattleMessage {
                 animatorSet = new AnimatorSet();
                 final String newEffect;
                 newEffect = battleFragment.getPrintable(split[1]);
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "typechange":
                         if (fromEffect != null) {
                             if (battleFragment.trimOrigin(fromEffectId).equals("reflecttype")) {
@@ -3201,7 +3212,7 @@ public class BattleMessage {
 
                     }
                 });
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "powertrick":
                         toAppendBuilder.append(attackerOutputName).append(" switched its Attack and Defense!");
                         break;
@@ -3325,7 +3336,7 @@ public class BattleMessage {
 
             case "-singleturn":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "roost":
                         toAppendBuilder.append(attackerOutputName).append(" landed on the ground!");
                         break;
@@ -3381,7 +3392,7 @@ public class BattleMessage {
 
             case "-singlemove":
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "grudge":
                         toAppendBuilder.append(attackerOutputName).append(" wants its target to bear a grudge!");
                         break;
@@ -3398,7 +3409,7 @@ public class BattleMessage {
             case "-activate":
                 attacker = split[0];
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
-                switch (battleFragment.getPrintable(MyApplication.toId(split[1]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
                     case "confusion":
                         toAppendBuilder.append(attackerOutputName).append(" is confused!");
                         break;
@@ -3855,7 +3866,7 @@ public class BattleMessage {
                 }
 
                 fromEffect = split[1];
-                fromEffectId = battleFragment.getPrintable(MyApplication.toId(fromEffect));
+                fromEffectId = MyApplication.toId(battleFragment.getPrintable(fromEffect));
 
                 animatorSet = new AnimatorSet();
                 switch (fromEffectId) {
@@ -4356,7 +4367,7 @@ public class BattleMessage {
             case "-fieldstart":
                 attackerOutputName = ofSource;
                 animatorSet = new AnimatorSet();
-                switch (battleFragment.getPrintable(MyApplication.toId(split[0]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
                         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -4417,7 +4428,7 @@ public class BattleMessage {
 
             case "-fieldend":
                 animatorSet = new AnimatorSet();
-                switch (battleFragment.getPrintable(MyApplication.toId(split[0]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append("The twisted dimensions returned to normal!");
                         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -4478,7 +4489,7 @@ public class BattleMessage {
                 break;
 
             case "-fieldactivate":
-                switch (battleFragment.getPrintable(MyApplication.toId(split[0]))) {
+                switch (MyApplication.toId(battleFragment.getPrintable(split[0]))) {
                     case "perishsong":
                         toAppendBuilder.append("All Pok&#xE9;mon hearing the song will faint in three turns!");
                         break;
@@ -4573,10 +4584,11 @@ public class BattleMessage {
         } else {
             int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
             int total = Integer.parseInt(hpFraction.substring(fraction + 1));
-            if (remaining == 1) {
+            int toReturn = (int) (((float) remaining / (float) total) * 100);
+            if (toReturn == 0 && remaining != 0) {
                 return 1;
             }
-            return (int) (((float) remaining / (float) total) * 100);
+            return toReturn;
         }
     }
 

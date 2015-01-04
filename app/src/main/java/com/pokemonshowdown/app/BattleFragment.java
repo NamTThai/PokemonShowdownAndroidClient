@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
@@ -116,6 +117,8 @@ public class BattleFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Toast.makeText(getActivity(), "loading", Toast.LENGTH_SHORT).show();
 
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
@@ -1009,7 +1012,9 @@ public class BattleFragment extends Fragment {
     public void setAddonStatus(String tag, String status) {
         try {
             LinearLayout statusBar = (LinearLayout) getView().findViewById(getTempStatusId(tag));
-
+            if (statusBar.findViewWithTag(status) != null) {
+                return;
+            }
             TextView stt = new TextView(getActivity());
             stt.setTag(status);
             stt.setText(status.toUpperCase());
@@ -1271,35 +1276,28 @@ public class BattleFragment extends Fragment {
 
     public void formChange(String playerTag, String oldPkm, String newPkm) {
         PokemonInfo oldInfo, newInfo;
+        ArrayList<PokemonInfo> team;
         if (playerTag.startsWith("p1")) {
-            int index = findPokemonInTeam(mPlayer1Team, oldPkm);
-            if (index == -1) {
-                return;
-            } else {
-                oldInfo = mPlayer1Team.get(index);
-                newInfo = new PokemonInfo(getActivity(), newPkm);
-                mPlayer1Team.set(index, newInfo);
-            }
+            team = getPlayer1Team();
         } else {
-            int index = findPokemonInTeam(mPlayer2Team, oldPkm);
-            if (index == -1) {
-                return;
-            } else {
-                oldInfo = mPlayer2Team.get(index);
-                newInfo = new PokemonInfo(getActivity(), newPkm);
-                mPlayer2Team.set(index, newInfo);
-            }
+            team = getPlayer2Team();
         }
 
-        newInfo.setNickname(oldInfo.getNickname());
-        newInfo.setLevel(oldInfo.getLevel());
-        newInfo.setGender(oldInfo.getGender());
-        newInfo.setShiny(oldInfo.isShiny());
-        newInfo.setActive(oldInfo.isActive());
-        newInfo.setHp(oldInfo.getHp());
-        newInfo.setStatus(oldInfo.getStatus());
-        newInfo.setMoves(oldInfo.getMoves());
-        newInfo.setItem(oldInfo.getItem());
+        int index = findPokemonInTeam(team, oldPkm);
+        if (index != -1) {
+            oldInfo = team.get(index);
+            newInfo = new PokemonInfo(getActivity(), newPkm);
+            newInfo.setNickname(oldInfo.getNickname());
+            newInfo.setLevel(oldInfo.getLevel());
+            newInfo.setGender(oldInfo.getGender());
+            newInfo.setShiny(oldInfo.isShiny());
+            newInfo.setActive(oldInfo.isActive());
+            newInfo.setHp(oldInfo.getHp());
+            newInfo.setStatus(oldInfo.getStatus());
+            newInfo.setMoves(oldInfo.getMoves());
+            newInfo.setItem(oldInfo.getItem());
+            team.set(index, newInfo);
+        }
     }
 
     public ArrayList<PokemonInfo> getTeam(String playerTag) {
