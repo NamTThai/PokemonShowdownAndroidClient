@@ -267,6 +267,7 @@ public class BattleFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(BTAG, "onPause");
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (roomData != null) {
             roomData.setMessageListener(true);
@@ -1248,12 +1249,14 @@ public class BattleFragment extends Fragment {
             getView().findViewById(getSpriteId(tag)).setAlpha(1f);
             if (!isBatonPass()) {
                 ((LinearLayout) getView().findViewById(getTempStatusId(tag))).removeAllViews();
-            } else {
-                getView().findViewById(getSpriteId(tag)).setAlpha(0.2f);
             }
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
-            if (sub != null && !isBatonPass()) {
-                relativeLayout.removeView(sub);
+            if (sub != null) {
+                if (!isBatonPass()) {
+                    relativeLayout.removeView(sub);
+                } else {
+                    getView().findViewById(getSpriteId(tag)).setAlpha(0.2f);
+                }
             }
             setBatonPass(false);
         } catch (NullPointerException e) {
