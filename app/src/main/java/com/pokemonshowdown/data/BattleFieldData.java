@@ -215,7 +215,14 @@ public class BattleFieldData {
     }
 
     public void leaveAllRooms() {
-        for (String roomId : mRoomList) {
+        ArrayList<String> holder = new ArrayList<>();
+        ArrayList<String> roomList = getRoomList();
+        for (String roomId : roomList) {
+            if (!roomId.equals("global")) {
+                holder.add(roomId);
+            }
+        }
+        for (String roomId : holder) {
             leaveRoom(roomId);
         }
     }
