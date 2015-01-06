@@ -149,6 +149,11 @@ public class TeamBuildingFragment extends Fragment {
                 mPokemonListAdapter.notifyDataSetChanged();
                 // Notify parent activity that the mPokemonTeam changed (so to reprint in the drawer)
                 ((TeamBuildingActivity) getActivity()).updateList();
+                if (mPokemonTeam.isFull()) {
+                    mFooterButton.setVisibility(View.GONE);
+                } else {
+                    mFooterButton.setVisibility(View.VISIBLE);
+                }
                 return true;
 
             case 2:
