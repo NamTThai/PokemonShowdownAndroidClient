@@ -93,6 +93,7 @@ public class BattleFieldFragment extends Fragment {
         super.onDetach();
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         getActivity().getActionBar().removeAllTabs();
+        BattleFieldData.get(getActivity()).leaveAllRooms();
     }
 
     @Override
@@ -289,6 +290,14 @@ public class BattleFieldFragment extends Fragment {
                 fragment.setQuota(true);
                 fragment.cancelSearchingButton();
             }
+        }
+
+        if (mRoomList.size() > 2) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("This app does not handle concurrent battles well =.= " +
+                            "Not just yet =.= Don't close any window, finish all battles and reset the app")
+                    .create()
+                    .show();
         }
     }
 

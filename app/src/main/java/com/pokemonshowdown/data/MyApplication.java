@@ -72,21 +72,8 @@ public class MyApplication extends Application {
         mRoomCategoryList = new HashMap<>();
     }
 
-    @Override
-    public void onTerminate() {
-        mOnboarding.signingOut();
-        mBattleFieldData.leaveAllRooms();
-        mCommunityLoungeData.leaveAllRooms();
-        closeActiveConnection();
-        super.onTerminate();
-    }
-
     public static MyApplication getMyApplication() {
         return sMyApplication;
-    }
-
-    public void setWebSocketClient(WebSocketClient webSocketClient) {
-        mWebSocketClient = webSocketClient;
     }
 
     public WebSocketClient getWebSocketClient() {
