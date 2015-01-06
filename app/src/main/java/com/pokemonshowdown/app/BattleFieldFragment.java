@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -93,6 +94,13 @@ public class BattleFieldFragment extends Fragment {
         super.onDetach();
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         getActivity().getActionBar().removeAllTabs();
+        BattleFieldData.get(getActivity()).leaveAllRooms();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(BTAG, "onStop");
+        super.onStop();
     }
 
     @Override
