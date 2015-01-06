@@ -190,7 +190,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 return true;
             case R.id.menu_settings:
                 new AlertDialog.Builder(this)
-                        .setMessage(R.string.teaser_alert)
+                        .setMessage(R.string.still_in_development)
                         .create()
                         .show();
                 return true;

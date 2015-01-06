@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -95,12 +94,6 @@ public class BattleFieldFragment extends Fragment {
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         getActivity().getActionBar().removeAllTabs();
         BattleFieldData.get(getActivity()).leaveAllRooms();
-    }
-
-    @Override
-    public void onStop() {
-        Log.d(BTAG, "onStop");
-        super.onStop();
     }
 
     @Override
@@ -297,6 +290,14 @@ public class BattleFieldFragment extends Fragment {
                 fragment.setQuota(true);
                 fragment.cancelSearchingButton();
             }
+        }
+
+        if (mRoomList.size() > 2) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("This app does not handle concurrent battles well =.= " +
+                            "Not just yet =.= Don't close any window, finish all battles and reset the app")
+                    .create()
+                    .show();
         }
     }
 
