@@ -6,8 +6,6 @@ import android.util.Log;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,15 +60,29 @@ public class PokemonTeam implements Serializable {
 
             StringBuffer pokemonTeamBuffer = new StringBuffer("");
             String currentNickname = null;
+            String currentTierId = "";
+
             for (String s : fileContentStringArray) {
                 if (s.startsWith("===") && s.endsWith("===")) {
                     if (pokemonTeamBuffer.length() > 0) {
                         PokemonTeam pt = PokemonTeam.importPokemonTeam(pokemonTeamBuffer.toString(), appContext, true);
                         pt.setNickname(currentNickname);
+                        if (!currentTierId.isEmpty()) {
+                            BattleFieldData.Format currentFormat = BattleFieldData.get(appContext).getFormatUsingId(currentTierId);
+                            if (currentFormat != null) {
+                                pt.setTier(currentFormat.getName());
+                            }
+                        }
                         mPokemonTeamList.add(pt);
                     }
                     pokemonTeamBuffer.setLength(0);
-                    currentNickname = s.replace("=", "").trim();
+                    if (s.contains("[") && s.contains("]")) {
+                        currentTierId = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
+                        currentNickname = s.substring(s.indexOf("]") + 1).replace("=", "").trim();
+                    } else {
+                        currentTierId = "";
+                        currentNickname = s.replace("=", "").trim();
+                    }
                 } else {
                     pokemonTeamBuffer.append(s).append("\n");
                 }
@@ -79,6 +91,12 @@ public class PokemonTeam implements Serializable {
             if (pokemonTeamBuffer.length() > 0 && currentNickname != null) {
                 PokemonTeam pt = PokemonTeam.importPokemonTeam(pokemonTeamBuffer.toString(), appContext, true);
                 pt.setNickname(currentNickname);
+                if (!currentTierId.isEmpty()) {
+                    BattleFieldData.Format currentFormat = BattleFieldData.get(appContext).getFormatUsingId(currentTierId);
+                    if (currentFormat != null) {
+                        pt.setTier(currentFormat.getName());
+                    }
+                }
                 mPokemonTeamList.add(pt);
             }
 
@@ -94,7 +112,11 @@ public class PokemonTeam implements Serializable {
             StringBuilder sb = new StringBuilder();
 
             for (PokemonTeam pokemonTeam : mPokemonTeamList) {
-                sb.append("=== ").append(pokemonTeam.getNickname()).append(" ===\n");
+                sb.append("=== ");
+                if (!pokemonTeam.getTier().isEmpty()) {
+                    sb.append("[").append(MyApplication.toId(pokemonTeam.getTier())).append("] ");
+                }
+                sb.append(pokemonTeam.getNickname()).append(" ===\n");
                 sb.append(pokemonTeam.exportPokemonTeam(c));
             }
 

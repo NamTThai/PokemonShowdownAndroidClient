@@ -96,8 +96,41 @@ public class Pokemon implements Serializable {
             pokemonItem = nameItem[1];
             pokemonMainData = nameItem[0];
         }
-        String tmpString = pokemonMainData;
-        String[] tmpSplit = tmpString.trim().split(" ");
+
+        if (pokemonMainData.contains("(") && pokemonMainData.contains(")")) {
+            int countOpen = pokemonMainData.length() - pokemonMainData.replace("(", "").length();
+            int countClosed = pokemonMainData.length() - pokemonMainData.replace(")", "").length();
+
+            if (countOpen == 1 && countClosed == 1) {
+                // either name or gender
+                String genderOrName = pokemonMainData.substring(pokemonMainData.lastIndexOf("(") + 1, pokemonMainData.lastIndexOf(")"));
+
+                if (genderOrName.equals("M") || genderOrName.equals("F") || genderOrName.equals("N")) {
+                    pokemonGender = genderOrName;
+                    pokemonName = pokemonMainData.substring(0, pokemonMainData.lastIndexOf("("));
+                } else {
+                    pokemonName = genderOrName;
+                    pokemonNickname = pokemonMainData.substring(0, pokemonMainData.lastIndexOf("("));
+                }
+            } else {
+                // both name + gender
+                String genderOrName = pokemonMainData.substring(pokemonMainData.lastIndexOf("(") + 1, pokemonMainData.lastIndexOf(")"));
+
+                if (genderOrName.equals("M") || genderOrName.equals("F") || genderOrName.equals("N")) {
+                    pokemonGender = genderOrName;
+                    pokemonMainData = pokemonMainData.substring(0, pokemonMainData.lastIndexOf("("));
+                    pokemonName = pokemonMainData.substring(pokemonMainData.lastIndexOf("(") + 1, pokemonMainData.lastIndexOf(")"));
+                    pokemonNickname = pokemonMainData.substring(0, pokemonMainData.lastIndexOf("("));
+                } else {
+                    // is nickname with ()()() and (name)
+                    pokemonName = genderOrName;
+                    pokemonNickname = pokemonMainData.substring(0, pokemonMainData.lastIndexOf("("));
+                }
+            }
+        } else {
+            pokemonName = pokemonMainData;
+        }
+        /*String[] tmpSplit = tmpString.trim().split(" ");
         switch (tmpSplit.length) {
             case 1:
                 pokemonName = tmpSplit[0].trim();
@@ -131,7 +164,7 @@ public class Pokemon implements Serializable {
 
             default:
                 return null;
-        }
+        }*/
 
         // replace for different formes
         pokemonName = MyApplication.toId(pokemonName);

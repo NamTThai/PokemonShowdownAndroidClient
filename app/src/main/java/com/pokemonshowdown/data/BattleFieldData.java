@@ -227,6 +227,17 @@ public class BattleFieldData {
         }
     }
 
+    public Format getFormatUsingId(String formatNameId) {
+        for (FormatType formatType : mFormatTypes) {
+            for (Format format : formatType.getFormatList()) {
+                if(MyApplication.toId(format.getName()).equals(formatNameId)) {
+                    return format;
+                }
+            }
+        }
+        return null;
+    }
+
     public static class BattleLog {
         private String mRoomId;
         private CharSequence mChatBox;
