@@ -104,7 +104,7 @@ public class BattleFieldFragment extends Fragment {
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        final String roomId = getCurrentRoomId();
+                        final String roomId = "http://play.pokemonshowdown.com/" + getCurrentRoomId();
                         new AlertDialog.Builder(getActivity())
                                 .setTitle(R.string.bar_room_id)
                                 .setMessage(roomId)
