@@ -192,7 +192,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 return true;
             case R.id.menu_settings:
                 new AlertDialog.Builder(this)
-                        .setMessage(R.string.teaser_alert)
+                        .setMessage(R.string.still_in_development)
                         .create()
                         .show();
                 return true;
@@ -260,9 +260,7 @@ public class BattleFieldActivity extends FragmentActivity {
         }
         if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
             mDrawerLayout.closeDrawer(mDrawerList);
-            return;
         }
-        super.onBackPressed();
     }
 
     private void processBroadcastMessage(Intent intent) {
@@ -356,7 +354,7 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
-                break;
+                return;
 
             case MyApplication.EXTRA_UPDATE_CHALLENGE:
                 String updateChallengeStatus = intent.getExtras().getString(MyApplication.EXTRA_UPDATE_CHALLENGE);
@@ -405,6 +403,22 @@ public class BattleFieldActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
+
+            case MyApplication.EXTRA_UNKNOWN_ERROR:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage("An unknown error was caught. " +
+                                        "You can copy current roomId to clipboard; if anything funny happens," +
+                                        " finish the battle in your device's browser.")
+                                .create();
+                        mDialog.show();
+                    }
+                });
         }
     }
 

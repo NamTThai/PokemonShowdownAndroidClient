@@ -1856,15 +1856,19 @@ public class BattleMessage {
                             break;
 
                         default:
-                            switch (battleFragment.trimOrigin(fromEffect)) {
-                                case "desolateland":
-                                    toAppendBuilder.append("The Water-type attack evaporated in the harsh sunlight!");
-                                    break;
-                                case "primordialsea":
-                                    toAppendBuilder.append("The Fire-type attack fizzled out in the heavy rain!");
-                                    break;
-                                default:
-                                    toAppendBuilder.append("But it failed!");
+                            if (fromEffect != null) {
+                                switch (battleFragment.trimOrigin(fromEffect)) {
+                                    case "desolateland":
+                                        toAppendBuilder.append("The Water-type attack evaporated in the harsh sunlight!");
+                                        break;
+                                    case "primordialsea":
+                                        toAppendBuilder.append("The Fire-type attack fizzled out in the heavy rain!");
+                                        break;
+                                    default:
+                                        toAppendBuilder.append("But it failed!");
+                                }
+                            } else {
+                                toAppendBuilder.append("But it failed!");
                             }
                             break;
                     }
@@ -4000,7 +4004,7 @@ public class BattleMessage {
 
                     case "lightscreen":
                         side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
-                        toAppendBuilder.append(side).append("'s Reflect wore off!");
+                        toAppendBuilder.append(side).append("'s Light Screen wore off!");
                         animatorSet.addListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {

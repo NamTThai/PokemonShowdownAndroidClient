@@ -92,7 +92,7 @@ public class SearchableActivity extends ListActivity {
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            String query = MyApplication.toId(intent.getStringExtra(SearchManager.QUERY));
             switch (mSearchType) {
                 case REQUEST_CODE_SEARCH_POKEMON:
                     searchPokemon(query);

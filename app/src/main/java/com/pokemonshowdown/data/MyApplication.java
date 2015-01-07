@@ -35,6 +35,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
     public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
     public final static String EXTRA_ERROR_MESSAGE = "Error Message";
+    public final static String EXTRA_UNKNOWN_ERROR = "Unknown Error";
     public final static String EXTRA_UPDATE_SEARCH = "Search Update";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
@@ -71,23 +72,17 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
-    }
 
-    @Override
-    public void onTerminate() {
-        mOnboarding.signingOut();
-        mBattleFieldData.leaveAllRooms();
-        mCommunityLoungeData.leaveAllRooms();
-        closeActiveConnection();
-        super.onTerminate();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                handleException(thread, ex);
+            }
+        });
     }
 
     public static MyApplication getMyApplication() {
         return sMyApplication;
-    }
-
-    public void setWebSocketClient(WebSocketClient webSocketClient) {
-        mWebSocketClient = webSocketClient;
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -410,5 +405,10 @@ public class MyApplication extends Application {
             return null;
         }
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
+
+    private void handleException(Thread thread, Throwable ex) {
+        Intent intent = new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UNKNOWN_ERROR);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

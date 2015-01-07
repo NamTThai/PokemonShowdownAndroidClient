@@ -67,10 +67,11 @@ public class BattleFieldData {
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
 
     }
+
     public Format getFormat(String formatName) {
         for (FormatType formatType : mFormatTypes) {
             for (Format format : formatType.getFormatList()) {
-                if(format.getName().equals(formatName)) {
+                if (format.getName().equals(formatName)) {
                     return format;
                 }
             }
@@ -81,7 +82,7 @@ public class BattleFieldData {
     public Format getFormatUsingId(String formatNameId) {
         for (FormatType formatType : mFormatTypes) {
             for (Format format : formatType.getFormatList()) {
-                if(MyApplication.toId(format.getName()).equals(formatNameId)) {
+                if (MyApplication.toId(format.getName()).equals(formatNameId)) {
                     return format;
                 }
             }
@@ -227,7 +228,14 @@ public class BattleFieldData {
     }
 
     public void leaveAllRooms() {
-        for (String roomId : mRoomList) {
+        ArrayList<String> holder = new ArrayList<>();
+        ArrayList<String> roomList = getRoomList();
+        for (String roomId : roomList) {
+            if (!roomId.equals("global")) {
+                holder.add(roomId);
+            }
+        }
+        for (String roomId : holder) {
             leaveRoom(roomId);
         }
     }
