@@ -357,6 +357,22 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
+                return;
+            case MyApplication.EXTRA_UNKNOWN_ERROR:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage("An unknown error was caught. " +
+                                        "You can copy current roomId to clipboard; if anything funny happens," +
+                                        " finish the battle in your device's browser.")
+                                .create();
+                        mDialog.show();
+                    }
+                });
         }
     }
 
