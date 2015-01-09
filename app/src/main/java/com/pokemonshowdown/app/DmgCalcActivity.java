@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DmgCalcActivity extends FragmentActivity {
+public class DmgCalcActivity extends FragmentActivity implements FieldFragment.FieldConditionsListener {
     public final static String DTAG = DmgCalcActivity.class.getName();
     public final static int REQUEST_CODE_FIND_ATTACKER = 0;
     public final static int REQUEST_CODE_FIND_DEFENDER = 1;
@@ -59,6 +59,8 @@ public class DmgCalcActivity extends FragmentActivity {
     private int mSpikesCount = 0;
     private Weather mActiveWeather = Weather.NO_WEATHER;
 
+    private FieldFragment mFieldFragment;
+
     public enum FieldConditions {
         SINGLES, DOUBLES, STEALTH_ROCK, ZERO_SPIKES, ONE_SPIKES, TWO_SPIKES, THREE_SPIKES, REFLECT, LIGHT_SCREEN, FORESIGHT, HELPING_HAND, NO_WEATHER, SUN, RAIN, SAND, HAIL, GRAVITY;
     }
@@ -78,13 +80,13 @@ public class DmgCalcActivity extends FragmentActivity {
         getActionBar().setTitle(R.string.bar_dmg_calc);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FieldFragment fieldFragment = new DmgCalcFieldXYFragment();
-        fieldFragment.setFieldConditionsListener(new DefaultFieldConditionsListener());
+        mFieldFragment = new DmgCalcFieldXYFragment();
+        mFieldFragment.setFieldConditionsListener(this);
         Bundle fieldBundle = new Bundle();
-        fieldFragment.setArguments(fieldBundle);
+        mFieldFragment.setArguments(fieldBundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.dmgcalc_field_container, fieldFragment)
+                .replace(R.id.dmgcalc_field_container, mFieldFragment)
                 .commit();
 
         ImageView switchButton = (ImageView) findViewById(R.id.dmgcalc_switch);
@@ -469,6 +471,9 @@ public class DmgCalcActivity extends FragmentActivity {
         if ("Status".equals(category)) {
             return 0;
         } else {
+            if("Shedinja".equals(getDefender().getName())) {
+                getDefender().setHP(1);
+            }
             switch (move) {
                 case "dragonrage":
                     return calculateWeaknessModifier(move, type) == 0 ? 0 : 40;
@@ -504,7 +509,7 @@ public class DmgCalcActivity extends FragmentActivity {
 
     private int applyDamageModifiers(double base, List<Double> modifiers) {
         for (double modifier : modifiers) {
-            base = base % 1 > 0.5 ? Math.ceil(base * modifier) : Math.floor(base *modifier);
+            base = base % 1 > 0.5 ? Math.ceil(base * modifier) : Math.floor(base * modifier);
         }
         return (int) base;
     }
@@ -808,7 +813,10 @@ public class DmgCalcActivity extends FragmentActivity {
                 bp = 150;
                 break;
             case "punishment":
-                bp = Math.min(200, 20 * countDefendersStatStages() + 60);
+                bp = Math.min(200, 20 * countStatStages(getDefender()) + 60);
+                break;
+            case "storedpower":
+                bp = 20 + (20*countStatStages(getAttacker()));
                 break;
             case "fling":
                 bp = 130;
@@ -870,11 +878,11 @@ public class DmgCalcActivity extends FragmentActivity {
         return bp;
     }
 
-    private int countDefendersStatStages() {
+    private int countStatStages(Pokemon pokemon) {
         int count = 0;
-        for(int change : getDefender().getStages()) {
-            if(change > 6) {
-                count += change-6;
+        for (int change : pokemon.getStages()) {
+            if (change > 6) {
+                count += change - 6;
             }
         }
 
@@ -1020,17 +1028,42 @@ public class DmgCalcActivity extends FragmentActivity {
         calculateAllMoves();
     }
 
-    private class DefaultFieldConditionsListener implements FieldConditionsListener {
 
-        @Override
-        public void onFieldConditionChanged(FieldConditions conditions, boolean value) {
-            setConditionStatus(conditions, value);
-        }
-
+    @Override
+    public void onFieldConditionChanged(FieldConditions conditions, boolean value) {
+        setConditionStatus(conditions, value);
     }
 
-    public interface FieldConditionsListener {
-        public void onFieldConditionChanged(FieldConditions conditions, boolean value);
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mFieldFragment != null) {
+            mFieldFragment.removeListener();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mFieldFragment != null) {
+            mFieldFragment.setFieldConditionsListener(this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mFieldFragment != null) {
+            mFieldFragment.removeListener();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (mFieldFragment != null) {
+            mFieldFragment.setFieldConditionsListener(this);
+        }
     }
 }
-
