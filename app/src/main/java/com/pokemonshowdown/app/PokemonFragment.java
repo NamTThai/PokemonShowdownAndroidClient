@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -17,8 +18,11 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -31,6 +35,8 @@ public class PokemonFragment extends DialogFragment {
     public final static String SEARCH = "Search";
     public final static String SEARCH_CODE = "Search Code";
     public final static String STAGES = "Stages";
+
+    private TextView mPokemonItem;
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -231,6 +237,24 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
+        mPokemonItem = (TextView) view.findViewById(R.id.pokemon_fragment_item);
+        String item = getPokemon().getItem();
+        if (getPokemon().getItem() != null && !getPokemon().getItem().isEmpty()) {
+            mPokemonItem.setText(getPokemon().getItem());
+        } else {
+            mPokemonItem.setText(getResources().getString(R.string.pokemon_nohelditem));
+        }
+
+        mPokemonItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
+                intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+                startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+            }
+        });
+
+        mPokemonItem.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
         initialHP.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
         initialHPText.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
     }
@@ -290,5 +314,21 @@ public class PokemonFragment extends DialogFragment {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
+            String item = data.getExtras().getString("Search");
+            getPokemon().setItem(item);
 
+            if (mPokemonItem != null) {
+                JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
+                if(itemObject != null) {
+                    int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
+                    mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
+                    item = itemObject.optString("name", item);
+                }
+                mPokemonItem.setText(item);
+            }
+        }
+    }
 }

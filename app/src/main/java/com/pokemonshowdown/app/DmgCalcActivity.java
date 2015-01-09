@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.FieldFragment;
+import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
@@ -448,24 +449,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             basePower = moveJson.getString("basePower");
             category = moveJson.getString("category");
             targets = moveJson.getString("target");
-
-            if ("weatherball".equals(move)) {
-                switch (mActiveWeather) {
-                    case HAIL:
-                        type = "Ice";
-                        break;
-                    case SAND:
-                        type = "Rock";
-                        break;
-                    case RAIN:
-                        type = "Water";
-                        break;
-                    case SUN:
-                        type = "Fire";
-                        break;
-                }
-            }
-
             hasSecondary = moveJson.optBoolean("secondary", true);
 
         } catch (JSONException | NullPointerException e) {
@@ -491,6 +474,9 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier(getDefender()) : getDefender().calculateSpDef() * getSpecialDefenseMultiplier(getDefender());
                     double base = calculateBasePower(move, type, Double.parseDouble(basePower));
 
+                    String originalType = type;
+                    type = modifyAttackType(move, type);
+
                     boolean isStab = Arrays.asList(getAttackerTypingAfterAbilities(type)).contains(type);
 
                     List<Double> modifiers = new ArrayList<>();
@@ -500,12 +486,53 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     modifiers.add(calculateCritMultiplier(move, crit));
                     modifiers.add(mHelpingHandActive ? 1.5 : 1.0);
                     modifiers.add(getSpreadMultiplicator(targets));
-                    modifyDamageWithAbility(modifiers, move, type, category, usesDefense, hasSecondary);
+                    modifyDamageWithAbility(modifiers, move, type, originalType, category, usesDefense, hasSecondary);
 
                     base = base == 0.0 ? 0 : Math.floor(((2 * getAttacker().getLevel() / 5 + 2) * attack * base / defense) / 50 + 2);
                     return applyDamageModifiers(base, modifiers);
             }
         }
+    }
+
+    private String modifyAttackType(String move, String type) {
+        String attackerAbility = getAttacker().getAbility();
+        if ("naturalgift".equals(move)) {
+            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            JSONObject naturalGiftObject = itemObject == null ? null : itemObject.optJSONObject("naturalGift");
+            if (naturalGiftObject != null) {
+                type = naturalGiftObject.optString("type", type);
+            }
+        } else if ("weatherball".equals(move)) {
+            switch (mActiveWeather) {
+                case HAIL:
+                    type = "Ice";
+                    break;
+                case SAND:
+                    type = "Rock";
+                    break;
+                case RAIN:
+                    type = "Water";
+                    break;
+                case SUN:
+                    type = "Fire";
+                    break;
+            }
+        } else if (attackerAbility.equals("Aerilate") && type.equals("Normal")) {
+            type = "Flying";
+        } else if (attackerAbility.equals("Refrigerate") && type.equals("Normal")) {
+            type = "Ice";
+        } else if (attackerAbility.equals("Pixilate") && type.equals("Normal")) {
+            type = "Fairy";
+        } else if (attackerAbility.equals("Normalize")) {
+            type = "Normal";
+        } else if ("technoblast".equals(move)) {
+            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            type = itemObject == null ? null : itemObject.optString("onDrive", type);
+        } else if ("judgement".equals(move)) {
+            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            type = itemObject == null ? "Normal" : itemObject.optString("onPlate", "Normal");
+        }
+        return type;
     }
 
     private int applyDamageModifiers(double base, List<Double> modifiers) {
@@ -529,7 +556,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             baseMultiplier *= 1.5;
         }
 
-        if("Defeatist".equals(pokemon.getAbility())) {
+        if ("Defeatist".equals(pokemon.getAbility())) {
             baseMultiplier *= 0.5;
         }
 
@@ -563,14 +590,14 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             baseMultiplier *= 1.5;
         }
 
-        if("Defeatist".equals(pokemon.getAbility())) {
+        if ("Defeatist".equals(pokemon.getAbility())) {
             baseMultiplier *= 0.5;
         }
 
         return baseMultiplier;
     }
 
-    private void modifyDamageWithAbility(List<Double> modifiers, String move, String type, String category, boolean usesDefense, boolean hasSecondary) {
+    private void modifyDamageWithAbility(List<Double> modifiers, String move, String type, String originalType, String category, boolean usesDefense, boolean hasSecondary) {
         List<String> attackerTyping = Arrays.asList(getAttackerTypingAfterAbilities(type));
         String attackerAbility = getAttacker().getAbility();
         String defenderAbility = getDefender().getAbility();
@@ -588,7 +615,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             modifiers.add(1.5);
         }
 
-        if(((attackerAbility.equals("Swarm") && type.equals("Bug")) || (attackerAbility.equals("Blaze") && type.equals("Fire")) || (attackerAbility.equals("Torrent") && type.equals("Water")) || (attackerAbility.equals("Overgrow") && type.equals("Grass"))) && getHPFraction(getAttacker()) <= 1/3.0) {
+        if (((attackerAbility.equals("Swarm") && type.equals("Bug")) || (attackerAbility.equals("Blaze") && type.equals("Fire")) || (attackerAbility.equals("Torrent") && type.equals("Water")) || (attackerAbility.equals("Overgrow") && type.equals("Grass"))) && getHPFraction(getAttacker()) <= 1 / 3.0) {
             modifiers.add(1.5);
         }
 
@@ -648,25 +675,24 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         }
 
         if (attackerAbility.equals("Analytic")) {
+            modifiers.add(1.3); //TODO: Reimplement
+        }
+
+        if (attackerAbility.equals("Aerilate") && originalType.equals("Normal")) {
             modifiers.add(1.3);
         }
 
-        if (attackerAbility.equals("Aerilate") && type.equals("Normal")) {
+        if (attackerAbility.equals("Refrigerate") && originalType.equals("Normal")) {
             modifiers.add(1.3);
         }
 
-        if (attackerAbility.equals("Refrigerate") && type.equals("Normal")) {
-            modifiers.add(1.3);
-        }
-
-        if (attackerAbility.equals("Pixilate") && type.equals("Normal")) {
+        if (attackerAbility.equals("Pixilate") && originalType.equals("Normal")) {
             modifiers.add(1.3);
         }
 
         if (defenderAbility.equals("Fur Coat") && usesDefense && !isMoldBreakerActive()) {
             modifiers.add(0.5);
         }
-
 
         if (mActiveWeather == Weather.SAND && attackerAbility.equals("Sand Force") && Arrays.asList(new String[]{"Rock", "Ground", "Steel"}).contains(type)) {
             modifiers.add(1.3);
@@ -717,38 +743,33 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return ("allAdjacentFoes".equals(targets) || "allAdjacent".equals(targets) || "all".equals(targets)) && !mIsSingles ? 0.75 : 1;
     }
 
+    private String[] getRealTyping(Pokemon pokemon) {
+        String[] typing = pokemon.getType();
+        if ("Forecast".equals(pokemon.getAbility())) {
+            switch (mActiveWeather) {
+                case RAIN:
+                    typing = new String[]{"Water"};
+                    break;
+                case SUN:
+                    typing = new String[]{"Fire"};
+                    break;
+                case HAIL:
+                    typing = new String[]{"Ice"};
+                    break;
+            }
+        } else if("Multitype".equals(pokemon.getAbility()) && pokemon.getName().contains("Arceus")) {
+            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            typing = itemObject == null ? new String[]{"Normal"} : new String[]{itemObject.optString("onPlate", "Normal")};
+        }
+        return typing;
+    }
+
     private double calculateWeaknessModifier(String move, String type) {
         double modifier = 1.0;
 
-        String[] defenderTyping = getDefender().getType();
+        String[] defenderTyping = getRealTyping(getDefender());
         String attackerAbility = getAttacker().getAbility();
         String defenderAbility = getDefender().getAbility();
-
-        if ("Forecast".equals(defenderAbility)) {
-            switch (mActiveWeather) {
-                case RAIN:
-                    defenderTyping = new String[]{"Water"};
-                    break;
-                case SUN:
-                    defenderTyping = new String[]{"Fire"};
-                    break;
-                case HAIL:
-                    defenderTyping = new String[]{"Ice"};
-                    break;
-            }
-        }
-
-        if (!"weatherball".equals(move)) {
-            if (defenderAbility.equals("Aerilate") && type.equals("Normal")) {
-                type = "Flying";
-            } else if (defenderAbility.equals("Refrigerate") && type.equals("Normal")) {
-                type = "Ice";
-            } else if (defenderAbility.equals("Pixilate") && type.equals("Normal")) {
-                type = "Fairy";
-            } else if (defenderAbility.equals("Normalize")) {
-                type = "Normal";
-            }
-        }
 
         for (String defType : defenderTyping) {
             if (mEffectivenessImmune.get(defType) != null && mEffectivenessImmune.get(defType).contains(type)) {
@@ -782,7 +803,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             type = backupType;
         }
 
-        if ("freezedry".equals(move) && Arrays.asList(getDefender().getType()).contains("Water")) {
+        if ("freezedry".equals(move) && Arrays.asList(defenderTyping).contains("Water")) {
             modifier *= 4; // as it should be resisted once
         }
 
@@ -826,18 +847,30 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 bp = 150;
                 break;
             case "punishment":
-                bp = Math.min(200, 20 * countStatStages(getDefender()) + 60);
+                bp = Math.min(200, 20 * countStatStages(getDefender(), true) + 60);
                 break;
             case "storedpower":
-                bp = 20 + (20*countStatStages(getAttacker()));
+                bp = 20 + (20 * countStatStages(getAttacker(), true));
+                break;
+            case "knockoff":
+                bp = getDefender().getItem().isEmpty() || getDefender().getItem() == null ? 65 : 97.5;
                 break;
             case "fling":
-                bp = 130;
-                break; // TODO: Reimplement if items are supported
+                JSONObject obj = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+                JSONObject flingObject = obj == null ? null : obj.optJSONObject("fling");
+                if (flingObject != null) {
+                    bp = flingObject.optInt("basePower", 0);
+                } else {
+                    bp = 0;
+                }
+                break;
             case "lowkick":
             case "grassknot":
                 double weight = getDefender().getWeight();
                 bp = weight < 10.0 ? 20 : weight < 25.0 ? 40 : weight < 50.0 ? 60 : weight < 100.0 ? 80 : weight < 200.0 ? 100 : 120;
+                break;
+            case "acrobatics":
+                bp = getDefender().getItem().isEmpty() || getDefender().getItem() == null ? 55 : 110;
                 break;
             case "reversal":
             case "flail":
@@ -865,7 +898,13 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 bp = 102;
                 break;
             case "naturalgift":
-                bp = 100;// TODO: Reimplement if items are supported
+                obj = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+                JSONObject naturalGiftObject = obj == null ? null : obj.optJSONObject("naturalGift");
+                if (naturalGiftObject != null) {
+                    bp = naturalGiftObject.optInt("basePower", 0);
+                } else {
+                    bp = 0;
+                }
                 break;
             case "gyroball":
                 bp = 25.0 * getDefender().calculateSpd() / getAttacker().calculateSpd();
@@ -879,7 +918,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     bp = 100;
                 }
                 break;
-            // TODO: Probably many other moves...
         }
 
         if (getAttacker().getAbility().equals("Technician") && bp <= 60) {
@@ -899,17 +937,15 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return bp;
     }
 
-    private int countStatStages(Pokemon pokemon) {
+    private int countStatStages(Pokemon pokemon, boolean positiveOnly) {
         int count = 0;
         for (int change : pokemon.getStages()) {
-            if (change > 6) {
+            if (change > 6 || !positiveOnly) {
                 count += change - 6;
             }
         }
-
         return count;
     }
-
 
     private void createIndexOfTypeModifiers() {
         // Normal Type
@@ -1042,7 +1078,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     }
 
     private String[] getAttackerTypingAfterAbilities(String moveType) {
-        return getAttacker().getAbility().equals("Protean") ? new String[]{moveType} : getAttacker().getType();
+        return getAttacker().getAbility().equals("Protean") ? new String[]{moveType} : getRealTyping(getAttacker());
     }
 
     public void updateDamage() {
