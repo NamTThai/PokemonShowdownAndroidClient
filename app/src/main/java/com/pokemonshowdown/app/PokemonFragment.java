@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.Pokemon;
@@ -83,7 +84,7 @@ public class PokemonFragment extends DialogFragment {
             addSearchWidget(view);
         }
 
-        TextView pokemonStats = (TextView) view.findViewById(R.id.stats);
+        final TextView pokemonStats = (TextView) view.findViewById(R.id.stats);
         resetStatsString();
         pokemonStats.setBackgroundResource(R.drawable.editable_frame);
         pokemonStats.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +206,33 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
+        int initialHPFraction = (int) (100 * getPokemon().getHP() / (double) getPokemon().calculateHP());
+        final TextView initialHPText = (TextView) view.findViewById(R.id.initial_hp_text);
+        initialHPText.setText(getResources().getString(R.string.initial_hp_dialog, initialHPFraction));
+
+        final SeekBar initialHP = (SeekBar) view.findViewById(R.id.initial_hp);
+        initialHP.setProgress(initialHPFraction);
+        initialHP.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mPokemon.setHP((int) Math.ceil(getPokemon().calculateHP() * (progress / 100.0)));
+                initialHPText.setText(getResources().getString(R.string.initial_hp_dialog, progress));
+                pokemonStats.setText(getStatsString());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        initialHP.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
+        initialHPText.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
     }
 
     private void addSearchWidget(View view) {
@@ -231,7 +259,12 @@ public class PokemonFragment extends DialogFragment {
     }
 
     public String getStatsString() {
-        return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpA " + Integer.toString(getPokemon().getSpAtk()) + " / SpD " + Integer.toString(getPokemon().getSpDef()) + " / Spe " + Integer.toString(getPokemon().getSpd()));
+        if (getArguments().getBoolean(STAGES) && getPokemon().calculateHP() != getPokemon().getHP()) {
+            return ("HP " + Integer.toString(getPokemon().getHP()) + " (" + getPokemon().calculateHP() + ")" + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
+        } else {
+            return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpA " + Integer.toString(getPokemon().getSpAtk()) + " / SpD " + Integer.toString(getPokemon().getSpDef()) + " / Spe " + Integer.toString(getPokemon().getSpd()));
+
+        }
     }
 
     public void resetStatsString() {

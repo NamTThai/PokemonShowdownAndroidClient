@@ -398,6 +398,7 @@ public class MyApplication extends Application {
     }
 
     private void handleException(Thread thread, Throwable ex) {
+        ex.printStackTrace();
         Intent intent = new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UNKNOWN_ERROR);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }

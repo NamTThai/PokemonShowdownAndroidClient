@@ -37,7 +37,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     public final static int REQUEST_CODE_GET_MOVE_3 = 4;
     public final static int REQUEST_CODE_GET_MOVE_4 = 5;
 
-    private final DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#0.0%");
+    private final static DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#0.0%");
 
     private Pokemon mAttacker;
     private Pokemon mDefender;
@@ -371,8 +371,8 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     }
 
     private int calculateDefendersInitialHP() {
-        int baseHP = getDefender().calculateHP();
-        int calculatedHP = baseHP;
+        int baseHP = "Shedinja".equals(getDefender().getName()) ? 1 : getDefender().calculateHP();
+        int calculatedHP = getDefender().getHP();
         List<String> typing = Arrays.asList(getDefender().getType());
 
         if (mStealthRocksActive && !getDefender().getAbility().equals("Magic Guard")) {
@@ -384,6 +384,10 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         }
 
         return calculatedHP;
+    }
+
+    private double getHPFraction(Pokemon pokemon) {
+        return pokemon.getHP() / (double) pokemon.calculateHP();
     }
 
     private int calculateDefendersDamagePerRound() {
@@ -471,9 +475,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         if ("Status".equals(category)) {
             return 0;
         } else {
-            if("Shedinja".equals(getDefender().getName())) {
-                getDefender().setHP(1);
-            }
             switch (move) {
                 case "dragonrage":
                     return calculateWeaknessModifier(move, type) == 0 ? 0 : 40;
@@ -486,8 +487,8 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     boolean usesAttack = "Physical".equals(category);
                     boolean usesDefense = "Physical".equals(category) || "psyshock".equals(move) || "psystrike".equals(move) || "secretsword".equals(move);
 
-                    double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAtkMultiplier()) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAtkMultiplier()) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier();
-                    double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier() : getDefender().calculateSpDef() * getSpecialDefenseMultiplier();
+                    double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAtkMultiplier(getAttacker())) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAtkMultiplier(getAttacker())) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier(getAttacker());
+                    double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier(getDefender()) : getDefender().calculateSpDef() * getSpecialDefenseMultiplier(getDefender());
                     double base = calculateBasePower(move, type, Double.parseDouble(basePower));
 
                     boolean isStab = Arrays.asList(getAttackerTypingAfterAbilities(type)).contains(type);
@@ -514,48 +515,56 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return (int) base;
     }
 
-    private double getAtkMultiplier() {
+    private double getAtkMultiplier(Pokemon pokemon) {
         double baseMultiplier = 1.0;
-        if (getAttacker().getAbility().equals("Huge Power") || getAttacker().getAbility().equals("Pure Power")) {
+        if (pokemon.getAbility().equals("Huge Power") || pokemon.getAbility().equals("Pure Power")) {
             baseMultiplier *= 2.0;
         }
 
-        if (getAttacker().getAbility().equals("Hustle")) {
+        if (pokemon.getAbility().equals("Hustle")) {
             baseMultiplier *= 1.5;
         }
 
-        if (getAttacker().getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
+        if (pokemon.getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
+            baseMultiplier *= 1.5;
+        }
+
+        if("Defeatist".equals(pokemon.getAbility())) {
+            baseMultiplier *= 0.5;
+        }
+
+        return baseMultiplier;
+    }
+
+    private double getSpecialDefenseMultiplier(Pokemon pokemon) {
+        double baseMultiplier = 1.0;
+
+        if (pokemon.getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
+            baseMultiplier *= 1.5;
+        }
+
+        if (Arrays.asList(pokemon.getType()).contains("Rock")) {
             baseMultiplier *= 1.5;
         }
 
         return baseMultiplier;
     }
 
-    private double getSpecialDefenseMultiplier() {
-        double baseMultiplier = 1.0;
-
-        if (getAttacker().getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
-            baseMultiplier *= 1.5;
-        }
-
-        if (Arrays.asList(getDefender().getType()).contains("Rock")) {
-            baseMultiplier *= 1.5;
-        }
-
-        return baseMultiplier;
-    }
-
-    private double getDefenseMultiplier() {
+    private double getDefenseMultiplier(Pokemon pokemon) {
         double baseMultiplier = 1.0;
 
         return baseMultiplier;
     }
 
-    private double getSpecialAttackMultiplier() {
+    private double getSpecialAttackMultiplier(Pokemon pokemon) {
         double baseMultiplier = 1.0;
 
-        if (mActiveWeather == Weather.SUN && getAttacker().getAbility().equals("Solar Power")) {
+        if (mActiveWeather == Weather.SUN && pokemon.getAbility().equals("Solar Power")) {
             baseMultiplier *= 1.5;
+        }
+
+        if("Defeatist".equals(pokemon.getAbility())) {
+            baseMultiplier *= 0.5;
         }
 
         return baseMultiplier;
@@ -576,6 +585,10 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
 
         // Without the list thingy, this would be unreadable
         if (attackerAbility.equals("Mega Launcher") && Arrays.asList(new String[]{"aurasphere", "darkpulse", "dragonpulse", "waterpulse"}).contains(move)) {
+            modifiers.add(1.5);
+        }
+
+        if(((attackerAbility.equals("Swarm") && type.equals("Bug")) || (attackerAbility.equals("Blaze") && type.equals("Fire")) || (attackerAbility.equals("Torrent") && type.equals("Water")) || (attackerAbility.equals("Overgrow") && type.equals("Grass"))) && getHPFraction(getAttacker()) <= 1/3.0) {
             modifiers.add(1.5);
         }
 
@@ -828,7 +841,8 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 break;
             case "reversal":
             case "flail":
-                bp = 200; // TODO: Reimplement if health modifiable
+                int mod = (int) (48 * getHPFraction(getAttacker()));
+                bp = mod <= 1 ? 200 : mod <= 4 ? 150 : mod <= 9 ? 100 : mod <= 16 ? 80 : mod <= 32 ? 40 : 20;
                 break;
             case "heatcrash":
             case "heavyslam":
@@ -837,7 +851,14 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 break;
             case "crushgrip":
             case "wringout":
-                bp = 121; // TODO: Reimplement once health modifiable
+                bp = 1 + (120 * getHPFraction(getDefender()));
+                break;
+            case "brine":
+                bp = getHPFraction(getDefender()) <= 0.5 ? 130 : 65;
+                break;
+            case "eruption":
+            case "waterspout":
+                bp = Math.max(1, 150 * getHPFraction(getAttacker()));
                 break;
             case "frustration":
             case "return":
