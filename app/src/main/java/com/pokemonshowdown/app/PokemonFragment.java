@@ -35,6 +35,8 @@ public class PokemonFragment extends DialogFragment {
     public final static String SEARCH = "Search";
     public final static String SEARCH_CODE = "Search Code";
     public final static String STAGES = "Stages";
+    public final static String ITEMS = "Items";
+    public final static String HEALTH = "Health";
 
     private TextView mPokemonItem;
 
@@ -260,9 +262,9 @@ public class PokemonFragment extends DialogFragment {
             }
         });
 
-        mPokemonItem.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
-        initialHP.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
-        initialHPText.setVisibility(getArguments().getBoolean(STAGES) ? View.VISIBLE : View.GONE);
+        mPokemonItem.setVisibility(getArguments().getBoolean(ITEMS) ? View.VISIBLE : View.GONE);
+        initialHP.setVisibility(getArguments().getBoolean(HEALTH) ? View.VISIBLE : View.GONE);
+        initialHPText.setVisibility(getArguments().getBoolean(HEALTH) ? View.VISIBLE : View.GONE);
     }
 
     private void addSearchWidget(View view) {
