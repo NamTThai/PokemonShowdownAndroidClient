@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.pokemonshowdown.data.FieldFragment;
 import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.MoveDex;
+import com.pokemonshowdown.data.Pokedex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.SearchableActivity;
 
@@ -404,7 +405,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             damagePerRound += (baseHP * 0.125);
         }
 
-        if (!defenderAbility.equals("Overcoat") && !defenderAbility.equals("Magic Guard") && !getDefender().getItem().equals("safetygoggles")) {
+        if (!defenderAbility.equals("Overcoat") && (!defenderAbility.equals("Magic Guard") || !getDefender().getItem().equals("safetygoggles"))) {
             if (mActiveWeather == Weather.SAND && !defenderAbility.equals("Sand Veil") && !defenderAbility.equals("Sand Rush") && !defenderAbility.equals("Sand Force") && !defenderTypes.contains("Rock") && !defenderTypes.contains("Steel") && !defenderTypes.contains("Ground")) {
                 damagePerRound += (baseHP / 16);
             } else if (mActiveWeather == Weather.HAIL && !defenderAbility.equals("Ice Body") && !defenderAbility.equals("Snow Cloak") && !defenderTypes.contains("Ice")) {
@@ -619,7 +620,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     private double getDefenseMultiplier(Pokemon pokemon) {
         double baseMultiplier = 1.0;
 
-        if ("eviolite".equals(pokemon.getItem())) {
+        if ("eviolite".equals(pokemon.getItem()) && Pokedex.get(this).getPokemonJSONObject(pokemon.getName()).has("evos")) {
             baseMultiplier *= 1.5;
         }
 
@@ -649,7 +650,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             baseMultiplier *= 1.5;
         }
 
-        if ("eviolite".equals(pokemon.getItem())) {
+        if ("eviolite".equals(pokemon.getItem()) && Pokedex.get(this).getPokemonJSONObject(pokemon.getName()).has("evos")) {
             baseMultiplier *= 1.5;
         }
 
