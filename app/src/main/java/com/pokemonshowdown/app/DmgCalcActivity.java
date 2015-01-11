@@ -347,13 +347,19 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         int maxHitsTilKo = minDamage == 0 ? 0 : (int) Math.ceil((double) defenderHP / (minDamage + damagePerRound));
         int minHitsTilKo = maxDamage == 0 ? 0 : (int) Math.ceil((double) defenderHP / (maxDamage + damagePerRound));
 
-        String damageText;
+        String damageText = null;
         if (minDamage == maxDamage && minDamage == 0) {
             damageText = String.format("--");
-        } else if (minDamageText.equals(maxDamageText)) {
+        } else if (minDamageText.equals(maxDamageText) && minHitsTilKo > 0) {
             damageText = getResources().getString(R.string.dmg_is_same, minDamageText, minHitsTilKo);
-        } else if (maxHitsTilKo == minHitsTilKo) {
+        } else if (minDamageText.equals(maxDamageText)) {
+            getResources().getString(R.string.dmg_is_same_outhealed, minDamageText);
+        } else if (maxHitsTilKo == minHitsTilKo && minHitsTilKo > 0) {
             damageText = getResources().getString(R.string.dmg_not_same_same_ko, minDamageText, maxDamageText, minHitsTilKo);
+        } else if (minHitsTilKo > 0 && maxHitsTilKo <= 0) {
+            damageText = getResources().getString(R.string.dmg_not_same_not_same__maybe_outhealed, minDamageText, maxDamageText, minHitsTilKo);
+        } else if (minHitsTilKo <= 0 && maxHitsTilKo <= 0) {
+            damageText = getResources().getString(R.string.dmg_not_same_not_same_outhealed, minDamageText, maxDamageText);
         } else {
             damageText = getResources().getString(R.string.dmg_not_same_not_same_ko, minDamageText, maxDamageText, minHitsTilKo, maxHitsTilKo);
         }
@@ -372,6 +378,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 ((TextView) findViewById(R.id.move4_result)).setText(damageText);
                 break;
         }
+
     }
 
     private int calculateDefendersInitialHP() {
@@ -427,11 +434,11 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         }
 
         //Items
-        if(getDefender().getItem().equals("Leftovers")) {
+        if (getDefender().getItem().equals("leftovers")) {
             damagePerRound -= (baseHP / 16);
         }
 
-        if(getDefender().getItem().equals("stickybarb") && !getDefender().getAbility().equals("Magic Guard")) {
+        if (getDefender().getItem().equals("stickybarb") && !getDefender().getAbility().equals("Magic Guard")) {
             damagePerRound += baseHP * (0.125);
         }
 
