@@ -290,6 +290,8 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         bundle.putBoolean(PokemonFragment.SEARCH, true);
         bundle.putInt(PokemonFragment.SEARCH_CODE, searchCode);
         bundle.putBoolean(PokemonFragment.STAGES, true);
+        bundle.putBoolean(PokemonFragment.HEALTH, true);
+        bundle.putBoolean(PokemonFragment.ITEMS, true);
         fragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragment.show(fragmentManager, PokemonFragment.PTAG);
