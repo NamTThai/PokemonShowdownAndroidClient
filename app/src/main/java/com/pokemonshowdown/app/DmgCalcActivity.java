@@ -412,7 +412,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             damagePerRound += (baseHP * 0.125);
         }
 
-        if (!defenderAbility.equals("Overcoat") && (!defenderAbility.equals("Magic Guard") || !getDefender().getItem().equals("safetygoggles"))) {
+        if (!defenderAbility.equals("Overcoat") && !defenderAbility.equals("Magic Guard") && !getDefender().getItem().equals("safetygoggles")) {
             if (mActiveWeather == Weather.SAND && !defenderAbility.equals("Sand Veil") && !defenderAbility.equals("Sand Rush") && !defenderAbility.equals("Sand Force") && !defenderTypes.contains("Rock") && !defenderTypes.contains("Steel") && !defenderTypes.contains("Ground")) {
                 damagePerRound += (baseHP / 16);
             } else if (mActiveWeather == Weather.HAIL && !defenderAbility.equals("Ice Body") && !defenderAbility.equals("Snow Cloak") && !defenderTypes.contains("Ice")) {
