@@ -410,10 +410,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             }
         }
 
-        if(getDefender().getItem().equals("Leftovers")) {
-            damagePerRound -= (baseHP / 16);
-        }
-
         // Weather Healing
         if (defenderAbility.equals("Dry Skin") && mActiveWeather == Weather.RAIN) {
             damagePerRound -= (baseHP * 0.125);
@@ -425,6 +421,15 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
 
         if ((defenderAbility.equals("Ice Body")) && mActiveWeather == Weather.HAIL) {
             damagePerRound -= (baseHP / 16);
+        }
+
+        //Items
+        if(getDefender().getItem().equals("Leftovers")) {
+            damagePerRound -= (baseHP / 16);
+        }
+
+        if(getDefender().getItem().equals("stickybarb") && !getDefender().getAbility().equals("Magic Guard")) {
+            damagePerRound += baseHP * (0.125);
         }
 
         return damagePerRound;
@@ -663,7 +668,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         if ("wiseglasses".equals(attackerItem) && "Special".equals(category)) {
             modifiers.add(1.1);
         }
-        // Plates. Shattering procutivity in seconds.
     }
 
     private void modifyDamageWithAbility(List<Double> modifiers, String move, String type, String originalType, String category, boolean usesDefense, boolean hasSecondary) {

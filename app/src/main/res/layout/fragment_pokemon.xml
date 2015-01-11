@@ -80,7 +80,7 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         <TextView
@@ -92,29 +92,22 @@
             android:ellipsize="marquee"
             android:gravity="center"
             android:lines="1"
-            android:padding="1dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="1">
-
-        <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/initial_hp"
-            android:max="100"
-            android:progress="100"
-            android:layout_weight="0.79" />
+            android:padding="1dp"
+            android:layout_gravity="left"
+            android:text="@string/pokemon_nohelditem"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/initial_hp_text"
-            android:text="@string/initial_hp_dialog"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/initial_hp_text" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/initial_hp"
+            android:max="100"
+            android:progress="100" />
+
     </LinearLayout>
 
     <LinearLayout

@@ -214,7 +214,7 @@ public class PokemonFragment extends DialogFragment {
 
         int initialHPFraction = (int) (100 * getPokemon().getHP() / (double) getPokemon().calculateHP());
         final TextView initialHPText = (TextView) view.findViewById(R.id.initial_hp_text);
-        initialHPText.setText(getResources().getString(R.string.initial_hp_dialog, initialHPFraction));
+        initialHPText.setText(Integer.toString(initialHPFraction));
 
         final SeekBar initialHP = (SeekBar) view.findViewById(R.id.initial_hp);
         initialHP.setProgress(initialHPFraction);
@@ -222,7 +222,7 @@ public class PokemonFragment extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mPokemon.setHP((int) Math.ceil(getPokemon().calculateHP() * (progress / 100.0)));
-                initialHPText.setText(getResources().getString(R.string.initial_hp_dialog, progress));
+                initialHPText.setText(Integer.toString(progress));
                 pokemonStats.setText(getStatsString());
             }
 
@@ -240,7 +240,13 @@ public class PokemonFragment extends DialogFragment {
         mPokemonItem = (TextView) view.findViewById(R.id.pokemon_fragment_item);
         String item = getPokemon().getItem();
         if (getPokemon().getItem() != null && !getPokemon().getItem().isEmpty()) {
-            mPokemonItem.setText(getPokemon().getItem());
+            JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
+            if (itemObject != null) {
+                int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
+                mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
+                item = itemObject.optString("name", item);
+            }
+            mPokemonItem.setText(item);
         } else {
             mPokemonItem.setText(getResources().getString(R.string.pokemon_nohelditem));
         }
@@ -322,7 +328,7 @@ public class PokemonFragment extends DialogFragment {
 
             if (mPokemonItem != null) {
                 JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
-                if(itemObject != null) {
+                if (itemObject != null) {
                     int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
                     mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
                     item = itemObject.optString("name", item);
