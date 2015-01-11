@@ -597,6 +597,16 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return baseMultiplier;
     }
 
+    private void modifyDamageWithItem(List<Double> modifiers, String move, String type, String originalType) {
+        String attackerItem =  getAttacker().getItem();
+
+        if("lifeorb".equals(attackerItem)) {
+            modifiers.add(1.3);
+        }
+
+        // Plates. Shattering procutivity in seconds.
+    }
+
     private void modifyDamageWithAbility(List<Double> modifiers, String move, String type, String originalType, String category, boolean usesDefense, boolean hasSecondary) {
         List<String> attackerTyping = Arrays.asList(getAttackerTypingAfterAbilities(type));
         String attackerAbility = getAttacker().getAbility();
@@ -870,7 +880,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 bp = weight < 10.0 ? 20 : weight < 25.0 ? 40 : weight < 50.0 ? 60 : weight < 100.0 ? 80 : weight < 200.0 ? 100 : 120;
                 break;
             case "acrobatics":
-                bp = getDefender().getItem().isEmpty() || getDefender().getItem() == null ? 55 : 110;
+                bp = getAttacker().getItem() == null || getAttacker().getItem().isEmpty() || "flyinggem".equals(getAttacker().getItem()) ? 55 : 110;
                 break;
             case "reversal":
             case "flail":
