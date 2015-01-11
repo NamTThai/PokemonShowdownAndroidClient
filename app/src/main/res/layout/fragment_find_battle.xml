@@ -33,11 +33,11 @@
             android:id="@+id/find_battle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="8dp"
             android:background="@drawable/onclick_light_red"
             android:clickable="true"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/find_battle"
             android:textColor="#FFF"
             android:textSize="20sp"
@@ -47,14 +47,28 @@
             android:id="@+id/watch_battle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="8dp"
             android:background="@drawable/onclick_green"
             android:clickable="true"
             android:gravity="center"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="@string/watch_battle"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/challenge_battle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/onclick_light_blue"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/challenge_battle"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
 
         <TextView
             android:id="@+id/cancel_search"

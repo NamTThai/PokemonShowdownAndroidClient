@@ -39,6 +39,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_UPDATE_SEARCH = "Search Update";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
+    public final static String EXTRA_UPDATE_CHALLENGE = "Challenges ";
 
     private static MyApplication sMyApplication;
 
@@ -282,6 +283,15 @@ public class MyApplication extends Application {
                 case "pm":
                 case "usercount":
                 case "updatechallenges":
+                    //|updatechallenges|{"challengesFrom":{},"challengeTo":{"to":"tetonator","format":"randombattle"}}
+                    //|updatechallenges|{"challengesFrom":{"tetonator2":"randombattle"},"challengeTo":null}
+                    //|updatechallenges|{"challengesFrom":{},"challengeTo":null}
+                    //|updatechallenges|{"challengesFrom":{"fezfzefzef":"randombattle","sdadafezf":"randombattle"},"challengeTo":null}
+                    channel = -1;
+                    final String challengesStatus = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UPDATE_CHALLENGE).putExtra(EXTRA_UPDATE_CHALLENGE, challengesStatus));
+                    break;
+
                 case "deinit":
                     channel = -1;
                     Log.d(MTAG, message);
