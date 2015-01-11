@@ -374,7 +374,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     private int calculateDefendersInitialHP() {
         int baseHP = "Shedinja".equals(getDefender().getName()) ? 1 : getDefender().calculateHP();
         int calculatedHP = getDefender().getHP();
-        List<String> typing = Arrays.asList(getDefender().getType());
+        List<String> typing = Arrays.asList(getRealTyping(getDefender()));
 
         if (mStealthRocksActive && !getDefender().getAbility().equals("Magic Guard")) {
             calculatedHP -= baseHP * (0.125 * calculateWeaknessModifier("stealthrock", "Rock"));
@@ -395,19 +395,23 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         int baseHP = getDefender().calculateHP();
         int damagePerRound = 0;
         String defenderAbility = getDefender().getAbility();
-        List<String> defenderTypes = Arrays.asList(getDefender().getType());
+        List<String> defenderTypes = Arrays.asList(getRealTyping(getDefender()));
 
         // Weather damage
         if ((defenderAbility.equals("Solar Power") || defenderAbility.equals("Dry Skin")) && mActiveWeather == Weather.SUN) {
             damagePerRound += (baseHP * 0.125);
         }
 
-        if (!defenderAbility.equals("Overcoat") && !defenderAbility.equals("Magic Guard")) {
+        if (!defenderAbility.equals("Overcoat") && !defenderAbility.equals("Magic Guard") && !getDefender().getItem().equals("safetygoggles")) {
             if (mActiveWeather == Weather.SAND && !defenderAbility.equals("Sand Veil") && !defenderAbility.equals("Sand Rush") && !defenderAbility.equals("Sand Force") && !defenderTypes.contains("Rock") && !defenderTypes.contains("Steel") && !defenderTypes.contains("Ground")) {
                 damagePerRound += (baseHP / 16);
             } else if (mActiveWeather == Weather.HAIL && !defenderAbility.equals("Ice Body") && !defenderAbility.equals("Snow Cloak") && !defenderTypes.contains("Ice")) {
                 damagePerRound += (baseHP / 16);
             }
+        }
+
+        if(getDefender().getItem().equals("Leftovers")) {
+            damagePerRound -= (baseHP / 16);
         }
 
         // Weather Healing
@@ -470,7 +474,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     boolean usesAttack = "Physical".equals(category);
                     boolean usesDefense = "Physical".equals(category) || "psyshock".equals(move) || "psystrike".equals(move) || "secretsword".equals(move);
 
-                    double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAtkMultiplier(getAttacker())) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAtkMultiplier(getAttacker())) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier(getAttacker());
+                    double attack = "foulplay".equals(move) ? Math.round(getDefender().calculateAtk() * getAttackMultiplier(getAttacker())) : usesAttack ? Math.round(getAttacker().calculateAtk() * getAttackMultiplier(getAttacker())) : getAttacker().calculateSpAtk() * getSpecialAttackMultiplier(getAttacker());
                     double defense = usesDefense ? getDefender().calculateDef() * getDefenseMultiplier(getDefender()) : getDefender().calculateSpDef() * getSpecialDefenseMultiplier(getDefender());
                     double base = calculateBasePower(move, type, Double.parseDouble(basePower));
 
@@ -487,7 +491,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     modifiers.add(mHelpingHandActive ? 1.5 : 1.0);
                     modifiers.add(getSpreadMultiplicator(targets));
                     modifyDamageWithAbility(modifiers, move, type, originalType, category, usesDefense, hasSecondary);
-
+                    modifyDamageWithItem(modifiers, move, type, originalType, category);
                     base = base == 0.0 ? 0 : Math.floor(((2 * getAttacker().getLevel() / 5 + 2) * attack * base / defense) / 50 + 2);
                     return applyDamageModifiers(base, modifiers);
             }
@@ -542,7 +546,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return (int) base;
     }
 
-    private double getAtkMultiplier(Pokemon pokemon) {
+    private double getAttackMultiplier(Pokemon pokemon) {
         double baseMultiplier = 1.0;
         if (pokemon.getAbility().equals("Huge Power") || pokemon.getAbility().equals("Pure Power")) {
             baseMultiplier *= 2.0;
@@ -560,25 +564,17 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             baseMultiplier *= 0.5;
         }
 
-        return baseMultiplier;
-    }
-
-    private double getSpecialDefenseMultiplier(Pokemon pokemon) {
-        double baseMultiplier = 1.0;
-
-        if (pokemon.getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
+        if ("choiceband".equals(pokemon.getItem())) {
             baseMultiplier *= 1.5;
         }
 
-        if (Arrays.asList(pokemon.getType()).contains("Rock")) {
-            baseMultiplier *= 1.5;
+        if ("Pikachu".equals(pokemon.getName()) && "lightball".equals(pokemon.getItem())) {
+            baseMultiplier *= 2.0;
         }
 
-        return baseMultiplier;
-    }
-
-    private double getDefenseMultiplier(Pokemon pokemon) {
-        double baseMultiplier = 1.0;
+        if (("Cubone".equals(pokemon.getName()) || "Marowak".equals(pokemon.getName())) && "thickclub".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
 
         return baseMultiplier;
     }
@@ -594,16 +590,79 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             baseMultiplier *= 0.5;
         }
 
+        if ("choicespecs".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
+        if ("Clamperl".equals(pokemon.getName()) && "deepseatooth".equals(pokemon.getItem())) {
+            baseMultiplier *= 2.0;
+        }
+
+        if ("Pikachu".equals(pokemon.getName()) && "lightball".equals(pokemon.getItem())) {
+            baseMultiplier *= 2.0;
+        }
+
+        if (("Latios".equals(pokemon.getName()) || "Latias".equals(pokemon.getName())) && "souldew".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
         return baseMultiplier;
     }
 
-    private void modifyDamageWithItem(List<Double> modifiers, String move, String type, String originalType) {
-        String attackerItem =  getAttacker().getItem();
+    private double getDefenseMultiplier(Pokemon pokemon) {
+        double baseMultiplier = 1.0;
 
-        if("lifeorb".equals(attackerItem)) {
+        if ("eviolite".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
+        return baseMultiplier;
+    }
+
+    private double getSpecialDefenseMultiplier(Pokemon pokemon) {
+        double baseMultiplier = 1.0;
+
+        if (pokemon.getAbility().equals("Flower Gift") && mActiveWeather == Weather.SUN) {
+            baseMultiplier *= 1.5;
+        }
+
+        if (Arrays.asList(pokemon.getType()).contains("Rock")) {
+            baseMultiplier *= 1.5;
+        }
+
+        if ("assaultvest".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
+        if ("Clamperl".equals(pokemon.getName()) && "deepseascale".equals(pokemon.getItem())) {
+            baseMultiplier *= 2.0;
+        }
+
+        if (("Latios".equals(pokemon.getName()) || "Latias".equals(pokemon.getName())) && "souldew".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
+        if ("eviolite".equals(pokemon.getItem())) {
+            baseMultiplier *= 1.5;
+        }
+
+        return baseMultiplier;
+    }
+
+    private void modifyDamageWithItem(List<Double> modifiers, String move, String type, String originalType, String category) {
+        String attackerItem = getAttacker().getItem();
+
+        if ("lifeorb".equals(attackerItem)) {
             modifiers.add(1.3);
         }
 
+        if ("muscleband".equals(attackerItem) && "Physical".equals(category)) {
+            modifiers.add(1.1);
+        }
+
+        if ("wiseglasses".equals(attackerItem) && "Special".equals(category)) {
+            modifiers.add(1.1);
+        }
         // Plates. Shattering procutivity in seconds.
     }
 
@@ -767,7 +826,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     typing = new String[]{"Ice"};
                     break;
             }
-        } else if("Multitype".equals(pokemon.getAbility()) && pokemon.getName().contains("Arceus")) {
+        } else if ("Multitype".equals(pokemon.getAbility()) && pokemon.getName().contains("Arceus")) {
             JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
             typing = itemObject == null ? new String[]{"Normal"} : new String[]{itemObject.optString("onPlate", "Normal")};
         }
@@ -786,6 +845,8 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 if ((attackerAbility.equals("Scrappy") || mForesightActive) && (type.equals("Fighting") || type.equals("Normal"))) {
                     modifier = 1.0;
                 } else if (defType.equals("Flying") && mGravityActive) {
+                    modifier = 1.0;
+                } else if ("ringtarget".equals(getDefender().getItem())) {
                     modifier = 1.0;
                 } else {
                     modifier = 0.0;
@@ -839,8 +900,14 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             modifier *= 0.5;
         }
 
+        if ("airballoon".equals(getDefender().getItem()) && "Ground".equals(type)) {
+            modifier *= 0;
+        }
+
         if (attackerAbility.equals("Tinted Lens") && modifier < 1.0) {
             modifier *= 2.0;
+        } else if ("expertbelt".equals(getAttacker().getItem()) && modifier > 1.0) {
+            modifier *= 1.2;
         }
 
         return modifier;
@@ -876,7 +943,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 break;
             case "lowkick":
             case "grassknot":
-                double weight = getDefender().getWeight();
+                double weight = calcuateWeight(getDefender());
                 bp = weight < 10.0 ? 20 : weight < 25.0 ? 40 : weight < 50.0 ? 60 : weight < 100.0 ? 80 : weight < 200.0 ? 100 : 120;
                 break;
             case "acrobatics":
@@ -889,7 +956,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 break;
             case "heatcrash":
             case "heavyslam":
-                ratio = getDefender().getWeight() / getAttacker().getWeight();
+                ratio = calcuateWeight(getDefender()) / calcuateWeight(getAttacker());
                 bp = ratio <= 0.2 ? 120 : ratio <= 0.25 ? 100 : ratio <= 1 / 3 ? 80 : ratio <= 0.5 ? 60 : 40;
                 break;
             case "crushgrip":
@@ -944,6 +1011,57 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             bp *= 0.5;
         }
 
+        // Items
+        if (getAttacker().getName().equals("Dialga") && getAttacker().getItem().equals("adamantorb") && (type.equals("Dragon") || type.equals("Steel"))) {
+            bp *= 1.2;
+        } else if (getAttacker().getName().equals("Palkia") && getAttacker().getItem().equals("lustrousorb") && (type.equals("Dragon") || type.equals("Water"))) {
+            bp *= 1.2;
+        } else if ((getAttacker().getName().equals("Giratina") || getAttacker().getName().equals("Giratina-Origin")) && getAttacker().getItem().equals("griseousorb") && (type.equals("Dragon") || type.equals("Ghost"))) {
+            bp *= 1.2;
+        }
+
+        if (Arrays.asList(new String[]{"dracoplate", "dragonfang"}).contains(getAttacker().getItem()) && "Dragon".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"earthplate", "softsand"}).contains(getAttacker().getItem()) && "Ground".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"fistplate", "blackbelt"}).contains(getAttacker().getItem()) && "Fighting".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"flameplate", "charcoal"}).contains(getAttacker().getItem()) && "Fire".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"icicleplate", "nevermeltice"}).contains(getAttacker().getItem()) && "Ice".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"insectplate", "silverpowder"}).contains(getAttacker().getItem()) && "Bug".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"ironplate", "metalcoat"}).contains(getAttacker().getItem()) && "Steel".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"meadowplate", "miracleseed", "roseincense"}).contains(getAttacker().getItem()) && "Grass".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"mindplate", "twistedspoon", "oddincense"}).contains(getAttacker().getItem()) && "Psychic".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"pixieplate"}).contains(getAttacker().getItem()) && "Fairy".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"dreadplate", "blackglasses"}).contains(getAttacker().getItem()) && "Dark".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"skyplate", "sharpbeak"}).contains(getAttacker().getItem()) && "Flying".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"splashplate", "mysticwater", "seaincense", "waveincense"}).contains(getAttacker().getItem()) && "Water".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"spookyplate", "spelltag"}).contains(getAttacker().getItem()) && "Ghost".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"stoneplate", "hardstone", "rockincense"}).contains(getAttacker().getItem()) && "Rock".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"toxicplate", "poisonbarb"}).contains(getAttacker().getItem()) && "Poison".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"zapplate", "magnet"}).contains(getAttacker().getItem()) && "Electric".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"silkscarf"}).contains(getAttacker().getItem()) && "Normal".equals(type)) {
+            bp *= 1.2;
+        } else if (Arrays.asList(new String[]{"polkadotbow"}).contains(getAttacker().getItem()) && "Normal".equals(type)) {
+            bp *= 1.125;
+        } else if (Arrays.asList(new String[]{"pinkbow"}).contains(getAttacker().getItem()) && "Normal".equals(type)) {
+            bp *= 1.1;
+        }
+
         return bp;
     }
 
@@ -955,6 +1073,22 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
             }
         }
         return count;
+    }
+
+    private double calcuateWeight(Pokemon pokemon) {
+        double normalWeight = pokemon.getWeight();
+
+        if ("floatstone".equals(pokemon.getItem())) {
+            normalWeight *= 0.5;
+        }
+
+        if ("Light Metal".equals(pokemon.getAbility())) {
+            normalWeight *= 0.5;
+        } else if ("Heavy Metal".equals(pokemon.getAbility())) {
+            normalWeight *= 2.0;
+        }
+
+        return normalWeight;
     }
 
     private void createIndexOfTypeModifiers() {
