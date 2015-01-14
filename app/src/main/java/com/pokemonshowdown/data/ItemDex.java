@@ -59,7 +59,7 @@ public class ItemDex {
         try {
             String item = mItemDexEntries.get(MyApplication.toId(name));
             return new JSONObject(item);
-        } catch (JSONException e) {
+        } catch (NullPointerException | JSONException e) {
             return null;
         }
     }

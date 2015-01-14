@@ -10,15 +10,23 @@ import com.pokemonshowdown.app.DmgCalcActivity;
  */
 public class FieldFragment extends Fragment {
 
-    private DmgCalcActivity.FieldConditionsListener mListener;
+    private FieldConditionsListener mListener;
 
-    public void setFieldConditionsListener(@Nullable DmgCalcActivity.FieldConditionsListener listener) {
+    public void setFieldConditionsListener(@Nullable FieldConditionsListener listener) {
         mListener = listener;
+    }
+
+    public void removeListener() {
+        mListener = null;
     }
 
     protected void sendUpdateToListeners(DmgCalcActivity.FieldConditions fieldCondition, boolean value) {
         if(mListener != null)  {
             mListener.onFieldConditionChanged(fieldCondition, value);
         }
+    }
+
+    public interface FieldConditionsListener {
+        public void onFieldConditionChanged(DmgCalcActivity.FieldConditions conditions, boolean value);
     }
 }
