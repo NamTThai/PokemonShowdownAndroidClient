@@ -1207,6 +1207,7 @@ public class Pokemon implements Serializable {
     public void setNatureMultiplier(String nature) {
         mNatureMultiplier = new float[6];
         Arrays.fill(mNatureMultiplier, 1.0f);
+
         if (nature.equals("Adamant")) {
             mNatureMultiplier[1] = 1.1f;
             mNatureMultiplier[3] = 0.9f;
@@ -1224,11 +1225,11 @@ public class Pokemon implements Serializable {
             mNatureMultiplier[1] = 0.9f;
         }
         if (nature.equals("Careful")) {
-            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[4] = 1.1f;
             mNatureMultiplier[3] = 0.9f;
         }
         if (nature.equals("Gentle")) {
-            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[4] = 1.1f;
             mNatureMultiplier[2] = 0.9f;
         }
         if (nature.equals("Hasty")) {
@@ -1265,7 +1266,7 @@ public class Pokemon implements Serializable {
         }
         if (nature.equals("Naughty")) {
             mNatureMultiplier[1] = 1.1f;
-            mNatureMultiplier[5] = 0.9f;
+            mNatureMultiplier[4] = 0.9f;
         }
         if (nature.equals("Quiet")) {
             mNatureMultiplier[3] = 1.1f;
@@ -1273,7 +1274,7 @@ public class Pokemon implements Serializable {
         }
         if (nature.equals("Rash")) {
             mNatureMultiplier[3] = 1.1f;
-            mNatureMultiplier[5] = 0.9f;
+            mNatureMultiplier[4] = 0.9f;
         }
         if (nature.equals("Relaxed")) {
             mNatureMultiplier[2] = 1.1f;
