@@ -340,6 +340,8 @@ public class TeamBuildingFragment extends Fragment {
                 move1PpTextView.setText("");
                 ImageView move1TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move1_type);
                 move1TypeImageView.setImageDrawable(null);
+                TextView move1NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move1_name);
+                move1NameTextView.setText("");
             }
 
             if (!pokemon.getMove2().equals("")) {
@@ -365,6 +367,8 @@ public class TeamBuildingFragment extends Fragment {
                 move2PpTextView.setText("");
                 ImageView move2TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move2_type);
                 move2TypeImageView.setImageDrawable(null);
+                TextView move2NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move2_name);
+                move2NameTextView.setText("");
             }
 
 
@@ -391,6 +395,8 @@ public class TeamBuildingFragment extends Fragment {
                 move3PpTextView.setText("");
                 ImageView move3TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move3_type);
                 move3TypeImageView.setImageDrawable(null);
+                TextView move3NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move3_name);
+                move3NameTextView.setText("");
             }
 
             if (!pokemon.getMove4().equals("")) {
@@ -416,6 +422,8 @@ public class TeamBuildingFragment extends Fragment {
                 move4PpTextView.setText("");
                 ImageView move4TypeImageView = (ImageView) convertView.findViewById(R.id.teambuilder_move4_type);
                 move4TypeImageView.setImageDrawable(null);
+                TextView move4NameTextView = (TextView) convertView.findViewById(R.id.teambuilder_move4_name);
+                move4NameTextView.setText("");
             }
 
 

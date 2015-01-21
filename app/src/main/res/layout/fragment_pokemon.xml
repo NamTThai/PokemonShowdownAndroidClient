@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pokemon_fragment"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:orientation="vertical">
-    
+
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/pokemon_icon"
@@ -22,7 +20,7 @@
             android:contentDescription="@string/pokemon_list">
 
         </ImageView>
-        
+
         <ImageButton
             android:id="@+id/pokemon_fragment_functions"
             android:layout_width="wrap_content"
@@ -31,7 +29,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitEnd"
             android:background="#00FFFFFF"
-            android:contentDescription="@string/pokemon_fragment_description"/>
+            android:contentDescription="@string/pokemon_fragment_description" />
 
         <TextView
             android:id="@+id/pokemon_name"
@@ -41,8 +39,8 @@
             android:layout_alignBottom="@id/pokemon_fragment_functions"
             android:layout_marginLeft="8dp"
             android:gravity="fill_vertical"
-            android:layout_toRightOf="@id/pokemon_icon"/>
-        
+            android:layout_toRightOf="@id/pokemon_icon" />
+
     </RelativeLayout>
 
     <View style="@style/divider" />
@@ -57,7 +55,7 @@
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/pokemon_list"/>
+            android:contentDescription="@string/pokemon_list" />
 
         <TextView
             android:id="@+id/stats"
@@ -67,7 +65,7 @@
             android:layout_alignTop="@id/pokemon_view"
             android:layout_margin="4dp"
             android:paddingLeft="4dp"
-            android:paddingRight="4dp"/>
+            android:paddingRight="4dp" />
 
         <TextView
             android:layout_height="wrap_content"
@@ -77,9 +75,40 @@
             android:layout_toRightOf="@id/pokemon_view"
             android:layout_margin="4dp"
             android:layout_below="@id/stats"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <TextView
+            android:id="@+id/pokemon_fragment_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@drawable/editable_frame"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:lines="1"
+            android:padding="1dp"
+            android:layout_gravity="left"
+            android:text="@string/pokemon_nohelditem"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/initial_hp_text" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/initial_hp"
+            android:max="100"
+            android:progress="100" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -93,21 +122,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/type_1"/>
+            android:contentDescription="@string/type_1" />
 
         <ImageView
             android:id="@+id/type_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:contentDescription="@string/type_2"/>
+            android:contentDescription="@string/type_2" />
 
         <TextView
             android:id="@+id/level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="8dp" />
 
         <ImageView
             android:id="@+id/gender"
@@ -115,7 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingLeft="8dp"
-            android:contentDescription="@string/gender"/>
+            android:contentDescription="@string/gender" />
 
         <TextView
             android:id="@+id/nature"
@@ -123,8 +152,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="8dp"
-            android:background="@drawable/editable_frame"/>
+            android:background="@drawable/editable_frame" />
 
     </LinearLayout>
+
+
 
 </LinearLayout>

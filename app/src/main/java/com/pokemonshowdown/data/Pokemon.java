@@ -130,41 +130,6 @@ public class Pokemon implements Serializable {
         } else {
             pokemonName = pokemonMainData;
         }
-        /*String[] tmpSplit = tmpString.trim().split(" ");
-        switch (tmpSplit.length) {
-            case 1:
-                pokemonName = tmpSplit[0].trim();
-                break;
-
-            case 2:
-                // name (gender)
-                // nickname (name)
-                if (tmpString.contains("(") && tmpString.contains(")")) {
-                    String gender = tmpString.substring(tmpString.indexOf("(") + 1, tmpString.indexOf(")"));
-                    if (gender.equals("M") || gender.equals("F") || gender.equals("N")) {
-                        pokemonGender = gender;
-                        pokemonName = tmpSplit[0].trim();
-                    } else {
-                        //is pokemon name
-                        pokemonNickname = tmpSplit[0].trim();
-                        pokemonName = gender;
-                    }
-                } else {
-                    Log.w(PTAG, "Invalid pokemon name");
-                    return null;
-                }
-                break;
-
-            case 3:
-                // nickname (name) (gender)
-                pokemonNickname = tmpSplit[0].trim();
-                pokemonName = tmpSplit[1].replace("(", "").replace(")", "").trim();
-                pokemonGender = tmpSplit[2].replace("(", "").replace(")", "").trim();
-                break;
-
-            default:
-                return null;
-        }*/
 
         // replace for different formes
         pokemonName = MyApplication.toId(pokemonName);
@@ -544,7 +509,9 @@ public class Pokemon implements Serializable {
             } else {
                 sb.append(getName());
             }
-            sb.append(" (").append(getGender().toUpperCase()).append(")");
+            if (!getGender().toUpperCase().equals("N")) {
+                sb.append(" (").append(getGender().toUpperCase()).append(")");
+            }
             if (getItem().length() > 0) {
                 JSONObject itemJSon = ItemDex.get(appContext).getItemJsonObject(getItem());
                 if (itemJSon != null) {
@@ -642,7 +609,7 @@ public class Pokemon implements Serializable {
         // IVS
         difZero = false;
         for (int i : getIVs()) {
-            if (i != 0) {
+            if (i != 31) {
                 difZero = true;
                 break;
             }
@@ -651,13 +618,13 @@ public class Pokemon implements Serializable {
             boolean first = true;
 
             sb.append("IVs: ");
-            if (getHPIV() != 0) {
+            if (getHPIV() != 31) {
                 if (first) {
                     sb.append(getHPIV()).append(" HP ");
                     first = false;
                 }
             }
-            if (getAtkIV() != 0) {
+            if (getAtkIV() != 31) {
                 if (first) {
                     sb.append(getAtkIV()).append(" Atk ");
                     first = false;
@@ -665,7 +632,7 @@ public class Pokemon implements Serializable {
                     sb.append("/ ").append(getAtkIV()).append(" Atk ");
                 }
             }
-            if (getDefIV() != 0) {
+            if (getDefIV() != 31) {
                 if (first) {
                     sb.append(getDefIV()).append(" Def ");
                     first = false;
@@ -674,7 +641,7 @@ public class Pokemon implements Serializable {
                     sb.append("/ ").append(getDefIV()).append(" Def ");
                 }
             }
-            if (getSpAtkIV() != 0) {
+            if (getSpAtkIV() != 31) {
                 if (first) {
                     sb.append(getSpAtkIV()).append(" SpA ");
                     first = false;
@@ -683,7 +650,7 @@ public class Pokemon implements Serializable {
                     sb.append("/ ").append(getSpAtkIV()).append(" SpA ");
                 }
             }
-            if (getSpDefIV() != 0) {
+            if (getSpDefIV() != 31) {
                 if (first) {
                     sb.append(getSpDefIV()).append(" SpD ");
                     first = false;
@@ -692,7 +659,7 @@ public class Pokemon implements Serializable {
                     sb.append("/ ").append(getSpDefIV()).append(" SpD ");
                 }
             }
-            if (getSpdIV() != 0) {
+            if (getSpdIV() != 31) {
                 if (first) {
                     sb.append(getSpdIV()).append(" Spe ");
                     first = false;
@@ -1207,6 +1174,7 @@ public class Pokemon implements Serializable {
     public void setNatureMultiplier(String nature) {
         mNatureMultiplier = new float[6];
         Arrays.fill(mNatureMultiplier, 1.0f);
+
         if (nature.equals("Adamant")) {
             mNatureMultiplier[1] = 1.1f;
             mNatureMultiplier[3] = 0.9f;
@@ -1224,11 +1192,11 @@ public class Pokemon implements Serializable {
             mNatureMultiplier[1] = 0.9f;
         }
         if (nature.equals("Careful")) {
-            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[4] = 1.1f;
             mNatureMultiplier[3] = 0.9f;
         }
         if (nature.equals("Gentle")) {
-            mNatureMultiplier[5] = 1.1f;
+            mNatureMultiplier[4] = 1.1f;
             mNatureMultiplier[2] = 0.9f;
         }
         if (nature.equals("Hasty")) {
@@ -1265,7 +1233,7 @@ public class Pokemon implements Serializable {
         }
         if (nature.equals("Naughty")) {
             mNatureMultiplier[1] = 1.1f;
-            mNatureMultiplier[5] = 0.9f;
+            mNatureMultiplier[4] = 0.9f;
         }
         if (nature.equals("Quiet")) {
             mNatureMultiplier[3] = 1.1f;
@@ -1273,7 +1241,7 @@ public class Pokemon implements Serializable {
         }
         if (nature.equals("Rash")) {
             mNatureMultiplier[3] = 1.1f;
-            mNatureMultiplier[5] = 0.9f;
+            mNatureMultiplier[4] = 0.9f;
         }
         if (nature.equals("Relaxed")) {
             mNatureMultiplier[2] = 1.1f;

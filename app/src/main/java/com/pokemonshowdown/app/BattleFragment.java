@@ -2047,7 +2047,7 @@ public class BattleFragment extends Fragment {
                         layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
                         layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
                         relativeLayout.addView(flyingMessage, layoutParams);
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
 
                     }
                 }
@@ -2057,7 +2057,7 @@ public class BattleFragment extends Fragment {
                     try {
                         RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
                         relativeLayout.removeView(flyingMessage);
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
 
                     }
                 }
