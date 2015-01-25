@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
  * TODO : Allow cached copies of replays
  */
 public abstract class RetrieveReplayTask extends AsyncTask<String, Void, String> implements ResponseHandler {
-    String html = "";
+    private String mHtml = "";
 
     @Override
     protected String doInBackground(String... url) {
@@ -37,15 +37,15 @@ public abstract class RetrieveReplayTask extends AsyncTask<String, Void, String>
                 str.append("::" + line);
             }
             in.close();
-            html = str.toString();
-            html = html.substring(html.indexOf("<script type=\"text/plain\" class=\"log\">") + 38);
-            html = html.substring(0, html.indexOf("</script>"));
-            Log.i("Sauce",html);
+            mHtml = str.toString();
+            mHtml = mHtml.substring(mHtml.indexOf("<script type=\"text/plain\" class=\"log\">") + 38);
+            mHtml = mHtml.substring(0, mHtml.indexOf("</script>"));
+            Log.i("Html Sauce",mHtml);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return html;
+        return mHtml;
     }
 
     @Override

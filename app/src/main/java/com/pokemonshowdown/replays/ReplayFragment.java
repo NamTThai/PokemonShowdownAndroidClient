@@ -51,7 +51,10 @@ public class ReplayFragment extends android.support.v4.app.Fragment implements V
     }
 
     public void showReplay(View view) {
+        //User input not supported
+/*
         EditText mEditText = (EditText) view.findViewById(R.id.replayInput);
+*/
 
         RetrieveReplayTask getReplayTask = new RetrieveReplayTask(){
             public void OnResponseRecived(Object obj) {
@@ -65,6 +68,7 @@ public class ReplayFragment extends android.support.v4.app.Fragment implements V
                 setUpReplayBattle(battleLog);
             }
         };
+
         getReplayTask.execute("http://pokemonshowdown.com/replay/exeggutorboldalakazam");
     }
 

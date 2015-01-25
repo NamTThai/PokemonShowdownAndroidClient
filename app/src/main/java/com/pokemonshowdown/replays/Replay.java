@@ -15,29 +15,14 @@ public class Replay {
 
     //Each step is an seprate event in-game
     //unformated steps for BattleMessage.java
-    ArrayList<String> mFormatedSteps = new ArrayList<String>();
+    private ArrayList<String> mFormatedSteps = new ArrayList<String>();
     //Speed in milliseconds at which each event of the replay will last
     //if Battle fragment does not handle messages fast enough, possibility of an exception being thrown
-    public long speed;
-
-    private String mPlayer1;
-    private String mPlayer1rank;
-    private String mPlayer2;
-    private String mPlayer2rank;
-    private String mGameType;
-    private String mTier;
-    private boolean mRated;
-
-    public ArrayList<String> rules = new ArrayList<String>();
-    public ArrayList<String> p1Pokemon = new ArrayList<String>();
-    public ArrayList<String> p2Pokemon = new ArrayList<String>();
-    public ArrayList<ArrayList> turns = new ArrayList<ArrayList>();
+    private long mSpeed;
 
     private com.pokemonshowdown.app.BattleFragment mReplayBattleFragment;
     private int mCurrentStep;
 
-    public String getPlayer1(){return mPlayer1;}
-    public String getPlayer2(){return mPlayer2;}
     public ArrayList<String> getSteps(){return mFormatedSteps;}
 
     public static ArrayList<String> getSteps(String replayData){
@@ -45,7 +30,7 @@ public class Replay {
         ArrayList<String> formatedSteps = new ArrayList<String>();
         unformatedSteps = replayData.split(System.getProperty("line.separator"));
         for(String str : unformatedSteps){
-            formatedSteps.add(/*str.replaceFirst("\\W", "")*/ str);
+            formatedSteps.add(str);
         }
         return formatedSteps;
     }
@@ -61,6 +46,7 @@ public class Replay {
     }
 
     //Converts the script.log to everything the battle message can understand
+    //Not fully stable
     public static String reformat(String mLine){
         String args[] = mLine.split("\\|");
         //Houses temporary splits when string is reformated
@@ -135,13 +121,13 @@ public class Replay {
             public void run() {
                 getStep();
             }
-        }, speed);
+        }, mSpeed);
         Log.i("Replay Next Step #", Integer.toString(mCurrentStep));
     }
 
     private void getStep(){
         if(mFormatedSteps.get(mCurrentStep).equalsIgnoreCase("callback|decision")){
-            speed = 1000;
+            mSpeed = 1500;
             mCurrentStep++;
             mReplayBattleFragment.processServerMessage(mFormatedSteps.get(mCurrentStep));
             Log.i("Replay Next Step", mFormatedSteps.get(mCurrentStep));
