@@ -27,6 +27,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
+import com.pokemonshowdown.replays.ReplayFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -230,6 +231,10 @@ public class BattleFieldActivity extends FragmentActivity {
                 mPosition = 1;
                 fragment = CommunityLoungeFragment.newInstance();
                 break;
+            case 2:
+                mPosition = 2;
+                fragment = ReplayFragment.newInstance();
+                break;
             case 3:
                 mPosition = 3;
                 fragment = CreditsFragment.newInstance();
@@ -237,6 +242,7 @@ public class BattleFieldActivity extends FragmentActivity {
             default:
                 mPosition = 2;
                 fragment = new PlaceHolderFragment();
+                break;
         }
 
         FragmentManager fm = getSupportFragmentManager();
