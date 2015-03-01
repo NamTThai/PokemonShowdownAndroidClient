@@ -71,13 +71,6 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
-
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
-                handleException(thread, ex);
-            }
-        });
     }
 
     public static MyApplication getMyApplication() {
@@ -103,7 +96,6 @@ public class MyApplication extends Application {
     public WebSocketClient openNewConnection() {
         try {
             URI uri = new URI("ws://sim.smogon.com:8000/showdown/websocket");
-            // URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
 
             WebSocketClient webSocketClient = new WebSocketClient(uri) {
                 @Override
@@ -395,11 +387,5 @@ public class MyApplication extends Application {
             return null;
         }
         return name.toLowerCase().replaceAll("[^a-z0-9]", "");
-    }
-
-    private void handleException(Thread thread, Throwable ex) {
-        ex.printStackTrace();
-        Intent intent = new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UNKNOWN_ERROR);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

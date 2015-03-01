@@ -28,11 +28,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pokemonshowdown.data.AnimatorListenerWithNet;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonInfo;
+import com.pokemonshowdown.data.RunWithNet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -555,9 +557,9 @@ public class BattleFragment extends Fragment {
         AnimatorSet animation = new AnimatorSet();
         animation.play(fadeIn);
         animation.play(fadeOut).after(fadeIn);
-        animation.addListener(new Animator.AnimatorListener() {
+        animation.addListener(new AnimatorListenerWithNet() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStartWithNet(Animator animation) {
                 if (getView() == null) {
                     return;
                 }
@@ -565,20 +567,6 @@ public class BattleFragment extends Fragment {
                 if (toast != null) {
                     toast.setText(message);
                 }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         return animation;
@@ -600,9 +588,9 @@ public class BattleFragment extends Fragment {
         AnimatorSet animation = new AnimatorSet();
         animation.play(fadeIn);
         animation.play(fadeOut).after(fadeIn);
-        animation.addListener(new Animator.AnimatorListener() {
+        animation.addListener(new AnimatorListenerWithNet() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStartWithNet(Animator animation) {
                 if (getView() == null) {
                     return;
                 }
@@ -610,20 +598,6 @@ public class BattleFragment extends Fragment {
                 if (toast != null) {
                     toast.setText(message);
                 }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         return animation;
@@ -642,12 +616,12 @@ public class BattleFragment extends Fragment {
     }
 
     public void startAnimation(final AnimatorSet animator, final String serverMessage) {
-        getActivity().runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new RunWithNet() {
             @Override
-            public void run() {
-                animator.addListener(new Animator.AnimatorListener() {
+            public void runWithNet() {
+                animator.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (getView() != null) {
                             View back = getView().findViewById(R.id.back);
                             if (back.getVisibility() == View.VISIBLE) {
@@ -663,7 +637,7 @@ public class BattleFragment extends Fragment {
                     }
 
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEndWithNet(Animator animation) {
                         mAnimatorSetQueue.pollFirst();
                         mServerMessageQueue.pollFirst();
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
@@ -672,16 +646,6 @@ public class BattleFragment extends Fragment {
                         } else {
                             startRequest();
                         }
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
 
@@ -1644,7 +1608,7 @@ public class BattleFragment extends Fragment {
 
         try {
             JSONObject requestJson = getRequestJson();
-            
+
             setRqid(requestJson.optInt("rqid", 0));
             setTeamPreview(requestJson.optBoolean("teamPreview", false));
             setWaiting(requestJson.optBoolean("wait", false));
@@ -1982,12 +1946,12 @@ public class BattleFragment extends Fragment {
             }
         }
     }
-    
+
     public void triggerTeamPreview(boolean on) {
         if (getView() == null) {
             return;
         }
-        
+
         if (on) {
             getView().findViewById(R.id.p1a_prev)
                     .setOnClickListener(new PokemonSwitchListener(true, 0));
@@ -2034,42 +1998,17 @@ public class BattleFragment extends Fragment {
             flyingMessage.setBackgroundResource(R.drawable.editable_frame);
             flyingMessage.setPadding(2, 2, 2, 2);
             flyingMessage.setAlpha(0f);
-
-            toast.addListener(new Animator.AnimatorListener() {
+            toast.addListener(new AnimatorListenerWithNet() {
                 @Override
-                public void onAnimationStart(Animator animation) {
-                    try {
-                        ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
+                public void onAnimationStartWithNet(Animator animation) {
+                    ImageView imageView = (ImageView) getView().findViewById(getSpriteId(tag));
 
-                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
-                        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
-                        layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
-                        relativeLayout.addView(flyingMessage, layoutParams);
-                    } catch (Exception e) {
-
-                    }
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    try {
-                        RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
-                        relativeLayout.removeView(flyingMessage);
-                    } catch (Exception e) {
-
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
+                    RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(getPkmLayoutId(tag));
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.ALIGN_TOP, getSpriteId(tag));
+                    layoutParams.addRule(RelativeLayout.ALIGN_LEFT, getSpriteId(tag));
+                    layoutParams.setMargins((int) (imageView.getWidth() * 0.25f), (int) (imageView.getHeight() * 0.5f), 0, 0);
+                    relativeLayout.addView(flyingMessage, layoutParams);
                 }
             });
 
