@@ -2,6 +2,7 @@ package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,36 +71,144 @@ public class FindBattleFragment extends Fragment {
         findBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isQuota()) {
-                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                            .setTitle(R.string.teaser_alert)
-                            .setMessage(R.string.multiple_battle_alert)
-                            .create();
-                    dialog.show();
+                findBattle();
+            }
+        });
+
+        final TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
+        watchBattle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                watchBattle();
+            }
+
+        });
+
+        final TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
+        cancelSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelSearchingButton();
+            }
+        });
+
+        final TextView challengeSearch = (TextView) getView().findViewById(R.id.challenge_battle);
+        challengeSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                issueChallenge();
+            }
+        });
+    }
+
+    private void watchBattle() {
+        if (isQuota()) {
+            AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.teaser_alert)
+                    .setMessage(R.string.multiple_battle_alert)
+                    .create();
+            dialog.show();
+            return;
+        }
+
+        showSearchingButton();
+
+        MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
+        mWaitingDialog.setMessage(getResources().getString(R.string.download_matches_inprogress));
+        mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mWaitingDialog.setCancelable(true);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWaitingDialog.show();
+            }
+        });
+    }
+
+    private void findBattle() {
+        if (isQuota()) {
+            AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.teaser_alert)
+                    .setMessage(R.string.multiple_battle_alert)
+                    .create();
+            dialog.show();
+            return;
+        }
+
+        //first need to check if the user is logged in
+        Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
+        if (!onboarding.isSignedIn()) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            OnboardingDialog fragment = new OnboardingDialog();
+            fragment.show(fm, OnboardingDialog.OTAG);
+            return;
+        }
+
+        Toast.makeText(getActivity(), R.string.request_sent, Toast.LENGTH_SHORT).show();
+        showSearchingButton();
+
+        // first we look the select format. if random -> send empty /utm
+        // else export selected team for showdown verification
+        String currentFormatString = (String) mFormatListView.getItemAtPosition(mFormatListView.getCheckedItemPosition());
+        if (currentFormatString != null) {
+            BattleFieldData.Format currentFormat = BattleFieldData.get(getActivity()).getFormat(currentFormatString);
+            if (currentFormat.isRandomFormat()) {
+                // we send /utm only
+                MyApplication.getMyApplication().sendClientMessage("|/utm");
+                MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
+            } else {
+                //we need to send the team for verification
+                Object pokemonTeamObject = mPokemonTeamSpinner.getSelectedItem();
+                // if we have no teams
+                if (!(pokemonTeamObject instanceof PokemonTeam)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.error_dialog_title);
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+                    builder.setMessage(R.string.no_teams);
+                    final AlertDialog alert = builder.create();
+                    getActivity().runOnUiThread(new java.lang.Runnable() {
+                        public void run() {
+                            alert.show();
+                        }
+                    });
                     return;
                 }
+                PokemonTeam pokemonTeam = (PokemonTeam) pokemonTeamObject;
+                String teamVerificationString = pokemonTeam.exportForVerification();
+                MyApplication.getMyApplication().sendClientMessage("|/utm " + teamVerificationString);
+                MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
+            }
+        }
+    }
 
-                //first need to check if the user is logged in
-                Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
-                if (!onboarding.isSignedIn()) {
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    OnboardingDialog fragment = new OnboardingDialog();
-                    fragment.show(fm, OnboardingDialog.OTAG);
-                    return;
-                }
+    private void issueChallenge() {
+        //first need to check if the user is logged in
+        Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
+        if (!onboarding.isSignedIn()) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            OnboardingDialog fragment = new OnboardingDialog();
+            fragment.show(fm, OnboardingDialog.OTAG);
+            return;
+        }
 
+        AlertDialog.Builder renameDialog = new AlertDialog.Builder(getActivity());
+        renameDialog.setTitle(R.string.challenge_dialog_title);
+        final EditText teamNameEditText = new EditText(getActivity());
+        renameDialog.setView(teamNameEditText);
+
+        renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
                 Toast.makeText(getActivity(), R.string.request_sent, Toast.LENGTH_SHORT).show();
-                showSearchingButton();
-
-                // first we look the select format. if random -> send empty /utm
-                // else export selected team for showdown verification
+                String toChallenge = teamNameEditText.getText().toString();
+                // todo check if user exists
                 String currentFormatString = (String) mFormatListView.getItemAtPosition(mFormatListView.getCheckedItemPosition());
                 if (currentFormatString != null) {
                     BattleFieldData.Format currentFormat = BattleFieldData.get(getActivity()).getFormat(currentFormatString);
                     if (currentFormat.isRandomFormat()) {
                         // we send /utm only
                         MyApplication.getMyApplication().sendClientMessage("|/utm");
-                        MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
+                        MyApplication.getMyApplication().sendClientMessage("|/challenge " + toChallenge + ", " + MyApplication.toId(currentFormatString));
                     } else {
                         //we need to send the team for verification
                         Object pokemonTeamObject = mPokemonTeamSpinner.getSelectedItem();
@@ -119,48 +229,20 @@ public class FindBattleFragment extends Fragment {
                         PokemonTeam pokemonTeam = (PokemonTeam) pokemonTeamObject;
                         String teamVerificationString = pokemonTeam.exportForVerification();
                         MyApplication.getMyApplication().sendClientMessage("|/utm " + teamVerificationString);
-                        MyApplication.getMyApplication().sendClientMessage("|/search " + MyApplication.toId(currentFormatString));
+                        MyApplication.getMyApplication().sendClientMessage("|/challenge " + toChallenge + ", " + MyApplication.toId(currentFormatString));
                     }
                 }
             }
         });
 
-        TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
-        watchBattle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isQuota()) {
-                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                            .setTitle(R.string.teaser_alert)
-                            .setMessage(R.string.multiple_battle_alert)
-                            .create();
-                    dialog.show();
-                    return;
-                }
-
-                showSearchingButton();
-
-                MyApplication.getMyApplication().sendClientMessage("|/cmd roomlist");
-                mWaitingDialog.setMessage(getResources().getString(R.string.download_matches_inprogress));
-                mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                mWaitingDialog.setCancelable(true);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWaitingDialog.show();
-                    }
-                });
+        renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                arg0.dismiss();
             }
         });
 
-        final TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
-        cancelSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelSearchingButton();
-            }
-        });
+        renameDialog.show();
+
     }
 
     @Override
@@ -273,6 +355,7 @@ public class FindBattleFragment extends Fragment {
 
         getView().findViewById(R.id.find_battle).setVisibility(View.GONE);
         getView().findViewById(R.id.watch_battle).setVisibility(View.GONE);
+        getView().findViewById(R.id.challenge_battle).setVisibility(View.GONE);
         getView().findViewById(R.id.cancel_search).setVisibility(View.VISIBLE);
     }
 
@@ -283,6 +366,7 @@ public class FindBattleFragment extends Fragment {
 
         getView().findViewById(R.id.find_battle).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.watch_battle).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.challenge_battle).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.cancel_search).setVisibility(View.GONE);
 
         MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
