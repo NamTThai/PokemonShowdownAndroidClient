@@ -56,6 +56,13 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
+    public final static String[] MEGAS = {"Abomasnow", "Absol", "Aerodactyl", "Aggron", "Alakazam",
+            "Altaria", "Ampharos", "Audino", "Banette", "Beedrill", "Blastoise", "Blaziken", "Camerupt",
+            "Charizard", "Diancie", "Gallade", "Garchomp", "Gardevoir", "Gengar", "Glalie", "Gyarados", "Heracross", "Houndoom",
+            "Kangaskhan", "Latias", "Latios", "Lopunny", "Lucario", "Manectric", "Mawile", "Medicham", "Metagross",
+            "Mewtwo", "Pidgeot", "Pinsir", "Rayquaza", "Sableye", "salamence", "Sceptile", "Scizor", "Sharpedo",
+            "Slowbro", "Steelix", "Swampert", "Tyranitar", "Venusaur"
+    };
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
@@ -1290,6 +1297,16 @@ public class BattleFragment extends Fragment {
             }
         }
 
+        if (!special) {
+            for (String sp : MEGAS) {
+                if (pkm.contains(sp)) {
+                    special = true;
+                    species = sp;
+                    break;
+                }
+            }
+        }
+
         ArrayList<String> teamName = getTeamNameArrayList(playerTeam);
 
         if (!special) {
@@ -1675,7 +1692,7 @@ public class BattleFragment extends Fragment {
         PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
         CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
 
-        if(currentPokemonInfo.canMegaEvo()) {
+        if (currentPokemonInfo.canMegaEvo()) {
             checkBox.setVisibility(View.VISIBLE);
         } else {
             checkBox.setVisibility(View.GONE);
@@ -1707,10 +1724,8 @@ public class BattleFragment extends Fragment {
                 parseMoveCommandAndSend(active, 0, 0);
             }
         } catch (JSONException e) {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(e.toString())
-                    .create()
-                    .show();
+            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
+
         }
     }
 
@@ -1743,9 +1758,9 @@ public class BattleFragment extends Fragment {
         String target = moveJson.getString("target");
 
         int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
-        int endFoe = (mCurrentActivePokemon + 1 >=  getPlayer2Team().size()) ?
+        int endFoe = (mCurrentActivePokemon + 1 >= getPlayer2Team().size()) ?
                 getPlayer2Team().size() - 1 : mCurrentActivePokemon + 1;
-        int endAlly = (mCurrentActivePokemon + 1 >=  getPlayer1Team().size()) ?
+        int endAlly = (mCurrentActivePokemon + 1 >= getPlayer1Team().size()) ?
                 getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
 
         final String[] foes = new String[3];
@@ -1787,7 +1802,7 @@ public class BattleFragment extends Fragment {
         String[] allTargets;
         final int numFoes = foeIndex;
         final int currentActive = mCurrentActivePokemon;
-        switch(target) {
+        switch (target) {
             case "normal":
                 if ((foeIndex + allyIndex) < 2) {
                     return null;
@@ -1889,7 +1904,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void parseMoveCommandAndSend(JSONArray active, int moveId, int position){
+    private void parseMoveCommandAndSend(JSONArray active, int moveId, int position) {
         if (getView() == null) {
             return;
         }

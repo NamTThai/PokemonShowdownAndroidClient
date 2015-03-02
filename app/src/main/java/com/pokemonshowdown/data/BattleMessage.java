@@ -327,13 +327,13 @@ public class BattleMessage {
                                             ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
                                             if (icon != null) {
                                                 icon.setImageResource(pkmIcon);
-                                                }
                                             }
                                         }
-                                    });
-                                } else {
-                                    battleFragment.getPlayer1Team().set(i, pkm);
-                                }
+                                    }
+                                });
+                            } else {
+                                battleFragment.getPlayer1Team().set(i, pkm);
+                            }
                         }
                     }
 
@@ -348,6 +348,7 @@ public class BattleMessage {
                             int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
                             if (idx != -1) {
                                 battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
+                                battleFragment.getPlayer1Team().get(idx).setCanMegaEvo(pkm.optBoolean("canMegaEvo", false));
                             }
                         }
                     }
@@ -701,7 +702,7 @@ public class BattleMessage {
                 break;
 
             case "tie":
-                toAppend ="The battle is a tie!";
+                toAppend = "The battle is a tie!";
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
