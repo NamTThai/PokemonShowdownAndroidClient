@@ -44,11 +44,7 @@ public class AnimatorListenerWithNet implements Animator.AnimatorListener {
         }.run();
     }
 
-    public void onAnimationStartWithNet(Animator animation) {
-
-    }
-
-    public void onAnimationEndWithNet(Animator animation) {
+    public void onAnimationRepeatWithNet(Animator animation) {
 
     }
 
@@ -56,7 +52,11 @@ public class AnimatorListenerWithNet implements Animator.AnimatorListener {
 
     }
 
-    public void onAnimationRepeatWithNet(Animator animation) {
+    public void onAnimationEndWithNet(Animator animation) {
+
+    }
+
+    public void onAnimationStartWithNet(Animator animation) {
 
     }
 }

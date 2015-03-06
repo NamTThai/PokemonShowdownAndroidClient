@@ -31,6 +31,10 @@ public class PokemonInfoFragment extends DialogFragment {
     private String mFragmentTag;
     private int mId;
 
+    public PokemonInfoFragment() {
+        // Required empty public constructor
+    }
+
     public static PokemonInfoFragment newInstance(PokemonInfo pkm, boolean switchPkm) {
         PokemonInfoFragment fragment = new PokemonInfoFragment();
         Bundle args = new Bundle();
@@ -49,10 +53,6 @@ public class PokemonInfoFragment extends DialogFragment {
         args.putInt(ID, id);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public PokemonInfoFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -116,7 +116,7 @@ public class PokemonInfoFragment extends DialogFragment {
         } else {
             item.setVisibility(View.GONE);
         }
-        
+
         TextView status = (TextView) view.findViewById(R.id.status);
         if (mPokemonInfo.getStatus() != null) {
             setStatus(status, mPokemonInfo.getStatus());
@@ -187,7 +187,7 @@ public class PokemonInfoFragment extends DialogFragment {
         if (getView() == null) {
             return;
         }
-        
+
         statusView.setText(status.toUpperCase());
         switch (status) {
             case "slp":

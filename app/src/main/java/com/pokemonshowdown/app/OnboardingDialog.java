@@ -56,7 +56,7 @@ public class OnboardingDialog extends DialogFragment {
                         fragment.setArguments(bundle);
                         fragment.show(fm, SignInDialog.STAG);
                     } else {
-                        MyApplication.getMyApplication().processGlobalMessage("|assertion|"+name+"|"+assertion);
+                        MyApplication.getMyApplication().processGlobalMessage("|assertion|" + name + "|" + assertion);
                         getDialog().dismiss();
                     }
                 }

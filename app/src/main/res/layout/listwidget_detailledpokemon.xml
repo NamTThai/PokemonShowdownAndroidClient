@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
 
     <RelativeLayout
         android:id="@+id/teambuilder_pokemonInfo"
@@ -25,7 +25,7 @@
             android:ellipsize="marquee"
             android:gravity="center"
             android:lines="1"
-            android:padding="1dp" />
+            android:padding="1dp"/>
 
         <ImageView
             android:id="@id/teambuilder_pokemonIcon"
@@ -34,7 +34,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/teambuilder_pokemonNickName"
             android:paddingLeft="48dp"
-            android:paddingRight="48dp" />
+            android:paddingRight="48dp"/>
 
         <TextView
             android:id="@+id/teambuilder_item"
@@ -48,7 +48,7 @@
             android:ellipsize="marquee"
             android:gravity="center"
             android:lines="1"
-            android:padding="1dp" />
+            android:padding="1dp"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -70,14 +70,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:gravity="center" />
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/teambuilder_move1_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"/>
 
             <ImageView
                 android:id="@+id/teambuilder_move1_type"
@@ -87,7 +87,7 @@
                 android:layout_margin="1dp"
                 android:layout_toLeftOf="@id/teambuilder_move1_pp"
                 android:contentDescription="@string/move_type"
-                android:paddingRight="16dp" />
+                android:paddingRight="16dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -103,14 +103,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:gravity="center" />
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/teambuilder_move2_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"/>
 
             <ImageView
                 android:id="@+id/teambuilder_move2_type"
@@ -120,7 +120,7 @@
                 android:layout_margin="1dp"
                 android:layout_toLeftOf="@id/teambuilder_move2_pp"
                 android:contentDescription="@string/move_type"
-                android:paddingRight="16dp" />
+                android:paddingRight="16dp"/>
 
         </RelativeLayout>
 
@@ -138,14 +138,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:gravity="center" />
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/teambuilder_move3_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"/>
 
             <ImageView
                 android:id="@+id/teambuilder_move3_type"
@@ -155,7 +155,7 @@
                 android:layout_margin="1dp"
                 android:layout_toLeftOf="@id/teambuilder_move3_pp"
                 android:contentDescription="@string/move_type"
-                android:paddingRight="16dp" />
+                android:paddingRight="16dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -171,14 +171,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:gravity="center" />
+                android:gravity="center"/>
 
             <TextView
                 android:id="@+id/teambuilder_move4_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"/>
 
             <ImageView
                 android:id="@+id/teambuilder_move4_type"
@@ -188,7 +188,7 @@
                 android:layout_margin="1dp"
                 android:layout_toLeftOf="@id/teambuilder_move4_pp"
                 android:contentDescription="@string/move_type"
-                android:paddingRight="16dp" />
+                android:paddingRight="16dp"/>
 
         </RelativeLayout>
 

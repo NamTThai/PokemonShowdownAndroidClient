@@ -51,7 +51,7 @@ public class SignInDialog extends DialogFragment {
                     if (assertion.charAt(0) == ';') {
                         passwordBox.setText("");
                     } else {
-                        MyApplication.getMyApplication().processGlobalMessage("|assertion|"+username+"|"+assertion);
+                        MyApplication.getMyApplication().processGlobalMessage("|assertion|" + username + "|" + assertion);
                         getDialog().dismiss();
                     }
                 }

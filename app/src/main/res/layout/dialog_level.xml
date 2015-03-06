@@ -2,8 +2,8 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
     android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     >
 
@@ -29,16 +29,16 @@
 
     </LinearLayout>
 
-    <View style="@style/divider" />
+    <View style="@style/divider"/>
 
     <TextView
         android:id="@+id/save_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/save"
-        android:textColor="@drawable/dialog_button"
-        android:gravity="center"/>
+        android:textColor="@drawable/dialog_button"/>
 
 </LinearLayout>

@@ -7,10 +7,9 @@ import java.util.HashMap;
 
 public class CommunityLoungeData {
     private final static String CTAG = CommunityLoungeData.class.getName();
+    private static CommunityLoungeData sCommunityLoungeData;
     private ArrayList<String> mRoomList;
     private HashMap<String, RoomData> mRoomDataHashMap;
-
-    private static CommunityLoungeData sCommunityLoungeData;
 
     private CommunityLoungeData(Context appContext) {
         mRoomList = new ArrayList<>();
@@ -45,15 +44,15 @@ public class CommunityLoungeData {
         MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
     }
 
-    public void leaveRoom(String roomId) {
-        mRoomList.remove(roomId);
-        MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
-    }
-
     public void leaveAllRooms() {
         for (String roomId : mRoomList) {
             leaveRoom(roomId);
         }
+    }
+
+    public void leaveRoom(String roomId) {
+        mRoomList.remove(roomId);
+        MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 
     public static class RoomData {

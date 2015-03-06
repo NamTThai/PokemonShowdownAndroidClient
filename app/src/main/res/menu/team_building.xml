@@ -1,17 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.pokemonshowdown.app.TeamBuildingActivity">
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.pokemonshowdown.app.TeamBuildingActivity">
     <item
         android:id="@+id/action_create_team"
         android:icon="@drawable/ic_action_new"
         android:showAsAction="ifRoom"
-        android:title="@string/create_team" />
+        android:title="@string/create_team"/>
 
     <item
         android:id="@+id/action_remove_team"
         android:icon="@drawable/ic_action_discard"
         android:showAsAction="ifRoom"
-        android:title="@string/delete_team" />
+        android:title="@string/delete_team"/>
 
     <!-- More -->
     <item
@@ -25,25 +25,25 @@
                 android:id="@+id/action_rename_team"
                 android:icon="@drawable/ic_action_labels"
                 android:showAsAction="never"
-                android:title="@string/rename_team" />
+                android:title="@string/rename_team"/>
 
             <item
                 android:id="@+id/action_import_team"
                 android:icon="@drawable/ic_action_import_export"
                 android:showAsAction="never"
-                android:title="@string/import_team" />
+                android:title="@string/import_team"/>
 
             <item
                 android:id="@+id/action_export_team"
                 android:icon="@drawable/ic_action_import_export"
                 android:showAsAction="never"
-                android:title="@string/export_team" />
+                android:title="@string/export_team"/>
 
             <item
                 android:id="@+id/action_share_team"
                 android:icon="@drawable/ic_action_share"
                 android:showAsAction="never"
-                android:title="@string/share_team" />
+                android:title="@string/share_team"/>
 
         </menu>
     </item>

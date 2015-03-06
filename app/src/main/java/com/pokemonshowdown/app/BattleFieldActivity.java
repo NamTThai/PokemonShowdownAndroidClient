@@ -49,89 +49,10 @@ public class BattleFieldActivity extends FragmentActivity {
     private BroadcastReceiver mBroadcastReceiver;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_battle_field);
-
-        mTitle = mDrawerTitle = getTitle();
-        mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_battle_field_drawer);
-        mDrawerList = (ListView) findViewById(R.id.layout_battle_field_left_drawer);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_battle_field, mLeftDrawerTitles));
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
-        });
-
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                R.drawable.ic_drawer,
-                R.string.drawer_open,
-                R.string.drawer_close
-        ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
-        }
-
-        if (savedInstanceState == null) {
-            mPosition = 0;
-            selectItem(0);
-        } else {
-            mPosition = savedInstanceState.getInt(DRAWER_POSITION);
-            selectItem(mPosition);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onPause();
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                processBroadcastMessage(intent);
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(MyApplication.ACTION_FROM_MY_APPLICATION));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(DRAWER_POSITION, mPosition);
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -205,10 +126,14 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+    public void onBackPressed() {
+        if (mPosition != 0) {
+            selectItem(0);
+            return;
+        }
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
     }
 
     @Override
@@ -218,46 +143,90 @@ public class BattleFieldActivity extends FragmentActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void selectItem(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment;
-        switch (position) {
-            case 0:
-                mPosition = 0;
-                fragment = BattleFieldFragment.newInstance();
-                break;
-            case 1:
-                mPosition = 1;
-                fragment = CommunityLoungeFragment.newInstance();
-                break;
-            case 3:
-                mPosition = 3;
-                fragment = CreditsFragment.newInstance();
-                break;
-            default:
-                mPosition = 2;
-                fragment = new PlaceHolderFragment();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_battle_field);
+
+        mTitle = mDrawerTitle = getTitle();
+        mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_battle_field_drawer);
+        mDrawerList = (ListView) findViewById(R.id.layout_battle_field_left_drawer);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_battle_field, mLeftDrawerTitles));
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItem(position);
+            }
+        });
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.drawable.ic_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
         }
 
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(position))
-                .commit();
-
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mLeftDrawerTitles[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
+        if (savedInstanceState == null) {
+            mPosition = 0;
+            selectItem(0);
+        } else {
+            mPosition = savedInstanceState.getInt(DRAWER_POSITION);
+            selectItem(mPosition);
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        if (mPosition != 0) {
-            selectItem(0);
-            return;
+    protected void onDestroy() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
         }
-        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
-        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPause();
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                processBroadcastMessage(intent);
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(MyApplication.ACTION_FROM_MY_APPLICATION));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(DRAWER_POSITION, mPosition);
     }
 
     private void processBroadcastMessage(Intent intent) {
@@ -401,16 +370,47 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
-    public AlertDialog createErrorAlert(Exception e) {
-        return new AlertDialog.Builder(this)
-                .setMessage(e.toString())
-                .create();
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+        Fragment fragment;
+        switch (position) {
+            case 0:
+                mPosition = 0;
+                fragment = BattleFieldFragment.newInstance();
+                break;
+            case 1:
+                mPosition = 1;
+                fragment = CommunityLoungeFragment.newInstance();
+                break;
+            case 3:
+                mPosition = 3;
+                fragment = CreditsFragment.newInstance();
+                break;
+            default:
+                mPosition = 2;
+                fragment = new PlaceHolderFragment();
+        }
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(position))
+                .commit();
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mLeftDrawerTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     public void showErrorAlert(Exception e) {
         AlertDialog alertDialog = createErrorAlert(e);
         Log.e(BTAG, "App exception", e);
         alertDialog.show();
+    }
+
+    public AlertDialog createErrorAlert(Exception e) {
+        return new AlertDialog.Builder(this)
+                .setMessage(e.toString())
+                .create();
     }
 
 }

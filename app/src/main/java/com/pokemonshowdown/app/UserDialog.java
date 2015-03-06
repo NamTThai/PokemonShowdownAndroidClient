@@ -27,7 +27,7 @@ public class UserDialog extends DialogFragment {
         getDialog().setTitle(onboarding.getUsername());
         String avatarId = onboarding.getAvatar();
         int avatar = getActivity().getApplicationContext()
-                .getResources().getIdentifier("avatar_"+avatarId, "drawable", getActivity().getApplicationContext().getPackageName());
+                .getResources().getIdentifier("avatar_" + avatarId, "drawable", getActivity().getApplicationContext().getPackageName());
         ((ImageView) view.findViewById(R.id.avatar)).setImageResource(avatar);
 
         view.findViewById(R.id.sign_out).setOnClickListener(new View.OnClickListener() {

@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="8dp"
-    android:orientation="horizontal"
-    android:weightSum="4">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="8dp"
+              android:orientation="horizontal"
+              android:weightSum="4">
 
     <TextView
-        android:layout_margin="4dp"
         android:id="@+id/pokedex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:drawableTop="@drawable/sprites_pichu"
-        android:text="@string/pokedex_pokemon"
+        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:paddingTop="48dp"
+        android:background="@drawable/editable_frame"
+        android:drawableTop="@drawable/sprites_pichu"
+        android:gravity="center"
         android:paddingBottom="48dp"
-        android:background="@drawable/editable_frame"/>
+        android:paddingTop="48dp"
+        android:text="@string/pokedex_pokemon"/>
 
     <TextView
-        android:layout_margin="4dp"
         android:id="@+id/movedex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:drawableTop="@drawable/sprites_magby"
-        android:text="@string/pokedex_moves"
+        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:paddingTop="48dp"
+        android:background="@drawable/editable_frame"
+        android:drawableTop="@drawable/sprites_magby"
+        android:gravity="center"
         android:paddingBottom="48dp"
-        android:background="@drawable/editable_frame"/>
+        android:paddingTop="48dp"
+        android:text="@string/pokedex_moves"/>
 
     <TextView
-        android:layout_margin="4dp"
         android:id="@+id/itemdex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:drawableTop="@drawable/sprites_igglybuff"
-        android:text="@string/pokedex_item"
+        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:paddingTop="48dp"
+        android:background="@drawable/editable_frame"
+        android:drawableTop="@drawable/sprites_igglybuff"
+        android:gravity="center"
         android:paddingBottom="48dp"
-        android:background="@drawable/editable_frame"/>
+        android:paddingTop="48dp"
+        android:text="@string/pokedex_item"/>
 
     <TextView
-        android:layout_margin="4dp"
         android:id="@+id/abilitydex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:drawableTop="@drawable/sprites_aron"
-        android:text="@string/pokedex_ability"
+        android:layout_margin="4dp"
         android:layout_weight="1"
-        android:paddingTop="48dp"
+        android:background="@drawable/editable_frame"
+        android:drawableTop="@drawable/sprites_aron"
+        android:gravity="center"
         android:paddingBottom="48dp"
-        android:background="@drawable/editable_frame"/>
+        android:paddingTop="48dp"
+        android:text="@string/pokedex_ability"/>
 
 </LinearLayout>

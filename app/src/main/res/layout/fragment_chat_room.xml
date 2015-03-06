@@ -1,44 +1,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:baselineAligned="false"
-    android:weightSum="4">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:baselineAligned="false"
+              android:orientation="horizontal"
+              android:weightSum="4">
 
     <ListView
         android:id="@+id/user_list"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/uneditable_frame"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@drawable/uneditable_frame">
 
     </ListView>
 
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:layout_margin="16dp">
+        android:layout_margin="16dp"
+        android:layout_weight="3">
 
         <EditText
             android:id="@+id/community_chat_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:inputType="textNoSuggestions"
-            android:padding="4dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/uneditable_frame"/>
+            android:layout_marginTop="4dp"
+            android:background="@drawable/uneditable_frame"
+            android:inputType="textNoSuggestions"
+            android:padding="4dp"/>
 
         <ScrollView
             android:id="@+id/chatroom_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/uneditable_frame"
-            android:layout_above="@id/community_chat_box">
+            android:layout_above="@id/community_chat_box"
+            android:background="@drawable/uneditable_frame">
 
             <TextView
                 android:id="@+id/community_chat_log"

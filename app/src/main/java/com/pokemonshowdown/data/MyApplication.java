@@ -55,6 +55,17 @@ public class MyApplication extends Application {
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
 
+    public static MyApplication getMyApplication() {
+        return sMyApplication;
+    }
+
+    public static String toId(String name) {
+        if (name == null) {
+            return null;
+        }
+        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -71,10 +82,6 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
-    }
-
-    public static MyApplication getMyApplication() {
-        return sMyApplication;
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -380,12 +387,5 @@ public class MyApplication extends Application {
 
     public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
         mRoomCategoryList = roomCategoryList;
-    }
-
-    public static String toId(String name) {
-        if (name == null) {
-            return null;
-        }
-        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }

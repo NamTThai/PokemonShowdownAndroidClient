@@ -206,364 +206,6 @@ public class BattleAnimation {
         }
     }
 
-    public static AnimatorSet ball(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int ballId) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView ball = new ImageView(context);
-        ball.setImageResource(ballId);
-        ball.setMaxHeight(atk.getHeight());
-        ball.setMaxWidth(atk.getWidth());
-        ball.setAdjustViewBounds(true);
-        ball.setX(atkC.getX() + atk.getX());
-        ball.setY(atkC.getY() + atk.getY());
-        ObjectAnimator ballX = ObjectAnimator.ofFloat(ball, "x", defC.getX() + def.getX());
-        ballX.setDuration(BattleFragment.ANIMATION_LONG);
-        ObjectAnimator ballY = ObjectAnimator.ofFloat(ball, "y", defC.getY() + def.getY());
-        ballY.setDuration(BattleFragment.ANIMATION_LONG);
-        ballX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                wrapper.addView(ball);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                wrapper.removeView(ball);
-            }
-        });
-        animatorSet.play(ballX).with(ballY);
-        return animatorSet;
-    }
-
-    public static AnimatorSet bomb(Context context, final RelativeLayout defC, final ImageView def, int bombId) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        int maxSize = 240;
-        final ImageView bomb1 = new ImageView(context);
-        bomb1.setImageResource(bombId);
-        bomb1.setMaxHeight(maxSize);
-        bomb1.setMaxWidth(maxSize);
-        bomb1.setAdjustViewBounds(true);
-        final ImageView bomb2 = new ImageView(context);
-        bomb2.setImageResource(bombId);
-        bomb2.setMaxHeight(maxSize);
-        bomb2.setMaxWidth(maxSize);
-        bomb2.setAdjustViewBounds(true);
-        bomb2.setX(defC.getWidth() / 4);
-        bomb2.setY(defC.getHeight() / 4);
-        final ImageView bomb3 = new ImageView(context);
-        bomb3.setImageResource(bombId);
-        bomb3.setMaxHeight(maxSize);
-        bomb3.setMaxWidth(maxSize);
-        bomb3.setAdjustViewBounds(true);
-        bomb3.setX(defC.getWidth() / 2);
-        ObjectAnimator bomb1Y = ObjectAnimator.ofFloat(bomb1, "y", defC.getHeight() / 4);
-        bomb1Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        ObjectAnimator bomb2Y = ObjectAnimator.ofFloat(bomb2, "y", defC.getHeight() / 2);
-        bomb2Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        ObjectAnimator bomb3Y = ObjectAnimator.ofFloat(bomb3, "y", defC.getHeight() / 4);
-        bomb3Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        bomb1Y.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(bomb1);
-                defC.addView(bomb2);
-                defC.addView(bomb3);
-            }
-        });
-        ObjectAnimator explode1X = ObjectAnimator.ofFloat(bomb1, "scaleX", 2f);
-        explode1X.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode1X.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode1Y = ObjectAnimator.ofFloat(bomb1, "scaleY", 2f);
-        explode1Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode1Y.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode1Alpha = ObjectAnimator.ofFloat(bomb1, "alpha", 0f);
-        explode1Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode1Alpha.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode2X = ObjectAnimator.ofFloat(bomb2, "scaleX", 2f);
-        explode2X.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode2X.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode2Y = ObjectAnimator.ofFloat(bomb2, "scaleY", 2f);
-        explode2Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode2Y.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode2Alpha = ObjectAnimator.ofFloat(bomb2, "alpha", 0f);
-        explode2Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode2Alpha.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode3X = ObjectAnimator.ofFloat(bomb3, "scaleX", 2f);
-        explode3X.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode3X.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode3Y = ObjectAnimator.ofFloat(bomb3, "scaleY", 2f);
-        explode3Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode3Y.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator explode3Alpha = ObjectAnimator.ofFloat(bomb3, "alpha", 0f);
-        explode3Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        explode3Alpha.setInterpolator(new AccelerateInterpolator());
-        explode3Alpha.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(bomb1);
-                defC.removeView(bomb2);
-                defC.removeView(bomb3);
-            }
-        });
-        animatorSet.play(bomb1Y).with(bomb2Y);
-        animatorSet.play(bomb1Y).with(bomb3Y);
-        animatorSet.play(explode1X).after(bomb1Y);
-        animatorSet.play(explode1X).with(explode1Y);
-        animatorSet.play(explode1X).with(explode1Alpha);
-        animatorSet.play(explode1X).with(explode2X);
-        animatorSet.play(explode1X).with(explode2Y);
-        animatorSet.play(explode1X).with(explode2Alpha);
-        animatorSet.play(explode1X).with(explode3X);
-        animatorSet.play(explode1X).with(explode3Y);
-        animatorSet.play(explode1X).with(explode3Alpha);
-        return animatorSet;
-    }
-
-    public static AnimatorSet charge(Context context, RelativeLayout atkC, final ImageView atk, RelativeLayout defC, ImageView def, String[] split) {
-        final float initialAlpha = atk.getAlpha();
-        if (split.length >= 4 && split[3].equals("[still]")) {
-            AnimatorSet animatorSet = new AnimatorSet();
-            ObjectAnimator alpha = ObjectAnimator.ofFloat(atk, "alpha", 0.3f);
-            alpha.setDuration(BattleFragment.ANIMATION_LONG);
-            return animatorSet;
-        } else {
-            AnimatorSet animatorSet = flight(context, atkC, atk, defC);
-            animatorSet.addListener(new AnimatorListenerWithNet() {
-                @Override
-                public void onAnimationStartWithNet(Animator animation) {
-                    atk.setAlpha(initialAlpha);
-                }
-            });
-            return animatorSet;
-        }
-    }
-
-    public static AnimatorSet contact(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contactId) {
-        final float initialAlpha = atk.getAlpha();
-        AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView atkPkm = new ImageView(context);
-        atkPkm.setImageDrawable(atk.getDrawable());
-        atkPkm.setX(atkC.getX() + atk.getX());
-        atkPkm.setY(atkC.getY() + atk.getY());
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator attackX = ObjectAnimator.ofFloat(atkPkm, "x", (defC.getX() + def.getX()));
-        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        attackX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator attackY = ObjectAnimator.ofFloat(atkPkm, "y", (defC.getY() + def.getY()));
-        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        attackY.setInterpolator(new AccelerateInterpolator());
-        attackX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                atk.setAlpha(0f);
-                wrapper.addView(atkPkm, imageParams);
-            }
-        });
-        final ImageView contact = new ImageView(context);
-        contact.setMaxWidth(100);
-        contact.setMaxHeight(100);
-        contact.setAdjustViewBounds(true);
-        contact.setImageResource(contactId);
-        contact.setX(def.getX() + def.getWidth() * 0.5f - 50);
-        contact.setY(def.getY() + def.getHeight() * 0.5f - 50);
-        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact, "scaleX", 3.5f);
-        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact, "scaleY", 3.5f);
-        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact, "alpha", 0f);
-        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        contactAlpha.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator defendX = ObjectAnimator.ofFloat(atkPkm, "x", (atkC.getX() + atk.getX()));
-        defendX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        ObjectAnimator defendY = ObjectAnimator.ofFloat(atkPkm, "y", (atkC.getY() + atk.getY()));
-        defendY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
-        contactScaleX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(contact, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(contact);
-                wrapper.removeView(atkPkm);
-                atk.setAlpha(initialAlpha);
-            }
-        });
-        animatorSet.play(attackX).with(attackY);
-        animatorSet.play(attackX).before(contactScaleX);
-        animatorSet.play(contactScaleX).with(contactScaleY);
-        animatorSet.play(contactScaleX).with(contactAlpha);
-        animatorSet.play(contactScaleX).with(defendX);
-        animatorSet.play(contactScaleX).with(defendY);
-        return animatorSet;
-    }
-
-    public static AnimatorSet contactTwice(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contact1Id, int contact2Id) {
-        final float initialAlpha = atk.getAlpha();
-        AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView atkPkm = new ImageView(context);
-        atkPkm.setImageDrawable(atk.getDrawable());
-        atkPkm.setX(atkC.getX() + atk.getX());
-        atkPkm.setY(atkC.getY() + atk.getY());
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator attackX = ObjectAnimator.ofFloat(atkPkm, "x", (defC.getX() + def.getX()));
-        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        attackX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator attackY = ObjectAnimator.ofFloat(atkPkm, "y", (defC.getY() + def.getY()));
-        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        attackY.setInterpolator(new AccelerateInterpolator());
-        attackX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                atk.setAlpha(0f);
-                wrapper.addView(atkPkm, imageParams);
-            }
-        });
-        final ImageView contact1 = new ImageView(context);
-        contact1.setMaxWidth(100);
-        contact1.setMaxHeight(100);
-        contact1.setAdjustViewBounds(true);
-        contact1.setImageResource(contact1Id);
-        contact1.setX(def.getX() + def.getWidth() * 0.5f - 50);
-        contact1.setY(def.getY() + def.getHeight() * 0.5f - 50);
-        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact1, "scaleX", 3.5f);
-        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact1, "scaleY", 3.5f);
-        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact1, "alpha", 0f);
-        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        contactAlpha.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator defendX = ObjectAnimator.ofFloat(atkPkm, "x", (atkC.getX() + atk.getX()));
-        defendX.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator defendY = ObjectAnimator.ofFloat(atkPkm, "y", (atkC.getY() + atk.getY()));
-        defendY.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        final ImageView contact2 = new ImageView(context);
-        contact2.setMaxWidth(100);
-        contact2.setMaxHeight(100);
-        contact2.setAdjustViewBounds(true);
-        contact2.setImageResource(contact2Id);
-        contact2.setX(def.getX() + def.getWidth() * 0.5f - 50);
-        contact2.setY(def.getY() + def.getHeight() * 0.5f - 50);
-        ObjectAnimator contact2ScaleX = ObjectAnimator.ofFloat(contact2, "scaleX", 3.5f);
-        contact2ScaleX.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator contact2ScaleY = ObjectAnimator.ofFloat(contact2, "scaleY", 3.5f);
-        contact2ScaleY.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator contact2Alpha = ObjectAnimator.ofFloat(contact2, "alpha", 0f);
-        contact2Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        contact2Alpha.setInterpolator(new AccelerateInterpolator());
-        contactScaleX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(contact1, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(contact1);
-            }
-        });
-        contact2ScaleX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(contact2, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(contact2);
-                wrapper.removeView(atkPkm);
-                atk.setAlpha(initialAlpha);
-            }
-        });
-        animatorSet.play(attackX).with(attackY);
-        animatorSet.play(attackX).before(contactScaleX);
-        animatorSet.play(contactScaleX).with(contactScaleY);
-        animatorSet.play(contactScaleX).with(contactAlpha);
-        animatorSet.play(contactScaleX).with(defendX);
-        animatorSet.play(contactScaleX).with(defendY);
-        animatorSet.play(contact2ScaleX).after(contactScaleX);
-        animatorSet.play(contact2ScaleX).with(contact2ScaleY);
-        animatorSet.play(contact2ScaleX).with(contact2Alpha);
-        return animatorSet;
-    }
-
-    public static AnimatorSet dance(RelativeLayout atkC, ImageView atk) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
-        shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator shakeRight = ObjectAnimator.ofFloat(atk, "x", atkC.getWidth() - atk.getWidth());
-        shakeRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator shakeMiddle = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        shakeMiddle.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        animatorSet.play(shakeLeft);
-        animatorSet.play(shakeRight).after(shakeLeft);
-        animatorSet.play(shakeMiddle).after(shakeRight);
-        return animatorSet;
-    }
-
-    public static AnimatorSet drain(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView attack = new ImageView(context);
-        attack.setImageResource(R.drawable.battle_energyball);
-        attack.setMaxHeight(40);
-        attack.setMaxWidth(40);
-        attack.setAdjustViewBounds(true);
-        attack.setX(atk.getX() + atk.getWidth() * 0.5f - 20);
-        attack.setY(atk.getY() + atk.getHeight() * 0.5f - 20);
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(attack, "scaleX", 5f);
-        scaleX.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(attack, "scaleY", 5f);
-        scaleY.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        scaleX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(attack, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(attack);
-            }
-        });
-        final ImageView drain = new ImageView(context);
-        drain.setImageResource(R.drawable.battle_energyball);
-        drain.setMaxHeight(atk.getHeight());
-        drain.setMaxWidth(atk.getWidth());
-        drain.setAdjustViewBounds(true);
-        drain.setX(atk.getX());
-        drain.setY(atk.getY());
-        ObjectAnimator drainX = ObjectAnimator.ofFloat(drain, "scaleX", 0.2f);
-        drainX.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator drainY = ObjectAnimator.ofFloat(drain, "scaleY", 0.2f);
-        drainY.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        drainX.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                atkC.addView(drain, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                atkC.removeView(drain);
-            }
-        });
-        animatorSet.play(scaleX).with(scaleY);
-        animatorSet.play(drainX).after(scaleX);
-        animatorSet.play(drainX).with(drainY);
-        return animatorSet;
-    }
-
-    public static AnimatorSet earth(final RelativeLayout defC, final ImageView def) {
-        AnimatorSet animatorSet = new AnimatorSet();
-        float left = 0f;
-        float right = defC.getWidth() - def.getWidth();
-        ObjectAnimator earth1 = ObjectAnimator.ofFloat(def, "x", def.getX(), left, right, left, right, left, right, left, right, def.getX());
-        earth1.setDuration(BattleFragment.ANIMATION_LONG);
-        animatorSet.play(earth1);
-        return animatorSet;
-    }
-
     public static AnimatorSet fast(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
@@ -596,6 +238,37 @@ public class BattleAnimation {
         animatorSet.play(disappear).before(attackX);
         animatorSet.play(attackX).with(attackY);
         animatorSet.play(appear).after(attackX);
+        return animatorSet;
+    }
+
+    public static AnimatorSet shake(RelativeLayout atkC, ImageView atk) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
+        shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        ObjectAnimator shakeRightAll = ObjectAnimator.ofFloat(atk, "x", atkC.getWidth() - atk.getWidth());
+        shakeRightAll.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator shakeLeftAll = ObjectAnimator.ofFloat(atk, "x", 0f);
+        shakeLeftAll.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator shakeMiddle = ObjectAnimator.ofFloat(atk, "x", atk.getX());
+        shakeMiddle.setDuration(BattleFragment.ANIMATION_LONG / 6);
+        animatorSet.play(shakeLeft);
+        animatorSet.play(shakeRightAll).after(shakeLeft);
+        animatorSet.play(shakeLeftAll).after(shakeRightAll);
+        animatorSet.play(shakeMiddle).after(shakeLeftAll);
+        return animatorSet;
+    }
+
+    public static AnimatorSet dance(RelativeLayout atkC, ImageView atk) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
+        shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator shakeRight = ObjectAnimator.ofFloat(atk, "x", atkC.getWidth() - atk.getWidth());
+        shakeRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator shakeMiddle = ObjectAnimator.ofFloat(atk, "x", atk.getX());
+        shakeMiddle.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        animatorSet.play(shakeLeft);
+        animatorSet.play(shakeRight).after(shakeLeft);
+        animatorSet.play(shakeMiddle).after(shakeRight);
         return animatorSet;
     }
 
@@ -645,36 +318,113 @@ public class BattleAnimation {
         animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
         return animatorSet;
     }
-    
-    public static AnimatorSet phaze(final ImageView def) {
+
+    public static AnimatorSet spinAtk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+        final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator spin = ObjectAnimator.ofFloat(def, "rotation", 1080f);
-        spin.setDuration(BattleFragment.ANIMATION_LONG);
-        spin.setInterpolator(new AccelerateDecelerateInterpolator());
-        spin.addListener(new AnimatorListenerWithNet() {
+        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
+        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
+        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
+        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        final ImageView spin = new ImageView(context);
+        spin.setImageDrawable(atk.getDrawable());
+        spin.setX(0);
+        spin.setY(0);
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator spinRight = ObjectAnimator.ofFloat(spin, "x", defC.getWidth());
+        spinRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator spinBottom = ObjectAnimator.ofFloat(spin, "y", defC.getHeight());
+        spinBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator spinRotation = ObjectAnimator.ofFloat(spin, "rotation", 720);
+        spinRotation.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        spinRight.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(spin, imageParams);
+            }
+
             @Override
             public void onAnimationEndWithNet(Animator animation) {
-                def.setRotation(0f);
+                defC.removeView(spin);
+                atk.setX(atkC.getWidth() - atk.getWidth());
+                atk.setY(atkC.getHeight() - atk.getHeight());
             }
         });
-        animatorSet.play(spin);
+        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
+        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
+        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", initialAlpha);
+        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        animatorSet.play(flightLeft).with(flightTop);
+        animatorSet.play(flightLeft).with(flightAlpha);
+        animatorSet.play(flightLeft).before(spinRight);
+        animatorSet.play(spinRight).with(spinBottom);
+        animatorSet.play(spinRight).with(spinRotation);
+        animatorSet.play(flightMiddleLeft).after(spinRight);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
         return animatorSet;
     }
 
-    public static AnimatorSet shake(RelativeLayout atkC, ImageView atk) {
+    public static AnimatorSet xatk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+        final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
-        shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 6);
-        ObjectAnimator shakeRightAll = ObjectAnimator.ofFloat(atk, "x", atkC.getWidth() - atk.getWidth());
-        shakeRightAll.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator shakeLeftAll = ObjectAnimator.ofFloat(atk, "x", 0f);
-        shakeLeftAll.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator shakeMiddle = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        shakeMiddle.setDuration(BattleFragment.ANIMATION_LONG / 6);
-        animatorSet.play(shakeLeft);
-        animatorSet.play(shakeRightAll).after(shakeLeft);
-        animatorSet.play(shakeLeftAll).after(shakeRightAll);
-        animatorSet.play(shakeMiddle).after(shakeLeftAll);
+        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
+        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
+        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
+        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        final ImageView leftClaw = new ImageView(context);
+        leftClaw.setImageResource(R.drawable.battle_leftclaw);
+        final ImageView rightClaw = new ImageView(context);
+        rightClaw.setImageResource(R.drawable.battle_rightclaw);
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator flightClawRight = ObjectAnimator.ofFloat(leftClaw, "x", defC.getWidth());
+        flightClawRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawBottom = ObjectAnimator.ofFloat(leftClaw, "y", defC.getHeight());
+        flightClawBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawLeft = ObjectAnimator.ofFloat(rightClaw, "x", 0f);
+        flightClawLeft.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator flightClawBottomL = ObjectAnimator.ofFloat(rightClaw, "y", defC.getHeight());
+        flightClawBottomL.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        flightClawRight.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(leftClaw, imageParams);
+                leftClaw.setX(0f);
+                leftClaw.setY(0f);
+                defC.addView(rightClaw, imageParams);
+                rightClaw.setX(defC.getWidth() - rightClaw.getWidth());
+                rightClaw.setY(0f);
+            }
+
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(leftClaw);
+                defC.removeView(rightClaw);
+                atk.setX(atkC.getWidth() - atk.getWidth());
+                atk.setY(atkC.getHeight() - atk.getHeight());
+            }
+        });
+        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
+        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
+        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", initialAlpha);
+        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
+        animatorSet.play(flightLeft).with(flightTop);
+        animatorSet.play(flightLeft).with(flightAlpha);
+        animatorSet.play(flightLeft).before(flightClawRight);
+        animatorSet.play(flightClawRight).with(flightClawBottom);
+        animatorSet.play(flightClawRight).with(flightClawLeft);
+        animatorSet.play(flightClawRight).with(flightClawBottomL);
+        animatorSet.play(flightMiddleLeft).after(flightClawRight);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
+        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
         return animatorSet;
     }
 
@@ -770,79 +520,58 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet slash(Context context, final RelativeLayout defC) {
+    public static AnimatorSet trick(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, ImageView def) {
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView slash = new ImageView(context);
-        slash.setImageResource(R.drawable.battle_leftclaw);
-        ObjectAnimator slashX = ObjectAnimator.ofFloat(slash, "x", defC.getWidth());
-        slashX.setDuration(BattleFragment.ANIMATION_LONG);
-        slashX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator slashY = ObjectAnimator.ofFloat(slash, "y", defC.getHeight());
-        slashY.setDuration(BattleFragment.ANIMATION_LONG);
-        slashX.setInterpolator(new AccelerateInterpolator());
-        slashX.addListener(new AnimatorListenerWithNet() {
+        final ImageView trick = new ImageView(context);
+        trick.setImageResource(R.drawable.pokeball_available);
+        final ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        float startX = atkC.getX() + atk.getX() + atk.getWidth() * 0.5f;
+        float startY = atkC.getY() + atk.getY() + atk.getHeight() * 0.5f;
+        float endX = defC.getX() + def.getX() + def.getWidth() * 0.5f;
+        float endY = defC.getY() + def.getY() + def.getHeight() * 0.5f;
+        ObjectAnimator goX = ObjectAnimator.ofFloat(trick, "x", startX, endX);
+        goX.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator goY = ObjectAnimator.ofFloat(trick, "y", startY, endY);
+        goY.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        goX.addListener(new AnimatorListenerWithNet() {
             @Override
             public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(slash);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(slash);
+                wrapper.addView(trick, layoutParams);
             }
         });
-        animatorSet.play(slashX).with(slashY);
+        ObjectAnimator backX = ObjectAnimator.ofFloat(trick, "x", startX);
+        backX.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator backY = ObjectAnimator.ofFloat(trick, "y", startY);
+        backY.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        backX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                wrapper.removeView(trick);
+            }
+        });
+        animatorSet.play(goX).with(goY);
+        animatorSet.play(backX).after(goX);
+        animatorSet.play(backX).with(backY);
         return animatorSet;
     }
 
-    public static AnimatorSet spinAtk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+    public static AnimatorSet charge(Context context, RelativeLayout atkC, final ImageView atk, RelativeLayout defC, ImageView def, String[] split) {
         final float initialAlpha = atk.getAlpha();
-        AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
-        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
-        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
-        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        final ImageView spin = new ImageView(context);
-        spin.setImageDrawable(atk.getDrawable());
-        spin.setX(0);
-        spin.setY(0);
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator spinRight = ObjectAnimator.ofFloat(spin, "x", defC.getWidth());
-        spinRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator spinBottom = ObjectAnimator.ofFloat(spin, "y", defC.getHeight());
-        spinBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator spinRotation = ObjectAnimator.ofFloat(spin, "rotation", 720);
-        spinRotation.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        spinRight.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(spin, imageParams);
-            }
-
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(spin);
-                atk.setX(atkC.getWidth() - atk.getWidth());
-                atk.setY(atkC.getHeight() - atk.getHeight());
-            }
-        });
-        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
-        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", initialAlpha);
-        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        animatorSet.play(flightLeft).with(flightTop);
-        animatorSet.play(flightLeft).with(flightAlpha);
-        animatorSet.play(flightLeft).before(spinRight);
-        animatorSet.play(spinRight).with(spinBottom);
-        animatorSet.play(spinRight).with(spinRotation);
-        animatorSet.play(flightMiddleLeft).after(spinRight);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
-        return animatorSet;
+        if (split.length >= 4 && split[3].equals("[still]")) {
+            AnimatorSet animatorSet = new AnimatorSet();
+            ObjectAnimator alpha = ObjectAnimator.ofFloat(atk, "alpha", 0.3f);
+            alpha.setDuration(BattleFragment.ANIMATION_LONG);
+            return animatorSet;
+        } else {
+            AnimatorSet animatorSet = flight(context, atkC, atk, defC);
+            animatorSet.addListener(new AnimatorListenerWithNet() {
+                @Override
+                public void onAnimationStartWithNet(Animator animation) {
+                    atk.setAlpha(initialAlpha);
+                }
+            });
+            return animatorSet;
+        }
     }
 
     public static AnimatorSet spread(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, int spreadId) {
@@ -955,31 +684,206 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet status(Context context, final RelativeLayout defC, final ImageView def, int statusId) {
+    public static AnimatorSet contact(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contactId) {
+        final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView status = new ImageView(context);
-        status.setImageResource(statusId);
-        status.setMaxHeight(100);
-        status.setMaxWidth(100);
-        status.setAdjustViewBounds(true);
-        status.setX(def.getX() + def.getWidth() * 0.5f);
-        status.setY(def.getY() + def.getHeight() * 0.5f);
-        ObjectAnimator circlingX = ObjectAnimator.ofFloat(status, "x", status.getX(), 0f, status.getX(), defC.getWidth() - def.getWidth(), status.getX());
-        circlingX.setDuration(BattleFragment.ANIMATION_LONG);
-        ObjectAnimator circlingY = ObjectAnimator.ofFloat(status, "y", status.getY(), status.getY() - 30f, status.getY() - 60f, status.getY() - 30f, status.getY());
-        circlingY.setDuration(BattleFragment.ANIMATION_LONG);
-        circlingX.addListener(new AnimatorListenerWithNet() {
+        final ImageView atkPkm = new ImageView(context);
+        atkPkm.setImageDrawable(atk.getDrawable());
+        atkPkm.setX(atkC.getX() + atk.getX());
+        atkPkm.setY(atkC.getY() + atk.getY());
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator attackX = ObjectAnimator.ofFloat(atkPkm, "x", (defC.getX() + def.getX()));
+        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator attackY = ObjectAnimator.ofFloat(atkPkm, "y", (defC.getY() + def.getY()));
+        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackY.setInterpolator(new AccelerateInterpolator());
+        attackX.addListener(new AnimatorListenerWithNet() {
             @Override
             public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(status);
+                atk.setAlpha(0f);
+                wrapper.addView(atkPkm, imageParams);
+            }
+        });
+        final ImageView contact = new ImageView(context);
+        contact.setMaxWidth(100);
+        contact.setMaxHeight(100);
+        contact.setAdjustViewBounds(true);
+        contact.setImageResource(contactId);
+        contact.setX(def.getX() + def.getWidth() * 0.5f - 50);
+        contact.setY(def.getY() + def.getHeight() * 0.5f - 50);
+        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact, "scaleX", 3.5f);
+        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact, "scaleY", 3.5f);
+        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact, "alpha", 0f);
+        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        contactAlpha.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator defendX = ObjectAnimator.ofFloat(atkPkm, "x", (atkC.getX() + atk.getX()));
+        defendX.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator defendY = ObjectAnimator.ofFloat(atkPkm, "y", (atkC.getY() + atk.getY()));
+        defendY.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        contactScaleX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(contact, imageParams);
             }
 
             @Override
             public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(status);
+                defC.removeView(contact);
+                wrapper.removeView(atkPkm);
+                atk.setAlpha(initialAlpha);
             }
         });
-        animatorSet.play(circlingX).with(circlingY);
+        animatorSet.play(attackX).with(attackY);
+        animatorSet.play(attackX).before(contactScaleX);
+        animatorSet.play(contactScaleX).with(contactScaleY);
+        animatorSet.play(contactScaleX).with(contactAlpha);
+        animatorSet.play(contactScaleX).with(defendX);
+        animatorSet.play(contactScaleX).with(defendY);
+        return animatorSet;
+    }
+
+    public static AnimatorSet drain(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ImageView attack = new ImageView(context);
+        attack.setImageResource(R.drawable.battle_energyball);
+        attack.setMaxHeight(40);
+        attack.setMaxWidth(40);
+        attack.setAdjustViewBounds(true);
+        attack.setX(atk.getX() + atk.getWidth() * 0.5f - 20);
+        attack.setY(atk.getY() + atk.getHeight() * 0.5f - 20);
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(attack, "scaleX", 5f);
+        scaleX.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(attack, "scaleY", 5f);
+        scaleY.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        scaleX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(attack, imageParams);
+            }
+
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(attack);
+            }
+        });
+        final ImageView drain = new ImageView(context);
+        drain.setImageResource(R.drawable.battle_energyball);
+        drain.setMaxHeight(atk.getHeight());
+        drain.setMaxWidth(atk.getWidth());
+        drain.setAdjustViewBounds(true);
+        drain.setX(atk.getX());
+        drain.setY(atk.getY());
+        ObjectAnimator drainX = ObjectAnimator.ofFloat(drain, "scaleX", 0.2f);
+        drainX.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        ObjectAnimator drainY = ObjectAnimator.ofFloat(drain, "scaleY", 0.2f);
+        drainY.setDuration(BattleFragment.ANIMATION_LONG / 2);
+        drainX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                atkC.addView(drain, imageParams);
+            }
+
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                atkC.removeView(drain);
+            }
+        });
+        animatorSet.play(scaleX).with(scaleY);
+        animatorSet.play(drainX).after(scaleX);
+        animatorSet.play(drainX).with(drainY);
+        return animatorSet;
+    }
+
+    public static AnimatorSet contactTwice(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contact1Id, int contact2Id) {
+        final float initialAlpha = atk.getAlpha();
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ImageView atkPkm = new ImageView(context);
+        atkPkm.setImageDrawable(atk.getDrawable());
+        atkPkm.setX(atkC.getX() + atk.getX());
+        atkPkm.setY(atkC.getY() + atk.getY());
+        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ObjectAnimator attackX = ObjectAnimator.ofFloat(atkPkm, "x", (defC.getX() + def.getX()));
+        attackX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator attackY = ObjectAnimator.ofFloat(atkPkm, "y", (defC.getY() + def.getY()));
+        attackY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        attackY.setInterpolator(new AccelerateInterpolator());
+        attackX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                atk.setAlpha(0f);
+                wrapper.addView(atkPkm, imageParams);
+            }
+        });
+        final ImageView contact1 = new ImageView(context);
+        contact1.setMaxWidth(100);
+        contact1.setMaxHeight(100);
+        contact1.setAdjustViewBounds(true);
+        contact1.setImageResource(contact1Id);
+        contact1.setX(def.getX() + def.getWidth() * 0.5f - 50);
+        contact1.setY(def.getY() + def.getHeight() * 0.5f - 50);
+        ObjectAnimator contactScaleX = ObjectAnimator.ofFloat(contact1, "scaleX", 3.5f);
+        contactScaleX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator contactScaleY = ObjectAnimator.ofFloat(contact1, "scaleY", 3.5f);
+        contactScaleY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator contactAlpha = ObjectAnimator.ofFloat(contact1, "alpha", 0f);
+        contactAlpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        contactAlpha.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator defendX = ObjectAnimator.ofFloat(atkPkm, "x", (atkC.getX() + atk.getX()));
+        defendX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator defendY = ObjectAnimator.ofFloat(atkPkm, "y", (atkC.getY() + atk.getY()));
+        defendY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        final ImageView contact2 = new ImageView(context);
+        contact2.setMaxWidth(100);
+        contact2.setMaxHeight(100);
+        contact2.setAdjustViewBounds(true);
+        contact2.setImageResource(contact2Id);
+        contact2.setX(def.getX() + def.getWidth() * 0.5f - 50);
+        contact2.setY(def.getY() + def.getHeight() * 0.5f - 50);
+        ObjectAnimator contact2ScaleX = ObjectAnimator.ofFloat(contact2, "scaleX", 3.5f);
+        contact2ScaleX.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator contact2ScaleY = ObjectAnimator.ofFloat(contact2, "scaleY", 3.5f);
+        contact2ScaleY.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator contact2Alpha = ObjectAnimator.ofFloat(contact2, "alpha", 0f);
+        contact2Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        contact2Alpha.setInterpolator(new AccelerateInterpolator());
+        contactScaleX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(contact1, imageParams);
+            }
+
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(contact1);
+            }
+        });
+        contact2ScaleX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(contact2, imageParams);
+            }
+
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(contact2);
+                wrapper.removeView(atkPkm);
+                atk.setAlpha(initialAlpha);
+            }
+        });
+        animatorSet.play(attackX).with(attackY);
+        animatorSet.play(attackX).before(contactScaleX);
+        animatorSet.play(contactScaleX).with(contactScaleY);
+        animatorSet.play(contactScaleX).with(contactAlpha);
+        animatorSet.play(contactScaleX).with(defendX);
+        animatorSet.play(contactScaleX).with(defendY);
+        animatorSet.play(contact2ScaleX).after(contactScaleX);
+        animatorSet.play(contact2ScaleX).with(contact2ScaleY);
+        animatorSet.play(contact2ScaleX).with(contact2Alpha);
         return animatorSet;
     }
 
@@ -1156,8 +1060,65 @@ public class BattleAnimation {
         animatorSet.play(flash6FlyX).with(flash6SizeY);
         return animatorSet;
     }
-    
-    public static AnimatorSet thunderNeutral(Context context, final RelativeLayout defC, final ImageView def){
+
+    public static AnimatorSet earth(final RelativeLayout defC, final ImageView def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        float left = 0f;
+        float right = defC.getWidth() - def.getWidth();
+        ObjectAnimator earth1 = ObjectAnimator.ofFloat(def, "x", def.getX(), left, right, left, right, left, right, left, right, def.getX());
+        earth1.setDuration(BattleFragment.ANIMATION_LONG);
+        animatorSet.play(earth1);
+        return animatorSet;
+    }
+
+    public static AnimatorSet phaze(final ImageView def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator spin = ObjectAnimator.ofFloat(def, "rotation", 1080f);
+        spin.setDuration(BattleFragment.ANIMATION_LONG);
+        spin.setInterpolator(new AccelerateDecelerateInterpolator());
+        spin.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                def.setRotation(0f);
+            }
+        });
+        animatorSet.play(spin);
+        return animatorSet;
+    }
+
+    public static AnimatorSet thunderStrong(Context context, final RelativeLayout defC, final ImageView def) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ImageView thunder1 = new ImageView(context);
+        thunder1.setImageResource(R.drawable.battle_lightning);
+        thunder1.setMaxHeight(defC.getHeight());
+        thunder1.setScaleType(ImageView.ScaleType.FIT_END);
+        thunder1.setAdjustViewBounds(true);
+        thunder1.setX(def.getX() + def.getWidth() * 0.5f);
+        ObjectAnimator flash1 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash1.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator flash2 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash2.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        ObjectAnimator flash3 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
+        flash3.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        flash1.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(thunder1);
+            }
+        });
+        flash3.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(thunder1);
+            }
+        });
+        animatorSet.play(flash1);
+        animatorSet.play(flash2).after(flash1);
+        animatorSet.play(flash3).after(flash2);
+        return animatorSet;
+    }
+
+    public static AnimatorSet thunderNeutral(Context context, final RelativeLayout defC, final ImageView def) {
         AnimatorSet animatorSet = new AnimatorSet();
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final ImageView thunder1 = new ImageView(context);
@@ -1221,38 +1182,6 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet thunderStrong(Context context, final RelativeLayout defC, final ImageView def){
-        AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView thunder1 = new ImageView(context);
-        thunder1.setImageResource(R.drawable.battle_lightning);
-        thunder1.setMaxHeight(defC.getHeight());
-        thunder1.setScaleType(ImageView.ScaleType.FIT_END);
-        thunder1.setAdjustViewBounds(true);
-        thunder1.setX(def.getX() + def.getWidth() * 0.5f);
-        ObjectAnimator flash1 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
-        flash1.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator flash2 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
-        flash2.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        ObjectAnimator flash3 = ObjectAnimator.ofFloat(thunder1, "alpha", 0f, 1f);
-        flash3.setDuration(BattleFragment.ANIMATION_LONG / 3);
-        flash1.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(thunder1);
-            }
-        });
-        flash3.addListener(new AnimatorListenerWithNet() {
-            @Override
-            public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(thunder1);
-            }
-        });
-        animatorSet.play(flash1);
-        animatorSet.play(flash2).after(flash1);
-        animatorSet.play(flash3).after(flash2);
-        return animatorSet;
-    }
-
     public static AnimatorSet thunderWeak(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
         AnimatorSet animatorSet = new AnimatorSet();
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1302,38 +1231,59 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet trick(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, ImageView def) {
+    public static AnimatorSet status(Context context, final RelativeLayout defC, final ImageView def, int statusId) {
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView trick = new ImageView(context);
-        trick.setImageResource(R.drawable.pokeball_available);
-        final ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        float startX = atkC.getX() + atk.getX() + atk.getWidth() * 0.5f;
-        float startY = atkC.getY() + atk.getY() + atk.getHeight() * 0.5f;
-        float endX = defC.getX() + def.getX() + def.getWidth() * 0.5f;
-        float endY = defC.getY() + def.getY() + def.getHeight() * 0.5f;
-        ObjectAnimator goX = ObjectAnimator.ofFloat(trick, "x", startX, endX);
-        goX.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator goY = ObjectAnimator.ofFloat(trick, "y", startY, endY);
-        goY.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        goX.addListener(new AnimatorListenerWithNet() {
+        final ImageView status = new ImageView(context);
+        status.setImageResource(statusId);
+        status.setMaxHeight(100);
+        status.setMaxWidth(100);
+        status.setAdjustViewBounds(true);
+        status.setX(def.getX() + def.getWidth() * 0.5f);
+        status.setY(def.getY() + def.getHeight() * 0.5f);
+        ObjectAnimator circlingX = ObjectAnimator.ofFloat(status, "x", status.getX(), 0f, status.getX(), defC.getWidth() - def.getWidth(), status.getX());
+        circlingX.setDuration(BattleFragment.ANIMATION_LONG);
+        ObjectAnimator circlingY = ObjectAnimator.ofFloat(status, "y", status.getY(), status.getY() - 30f, status.getY() - 60f, status.getY() - 30f, status.getY());
+        circlingY.setDuration(BattleFragment.ANIMATION_LONG);
+        circlingX.addListener(new AnimatorListenerWithNet() {
             @Override
             public void onAnimationStartWithNet(Animator animation) {
-                wrapper.addView(trick, layoutParams);
+                defC.addView(status);
             }
-        });
-        ObjectAnimator backX = ObjectAnimator.ofFloat(trick, "x", startX);
-        backX.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator backY = ObjectAnimator.ofFloat(trick, "y", startY);
-        backY.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        backX.addListener(new AnimatorListenerWithNet() {
+
             @Override
             public void onAnimationEndWithNet(Animator animation) {
-                wrapper.removeView(trick);
+                defC.removeView(status);
             }
         });
-        animatorSet.play(goX).with(goY);
-        animatorSet.play(backX).after(goX);
-        animatorSet.play(backX).with(backY);
+        animatorSet.play(circlingX).with(circlingY);
+        return animatorSet;
+    }
+
+    public static AnimatorSet ball(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int ballId) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        final ImageView ball = new ImageView(context);
+        ball.setImageResource(ballId);
+        ball.setMaxHeight(atk.getHeight());
+        ball.setMaxWidth(atk.getWidth());
+        ball.setAdjustViewBounds(true);
+        ball.setX(atkC.getX() + atk.getX());
+        ball.setY(atkC.getY() + atk.getY());
+        ObjectAnimator ballX = ObjectAnimator.ofFloat(ball, "x", defC.getX() + def.getX());
+        ballX.setDuration(BattleFragment.ANIMATION_LONG);
+        ObjectAnimator ballY = ObjectAnimator.ofFloat(ball, "y", defC.getY() + def.getY());
+        ballY.setDuration(BattleFragment.ANIMATION_LONG);
+        ballX.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                wrapper.removeView(ball);
+            }            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                wrapper.addView(ball);
+            }
+
+
+        });
+        animatorSet.play(ballX).with(ballY);
         return animatorSet;
     }
 
@@ -1363,62 +1313,112 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet xatk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
-        final float initialAlpha = atk.getAlpha();
+    public static AnimatorSet slash(Context context, final RelativeLayout defC) {
         AnimatorSet animatorSet = new AnimatorSet();
-        ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
-        flightLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightTop = ObjectAnimator.ofFloat(atk, "y", 0f);
-        flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
-        flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        final ImageView leftClaw = new ImageView(context);
-        leftClaw.setImageResource(R.drawable.battle_leftclaw);
-        final ImageView rightClaw = new ImageView(context);
-        rightClaw.setImageResource(R.drawable.battle_rightclaw);
-        final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ObjectAnimator flightClawRight = ObjectAnimator.ofFloat(leftClaw, "x", defC.getWidth());
-        flightClawRight.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawBottom = ObjectAnimator.ofFloat(leftClaw, "y", defC.getHeight());
-        flightClawBottom.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawLeft = ObjectAnimator.ofFloat(rightClaw, "x", 0f);
-        flightClawLeft.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        ObjectAnimator flightClawBottomL = ObjectAnimator.ofFloat(rightClaw, "y", defC.getHeight());
-        flightClawBottomL.setDuration(BattleFragment.ANIMATION_LONG / 2);
-        flightClawRight.addListener(new AnimatorListenerWithNet() {
+        final ImageView slash = new ImageView(context);
+        slash.setImageResource(R.drawable.battle_leftclaw);
+        ObjectAnimator slashX = ObjectAnimator.ofFloat(slash, "x", defC.getWidth());
+        slashX.setDuration(BattleFragment.ANIMATION_LONG);
+        slashX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator slashY = ObjectAnimator.ofFloat(slash, "y", defC.getHeight());
+        slashY.setDuration(BattleFragment.ANIMATION_LONG);
+        slashX.setInterpolator(new AccelerateInterpolator());
+        slashX.addListener(new AnimatorListenerWithNet() {
             @Override
             public void onAnimationStartWithNet(Animator animation) {
-                defC.addView(leftClaw, imageParams);
-                leftClaw.setX(0f);
-                leftClaw.setY(0f);
-                defC.addView(rightClaw, imageParams);
-                rightClaw.setX(defC.getWidth() - rightClaw.getWidth());
-                rightClaw.setY(0f);
+                defC.addView(slash);
             }
 
             @Override
             public void onAnimationEndWithNet(Animator animation) {
-                defC.removeView(leftClaw);
-                defC.removeView(rightClaw);
-                atk.setX(atkC.getWidth() - atk.getWidth());
-                atk.setY(atkC.getHeight() - atk.getHeight());
+                defC.removeView(slash);
             }
         });
-        ObjectAnimator flightMiddleLeft = ObjectAnimator.ofFloat(atk, "x", atk.getX());
-        flightMiddleLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleTop = ObjectAnimator.ofFloat(atk, "y", atk.getY());
-        flightMiddleTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        ObjectAnimator flightMiddleAlpha = ObjectAnimator.ofFloat(atk, "alpha", initialAlpha);
-        flightMiddleAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        animatorSet.play(flightLeft).with(flightTop);
-        animatorSet.play(flightLeft).with(flightAlpha);
-        animatorSet.play(flightLeft).before(flightClawRight);
-        animatorSet.play(flightClawRight).with(flightClawBottom);
-        animatorSet.play(flightClawRight).with(flightClawLeft);
-        animatorSet.play(flightClawRight).with(flightClawBottomL);
-        animatorSet.play(flightMiddleLeft).after(flightClawRight);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleTop);
-        animatorSet.play(flightMiddleLeft).with(flightMiddleAlpha);
+        animatorSet.play(slashX).with(slashY);
+        return animatorSet;
+    }
+
+    public static AnimatorSet bomb(Context context, final RelativeLayout defC, final ImageView def, int bombId) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        int maxSize = 240;
+        final ImageView bomb1 = new ImageView(context);
+        bomb1.setImageResource(bombId);
+        bomb1.setMaxHeight(maxSize);
+        bomb1.setMaxWidth(maxSize);
+        bomb1.setAdjustViewBounds(true);
+        final ImageView bomb2 = new ImageView(context);
+        bomb2.setImageResource(bombId);
+        bomb2.setMaxHeight(maxSize);
+        bomb2.setMaxWidth(maxSize);
+        bomb2.setAdjustViewBounds(true);
+        bomb2.setX(defC.getWidth() / 4);
+        bomb2.setY(defC.getHeight() / 4);
+        final ImageView bomb3 = new ImageView(context);
+        bomb3.setImageResource(bombId);
+        bomb3.setMaxHeight(maxSize);
+        bomb3.setMaxWidth(maxSize);
+        bomb3.setAdjustViewBounds(true);
+        bomb3.setX(defC.getWidth() / 2);
+        ObjectAnimator bomb1Y = ObjectAnimator.ofFloat(bomb1, "y", defC.getHeight() / 4);
+        bomb1Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator bomb2Y = ObjectAnimator.ofFloat(bomb2, "y", defC.getHeight() / 2);
+        bomb2Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        ObjectAnimator bomb3Y = ObjectAnimator.ofFloat(bomb3, "y", defC.getHeight() / 4);
+        bomb3Y.setDuration(BattleFragment.ANIMATION_LONG * 2 / 3);
+        bomb1Y.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationStartWithNet(Animator animation) {
+                defC.addView(bomb1);
+                defC.addView(bomb2);
+                defC.addView(bomb3);
+            }
+        });
+        ObjectAnimator explode1X = ObjectAnimator.ofFloat(bomb1, "scaleX", 2f);
+        explode1X.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode1X.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode1Y = ObjectAnimator.ofFloat(bomb1, "scaleY", 2f);
+        explode1Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode1Y.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode1Alpha = ObjectAnimator.ofFloat(bomb1, "alpha", 0f);
+        explode1Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode1Alpha.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode2X = ObjectAnimator.ofFloat(bomb2, "scaleX", 2f);
+        explode2X.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode2X.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode2Y = ObjectAnimator.ofFloat(bomb2, "scaleY", 2f);
+        explode2Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode2Y.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode2Alpha = ObjectAnimator.ofFloat(bomb2, "alpha", 0f);
+        explode2Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode2Alpha.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode3X = ObjectAnimator.ofFloat(bomb3, "scaleX", 2f);
+        explode3X.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode3X.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode3Y = ObjectAnimator.ofFloat(bomb3, "scaleY", 2f);
+        explode3Y.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode3Y.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator explode3Alpha = ObjectAnimator.ofFloat(bomb3, "alpha", 0f);
+        explode3Alpha.setDuration(BattleFragment.ANIMATION_LONG / 3);
+        explode3Alpha.setInterpolator(new AccelerateInterpolator());
+        explode3Alpha.addListener(new AnimatorListenerWithNet() {
+            @Override
+            public void onAnimationEndWithNet(Animator animation) {
+                defC.removeView(bomb1);
+                defC.removeView(bomb2);
+                defC.removeView(bomb3);
+            }
+        });
+        animatorSet.play(bomb1Y).with(bomb2Y);
+        animatorSet.play(bomb1Y).with(bomb3Y);
+        animatorSet.play(explode1X).after(bomb1Y);
+        animatorSet.play(explode1X).with(explode1Y);
+        animatorSet.play(explode1X).with(explode1Alpha);
+        animatorSet.play(explode1X).with(explode2X);
+        animatorSet.play(explode1X).with(explode2Y);
+        animatorSet.play(explode1X).with(explode2Alpha);
+        animatorSet.play(explode1X).with(explode3X);
+        animatorSet.play(explode1X).with(explode3Y);
+        animatorSet.play(explode1X).with(explode3Alpha);
         return animatorSet;
     }
 

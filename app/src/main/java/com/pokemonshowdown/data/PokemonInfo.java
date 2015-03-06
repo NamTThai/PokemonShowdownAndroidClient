@@ -58,6 +58,14 @@ public class PokemonInfo implements Serializable {
         setCanMegaEvo(false);
     }
 
+    public void setAbility(String ability) {
+        mAbility = MyApplication.toId(ability);
+    }
+
+    public void setCanMegaEvo(boolean canMegaEvo) {
+        mCanMegaEvo = canMegaEvo;
+    }
+
     public int getIcon(Context appContext) {
         return Pokemon.getPokemonIcon(appContext, MyApplication.toId(mName));
     }
@@ -102,16 +110,16 @@ public class PokemonInfo implements Serializable {
         mTypeIcon = typeIcon;
     }
 
+    public boolean isFemale() {
+        return (getGender() != null && getGender().equals("F"));
+    }
+
     public String getGender() {
         return mGender;
     }
 
     public void setGender(String gender) {
         mGender = gender;
-    }
-
-    public boolean isFemale() {
-        return (getGender() != null && getGender().equals("F"));
     }
 
     public boolean isShiny() {
@@ -174,10 +182,6 @@ public class PokemonInfo implements Serializable {
         return (toReturn == null) ? mAbility : toReturn;
     }
 
-    public void setAbility(String ability) {
-        mAbility = MyApplication.toId(ability);
-    }
-
     public String getNature() {
         return mNature;
     }
@@ -190,6 +194,10 @@ public class PokemonInfo implements Serializable {
         return mItem;
     }
 
+    public void setItem(String item) {
+        mItem = MyApplication.toId(item);
+    }
+
     public String getItemName(Context activityContext) {
         if (mItem != null) {
             return ItemDex.get(activityContext).getItemName(mItem);
@@ -198,15 +206,7 @@ public class PokemonInfo implements Serializable {
         }
     }
 
-    public void setItem(String item) {
-        mItem = MyApplication.toId(item);
-    }
-
     public boolean canMegaEvo() {
         return mCanMegaEvo;
-    }
-
-    public void setCanMegaEvo(boolean canMegaEvo) {
-        mCanMegaEvo = canMegaEvo;
     }
 }

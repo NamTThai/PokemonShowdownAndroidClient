@@ -29,16 +29,20 @@ import java.util.Set;
 
 public class PokemonFragment extends DialogFragment {
     public final static String PTAG = PokemonFragment.class.getName();
-    private Pokemon mPokemon;
-
     public final static String POKEMON = "Pokemon";
     public final static String SEARCH = "Search";
     public final static String SEARCH_CODE = "Search Code";
     public final static String STAGES = "Stages";
     public final static String ITEMS = "Items";
     public final static String HEALTH = "Health";
-
+    private Pokemon mPokemon;
     private TextView mPokemonItem;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPokemon = (Pokemon) getArguments().getSerializable(POKEMON);
+    }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -52,11 +56,77 @@ public class PokemonFragment extends DialogFragment {
         }
     }
 
+    private void addSearchWidget(View view) {
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.pokemon_fragment_functions);
+        imageButton.setImageResource(R.drawable.ic_action_search);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFragment();
+                Intent intent = new Intent(getActivity(), SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                getActivity().startActivityForResult(intent, getArguments().getInt(SEARCH_CODE));
+            }
+        });
+    }
+
+    public void setAbilityString(String ability) {
+        TextView pokemonAbility = (TextView) getView().findViewById(R.id.stats_abilities);
+        pokemonAbility.setText(ability);
+    }
+
+    public String getStatsString() {
+        if (getArguments().getBoolean(STAGES) && getPokemon().calculateHP() != getPokemon().getHP()) {
+            return ("HP " + Integer.toString(getPokemon().getHP()) + " (" + getPokemon().calculateHP() + ")" + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
+        } else {
+            return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpA " + Integer.toString(getPokemon().getSpAtk()) + " / SpD " + Integer.toString(getPokemon().getSpDef()) + " / Spe " + Integer.toString(getPokemon().getSpd()));
+
+        }
+    }
+
+    public void resetStatsString() {
+        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
+        pokemonStats.setText(getStatsString());
+    }
+
+    public void resetBaseStatsString() {
+        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
+        pokemonStats.setText(getBaseStatsString());
+    }
+
+    public String getBaseStatsString() {
+        return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
+    }
+
+    public Pokemon getPokemon() {
+        return mPokemon;
+    }
+
+    public void setLevelString(int lv) {
+        TextView level = (TextView) getView().findViewById(R.id.level);
+        level.setText(Integer.toString(lv));
+    }
+
+    private void closeFragment() {
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPokemon = (Pokemon) getArguments().getSerializable(POKEMON);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
+            String item = data.getExtras().getString("Search");
+            getPokemon().setItem(item);
+
+            if (mPokemonItem != null) {
+                JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
+                if (itemObject != null) {
+                    int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
+                    mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
+                    item = itemObject.optString("name", item);
+                }
+                mPokemonItem.setText(item);
+            }
+        }
     }
 
     @Override
@@ -265,78 +335,5 @@ public class PokemonFragment extends DialogFragment {
         mPokemonItem.setVisibility(getArguments().getBoolean(ITEMS) ? View.VISIBLE : View.GONE);
         initialHP.setVisibility(getArguments().getBoolean(HEALTH) ? View.VISIBLE : View.GONE);
         initialHPText.setVisibility(getArguments().getBoolean(HEALTH) ? View.VISIBLE : View.GONE);
-    }
-
-    private void addSearchWidget(View view) {
-        ImageButton imageButton = (ImageButton) view.findViewById(R.id.pokemon_fragment_functions);
-        imageButton.setImageResource(R.drawable.ic_action_search);
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFragment();
-                Intent intent = new Intent(getActivity(), SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
-                getActivity().startActivityForResult(intent, getArguments().getInt(SEARCH_CODE));
-            }
-        });
-    }
-
-    public Pokemon getPokemon() {
-        return mPokemon;
-    }
-
-    public void setAbilityString(String ability) {
-        TextView pokemonAbility = (TextView) getView().findViewById(R.id.stats_abilities);
-        pokemonAbility.setText(ability);
-    }
-
-    public String getStatsString() {
-        if (getArguments().getBoolean(STAGES) && getPokemon().calculateHP() != getPokemon().getHP()) {
-            return ("HP " + Integer.toString(getPokemon().getHP()) + " (" + getPokemon().calculateHP() + ")" + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
-        } else {
-            return ("HP " + Integer.toString(getPokemon().getHP()) + " / Atk " + Integer.toString(getPokemon().getAtk()) + " / Def " + Integer.toString(getPokemon().getDef()) + " / SpA " + Integer.toString(getPokemon().getSpAtk()) + " / SpD " + Integer.toString(getPokemon().getSpDef()) + " / Spe " + Integer.toString(getPokemon().getSpd()));
-
-        }
-    }
-
-    public void resetStatsString() {
-        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
-        pokemonStats.setText(getStatsString());
-    }
-
-    public String getBaseStatsString() {
-        return ("HP " + Integer.toString(getPokemon().getBaseHP()) + " / Atk " + Integer.toString(getPokemon().getBaseAtk()) + " / Def " + Integer.toString(getPokemon().getBaseDef()) + " / SpA " + Integer.toString(getPokemon().getBaseSpAtk()) + " / SpD " + Integer.toString(getPokemon().getBaseSpDef()) + " / Spe " + Integer.toString(getPokemon().getBaseSpd()));
-    }
-
-    public void resetBaseStatsString() {
-        TextView pokemonStats = (TextView) getView().findViewById(R.id.stats);
-        pokemonStats.setText(getBaseStatsString());
-    }
-
-    public void setLevelString(int lv) {
-        TextView level = (TextView) getView().findViewById(R.id.level);
-        level.setText(Integer.toString(lv));
-    }
-
-    private void closeFragment() {
-        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
-            String item = data.getExtras().getString("Search");
-            getPokemon().setItem(item);
-
-            if (mPokemonItem != null) {
-                JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
-                if (itemObject != null) {
-                    int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
-                    mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
-                    item = itemObject.optString("name", item);
-                }
-                mPokemonItem.setText(item);
-            }
-        }
     }
 }

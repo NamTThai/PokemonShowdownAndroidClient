@@ -29,21 +29,21 @@ public class CreditsFragment extends Fragment {
             {"Zarel", Integer.toString(R.drawable.coder_zarel), "Guangcong Luo", "Showdown Creator"}
     };
 
-    public static CreditsFragment newInstance() {
-        return new CreditsFragment();
-    }
-
     public CreditsFragment() {
 
     }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	} 
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+    public static CreditsFragment newInstance() {
+        return new CreditsFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_credits, parent, false);
     }
 
@@ -69,7 +69,7 @@ public class CreditsFragment extends Fragment {
         LinearLayout androidContributors = (LinearLayout) view.findViewById(R.id.android_contributors);
         for (String[] androidContributor : ANDROID_CONTRIBUTOR) {
             LinearLayout contributor = (LinearLayout) getLayoutInflater(savedInstanceState)
-                    .inflate(R.layout.listwidget_contributors, androidContributors,  false);
+                    .inflate(R.layout.listwidget_contributors, androidContributors, false);
             ((TextView) contributor.findViewById(R.id.nickname)).setText(androidContributor[0]);
             ((ImageView) contributor.findViewById(R.id.avatar)).setImageResource(Integer.parseInt(androidContributor[1]));
             ((TextView) contributor.findViewById(R.id.real_name)).setText(androidContributor[2]);

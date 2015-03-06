@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pokemon_fragment"
-    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
-    
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,9 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/battle_switch"
-            android:src="@drawable/ic_action_repeat"
             android:paddingLeft="8dp"
-            android:paddingRight="12dp"/>
+            android:paddingRight="12dp"
+            android:src="@drawable/ic_action_repeat"/>
 
         <TextView
             android:id="@+id/pokemon_name"
@@ -35,10 +35,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="fill_vertical"/>
-        
+
     </LinearLayout>
 
-    <View style="@style/divider" />
+    <View style="@style/divider"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -48,45 +48,45 @@
             android:id="@+id/pokemon_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/pokemon_list"/>
+            android:contentDescription="@string/pokemon_list"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:id="@+id/stats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/pokemon_view"
-            android:layout_toEndOf="@id/pokemon_view"
             android:layout_alignTop="@id/pokemon_view"
             android:layout_margin="4dp"
+            android:layout_toEndOf="@id/pokemon_view"
+            android:layout_toRightOf="@id/pokemon_view"
+            android:background="@drawable/uneditable_frame"
             android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:background="@drawable/uneditable_frame"/>
+            android:paddingRight="4dp"/>
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/stats_abilities"
-            android:gravity="fill_vertical"
-            android:layout_toRightOf="@id/pokemon_view"
-            android:layout_toEndOf="@id/pokemon_view"
-            android:layout_margin="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/stats"
             android:layout_gravity="center"
-            android:background="@drawable/uneditable_frame"/>
+            android:layout_margin="4dp"
+            android:layout_toEndOf="@id/pokemon_view"
+            android:layout_toRightOf="@id/pokemon_view"
+            android:background="@drawable/uneditable_frame"
+            android:gravity="fill_vertical"/>
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/nature"
-            android:gravity="fill_vertical"
-            android:layout_toRightOf="@id/stats_abilities"
-            android:layout_toEndOf="@id/stats_abilities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@id/stats_abilities"
-            android:layout_margin="4dp"
             android:layout_gravity="center"
-            android:background="@drawable/uneditable_frame"/>
+            android:layout_margin="4dp"
+            android:layout_toEndOf="@id/stats_abilities"
+            android:layout_toRightOf="@id/stats_abilities"
+            android:background="@drawable/uneditable_frame"
+            android:gravity="fill_vertical"/>
 
     </RelativeLayout>
 
@@ -125,21 +125,21 @@
             android:max="100"
             />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:weightSum="2">
 
         <RelativeLayout
             android:id="@+id/move1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:background="@drawable/uneditable_frame">
 
             <TextView
@@ -158,9 +158,9 @@
                 android:id="@+id/move1_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/move1_type"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignTop="@id/move1_type"/>
 
         </RelativeLayout>
 
@@ -168,8 +168,8 @@
             android:id="@+id/move2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:background="@drawable/uneditable_frame">
 
             <TextView
@@ -188,9 +188,9 @@
                 android:id="@+id/move2_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/move2_type"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignTop="@id/move2_type"/>
 
         </RelativeLayout>
 
@@ -199,16 +199,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:weightSum="2">
 
         <RelativeLayout
             android:id="@+id/move3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:background="@drawable/uneditable_frame">
 
             <TextView
@@ -227,9 +227,9 @@
                 android:id="@+id/move3_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/move3_type"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignTop="@id/move3_type"/>
 
         </RelativeLayout>
 
@@ -237,8 +237,8 @@
             android:id="@+id/move4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:background="@drawable/uneditable_frame">
 
             <TextView
@@ -257,9 +257,9 @@
                 android:id="@+id/move4_pp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@id/move4_type"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignTop="@id/move4_type"/>
 
         </RelativeLayout>
 

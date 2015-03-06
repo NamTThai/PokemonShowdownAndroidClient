@@ -327,13 +327,13 @@ public class BattleMessage {
                                             ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
                                             if (icon != null) {
                                                 icon.setImageResource(pkmIcon);
-                                                }
                                             }
                                         }
-                                    });
-                                } else {
-                                    battleFragment.getPlayer1Team().set(i, pkm);
-                                }
+                                    }
+                                });
+                            } else {
+                                battleFragment.getPlayer1Team().set(i, pkm);
+                            }
                         }
                     }
 
@@ -701,7 +701,7 @@ public class BattleMessage {
                 break;
 
             case "tie":
-                toAppend ="The battle is a tie!";
+                toAppend = "The battle is a tie!";
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
@@ -3534,6 +3534,36 @@ public class BattleMessage {
         battleFragment.addToLog(logMessage);
     }
 
+    private static String processSpecialName(String name) {
+        for (String sp : BattleFragment.MORPHS) {
+            if (name.contains(sp)) {
+                return sp;
+            }
+        }
+        return name;
+    }
+
+    private static void processPokemonDetailString(PokemonInfo pkm, String details) {
+        int separator = details.indexOf(",");
+        String name = (separator == -1) ? details : details.substring(0, separator);
+        pkm.setName(name);
+        if (details.contains(", L")) {
+            String level = details.substring(details.indexOf(", L") + 3);
+            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
+            pkm.setLevel(Integer.parseInt(level));
+        }
+        if (details.contains(", M")) {
+            pkm.setGender("M");
+        } else {
+            if (details.contains(", F")) {
+                pkm.setGender("F");
+            }
+        }
+        if (details.contains("shiny")) {
+            pkm.setShiny(true);
+        }
+    }
+
     public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
@@ -3592,36 +3622,6 @@ public class BattleMessage {
             return null;
         } else {
             return statusFraction.substring(status + 1);
-        }
-    }
-
-    private static String processSpecialName(String name) {
-        for (String sp : BattleFragment.MORPHS) {
-            if (name.contains(sp)) {
-                return sp;
-            }
-        }
-        return name;
-    }
-
-    private static void processPokemonDetailString(PokemonInfo pkm, String details) {
-        int separator = details.indexOf(",");
-        String name = (separator == -1) ? details : details.substring(0, separator);
-        pkm.setName(name);
-        if (details.contains(", L")) {
-            String level = details.substring(details.indexOf(", L") + 3);
-            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
-            pkm.setLevel(Integer.parseInt(level));
-        }
-        if (details.contains(", M")) {
-            pkm.setGender("M");
-        } else {
-            if (details.contains(", F")) {
-                pkm.setGender("F");
-            }
-        }
-        if (details.contains("shiny")) {
-            pkm.setShiny(true);
         }
     }
 
