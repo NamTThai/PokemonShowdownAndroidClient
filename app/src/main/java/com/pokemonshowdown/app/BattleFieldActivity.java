@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -399,18 +398,6 @@ public class BattleFieldActivity extends FragmentActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-    public void showErrorAlert(Exception e) {
-        AlertDialog alertDialog = createErrorAlert(e);
-        Log.e(BTAG, "App exception", e);
-        alertDialog.show();
-    }
-
-    public AlertDialog createErrorAlert(Exception e) {
-        return new AlertDialog.Builder(this)
-                .setMessage(e.toString())
-                .create();
     }
 
 }

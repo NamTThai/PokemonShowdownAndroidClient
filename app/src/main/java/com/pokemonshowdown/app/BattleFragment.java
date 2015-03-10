@@ -367,16 +367,17 @@ public class BattleFragment extends Fragment {
         });
     }
 
-    public void processServerMessage(String message) {
-        try {
-            if (mBattling == -1) {
-                message = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+    public void processServerMessage(final String message) {
+        new RunWithNet() {
+            @Override
+            public void runWithNet() throws Exception {
+                String processedMessage = message;
+                if (mBattling == -1) {
+                    processedMessage = message.replace("p1", "p3").replace("p2", "p1").replace("p3", "p2");
+                }
+                BattleMessage.processMajorAction(BattleFragment.this, processedMessage);
             }
-            BattleMessage.processMajorAction(this, message);
-        } catch (Exception e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-            Log.d(BTAG, "error server message: " + message);
-        }
+        }.run();
     }
 
     public String getPlayer1() {
@@ -1466,7 +1467,7 @@ public class BattleFragment extends Fragment {
         return getPlayer1Team().get(mCurrentActivePokemon);
     }
 
-    public void processSwitch(int id) {
+    public void processSwitch(int id) throws JSONException {
         if (isTeamPreview()) {
             chooseLeadInTeamPreview(id);
         } else {
@@ -1527,7 +1528,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    public void chooseSwitch(int id) {
+    public void chooseSwitch(int id) throws JSONException {
         String chosen = mChooseCommand.toString();
         if (chosen.contains("switch " + (id + 1))) {
             return;
@@ -1546,11 +1547,7 @@ public class BattleFragment extends Fragment {
                     return;
                 }
             } else {
-                try {
-                    startAction(getRequestJson().getJSONArray("active"));
-                } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-                }
+                startAction(getRequestJson().getJSONArray("active"));
             }
         }
     }
@@ -1571,31 +1568,32 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        try {
-            JSONObject requestJson = getRequestJson();
+        new RunWithNet() {
+            @Override
+            public void runWithNet() throws Exception {
+                JSONObject requestJson = getRequestJson();
 
-            setRqid(requestJson.optInt("rqid", 0));
-            setTeamPreview(requestJson.optBoolean("teamPreview", false));
-            setWaiting(requestJson.optBoolean("wait", false));
+                setRqid(requestJson.optInt("rqid", 0));
+                setTeamPreview(requestJson.optBoolean("teamPreview", false));
+                setWaiting(requestJson.optBoolean("wait", false));
 
-            if (isTeamPreview()) {
-                resetChooseCommand();
-                triggerTeamPreview(true);
-            } else {
-                if (getRqid() != 0) {
+                if (isTeamPreview()) {
                     resetChooseCommand();
-                    if (requestJson.has("forceSwitch")) {
-                        setForceSwitch(true);
-                        JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
-                        chooseForceSwitch(forceSwitchJsonArray);
-                    } else {
-                        startAction(requestJson.getJSONArray("active"));
+                    triggerTeamPreview(true);
+                } else {
+                    if (getRqid() != 0) {
+                        resetChooseCommand();
+                        if (requestJson.has("forceSwitch")) {
+                            setForceSwitch(true);
+                            JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
+                            chooseForceSwitch(forceSwitchJsonArray);
+                        } else {
+                            startAction(requestJson.getJSONArray("active"));
+                        }
                     }
                 }
             }
-        } catch (JSONException e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-        }
+        }.run();
     }
 
     public void startAction(final JSONArray active) {
@@ -1671,11 +1669,13 @@ public class BattleFragment extends Fragment {
             } else {
                 parseMoveCommandAndSend(active, 0, 0);
             }
-        } catch (JSONException e) {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(e.toString())
-                    .create()
-                    .show();
+        } catch (final JSONException e) {
+            new RunWithNet() {
+                @Override
+                public void runWithNet() throws Exception {
+                    throw e;
+                }
+            }.run();
         }
     }
 
@@ -1687,16 +1687,17 @@ public class BattleFragment extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
-                    if (targetDialog == null) {
-                        parseMoveCommandAndSend(active, moveId, 0);
-                    } else {
-                        targetDialog.show();
+                new RunWithNet() {
+                    @Override
+                    public void runWithNet() throws Exception {
+                        AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
+                        if (targetDialog == null) {
+                            parseMoveCommandAndSend(active, moveId, 0);
+                        } else {
+                            targetDialog.show();
+                        }
                     }
-                } catch (JSONException e) {
-                    ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-                }
+                }.run();
             }
         };
     }
@@ -1854,42 +1855,43 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void parseMoveCommandAndSend(JSONArray active, int moveId, int position) {
+    private void parseMoveCommandAndSend(final JSONArray active, final int moveId, final int position) {
         if (getView() == null) {
             return;
         }
 
-        try {
-            JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
-                    .getJSONArray("moves")
-                    .getJSONObject(moveId);
+        new RunWithNet() {
+            @Override
+            public void runWithNet() throws Exception {
+                JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
+                        .getJSONArray("moves")
+                        .getJSONObject(moveId);
 
-            String moveName = moveJson.getString("move");
-            String command;
+                String moveName = moveJson.getString("move");
+                String command;
 
-            CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
-            if (checkBox.isChecked()) {
-                command = "move " + moveName + " mega";
-            } else {
-                command = "move " + moveName;
+                CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+                if (checkBox.isChecked()) {
+                    command = "move " + moveName + " mega";
+                } else {
+                    command = "move " + moveName;
+                }
+
+                if (position != 0) {
+                    command += " " + position;
+                }
+
+                addCommand(command);
+                mCurrentActivePokemon++;
+
+                if (mCurrentActivePokemon < mTotalActivePokemon) {
+                    startAction(active);
+                } else {
+                    mChooseCommand.insert(0, "|/choose ");
+                    sendCommands(mChooseCommand);
+                }
             }
-
-            if (position != 0) {
-                command += " " + position;
-            }
-
-            addCommand(command);
-            mCurrentActivePokemon++;
-
-            if (mCurrentActivePokemon < mTotalActivePokemon) {
-                startAction(active);
-            } else {
-                mChooseCommand.insert(0, "|/choose ");
-                sendCommands(mChooseCommand);
-            }
-        } catch (JSONException e) {
-            ((BattleFieldActivity) getActivity()).showErrorAlert(e);
-        }
+        }.run();
     }
 
     private void triggerSwitchOptions(boolean on) {

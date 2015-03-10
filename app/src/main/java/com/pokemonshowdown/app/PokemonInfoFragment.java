@@ -15,6 +15,9 @@ import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.PokemonInfo;
+import com.pokemonshowdown.data.RunWithNet;
+
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -170,7 +173,12 @@ public class PokemonInfoFragment extends DialogFragment {
             switchPkm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    switchPkm();
+                    new RunWithNet() {
+                        @Override
+                        public void runWithNet() throws Exception {
+                            switchPkm();
+                        }
+                    }.run();
                 }
             });
         } else {
@@ -212,7 +220,7 @@ public class PokemonInfoFragment extends DialogFragment {
         statusView.setPadding(2, 2, 2, 2);
     }
 
-    private void switchPkm() {
+    private void switchPkm() throws JSONException {
         BattleFieldFragment battleFieldFragment = (BattleFieldFragment) getActivity().getSupportFragmentManager()
                 .findFragmentByTag(BattleFieldActivity.BATTLE_FIELD_FRAGMENT_TAG);
         BattleFragment fragment = (BattleFragment) battleFieldFragment.getChildFragmentManager()
