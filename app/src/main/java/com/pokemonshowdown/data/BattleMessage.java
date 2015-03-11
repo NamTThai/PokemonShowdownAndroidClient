@@ -605,9 +605,8 @@ public class BattleMessage {
                 final String forme = (split[1].contains(",")) ? split[1].substring(0, split[1].indexOf(',')) : split[1];
 
                 position = split[0].substring(0, 3);
-                species = split[0].substring(5);
 
-                battleFragment.formChange(position, species, forme);
+                battleFragment.formChange(position, forme);
 
                 pokemonInfo = battleFragment.getPokemonInfo(position);
 
