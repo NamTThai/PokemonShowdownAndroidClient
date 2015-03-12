@@ -5,9 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
@@ -15,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -26,6 +38,7 @@ import java.util.Iterator;
  */
 public class MyApplication extends Application {
     public final static String MTAG = MyApplication.class.getName();
+    public final static Float VERSION = 1.0f;
     public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
     public final static String EXTRA_DETAILS = "Details";
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
@@ -39,6 +52,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_UPDATE_SEARCH = "Search Update";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
+    public final static String EXTRA_UPDATE_AVAILABLE = "Update Available";
 
     private static MyApplication sMyApplication;
 
@@ -82,6 +96,8 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
+
+        new UpdateCheckTask().execute();
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -388,4 +404,44 @@ public class MyApplication extends Application {
     public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
         mRoomCategoryList = roomCategoryList;
     }
+
+
+    public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
+        private final static String VERSION_URL = "http://ns3367227.ip-37-187-3.eu/showdown/version.txt";
+
+        private int status;
+        private float serverVersion = -1;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 50000);
+            HttpClient client = new DefaultHttpClient(httpParams);
+            HttpGet httpget = new HttpGet(VERSION_URL);
+            HttpResponse response = null;
+            try {
+                response = client.execute(httpget);
+                status = response.getStatusLine().getStatusCode();
+                if (status == HttpStatus.SC_OK) {
+                    HttpEntity entity = response.getEntity();
+                    String output = EntityUtils.toString(entity);
+                    serverVersion = Float.parseFloat(output);
+                }
+            } catch (IOException e) {
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (status == HttpStatus.SC_OK) {
+                if (serverVersion > MyApplication.VERSION) {
+                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE));
+                }
+            }
+        }
+    }
+
 }
