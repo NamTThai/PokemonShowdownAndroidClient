@@ -3,6 +3,7 @@ package com.pokemonshowdown.data;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -38,7 +39,6 @@ import java.util.Iterator;
  */
 public class MyApplication extends Application {
     public final static String MTAG = MyApplication.class.getName();
-    public final static Float VERSION = 1.0f;
     public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
     public final static String EXTRA_DETAILS = "Details";
     public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
@@ -410,7 +410,7 @@ public class MyApplication extends Application {
         private final static String VERSION_URL = "http://ns3367227.ip-37-187-3.eu/showdown/version.txt";
 
         private int status;
-        private float serverVersion = -1;
+        private String serverVersion = null;
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -424,8 +424,7 @@ public class MyApplication extends Application {
                 status = response.getStatusLine().getStatusCode();
                 if (status == HttpStatus.SC_OK) {
                     HttpEntity entity = response.getEntity();
-                    String output = EntityUtils.toString(entity);
-                    serverVersion = Float.parseFloat(output);
+                    serverVersion = EntityUtils.toString(entity);
                 }
             } catch (IOException e) {
                 return null;
@@ -437,10 +436,40 @@ public class MyApplication extends Application {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (status == HttpStatus.SC_OK) {
-                if (serverVersion > MyApplication.VERSION) {
-                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE));
+                try {
+                    String currentVersion = MyApplication.this.getPackageManager().getPackageInfo(MyApplication.this.getApplicationContext().getPackageName(), 0).versionName;
+                    if (isUpdateAvailable(currentVersion, serverVersion)) {
+                        LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE));
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        private boolean isUpdateAvailable(String currentVersion, String serverVersion) {
+            serverVersion = serverVersion.trim();
+            currentVersion = currentVersion.trim();
+
+            String[] serverSplit = serverVersion.split("\\.");
+            String[] currentSplit = currentVersion.split("\\.");
+
+            Log.i(MTAG, "Current version " + currentVersion);
+            Log.i(MTAG, "Server version " + serverVersion);
+
+            int maxLength = serverSplit.length > currentSplit.length ? currentSplit.length : serverSplit.length;
+
+            for (int i = 0; i < maxLength; i++) {
+                int server = Integer.parseInt(serverSplit[i]);
+                int current = Integer.parseInt(currentSplit[i]);
+
+                if (server > current) {
+                    return true;
                 }
             }
+            // we only get here if we have something like 1.0.1 and 1.0.1.1, or the two version are equals
+            return serverSplit.length > currentSplit.length;
         }
     }
 
