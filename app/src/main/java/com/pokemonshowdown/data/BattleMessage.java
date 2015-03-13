@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pokemonshowdown.app.BattleFieldActivity;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
@@ -40,7 +39,9 @@ import java.util.Random;
 
 public class BattleMessage {
 
-    public static void processMajorAction(final BattleFragment battleFragment, final String message) {
+    public static void processMajorAction(final BattleFragment battleFragment, final String message)
+            throws JSONException
+    {
         BattleFieldData.RoomData roomData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
         final BattleFieldData.ViewData viewData = BattleFieldData.get(battleFragment.getActivity()).getViewData(battleFragment.getRoomId());
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
@@ -302,62 +303,57 @@ public class BattleMessage {
                 break;
 
             case "request":
-                try {
-                    JSONObject requestJson = new JSONObject(messageDetails);
-                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
-                        battleFragment.setBattling(requestJson);
-                        JSONObject sideJson = requestJson.getJSONObject("side");
-                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        for (int i = 0; i < teamJson.length(); i++) {
-                            JSONObject info = teamJson.getJSONObject(i);
-                            final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
-                                    pkm.getName()) == -1) {
-                                battleFragment.getPlayer1Team().add(i, pkm);
-                                battleFragment.getActivity().runOnUiThread(new RunWithNet() {
-                                    @Override
-                                    public void runWithNet() {
-                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                                MyApplication.toId(pkm.getName()));
-                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
-                                        if (battleFragment.getView() == null) {
-                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
-                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                                        } else {
-                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                                            if (icon != null) {
-                                                icon.setImageResource(pkmIcon);
-                                            }
+                JSONObject requestJson = new JSONObject(messageDetails);
+                if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
+                    battleFragment.setBattling(requestJson);
+                    JSONObject sideJson = requestJson.getJSONObject("side");
+                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                    for (int i = 0; i < teamJson.length(); i++) {
+                        JSONObject info = teamJson.getJSONObject(i);
+                        final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
+                        if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
+                                pkm.getName()) == -1) {
+                            battleFragment.getPlayer1Team().add(i, pkm);
+                            battleFragment.getActivity().runOnUiThread(new RunWithNet() {
+                                @Override
+                                public void runWithNet() {
+                                    int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName()));
+                                    int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
+                                    if (battleFragment.getView() == null) {
+                                        viewData.addViewSetterOnHold(iconId, pkmIcon,
+                                                BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
+                                    } else {
+                                        ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
+                                        if (icon != null) {
+                                            icon.setImageResource(pkmIcon);
                                         }
                                     }
-                                });
-                            } else {
-                                battleFragment.getPlayer1Team().set(i, pkm);
-                            }
+                                }
+                            });
+                        } else {
+                            battleFragment.getPlayer1Team().set(i, pkm);
                         }
                     }
-
-                    if (requestJson.has("side")) {
-                        JSONObject sideJson = requestJson.getJSONObject("side");
-                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        for (int i = 0; i < teamJson.length(); i++) {
-                            JSONObject pkm = teamJson.getJSONObject(i);
-                            String pkmName = pkm.getString("details");
-                            separator = pkmName.indexOf(",");
-                            pkmName = (separator == -1) ? pkmName : pkmName.substring(0, separator);
-                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
-                            if (idx != -1) {
-                                battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
-                            }
-                        }
-                    }
-
-                    battleFragment.setRequestJson(requestJson);
-                    battleFragment.setUndoMessage(requestJson);
-                } catch (JSONException e) {
-                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e);
-                    break;
                 }
+
+                if (requestJson.has("side")) {
+                    JSONObject sideJson = requestJson.getJSONObject("side");
+                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                    for (int i = 0; i < teamJson.length(); i++) {
+                        JSONObject pkm = teamJson.getJSONObject(i);
+                        String pkmName = pkm.getString("details");
+                        separator = pkmName.indexOf(",");
+                        pkmName = (separator == -1) ? pkmName : pkmName.substring(0, separator);
+                        int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
+                        if (idx != -1) {
+                            battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
+                        }
+                    }
+                }
+
+                battleFragment.setRequestJson(requestJson);
+                battleFragment.setUndoMessage(requestJson);
                 break;
 
             case "inactive":

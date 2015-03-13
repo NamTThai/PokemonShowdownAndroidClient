@@ -536,6 +536,4 @@ public class BattleFieldActivity extends FragmentActivity {
 
         }
     }
-
-
 }
