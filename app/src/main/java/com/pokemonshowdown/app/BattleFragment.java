@@ -82,6 +82,7 @@ public class BattleFragment extends Fragment {
     private StringBuilder mChooseCommand = new StringBuilder();
     private JSONObject mRequestJson;
     private JSONObject mUndoMessage;
+
     public BattleFragment() {
 
     }
@@ -592,7 +593,9 @@ public class BattleFragment extends Fragment {
                         } else {
                             startRequest();
                         }
-                    }                    @Override
+                    }
+
+                    @Override
                     public void onAnimationStartWithNet(Animator animation) {
                         if (getView() != null) {
                             View back = getView().findViewById(R.id.back);
@@ -1178,7 +1181,7 @@ public class BattleFragment extends Fragment {
         mBatonPass = batonPass;
     }
 
-    public void formChange(String playerTag, String oldPkm, String newPkm) {
+    public void formChange(String playerTag, String newPkm) {
         PokemonInfo oldInfo, newInfo;
         ArrayList<PokemonInfo> team;
         if (playerTag.startsWith("p1")) {
@@ -1187,21 +1190,19 @@ public class BattleFragment extends Fragment {
             team = getPlayer2Team();
         }
 
-        int index = findPokemonInTeam(team, oldPkm);
-        if (index != -1) {
-            oldInfo = team.get(index);
-            newInfo = new PokemonInfo(getActivity(), newPkm);
-            newInfo.setNickname(oldInfo.getNickname());
-            newInfo.setLevel(oldInfo.getLevel());
-            newInfo.setGender(oldInfo.getGender());
-            newInfo.setShiny(oldInfo.isShiny());
-            newInfo.setActive(oldInfo.isActive());
-            newInfo.setHp(oldInfo.getHp());
-            newInfo.setStatus(oldInfo.getStatus());
-            newInfo.setMoves(oldInfo.getMoves());
-            newInfo.setItem(oldInfo.getItem());
-            team.set(index, newInfo);
-        }
+        oldInfo = getPokemonInfo(playerTag);
+        int index = findPokemonInTeam(team, oldInfo.getName());
+        newInfo = new PokemonInfo(getActivity(), newPkm);
+        newInfo.setNickname(oldInfo.getNickname());
+        newInfo.setLevel(oldInfo.getLevel());
+        newInfo.setGender(oldInfo.getGender());
+        newInfo.setShiny(oldInfo.isShiny());
+        newInfo.setActive(oldInfo.isActive());
+        newInfo.setHp(oldInfo.getHp());
+        newInfo.setStatus(oldInfo.getStatus());
+        newInfo.setMoves(oldInfo.getMoves());
+        newInfo.setItem(oldInfo.getItem());
+        team.set(index, newInfo);
     }
 
     public ArrayList<PokemonInfo> getPlayer1Team() {
