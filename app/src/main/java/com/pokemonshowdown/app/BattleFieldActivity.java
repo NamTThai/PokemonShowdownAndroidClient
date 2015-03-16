@@ -364,7 +364,7 @@ public class BattleFieldActivity extends FragmentActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        new DownloadUpdateTask().execute();
+                                        new DownloadUpdateTask(BattleFieldActivity.this).execute();
                                     }
                                 })
                         .setNegativeButton(R.string.dialog_cancel, null)
@@ -449,91 +449,4 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
 
-    public class DownloadUpdateTask extends AsyncTask<Void, Integer, Void> {
-        private ProgressDialog waitingDialog;
-        private final static String APK_LOCATION = "http://ns3367227.ip-37-187-3.eu/showdown/current.apk";
-        private int status;
-
-        public DownloadUpdateTask() {
-            waitingDialog = new ProgressDialog(BattleFieldActivity.this);
-            waitingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            waitingDialog.setMessage(getResources().getString(R.string.downloadingupdate));
-            waitingDialog.setCancelable(false);
-            waitingDialog.setMax(100);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            BattleFieldActivity.this.runOnUiThread(new java.lang.Runnable() {
-                public void run() {
-                    waitingDialog.show();
-                }
-            });
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            waitingDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            final HttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-            HttpClient client = new DefaultHttpClient(httpParams);
-            HttpGet httpget = new HttpGet(APK_LOCATION);
-            HttpResponse response = null;
-            try {
-                response = client.execute(httpget);
-                status = response.getStatusLine().getStatusCode();
-                if (status == HttpStatus.SC_OK) {
-                    HttpEntity entity = response.getEntity();
-                    InputStream fileStream = entity.getContent();
-                    File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "temp.apk");
-                    file.createNewFile();
-                    FileOutputStream fos = new FileOutputStream(file);
-
-                    long totalLength = entity.getContentLength();
-                    int readLength = 0;
-                    int count = 0;
-                    byte data[] = new byte[1024];
-                    while ((count = fileStream.read(data)) != -1) {
-                        readLength += count;
-                        publishProgress((int) ((readLength * 100) / totalLength));
-                        fos.write(data, 0, count);
-                    }
-
-                    fos.flush();
-                    fos.close();
-                    fileStream.close();
-                }
-            } catch (IOException e) {
-                return null;
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            BattleFieldActivity.this.runOnUiThread(new java.lang.Runnable() {
-                public void run() {
-                    waitingDialog.dismiss();
-                }
-            });
-
-            if (status == HttpStatus.SC_OK) {
-                File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "temp.apk");
-
-                Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                        .setDataAndType(Uri.fromFile(file),
-                                "application/vnd.android.package-archive");
-                startActivity(promptInstall);
-            }
-
-        }
-    }
 }
