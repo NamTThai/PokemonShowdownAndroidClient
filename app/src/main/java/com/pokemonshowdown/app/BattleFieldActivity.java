@@ -435,18 +435,4 @@ public class BattleFieldActivity extends FragmentActivity {
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
-
-    public void showErrorAlert(Exception e) {
-        AlertDialog alertDialog = createErrorAlert(e);
-        Log.e(BTAG, "App exception", e);
-        alertDialog.show();
-    }
-
-    public AlertDialog createErrorAlert(Exception e) {
-        return new AlertDialog.Builder(this)
-                .setMessage(e.toString())
-                .create();
-    }
-
-
 }
