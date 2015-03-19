@@ -17,6 +17,10 @@
     <string name="waiting_for_server">Waiting for server…</string>
     <string name="ok">OK</string>
 
+    <string name="error_server_notavailable">Server not available</string>
+    <string name="update_available">Update available! Download?</string>
+    <string name="downloadingupdate">Downloading update</string>
+
     <!-- These are for Onboarding -->
     <string name="choose_username">Choose Username</string>
     <string name="cancel">Cancel</string>

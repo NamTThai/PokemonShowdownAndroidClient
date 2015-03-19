@@ -3,6 +3,7 @@ package com.pokemonshowdown.app;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -34,7 +35,6 @@ public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
-
     private int mPosition;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -212,7 +212,8 @@ public class BattleFieldActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
-        super.onPause();
+        super.onResume();
+
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -335,6 +336,22 @@ public class BattleFieldActivity extends FragmentActivity {
                         mDialog.show();
                     }
                 });
+                break;
+
+            case MyApplication.EXTRA_UPDATE_AVAILABLE:
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.update_available)
+                        .setPositiveButton(R.string.dialog_ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new DownloadUpdateTask(BattleFieldActivity.this).execute();
+                                    }
+                                })
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .create()
+                        .show();
+                break;
         }
     }
 
@@ -399,5 +416,4 @@ public class BattleFieldActivity extends FragmentActivity {
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
-
 }
