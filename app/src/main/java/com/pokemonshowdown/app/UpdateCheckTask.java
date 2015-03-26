@@ -87,7 +87,10 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
 
             if (server > current) {
                 return true;
+            } else if (current > server) {
+                return false;
             }
+            //if equals, we check the next version part
         }
         // we only get here if we have something like 1.0.1 and 1.0.1.1, or the two version are equals
         return serverSplit.length > currentSplit.length;
