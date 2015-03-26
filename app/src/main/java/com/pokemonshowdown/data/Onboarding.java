@@ -8,15 +8,27 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Onboarding {
     public final static String OTAG = Onboarding.class.getName();
+
+    private static final String COOKIES_HEADER = "cookie";
+    private static final String SET_COOKIES_HEADER = "Set-Cookie";
+    private static final String AUTH_COOKIE = "sid=";
+    private static final String COOKIE_FILE = "auth.cookie";
+
+
     private final static String GET_LOGGED_IN = "Get logged in";
     private final static String VERIFY_USERNAME_REGISTERED = "Verify username registered";
     private final static String SIGNING_IN = "Signing in";
@@ -46,7 +58,24 @@ public class Onboarding {
 
     public String attemptSignIn() {
         SignIn signIn = new SignIn();
-        signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge);
+        String cookie = null;
+        try {
+            FileInputStream fis = mAppContext.openFileInput(COOKIE_FILE);
+            StringBuffer fileContent = new StringBuffer("");
+            byte[] buffer = new byte[1024];
+            int n;
+            while ((n = fis.read(buffer)) != -1) {
+                fileContent.append(new String(buffer, 0, n));
+            }
+            fis.close();
+            cookie = fileContent.toString();
+        } catch (FileNotFoundException e) {
+            cookie = null;
+        } catch (IOException e) {
+            cookie = null;
+        }
+
+        signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge, cookie);
         try {
             String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
             JSONObject resultJson = new JSONObject(result);
@@ -155,7 +184,7 @@ public class Onboarding {
             params[1] = MyApplication.toId(params[1]);
             switch (task) {
                 case GET_LOGGED_IN:
-                    return getLoggedIn(params[1], params[2]);
+                    return getLoggedIn(params[1], params[2], params[3]);
                 case VERIFY_USERNAME_REGISTERED:
                     return verifyUsernameSignedIn(params[1], params[2], params[3]);
                 case SIGNING_IN:
@@ -166,13 +195,16 @@ public class Onboarding {
             return null;
         }
 
-        private String getLoggedIn(String keyId, String challenge) {
+        private String getLoggedIn(String keyId, String challenge, String cookie) {
             try {
                 String getUrl = getUrlComponent[0] + keyId + getUrlComponent[1] + challenge;
                 URL url = new URL(getUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
+                if (cookie != null) {
+                    conn.setRequestProperty("cookie", cookie);
+                }
 
                 InputStream inputStream = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((inputStream)));
@@ -235,6 +267,21 @@ public class Onboarding {
 
                 inputStream.close();
 
+                Map<String, List<String>> headerFields = conn.getHeaderFields();
+                List<String> cookiesHeader = headerFields.get(SET_COOKIES_HEADER);
+
+                if (cookiesHeader != null) {
+                    for (String cookie : cookiesHeader) {
+                        if (cookie.startsWith(AUTH_COOKIE)) {
+                            // saving auth cookie
+                            FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
+                            fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
+                            fos.close();
+                        }
+                    }
+                }
+
+
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
             } catch (IOException e) {
@@ -244,6 +291,7 @@ public class Onboarding {
         }
 
         private String signingOut(String username) {
+            mAppContext.deleteFile(COOKIE_FILE);
             try {
                 String postData = signOut + username;
                 URL url = new URL(postUrl);
