@@ -40,13 +40,10 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     public final static int REQUEST_CODE_GET_MOVE_4 = 5;
 
     private final static DecimalFormat DAMAGE_FORMAT = new DecimalFormat("#0.0%");
-
-    private Pokemon mAttacker;
-    private Pokemon mDefender;
-
     private final static String PARAM_ATTACKER = "Attacker";
     private final static String PARAM_DEFENDER = "Defender";
-
+    private Pokemon mAttacker;
+    private Pokemon mDefender;
     private Map<String, List<String>> mEffectivenessStrong = new HashMap<>();
     private Map<String, List<String>> mEffectivenessWeak = new HashMap<>();
     private Map<String, List<String>> mEffectivenessImmune = new HashMap<>();
@@ -63,12 +60,33 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
 
     private FieldFragment mFieldFragment;
 
-    public enum FieldConditions {
-        SINGLES, DOUBLES, STEALTH_ROCK, ZERO_SPIKES, ONE_SPIKES, TWO_SPIKES, THREE_SPIKES, REFLECT, LIGHT_SCREEN, FORESIGHT, HELPING_HAND, NO_WEATHER, SUN, RAIN, SAND, HAIL, GRAVITY;
-    }
-
-    private enum Weather {
-        NO_WEATHER, SUN, RAIN, SAND, HAIL;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_FIND_ATTACKER:
+                    setAttacker(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_FIND_DEFENDER:
+                    setDefender(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_1:
+                    setMove1(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_2:
+                    setMove2(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_3:
+                    setMove3(data.getExtras().getString("Search"));
+                    return;
+                case REQUEST_CODE_GET_MOVE_4:
+                    setMove4(data.getExtras().getString("Search"));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Override
@@ -198,43 +216,18 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (NavUtils.getParentActivityName(this) != null)
-                    NavUtils.navigateUpFromSameTask(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    protected void onPause() {
+        super.onPause();
+        if (mFieldFragment != null) {
+            mFieldFragment.removeListener();
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_FIND_ATTACKER:
-                    setAttacker(data.getExtras().getString("Search"));
-                    return;
-                case REQUEST_CODE_FIND_DEFENDER:
-                    setDefender(data.getExtras().getString("Search"));
-                    return;
-                case REQUEST_CODE_GET_MOVE_1:
-                    setMove1(data.getExtras().getString("Search"));
-                    return;
-                case REQUEST_CODE_GET_MOVE_2:
-                    setMove2(data.getExtras().getString("Search"));
-                    return;
-                case REQUEST_CODE_GET_MOVE_3:
-                    setMove3(data.getExtras().getString("Search"));
-                    return;
-                case REQUEST_CODE_GET_MOVE_4:
-                    setMove4(data.getExtras().getString("Search"));
-                    break;
-                default:
-                    break;
-            }
+    protected void onResume() {
+        super.onResume();
+        if (mFieldFragment != null) {
+            mFieldFragment.setFieldConditionsListener(this);
         }
     }
 
@@ -250,6 +243,26 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         return mAttacker;
     }
 
+    public void setAttacker(String attacker) {
+        setAttacker(new Pokemon(this, attacker));
+    }
+
+    public Pokemon getDefender() {
+        return mDefender;
+    }
+
+    public void setDefender(String defender) {
+        setDefender(new Pokemon(this, defender));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mFieldFragment != null) {
+            mFieldFragment.removeListener();
+        }
+    }
+
     public void setAttacker(Pokemon attacker) {
         mAttacker = attacker;
 
@@ -263,14 +276,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         setMove4(attacker.getMove4());
     }
 
-    public void setAttacker(String attacker) {
-        setAttacker(new Pokemon(this, attacker));
-    }
-
-    public Pokemon getDefender() {
-        return mDefender;
-    }
-
     public void setDefender(Pokemon defender) {
         mDefender = defender;
         TextView textView = (TextView) findViewById(R.id.dmgcalc_defender);
@@ -278,10 +283,6 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         textView.setText(defender.getName());
 
         calculateAllMoves();
-    }
-
-    public void setDefender(String defender) {
-        setDefender(new Pokemon(this, defender));
     }
 
     private void loadPokemon(Pokemon pokemon, int searchCode) {
@@ -1249,36 +1250,31 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         setConditionStatus(conditions, value);
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mFieldFragment != null) {
-            mFieldFragment.removeListener();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mFieldFragment != null) {
-            mFieldFragment.setFieldConditionsListener(this);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mFieldFragment != null) {
-            mFieldFragment.removeListener();
-        }
-    }
-
     @Override
     protected void onRestart() {
         super.onRestart();
         if (mFieldFragment != null) {
             mFieldFragment.setFieldConditionsListener(this);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (NavUtils.getParentActivityName(this) != null)
+                    NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public enum FieldConditions {
+        SINGLES, DOUBLES, STEALTH_ROCK, ZERO_SPIKES, ONE_SPIKES, TWO_SPIKES, THREE_SPIKES, REFLECT, LIGHT_SCREEN, FORESIGHT, HELPING_HAND, NO_WEATHER, SUN, RAIN, SAND, HAIL, GRAVITY;
+    }
+
+    private enum Weather {
+        NO_WEATHER, SUN, RAIN, SAND, HAIL;
     }
 }

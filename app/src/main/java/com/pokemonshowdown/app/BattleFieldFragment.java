@@ -53,11 +53,12 @@ public class BattleFieldFragment extends Fragment {
         }
     };
 
-    public static BattleFieldFragment newInstance() {
-        return new BattleFieldFragment();
-    }
     public BattleFieldFragment() {
 
+    }
+
+    public static BattleFieldFragment newInstance() {
+        return new BattleFieldFragment();
     }
 
     @Override
@@ -86,6 +87,44 @@ public class BattleFieldFragment extends Fragment {
                 });
         mViewPager.setAdapter(mBattleFieldPagerAdapter);
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        final ActionBar actionBar = getActivity().getActionBar();
+
+        setAvailableFormat();
+
+        // Specify that tabs should be displayed in the action bar.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Create a tab listener that is called when the user changes tabs.
+        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+            @Override
+            public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+            }
+
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
+
+            }
+        };
+
+        for (int i = 0; i < mRoomList.size(); i++) {
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(i == 0 ? mRoomList.get(i) : "battle" + i)
+                            .setTabListener(tabListener)
+            );
+        }
+
     }
 
     @Override
@@ -134,61 +173,6 @@ public class BattleFieldFragment extends Fragment {
                 });
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        final ActionBar actionBar = getActivity().getActionBar();
-
-        setAvailableFormat();
-
-        // Specify that tabs should be displayed in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Create a tab listener that is called when the user changes tabs.
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            @Override
-            public void onTabSelected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-            }
-
-            @Override
-            public void onTabReselected(ActionBar.Tab tab, android.app.FragmentTransaction ft) {
-
-            }
-        };
-
-        for (int i = 0; i < mRoomList.size(); i++) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(i == 0 ? mRoomList.get(i) : "battle" + i)
-                            .setTabListener(tabListener)
-            );
-        }
-
-    }
-
-    public void setAvailableFormat() {
-        if (mPosition == 0) {
-            FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
-            if (fragment != null) {
-                fragment.setAvailableFormat();
-            }
-        }
-    }
-
-    public void processServerMessage(String roomId, String message) {
-        int index = mRoomList.indexOf(roomId);
-        BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
-        if (fragment != null) {
-            fragment.processServerMessage(message);
-        }
-    }
-
     private String getCurrentRoomId() {
         ActionBar actionBar = getActivity().getActionBar();
         ActionBar.Tab tab = actionBar.getSelectedTab();
@@ -225,6 +209,23 @@ public class BattleFieldFragment extends Fragment {
             findBattleFragment.setQuota(false);
         }
         //decrementBattleFragmentTag(tabPosition, tabCount - 1);
+    }
+
+    public void setAvailableFormat() {
+        if (mPosition == 0) {
+            FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
+            if (fragment != null) {
+                fragment.setAvailableFormat();
+            }
+        }
+    }
+
+    public void processServerMessage(String roomId, String message) {
+        int index = mRoomList.indexOf(roomId);
+        BattleFragment fragment = (BattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + index);
+        if (fragment != null) {
+            fragment.processServerMessage(message);
+        }
     }
 /*
     public void decrementBattleFragmentTag(int start, int end) {

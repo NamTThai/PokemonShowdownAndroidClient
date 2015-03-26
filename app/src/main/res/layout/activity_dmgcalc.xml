@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_dmgcalc_drawer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,34 +20,34 @@
                 android:id="@+id/dmgcalc_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_masterball"
-                android:contentDescription="@string/dmgcalc_switch"
+                android:layout_centerInParent="true"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
-                android:layout_centerInParent="true"/>
+                android:contentDescription="@string/dmgcalc_switch"
+                android:src="@drawable/ic_masterball"/>
 
             <TextView
                 android:id="@+id/dmgcalc_attacker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:layout_toLeftOf="@id/dmgcalc_switch"
                 android:background="@drawable/border_frame"
-                android:textSize="16sp"
                 android:gravity="center_vertical"
-                android:layout_toLeftOf="@id/dmgcalc_switch"/>
+                android:padding="8dp"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/dmgcalc_defender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:layout_toRightOf="@id/dmgcalc_switch"
                 android:background="@drawable/border_frame"
-                android:textSize="16sp"
                 android:gravity="center_vertical"
-                android:layout_toRightOf="@id/dmgcalc_switch"/>
-            
+                android:padding="8dp"
+                android:textSize="16sp"/>
+
         </RelativeLayout>
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -71,8 +71,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
                     android:layout_margin="4dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -80,9 +80,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:padding="4dp"
                         android:layout_marginRight="8dp"
-                        android:background="@drawable/editable_frame"/>
+                        android:background="@drawable/editable_frame"
+                        android:padding="4dp"/>
 
                     <TextView
                         android:id="@+id/move1_result"
@@ -96,8 +96,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
                     android:layout_margin="4dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -105,9 +105,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:padding="4dp"
                         android:layout_marginRight="8dp"
-                        android:background="@drawable/editable_frame"/>
+                        android:background="@drawable/editable_frame"
+                        android:padding="4dp"/>
 
                     <TextView
                         android:id="@+id/move2_result"
@@ -121,8 +121,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
                     android:layout_margin="4dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -130,9 +130,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:padding="4dp"
                         android:layout_marginRight="8dp"
-                        android:background="@drawable/editable_frame"/>
+                        android:background="@drawable/editable_frame"
+                        android:padding="4dp"/>
 
                     <TextView
                         android:id="@+id/move3_result"
@@ -146,8 +146,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
                     android:layout_margin="4dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -155,9 +155,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:padding="4dp"
                         android:layout_marginRight="8dp"
-                        android:background="@drawable/editable_frame"/>
+                        android:background="@drawable/editable_frame"
+                        android:padding="4dp"/>
 
                     <TextView
                         android:id="@+id/move4_result"

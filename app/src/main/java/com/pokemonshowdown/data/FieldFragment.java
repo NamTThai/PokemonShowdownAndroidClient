@@ -21,7 +21,7 @@ public class FieldFragment extends Fragment {
     }
 
     protected void sendUpdateToListeners(DmgCalcActivity.FieldConditions fieldCondition, boolean value) {
-        if(mListener != null)  {
+        if (mListener != null) {
             mListener.onFieldConditionChanged(fieldCondition, value);
         }
     }

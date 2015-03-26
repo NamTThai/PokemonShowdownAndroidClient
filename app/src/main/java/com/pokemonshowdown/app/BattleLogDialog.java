@@ -23,6 +23,10 @@ public class BattleLogDialog extends DialogFragment {
     public static final String BTAG = BattleLogDialog.class.getName();
     private String mRoomId;
 
+    public BattleLogDialog() {
+
+    }
+
     public static BattleLogDialog newInstance(String roomId) {
         BattleLogDialog fragment = new BattleLogDialog();
         Bundle args = new Bundle();
@@ -30,11 +34,6 @@ public class BattleLogDialog extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-    public BattleLogDialog() {
-
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

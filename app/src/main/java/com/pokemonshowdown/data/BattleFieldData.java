@@ -18,6 +18,7 @@ import java.util.LinkedList;
 
 public class BattleFieldData {
     private final static String BTAG = BattleFieldData.class.getName();
+    private static BattleFieldData sBattleFieldData;
     private ArrayList<FormatType> mFormatTypes;
     private int mCurrentFormat;
     private JSONObject mAvailableBattle;
@@ -25,8 +26,6 @@ public class BattleFieldData {
     private HashMap<String, BattleLog> mRoomDataHashMap;
     private HashMap<String, RoomData> mAnimationDataHashMap;
     private HashMap<String, ViewData> mViewDataHashMap;
-
-    private static BattleFieldData sBattleFieldData;
     private Context mAppContext;
 
     private BattleFieldData(Context appContext) {
@@ -44,6 +43,10 @@ public class BattleFieldData {
             sBattleFieldData = new BattleFieldData(c.getApplicationContext());
         }
         return sBattleFieldData;
+    }
+
+    public static String getRoomFormat(String roomId) {
+        return roomId.substring(roomId.indexOf("-") + 1, roomId.lastIndexOf("-"));
     }
 
     public ArrayList<FormatType> getFormatTypes() {
@@ -66,37 +69,6 @@ public class BattleFieldData {
         }
         LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
 
-    }
-    public Format getFormat(String formatName) {
-        for (FormatType formatType : mFormatTypes) {
-            for (Format format : formatType.getFormatList()) {
-                if(format.getName().equals(formatName)) {
-                    return format;
-                }
-            }
-        }
-        return null;
-    }
-    public String getCurrentFormatName() {
-        int currentFormat = getCurrentFormat();
-        int count = 0;
-        do {
-            int mask = mFormatTypes.get(count).getSearchableFormatList().size();
-            if (mask > currentFormat) {
-                return mFormatTypes.get(count).getSearchableFormatList().get(currentFormat);
-            }
-            count++;
-            currentFormat -= mask;
-        } while (currentFormat >= 0);
-        return null;
-    }
-
-    public int getCurrentFormat() {
-        return mCurrentFormat;
-    }
-
-    public void setCurrentFormat(int currentFormat) {
-        mCurrentFormat = currentFormat;
     }
 
     public Format processSpecialRoomTrait(String query) {
@@ -123,6 +95,17 @@ public class BattleFieldData {
             }
         }
         return format;
+    }
+
+    public Format getFormat(String formatName) {
+        for (FormatType formatType : mFormatTypes) {
+            for (Format format : formatType.getFormatList()) {
+                if (format.getName().equals(formatName)) {
+                    return format;
+                }
+            }
+        }
+        return null;
     }
 
     public void parseAvailableWatchBattleList(String message) {
@@ -158,16 +141,26 @@ public class BattleFieldData {
         return toReturn;
     }
 
-    public static String getRoomFormat(String roomId) {
-        return roomId.substring(roomId.indexOf("-") + 1, roomId.lastIndexOf("-"));
+    public String getCurrentFormatName() {
+        int currentFormat = getCurrentFormat();
+        int count = 0;
+        do {
+            int mask = mFormatTypes.get(count).getSearchableFormatList().size();
+            if (mask > currentFormat) {
+                return mFormatTypes.get(count).getSearchableFormatList().get(currentFormat);
+            }
+            count++;
+            currentFormat -= mask;
+        } while (currentFormat >= 0);
+        return null;
     }
 
-    public ArrayList<String> getRoomList() {
-        return mRoomList;
+    public int getCurrentFormat() {
+        return mCurrentFormat;
     }
 
-    public HashMap<String, BattleLog> getRoomDataHashMap() {
-        return mRoomDataHashMap;
+    public void setCurrentFormat(int currentFormat) {
+        mCurrentFormat = currentFormat;
     }
 
     public void saveRoomInstance(String roomId, CharSequence chatBox, boolean messageListener) {
@@ -178,16 +171,8 @@ public class BattleFieldData {
         return mRoomDataHashMap.get(roomId);
     }
 
-    public HashMap<String, RoomData> getAnimationDataHashMap() {
-        return mAnimationDataHashMap;
-    }
-
     public RoomData getAnimationInstance(String roomId) {
         return mAnimationDataHashMap.get(roomId);
-    }
-
-    public HashMap<String, ViewData> getViewDataHashMap() {
-        return mViewDataHashMap;
     }
 
     public ViewData getViewData(String roomId) {
@@ -206,12 +191,16 @@ public class BattleFieldData {
         }
     }
 
-    public void leaveRoom(String roomId) {
-        mRoomList.remove(roomId);
-        getRoomDataHashMap().remove(roomId);
-        getAnimationDataHashMap().remove(roomId);
-        getViewDataHashMap().remove(roomId);
-        MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
+    public HashMap<String, BattleLog> getRoomDataHashMap() {
+        return mRoomDataHashMap;
+    }
+
+    public HashMap<String, RoomData> getAnimationDataHashMap() {
+        return mAnimationDataHashMap;
+    }
+
+    public HashMap<String, ViewData> getViewDataHashMap() {
+        return mViewDataHashMap;
     }
 
     public void leaveAllRooms() {
@@ -227,10 +216,22 @@ public class BattleFieldData {
         }
     }
 
+    public ArrayList<String> getRoomList() {
+        return mRoomList;
+    }
+
+    public void leaveRoom(String roomId) {
+        mRoomList.remove(roomId);
+        getRoomDataHashMap().remove(roomId);
+        getAnimationDataHashMap().remove(roomId);
+        getViewDataHashMap().remove(roomId);
+        MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
+    }
+
     public Format getFormatUsingId(String formatNameId) {
         for (FormatType formatType : mFormatTypes) {
             for (Format format : formatType.getFormatList()) {
-                if(MyApplication.toId(format.getName()).equals(formatNameId)) {
+                if (MyApplication.toId(format.getName()).equals(formatNameId)) {
                     return format;
                 }
             }
@@ -353,12 +354,6 @@ public class BattleFieldData {
         private String mRoomId;
         private LinkedList<ViewSetter> mViewSetterOnHold;
 
-        public static enum SetterType {
-            BATTLE_START,
-            TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
-            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE
-        }
-
         public ViewData(String roomId) {
             mRoomId = roomId;
             mViewSetterOnHold = new LinkedList<>();
@@ -374,6 +369,12 @@ public class BattleFieldData {
 
         public LinkedList<ViewSetter> getViewSetterOnHold() {
             return mViewSetterOnHold;
+        }
+
+        public static enum SetterType {
+            BATTLE_START,
+            TEXTVIEW_SETTEXT, IMAGEVIEW_SETIMAGERESOURCE,
+            VIEW_VISIBLE, VIEW_INVISIBLE, VIEW_GONE
         }
 
     }
@@ -439,9 +440,9 @@ public class BattleFieldData {
     }
 
     public static class Format {
+        private static final String RANDOM_FORMAT_TRAIT = ",#";
         private String mName;
         private ArrayList<String> mSpecialTrait;
-        private static final String RANDOM_FORMAT_TRAIT = ",#";
 
         public Format(String name) {
             mName = name;

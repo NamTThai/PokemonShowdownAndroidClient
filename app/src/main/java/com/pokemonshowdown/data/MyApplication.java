@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.pokemonshowdown.app.UpdateCheckTask;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
@@ -39,6 +41,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_UPDATE_SEARCH = "Search Update";
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
+    public final static String EXTRA_UPDATE_AVAILABLE = "Update Available";
 
     private static MyApplication sMyApplication;
 
@@ -54,6 +57,17 @@ public class MyApplication extends Application {
     private int mUserCount;
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
+
+    public static MyApplication getMyApplication() {
+        return sMyApplication;
+    }
+
+    public static String toId(String name) {
+        if (name == null) {
+            return null;
+        }
+        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
 
     @Override
     public void onCreate() {
@@ -71,10 +85,8 @@ public class MyApplication extends Application {
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = new HashMap<>();
-    }
 
-    public static MyApplication getMyApplication() {
-        return sMyApplication;
+        new UpdateCheckTask(this).execute();
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -350,7 +362,7 @@ public class MyApplication extends Application {
                         break;
                     default:
                         JSONArray rooms = clientInitiationJson.getJSONArray(key);
-                        //getRoomCategoryList().put(key, rooms);
+                        getRoomCategoryList().put(key, rooms);
                 }
             }
         } catch (JSONException e) {
@@ -380,12 +392,5 @@ public class MyApplication extends Application {
 
     public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
         mRoomCategoryList = roomCategoryList;
-    }
-
-    public static String toId(String name) {
-        if (name == null) {
-            return null;
-        }
-        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 }

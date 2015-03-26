@@ -63,111 +63,11 @@ public class TeamBuildingActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_building);
-
-        PokemonTeam.loadPokemonTeams(getApplicationContext());
-        mPokemonTeamList = PokemonTeam.getPokemonTeamList();
-
-        // spinner
-        mPokemonTeamSpinner = (Spinner) findViewById(R.id.pokemonteamlist_spinner);
-        mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getApplicationContext(), mPokemonTeamList);
-        mPokemonTeamSpinner.setAdapter(mPokemonTeamListArrayAdapter);
-
-        mPokemonTeamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                PokemonTeam pt = (PokemonTeam) adapterView.getItemAtPosition(i);
-
-                TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt);
-
-                FragmentManager fm = getSupportFragmentManager();
-                fm.beginTransaction()
-                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
-                        .commit();
-
-                Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-                ArrayAdapter adapter = (ArrayAdapter) tier_spinner.getAdapter();
-                if (adapter != null && adapter.getPosition(pt.getTier()) != -1) {
-                    tier_spinner.setSelection(adapter.getPosition(pt.getTier()));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        mFormatList = new ArrayList<>();
-        Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-        ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(this).getFormatTypes();
-        for (BattleFieldData.FormatType formatType : formatTypes) {
-            ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
-            for (BattleFieldData.Format format : result) {
-                if (format.isRandomFormat()) {
-                    continue;
-                }
-                mFormatList.add(format.getName());
-            }
-        }
-
-        if (mFormatList.size() > 0) {
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mFormatList);
-            tier_spinner.setAdapter(adapter);
-            tier_spinner.setVisibility(View.VISIBLE);
-        } else {
-            tier_spinner.setVisibility(View.GONE);
-        }
-
-        tier_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String tier = (String) adapterView.getItemAtPosition(i);
-                PokemonTeam pt = (PokemonTeam) mPokemonTeamSpinner.getSelectedItem();
-                if (pt != null) {
-                    pt.setTier(tier);
-                    mPokemonTeamListArrayAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        PokemonTeam.savePokemonTeams(getApplicationContext());
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.team_building, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (scanResult != null) {
-            //  here weh ave the url read from the barcode
-            String url = scanResult.getContents();
-            if(url == null) {
-                return;
-            }
-            new PastebinTask(PastebinTaskId.IMPORT).execute(url);
-        } else {
-            //passing to the fragment below (for searchable pokemons/moves ...  etc etc)
-            super.onActivityResult(requestCode, resultCode, data);
-
-        }
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -356,6 +256,108 @@ public class TeamBuildingActivity extends FragmentActivity {
         }
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            //  here weh ave the url read from the barcode
+            String url = scanResult.getContents();
+            if (url == null) {
+                return;
+            }
+            new PastebinTask(PastebinTaskId.IMPORT).execute(url);
+        } else {
+            //passing to the fragment below (for searchable pokemons/moves ...  etc etc)
+            super.onActivityResult(requestCode, resultCode, data);
+
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_team_building);
+
+        PokemonTeam.loadPokemonTeams(getApplicationContext());
+        mPokemonTeamList = PokemonTeam.getPokemonTeamList();
+
+        // spinner
+        mPokemonTeamSpinner = (Spinner) findViewById(R.id.pokemonteamlist_spinner);
+        mPokemonTeamListArrayAdapter = new PokemonTeamListArrayAdapter(getApplicationContext(), mPokemonTeamList);
+        mPokemonTeamSpinner.setAdapter(mPokemonTeamListArrayAdapter);
+
+        mPokemonTeamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                PokemonTeam pt = (PokemonTeam) adapterView.getItemAtPosition(i);
+
+                TeamBuildingFragment fragment = TeamBuildingFragment.newInstance(pt);
+
+                FragmentManager fm = getSupportFragmentManager();
+                fm.beginTransaction()
+                        .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
+                        .commit();
+
+                Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+                ArrayAdapter adapter = (ArrayAdapter) tier_spinner.getAdapter();
+                if (adapter != null && adapter.getPosition(pt.getTier()) != -1) {
+                    tier_spinner.setSelection(adapter.getPosition(pt.getTier()));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        mFormatList = new ArrayList<>();
+        Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+        ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(this).getFormatTypes();
+        for (BattleFieldData.FormatType formatType : formatTypes) {
+            ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
+            for (BattleFieldData.Format format : result) {
+                if (format.isRandomFormat()) {
+                    continue;
+                }
+                mFormatList.add(format.getName());
+            }
+        }
+
+        if (mFormatList.size() > 0) {
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mFormatList);
+            tier_spinner.setAdapter(adapter);
+            tier_spinner.setVisibility(View.VISIBLE);
+        } else {
+            tier_spinner.setVisibility(View.GONE);
+        }
+
+        tier_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String tier = (String) adapterView.getItemAtPosition(i);
+                PokemonTeam pt = (PokemonTeam) mPokemonTeamSpinner.getSelectedItem();
+                if (pt != null) {
+                    pt.setTier(tier);
+                    mPokemonTeamListArrayAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PokemonTeam.savePokemonTeams(getApplicationContext());
+    }
+
+    private enum PastebinTaskId {
+        IMPORT, EXPORT, EXPORT_FOR_QR // for QR
+    }
+
     private class PastebinTask extends AsyncTask<String, Void, String> {
         private final static String PASTEBIN_RAW = "http://pastebin.com/raw.php?i=";
         private final static String PASTEBIN_API = "http://pastebin.com/api/api_post.php";
@@ -390,6 +392,32 @@ public class TeamBuildingActivity extends FragmentActivity {
                     waitingDialog.setMessage(getResources().getString(R.string.import_inprogress));
                     break;
             }
+        }
+
+        protected String doInBackground(String... strings) {
+            String data = strings[0];
+            String out = null;
+            switch (mTask) {
+                case EXPORT_FOR_QR:
+                case EXPORT:
+                    out = exportToPastebin(data);
+                    break;
+
+                case IMPORT:
+                    importFromPastebin(data);
+                    break;
+            }
+
+            return out;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
+                public void run() {
+                    waitingDialog.show();
+                }
+            });
         }
 
         @Override
@@ -454,30 +482,32 @@ public class TeamBuildingActivity extends FragmentActivity {
             }
         }
 
-        @Override
-        protected void onPreExecute() {
-            TeamBuildingActivity.this.runOnUiThread(new java.lang.Runnable() {
-                public void run() {
-                    waitingDialog.show();
+        private String exportToPastebin(String data) {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(PASTEBIN_API);
+            String outputURL;
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair(API_DEV_KEY_KEY, API_DEV_KEY_VALUE));
+                nameValuePairs.add(new BasicNameValuePair(API_OPTION_KEY, API_OPTION_VALUE));
+                nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, data));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity entity = response.getEntity();
+                outputURL = EntityUtils.toString(entity, ENCODING);
+                if (outputURL.startsWith("http://pastebin.com/")) {
+                    success = true;
+                } else {
+                    //export error (post limit reached)
+                    success = false;
                 }
-            });
-        }
-
-        protected String doInBackground(String... strings) {
-            String data = strings[0];
-            String out = null;
-            switch (mTask) {
-                case EXPORT_FOR_QR:
-                case EXPORT:
-                    out = exportToPastebin(data);
-                    break;
-
-                case IMPORT:
-                    importFromPastebin(data);
-                    break;
+            } catch (IOException e) {
+                outputURL = null;
+                mException = e;
+                success = false;
             }
-
-            return out;
+            return outputURL;
         }
 
         private void importFromPastebin(String url) {
@@ -516,37 +546,5 @@ public class TeamBuildingActivity extends FragmentActivity {
                 return;
             }
         }
-
-        private String exportToPastebin(String data) {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(PASTEBIN_API);
-            String outputURL;
-            try {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair(API_DEV_KEY_KEY, API_DEV_KEY_VALUE));
-                nameValuePairs.add(new BasicNameValuePair(API_OPTION_KEY, API_OPTION_VALUE));
-                nameValuePairs.add(new BasicNameValuePair(PASTE_DATA, data));
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity entity = response.getEntity();
-                outputURL = EntityUtils.toString(entity, ENCODING);
-                if (outputURL.startsWith("http://pastebin.com/")) {
-                    success = true;
-                } else {
-                    //export error (post limit reached)
-                    success = false;
-                }
-            } catch (IOException e) {
-                outputURL = null;
-                mException = e;
-                success = false;
-            }
-            return outputURL;
-        }
-    }
-
-    private enum PastebinTaskId {
-        IMPORT, EXPORT, EXPORT_FOR_QR // for QR
     }
 }

@@ -37,12 +37,12 @@ public class FindBattleFragment extends Fragment {
     private ArrayAdapter<String> mNoTeamsAdapter;
     private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
 
-    public static FindBattleFragment newInstance() {
-        return new FindBattleFragment();
-    }
-
     public FindBattleFragment() {
 
+    }
+
+    public static FindBattleFragment newInstance() {
+        return new FindBattleFragment();
     }
 
     @Override
@@ -176,14 +176,6 @@ public class FindBattleFragment extends Fragment {
         super.onPause();
     }
 
-    public boolean isQuota() {
-        return mQuota;
-    }
-
-    public void setQuota(boolean quota) {
-        mQuota = quota;
-    }
-
     public void setAvailableFormat() {
         View v = getView();
         if (v == null) {
@@ -252,18 +244,12 @@ public class FindBattleFragment extends Fragment {
         listView.performItemClick(null, 0, 0);
     }
 
-    public boolean dismissWaitingDialog() {
-        if (mWaitingDialog.isShowing()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mWaitingDialog.dismiss();
-                }
-            });
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isQuota() {
+        return mQuota;
+    }
+
+    public void setQuota(boolean quota) {
+        mQuota = quota;
     }
 
     public void showSearchingButton() {
@@ -286,6 +272,20 @@ public class FindBattleFragment extends Fragment {
         getView().findViewById(R.id.cancel_search).setVisibility(View.GONE);
 
         MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
+    }
+
+    public boolean dismissWaitingDialog() {
+        if (mWaitingDialog.isShowing()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mWaitingDialog.dismiss();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

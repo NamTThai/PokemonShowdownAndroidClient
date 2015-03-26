@@ -2,8 +2,8 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     >
 
@@ -28,28 +28,28 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"/>
 
-    <View style="@style/divider" />
+    <View style="@style/divider"/>
 
     <TextView
         android:id="@+id/onboarding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/sign_in"
-        android:textColor="@drawable/dialog_button"
-        android:gravity="center"/>
+        android:textColor="@drawable/dialog_button"/>
 
-    <View style="@style/divider" />
+    <View style="@style/divider"/>
 
     <TextView
         android:id="@+id/new_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/pick_another_name"
-        android:textColor="@drawable/dialog_button"
-        android:gravity="center"/>
+        android:textColor="@drawable/dialog_button"/>
 
 </LinearLayout>
