@@ -18,7 +18,7 @@
     <string name="ok">OK</string>
 
     <string name="error_server_notavailable">Server not available</string>
-    <string name="update_available">Update available! Download?</string>
+    <string name="update_available">Update %s available!</string>
     <string name="downloadingupdate">Downloading update</string>
 
     <!-- These are for Onboarding -->

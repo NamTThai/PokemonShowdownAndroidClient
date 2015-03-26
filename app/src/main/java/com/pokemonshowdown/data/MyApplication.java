@@ -42,6 +42,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_CHANNEL = "Channel";
     public final static String EXTRA_ROOMID = "RoomId";
     public final static String EXTRA_UPDATE_AVAILABLE = "Update Available";
+    public final static String EXTRA_SERVER_VERSION = "Update Available";
 
     private static MyApplication sMyApplication;
 

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.pokemonshowdown.data.MyApplication;
 
@@ -23,11 +22,18 @@ import java.io.IOException;
 
 public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
     private final static String TAG = UpdateCheckTask.class.getName();
+
+    /**
+     * version txt contains versionCode versionName
+     */
     private final static String VERSION_URL = "http://ns3367227.ip-37-187-3.eu/showdown/version.txt";
 
     private int status;
-    private String serverVersion = null;
+    private String serverVersionName = null;
+    private int serverVersionCode = 0;
+
     private MyApplication myApplication;
+
     public UpdateCheckTask(MyApplication application) {
         myApplication = application;
     }
@@ -45,7 +51,9 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
             status = response.getStatusLine().getStatusCode();
             if (status == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
-                serverVersion = EntityUtils.toString(entity);
+                String[] serverOutput = EntityUtils.toString(entity).split(" ");
+                serverVersionCode = Integer.parseInt(serverOutput[0]);
+                serverVersionName = serverOutput[1];
             }
         } catch (IOException e) {
             return null;
@@ -58,9 +66,9 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
         if (status == HttpStatus.SC_OK) {
             try {
-                String currentVersion = myApplication.getPackageManager().getPackageInfo(myApplication.getApplicationContext().getPackageName(), 0).versionName;
-                if (isUpdateAvailable(currentVersion, serverVersion)) {
-                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE));
+                int currentVersionCode = myApplication.getPackageManager().getPackageInfo(myApplication.getApplicationContext().getPackageName(), 0).versionCode;
+                if (currentVersionCode < serverVersionCode) {
+                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE).putExtra(MyApplication.EXTRA_SERVER_VERSION, serverVersionName));
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
@@ -69,30 +77,4 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private boolean isUpdateAvailable(String currentVersion, String serverVersion) {
-        serverVersion = serverVersion.trim();
-        currentVersion = currentVersion.trim();
-
-        String[] serverSplit = serverVersion.split("\\.");
-        String[] currentSplit = currentVersion.split("\\.");
-
-        Log.i(TAG, "Current version " + currentVersion);
-        Log.i(TAG, "Server version " + serverVersion);
-
-        int maxLength = serverSplit.length > currentSplit.length ? currentSplit.length : serverSplit.length;
-
-        for (int i = 0; i < maxLength; i++) {
-            int server = Integer.parseInt(serverSplit[i]);
-            int current = Integer.parseInt(currentSplit[i]);
-
-            if (server > current) {
-                return true;
-            } else if (current > server) {
-                return false;
-            }
-            //if equals, we check the next version part
-        }
-        // we only get here if we have something like 1.0.1 and 1.0.1.1, or the two version are equals
-        return serverSplit.length > currentSplit.length;
-    }
 }

@@ -339,8 +339,10 @@ public class BattleFieldActivity extends FragmentActivity {
                 break;
 
             case MyApplication.EXTRA_UPDATE_AVAILABLE:
+                final String serverVersion = intent.getExtras().getString(MyApplication.EXTRA_SERVER_VERSION);
                 new AlertDialog.Builder(this)
-                        .setMessage(R.string.update_available)
+                        .setMessage(String.format(
+                                getResources().getString(R.string.update_available), serverVersion.trim()))
                         .setPositiveButton(R.string.dialog_ok,
                                 new DialogInterface.OnClickListener() {
                                     @Override
