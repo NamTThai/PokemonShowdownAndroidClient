@@ -23,9 +23,7 @@ import java.io.IOException;
 public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
     private final static String TAG = UpdateCheckTask.class.getName();
 
-    /**
-     * version txt contains versionCode versionName
-     */
+    // version.txt contains versionCode versionName
     private final static String VERSION_URL = "http://ns3367227.ip-37-187-3.eu/showdown/version.txt";
 
     private int status;
