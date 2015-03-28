@@ -195,5 +195,6 @@
 
     <string name="register_account">Register</string>
     <string name="login_successful">Successfully logged in as %s</string>
+    <string name="ask_registration">Don\'t forget to register your account to keep your progress!</string>
 
 </resources>
