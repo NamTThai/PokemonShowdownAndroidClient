@@ -33,6 +33,8 @@ public class Onboarding {
     private final static String VERIFY_USERNAME_REGISTERED = "Verify username registered";
     private final static String SIGNING_IN = "Signing in";
     private final static String SIGNING_OUT = "Signing out";
+    private final static String REGISTER_USER = "Register user";
+
     private final static int TIME_OUT = 20;
     private static Onboarding sOnboarding;
     private Context mAppContext;
@@ -42,6 +44,7 @@ public class Onboarding {
     private String mUsername;
     private String mNamed;
     private String mAvatar;
+    private boolean accountRegistered;
 
     private Onboarding(Context appContext) {
         mAppContext = appContext;
@@ -82,6 +85,7 @@ public class Onboarding {
             if (!resultJson.getBoolean("loggedin")) {
                 return null;
             } else {
+                setAccountRegistered(true);
                 return resultJson.getString("username") + ",0," + resultJson.getString("assertion");
             }
         } catch (Exception e) {
@@ -121,6 +125,31 @@ public class Onboarding {
         setSignedIn(false);
         setUsername(null);
         setAvatar(null);
+    }
+
+    public String registerUser(String password) {
+        SignIn signIn = new SignIn();
+        // cmon zarel, work out a better captcha system
+        signIn.execute(REGISTER_USER, mUsername, password, password, "pikachu", mKeyId, mChallenge);
+
+        //TODO
+        try {
+            String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
+            JSONObject resultJson = new JSONObject(result);
+            return resultJson.toString();
+        } catch (Exception e) {
+            Log.e(OTAG, "from signingIn", e);
+        }
+        return null;
+    }
+
+
+    public boolean isAccountRegistered() {
+        return accountRegistered;
+    }
+
+    public void setAccountRegistered(boolean accountRegistered) {
+        this.accountRegistered = accountRegistered;
     }
 
     public boolean isSignedIn() {
@@ -177,12 +206,15 @@ public class Onboarding {
         private String postUrl = "http://play.pokemonshowdown.com/~~showdown/action.php";
         private String[] verifyUsernameComponent = {"act=getassertion&userid=", "&challengekeyid=", "&challenge="};
         private String signOut = "act=logout&userid=";
+        private String[] register = {"act=register&username=", "&password=", "&cpassword=", "&captcha=", "&challengekeyid=", "&challenge="};
 
         @Override
         protected String doInBackground(String... params) {
             String task = params[0];
             params[1] = MyApplication.toId(params[1]);
             switch (task) {
+                case REGISTER_USER:
+                    return registerUser(params[1], params[2], params[3], params[4], params[5], params[6]);
                 case GET_LOGGED_IN:
                     return getLoggedIn(params[1], params[2], params[3]);
                 case VERIFY_USERNAME_REGISTERED:
@@ -195,6 +227,53 @@ public class Onboarding {
             return null;
         }
 
+        private String registerUser(String username, String password, String cPassword, String captcha, String keyId, String challenge) {
+            try {
+                String postData = register[0] + username + register[1] + password + register[2] + cPassword + register[3] + captcha
+                        + register[4] + keyId + register[5] + challenge;
+                URL url = new URL(postUrl);
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                DataOutputStream outStream = new DataOutputStream(conn.getOutputStream());
+
+                // Send request
+                outStream.writeBytes(postData);
+                outStream.flush();
+                outStream.close();
+
+                InputStream inputStream = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((inputStream)));
+
+                String output = bufferedReader.readLine();
+
+                inputStream.close();
+
+                Map<String, List<String>> headerFields = conn.getHeaderFields();
+                List<String> cookiesHeader = headerFields.get(SET_COOKIES_HEADER);
+
+                if (cookiesHeader != null) {
+                    for (String cookie : cookiesHeader) {
+                        if (cookie.startsWith(AUTH_COOKIE)) {
+                            // saving auth cookie
+                            FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
+                            fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
+                            fos.close();
+                        }
+                    }
+                }
+
+                //TODO: verify that output from server actually start with ']'
+                return output.substring(1);
+            } catch (IOException e) {
+                Log.e(OTAG, "from getLoggedIn", e);
+                return null;
+            }
+        }
+
         private String getLoggedIn(String keyId, String challenge, String cookie) {
             try {
                 String getUrl = getUrlComponent[0] + keyId + getUrlComponent[1] + challenge;
@@ -203,7 +282,7 @@ public class Onboarding {
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 if (cookie != null) {
-                    conn.setRequestProperty("cookie", cookie);
+                    conn.setRequestProperty(COOKIES_HEADER, cookie);
                 }
 
                 InputStream inputStream = conn.getInputStream();

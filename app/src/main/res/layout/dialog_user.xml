@@ -18,6 +18,18 @@
     <View style="@style/divider"/>
 
     <TextView
+        android:id="@+id/register_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/register_account"
+        android:textColor="@drawable/dialog_button"/>
+
+
+    <TextView
         android:id="@+id/sign_out"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

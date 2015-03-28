@@ -43,6 +43,7 @@ public class MyApplication extends Application {
     public final static String EXTRA_ROOMID = "RoomId";
     public final static String EXTRA_UPDATE_AVAILABLE = "Update Available";
     public final static String EXTRA_SERVER_VERSION = "Server Version";
+    public final static String EXTRA_LOGIN_SUCCESSFUL = "EXTRA_LOGIN_SUCCESSFUL";
 
     private static MyApplication sMyApplication;
 
@@ -241,6 +242,8 @@ public class MyApplication extends Application {
                         onboarding.setUsername(username);
                         onboarding.setSignedIn(true);
                         onboarding.setAvatar(avatar);
+
+                        LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_LOGIN_SUCCESSFUL).putExtra(EXTRA_LOGIN_SUCCESSFUL, username));
                     }
                     break;
                 case "nametaken":
