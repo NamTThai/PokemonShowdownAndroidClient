@@ -59,12 +59,11 @@ public class Onboarding {
         return sOnboarding;
     }
 
-    public String attemptSignIn() {
-        SignIn signIn = new SignIn();
+    public String getAuthCookie() {
         String cookie = null;
         try {
             FileInputStream fis = mAppContext.openFileInput(COOKIE_FILE);
-            StringBuffer fileContent = new StringBuffer("");
+            StringBuilder fileContent = new StringBuilder("");
             byte[] buffer = new byte[1024];
             int n;
             while ((n = fis.read(buffer)) != -1) {
@@ -77,19 +76,48 @@ public class Onboarding {
         } catch (IOException e) {
             cookie = null;
         }
+        return cookie;
+    }
 
-        signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge, cookie);
-        try {
-            String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
-            JSONObject resultJson = new JSONObject(result);
-            if (!resultJson.getBoolean("loggedin")) {
-                return null;
-            } else {
-                setAccountRegistered(true);
-                return resultJson.getString("username") + ",0," + resultJson.getString("assertion");
+    public void setAuthCookie(List<String> cookiesHeader) {
+        if (cookiesHeader != null) {
+            for (String cookie : cookiesHeader) {
+                if (cookie.startsWith(AUTH_COOKIE)) {
+                    // saving auth cookie
+                    try {
+                        FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
+                        fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
+                        fos.close();
+                        return;
+                    } catch (IOException e) {
+                        return;
+                    }
+                }
             }
-        } catch (Exception e) {
-            Log.e(OTAG, "attemptSignIn", e);
+        }
+    }
+
+    public String attemptSignIn() {
+        SignIn signIn = new SignIn();
+
+        String cookie = getAuthCookie();
+        if (cookie != null) {
+            signIn.execute(GET_LOGGED_IN, mKeyId, mChallenge, cookie);
+            try {
+                String result = signIn.get(TIME_OUT, TimeUnit.SECONDS);
+                JSONObject resultJson = new JSONObject(result);
+                if (!resultJson.getBoolean("loggedin")) {
+                    return null;
+                } else {
+                    setAccountRegistered(true);
+                    return resultJson.getString("username") + ",0," + resultJson.getString("assertion");
+                }
+            } catch (Exception e) {
+                Log.e(OTAG, "attemptSignIn", e);
+                return null;
+            }
+        } else {
+            //no point in attempting to sign without cookies / username
             return null;
         }
     }
@@ -254,17 +282,8 @@ public class Onboarding {
 
                 Map<String, List<String>> headerFields = conn.getHeaderFields();
                 List<String> cookiesHeader = headerFields.get(SET_COOKIES_HEADER);
+                setAuthCookie(cookiesHeader);
 
-                if (cookiesHeader != null) {
-                    for (String cookie : cookiesHeader) {
-                        if (cookie.startsWith(AUTH_COOKIE)) {
-                            // saving auth cookie
-                            FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
-                            fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
-                            fos.close();
-                        }
-                    }
-                }
 
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
@@ -349,17 +368,7 @@ public class Onboarding {
                 Map<String, List<String>> headerFields = conn.getHeaderFields();
                 List<String> cookiesHeader = headerFields.get(SET_COOKIES_HEADER);
 
-                if (cookiesHeader != null) {
-                    for (String cookie : cookiesHeader) {
-                        if (cookie.startsWith(AUTH_COOKIE)) {
-                            // saving auth cookie
-                            FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
-                            fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
-                            fos.close();
-                        }
-                    }
-                }
-
+                setAuthCookie(cookiesHeader);
 
                 //TODO: verify that output from server actually start with ']'
                 return output.substring(1);
