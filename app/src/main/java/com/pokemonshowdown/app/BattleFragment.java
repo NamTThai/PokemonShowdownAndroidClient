@@ -1755,7 +1755,8 @@ public class BattleFragment extends Fragment {
         final int numFoes = foeIndex;
         final int currentActive = mCurrentActivePokemon;
         switch (target) {
-            case "normal":
+            case "any": //can hit anything on the BG
+            case "normal": // i think this one hits everyone around (TODO check for triples)
                 if ((foeIndex + allyIndex) < 2) {
                     return null;
                 }
