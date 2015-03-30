@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -1715,6 +1716,7 @@ public class BattleFragment extends Fragment {
         int endAlly = (mCurrentActivePokemon + 1 >= getPlayer1Team().size()) ?
                 getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
 
+        // counting foes
         final String[] foes = new String[3];
         final int[] foeIcons = new int[3];
         int foeIndex = 0;
@@ -1727,6 +1729,7 @@ public class BattleFragment extends Fragment {
             }
         }
 
+        // counting allies and self
         final String[] allyOrSelf = new String[3];
         final int[] aosIcons = new int[3];
         int aosIndex = 0;
@@ -1739,6 +1742,7 @@ public class BattleFragment extends Fragment {
             }
         }
 
+        // counting allies but not self
         final String[] allies = new String[2];
         final int[] allyIcons = new int[2];
         int allyIndex = 0;
@@ -1755,8 +1759,36 @@ public class BattleFragment extends Fragment {
         final int numFoes = foeIndex;
         final int currentActive = mCurrentActivePokemon;
         switch (target) {
-            case "any": //can hit anything on the BG
-            case "normal": // i think this one hits everyone around (TODO check for triples)
+            case "any": //can hit anything on the BG, filling the list
+                ArrayList<String> anyTargets = new ArrayList<>();
+                int anyFoes = 0;
+                for (int i = 0; i < getPlayer2Team().size(); i++) {
+                    PokemonInfo pkm = getPlayer2Team().get(i);
+                    if (checkSwitchedOut(false, i)) {
+                        anyTargets.add(pkm.getName());
+                        anyFoes++;
+                    }
+                }
+                for (int i = 0; i < getPlayer1Team().size(); i++) {
+                    PokemonInfo pkm = getPlayer1Team().get(i);
+                    if (i != mCurrentActivePokemon && checkSwitchedOut(true, i)) {
+                        anyTargets.add(pkm.getName());
+                    }
+                }
+                final int anyFoesNum = anyFoes;
+                return new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(Arrays.copyOf(anyTargets.toArray(), anyTargets.toArray().length, String[].class), -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which < anyFoesNum) {
+                                    parseMoveCommandAndSend(active, moveId, which + 1);
+                                } else {
+                                    parseMoveCommandAndSend(active, moveId, (which - anyFoesNum + 1) * -1);
+                                }
+                                dialog.dismiss();
+                            }
+                        }).create();
+            case "normal": // can hit everyone close to mCurrentActivePokemon
                 if ((foeIndex + allyIndex) < 2) {
                     return null;
                 }
