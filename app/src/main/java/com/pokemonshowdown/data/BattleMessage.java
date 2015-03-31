@@ -248,6 +248,15 @@ public class BattleMessage {
                 break;
 
             case "teampreview":
+                int teamSelectionSize;
+                try {
+                    teamSelectionSize = Integer.parseInt(messageDetails);
+                    // sometimes messageDetails is the number of mons (for VGC), sometimes it's just teampreview
+                } catch (NumberFormatException e) {
+                    teamSelectionSize = 0;
+                }
+
+                final int teamSelectionSizeFinal = teamSelectionSize;
                 battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                     @Override
                     public void runWithNet() {
@@ -270,7 +279,7 @@ public class BattleMessage {
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
                         }
-
+                        battleFragment.setTeamSize(teamSelectionSizeFinal);
                         battleFragment.startRequest();
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));

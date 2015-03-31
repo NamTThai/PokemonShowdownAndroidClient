@@ -84,6 +84,7 @@ public class BattleFragment extends Fragment {
     private StringBuilder mChooseCommand = new StringBuilder();
     private JSONObject mRequestJson;
     private JSONObject mUndoMessage;
+    private int teamSize;
 
     public BattleFragment() {
 
@@ -1492,24 +1493,26 @@ public class BattleFragment extends Fragment {
         mCurrentActivePokemon++;
 
         chosen = mChooseCommand.toString();
-
-        if (mCurrentActivePokemon == mTotalActivePokemon) {
-            int[] lineUp = new int[mPlayer1Team.size()];
-            for (int i = 0; i < mPlayer1Team.size(); i++) {
-                lineUp[i] = i;
-            }
-
+        int totalActive = (teamSize > 0) ? teamSize : mTotalActivePokemon;
+        if (mCurrentActivePokemon == totalActive) {
+            ArrayList<Integer> lineUp = new ArrayList<>();
+            // starting with user selection
             for (int i = 0; i < chosen.length(); i++) {
-                int idx = Integer.parseInt(Character.toString(chosen.charAt(i))) - 1;
-                lineUp[i] = idx;
-                lineUp[idx] = i;
+                lineUp.add(Integer.parseInt(Character.toString(chosen.charAt(i))));
+            }
+            // filling with rest of ids
+            for (int i = 1; i <= mPlayer1Team.size(); i++) {
+                if (lineUp.indexOf(i) == -1) {
+                    lineUp.add(i);
+                }
             }
 
             mChooseCommand = new StringBuilder();
             mChooseCommand.append("|/team ");
-            for (int i = 0; i < mPlayer1Team.size(); i++) {
-                lineUp[i]++;
-                mChooseCommand.append(Integer.toString(lineUp[i]));
+
+            // line up size should be 6
+            for (int i = 0; i < lineUp.size(); i++) {
+                mChooseCommand.append(lineUp.get(i));
             }
 
             setTeamPreview(false);
@@ -2061,6 +2064,14 @@ public class BattleFragment extends Fragment {
             default:
                 return 0;
         }
+    }
+
+    public void setTeamSize(int teamSize) {
+        this.teamSize = teamSize;
+    }
+
+    public int getTeamSize() {
+        return teamSize;
     }
 
     public enum ViewBundle {
