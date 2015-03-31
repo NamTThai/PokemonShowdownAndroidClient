@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,16 +17,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class Onboarding {
     public final static String OTAG = Onboarding.class.getName();
 
+    private static final String PROPERTIES_FILE = "showdown.properties";
+
+    private static final String ANIM_HEADER = "animation";
     private static final String COOKIES_HEADER = "cookie";
+
     private static final String SET_COOKIES_HEADER = "Set-Cookie";
     private static final String AUTH_COOKIE = "sid=";
-    private static final String COOKIE_FILE = "auth.cookie";
-
 
     private final static String GET_LOGGED_IN = "Get logged in";
     private final static String VERIFY_USERNAME_REGISTERED = "Verify username registered";
@@ -45,55 +47,62 @@ public class Onboarding {
     private String mNamed;
     private String mAvatar;
     private boolean mAccountRegistered;
-    private boolean mAnimation;
+
+    //data to save : contains cookie + animation on/off
+    private Properties mAppProperties;
 
     private Onboarding(Context appContext) {
         mAppContext = appContext;
         setSignedIn(false);
         setUsername(null);
-        setAnimation(true);
+
+        mAppProperties = null;
     }
 
     public static Onboarding get(Context c) {
         if (sOnboarding == null) {
             sOnboarding = new Onboarding(c.getApplicationContext());
+            sOnboarding.loadProperties();
         }
         return sOnboarding;
     }
 
-    public String getAuthCookie() {
-        String cookie = null;
-        try {
-            FileInputStream fis = mAppContext.openFileInput(COOKIE_FILE);
-            StringBuilder fileContent = new StringBuilder("");
-            byte[] buffer = new byte[1024];
-            int n;
-            while ((n = fis.read(buffer)) != -1) {
-                fileContent.append(new String(buffer, 0, n));
-            }
-            fis.close();
-            cookie = fileContent.toString();
-        } catch (FileNotFoundException e) {
-            cookie = null;
-        } catch (IOException e) {
-            cookie = null;
+
+    private void loadProperties() {
+        if (mAppProperties == null) {
+            mAppProperties = new Properties();
         }
-        return cookie;
+        try {
+            FileInputStream fis = mAppContext.openFileInput(PROPERTIES_FILE);
+            mAppProperties.load(fis);
+        } catch (IOException e) {
+            // no prop file, no problems
+        }
+    }
+
+    private void saveProperties() {
+        try {
+            FileOutputStream fos = mAppContext.openFileOutput(PROPERTIES_FILE, Context.MODE_PRIVATE);
+            mAppProperties.store(fos, "comment");
+        } catch (IOException e) {
+            // no prop file, no problems
+        }
+    }
+
+    public String getAuthCookie() {
+        return mAppProperties.getProperty(COOKIES_HEADER);
     }
 
     public void setAuthCookie(List<String> cookiesHeader) {
+        if (mAppProperties == null) {
+            mAppProperties = new Properties();
+        }
         if (cookiesHeader != null) {
             for (String cookie : cookiesHeader) {
                 if (cookie.startsWith(AUTH_COOKIE)) {
-                    // saving auth cookie
-                    try {
-                        FileOutputStream fos = mAppContext.openFileOutput(COOKIE_FILE, Context.MODE_PRIVATE);
-                        fos.write(cookie.substring(0, cookie.indexOf(";") + 1).getBytes());
-                        fos.close();
-                        return;
-                    } catch (IOException e) {
-                        return;
-                    }
+                    mAppProperties.setProperty(COOKIES_HEADER, cookie.substring(0, cookie.indexOf(";") + 1));
+                    saveProperties();
+                    break;
                 }
             }
         }
@@ -174,11 +183,19 @@ public class Onboarding {
     }
 
     public boolean isAnimation() {
-        return mAnimation;
+        if(mAppProperties.getProperty(ANIM_HEADER) !=null) {
+            return Boolean.parseBoolean(mAppProperties.getProperty(ANIM_HEADER));
+        } else {
+            // is by default true
+            mAppProperties.setProperty(ANIM_HEADER, Boolean.toString(true));
+            saveProperties();
+            return true;
+        }
     }
 
     public void setAnimation(boolean animation) {
-        mAnimation = animation;
+        mAppProperties.setProperty(ANIM_HEADER, Boolean.toString(animation));
+        saveProperties();
     }
 
     public boolean isAccountRegistered() {
@@ -388,7 +405,8 @@ public class Onboarding {
         }
 
         private String signingOut(String username) {
-            mAppContext.deleteFile(COOKIE_FILE);
+            mAppProperties.remove(COOKIES_HEADER);
+            saveProperties();
             try {
                 String postData = signOut + username;
                 URL url = new URL(postUrl);
