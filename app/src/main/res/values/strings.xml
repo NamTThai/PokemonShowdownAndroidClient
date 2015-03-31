@@ -18,7 +18,7 @@
     <string name="ok">OK</string>
 
     <string name="error_server_notavailable">Server not available</string>
-    <string name="update_available">Update available! Download?</string>
+    <string name="update_available">Update %s available!</string>
     <string name="downloadingupdate">Downloading update</string>
 
     <!-- These are for Onboarding -->
@@ -192,4 +192,9 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="mega_evolution">Mega-evolve</string>
+
+    <string name="register_account">Register</string>
+    <string name="login_successful">Successfully logged in as %s</string>
+    <string name="ask_registration">Don\'t forget to register your account to keep your progress!</string>
+
 </resources>

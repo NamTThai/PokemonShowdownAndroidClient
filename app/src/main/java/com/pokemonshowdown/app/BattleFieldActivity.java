@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
@@ -339,8 +340,10 @@ public class BattleFieldActivity extends FragmentActivity {
                 break;
 
             case MyApplication.EXTRA_UPDATE_AVAILABLE:
+                final String serverVersion = intent.getExtras().getString(MyApplication.EXTRA_SERVER_VERSION);
                 new AlertDialog.Builder(this)
-                        .setMessage(R.string.update_available)
+                        .setMessage(String.format(
+                                getResources().getString(R.string.update_available), serverVersion.trim()))
                         .setPositiveButton(R.string.dialog_ok,
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -351,6 +354,11 @@ public class BattleFieldActivity extends FragmentActivity {
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .create()
                         .show();
+                break;
+
+            case MyApplication.EXTRA_LOGIN_SUCCESSFUL:
+                final String userName = intent.getExtras().getString(MyApplication.EXTRA_LOGIN_SUCCESSFUL);
+                Toast.makeText(this, String.format(getResources().getString(R.string.login_successful), userName), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

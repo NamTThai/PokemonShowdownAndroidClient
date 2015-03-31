@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
@@ -40,8 +41,7 @@ import java.util.Random;
 public class BattleMessage {
 
     public static void processMajorAction(final BattleFragment battleFragment, final String message)
-            throws JSONException
-    {
+            throws JSONException {
         BattleFieldData.RoomData roomData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
         final BattleFieldData.ViewData viewData = BattleFieldData.get(battleFragment.getActivity()).getViewData(battleFragment.getRoomId());
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
@@ -71,6 +71,11 @@ public class BattleMessage {
 
         Spannable logMessage = new SpannableString("");
         switch (command) {
+            case "askreg":
+                toast = battleFragment.makeToast(battleFragment.getResources().getString(R.string.ask_registration));
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableString(messageDetails);
+                break;
             case "title":
             case "J":
             case "L":
