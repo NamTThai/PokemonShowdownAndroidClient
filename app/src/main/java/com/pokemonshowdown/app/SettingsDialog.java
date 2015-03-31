@@ -1,5 +1,6 @@
 package com.pokemonshowdown.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -31,6 +32,14 @@ public class SettingsDialog extends DialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Onboarding.get(SettingsDialog.this.getActivity())
                         .setAnimation(isChecked);
+            }
+        });
+
+        view.findViewById(R.id.donate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsDialog.this.dismiss();
+                startActivity(new Intent(SettingsDialog.this.getActivity(), DonateActivity.class));
             }
         });
 

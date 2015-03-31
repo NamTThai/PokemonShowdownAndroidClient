@@ -366,7 +366,7 @@ public class MyApplication extends Application {
                         break;
                     default:
                         JSONArray rooms = clientInitiationJson.getJSONArray(key);
-                        getRoomCategoryList().put(key, rooms);
+                        // getRoomCategoryList().put(key, rooms);
                 }
             }
         } catch (JSONException e) {

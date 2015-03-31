@@ -199,5 +199,6 @@
 
     <!-- These are for Settings -->
     <string name="animation">Animation</string>
+    <string name="donate">Donate!</string>
 
 </resources>
