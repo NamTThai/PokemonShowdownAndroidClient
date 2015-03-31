@@ -33,6 +33,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.RunWithNet;
 
@@ -609,6 +610,10 @@ public class BattleFragment extends Fragment {
                             triggerTeamPreview(false);
                         } catch (NullPointerException e) {
                             clearActionFrame();
+                        }
+
+                        if (!Onboarding.get(getActivity()).isAnimation()) {
+                            animation.end();
                         }
                     }
 

@@ -197,4 +197,7 @@
     <string name="login_successful">Successfully logged in as %s</string>
     <string name="ask_registration">Don\'t forget to register your account to keep your progress!</string>
 
+    <!-- These are for Settings -->
+    <string name="animation">Animation</string>
+
 </resources>

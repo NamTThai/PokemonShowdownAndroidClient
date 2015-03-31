@@ -109,10 +109,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 fragment.show(fm, OnboardingDialog.OTAG);
                 return true;
             case R.id.menu_settings:
-                new AlertDialog.Builder(this)
-                        .setMessage(R.string.still_in_development)
-                        .create()
-                        .show();
+                new SettingsDialog().show(getSupportFragmentManager(), SettingsDialog.STAG);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

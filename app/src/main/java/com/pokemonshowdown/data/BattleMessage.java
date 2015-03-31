@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
@@ -480,7 +479,7 @@ public class BattleMessage {
 
                         if (!messageDetails.contains("[still]")) {
                             AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
-                            if (animatorSet != null) {
+                            if (animatorSet != null && Onboarding.get(battleFragment.getActivity()).isAnimation()) {
                                 animatorSet.start();
                             }
                         }

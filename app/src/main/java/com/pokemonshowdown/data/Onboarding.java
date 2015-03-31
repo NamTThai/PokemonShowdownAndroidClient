@@ -44,12 +44,14 @@ public class Onboarding {
     private String mUsername;
     private String mNamed;
     private String mAvatar;
-    private boolean accountRegistered;
+    private boolean mAccountRegistered;
+    private boolean mAnimation;
 
     private Onboarding(Context appContext) {
         mAppContext = appContext;
         setSignedIn(false);
         setUsername(null);
+        setAnimation(true);
     }
 
     public static Onboarding get(Context c) {
@@ -171,13 +173,20 @@ public class Onboarding {
         return null;
     }
 
+    public boolean isAnimation() {
+        return mAnimation;
+    }
+
+    public void setAnimation(boolean animation) {
+        mAnimation = animation;
+    }
 
     public boolean isAccountRegistered() {
-        return accountRegistered;
+        return mAccountRegistered;
     }
 
     public void setAccountRegistered(boolean accountRegistered) {
-        this.accountRegistered = accountRegistered;
+        this.mAccountRegistered = accountRegistered;
     }
 
     public boolean isSignedIn() {
