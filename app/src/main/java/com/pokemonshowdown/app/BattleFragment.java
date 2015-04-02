@@ -84,7 +84,7 @@ public class BattleFragment extends Fragment {
     private StringBuilder mChooseCommand = new StringBuilder();
     private JSONObject mRequestJson;
     private JSONObject mUndoMessage;
-    private int teamSize;
+    private int mTeamSize;
 
     public BattleFragment() {
 
@@ -179,6 +179,7 @@ public class BattleFragment extends Fragment {
                     mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
                     mChooseCommand = (StringBuilder) viewBundle.get(ViewBundle.CHOOSE_COMMAND);
                     mUndoMessage = (JSONObject) viewBundle.get(ViewBundle.UNDO_MESSAGE);
+                    mTeamSize = (int) viewBundle.get(ViewBundle.TEAM_SIZE);
                     ((TextView) getView().findViewById(R.id.username))
                             .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
                     mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
@@ -258,7 +259,6 @@ public class BattleFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(BTAG, "onPause");
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (roomData != null) {
             roomData.setMessageListener(true);
@@ -288,6 +288,7 @@ public class BattleFragment extends Fragment {
             viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
             viewBundle.put(ViewBundle.CHOOSE_COMMAND, mChooseCommand);
             viewBundle.put(ViewBundle.UNDO_MESSAGE, mUndoMessage);
+            viewBundle.put(ViewBundle.TEAM_SIZE, mTeamSize);
             viewBundle.put(ViewBundle.PLAYER1_NAME,
                     ((TextView) getView().findViewById(R.id.username)).getText());
             viewBundle.put(ViewBundle.PLAYER1_AVATAR,
@@ -1493,7 +1494,7 @@ public class BattleFragment extends Fragment {
         mCurrentActivePokemon++;
 
         chosen = mChooseCommand.toString();
-        int totalActive = (teamSize > 0) ? teamSize : mTotalActivePokemon;
+        int totalActive = (mTeamSize > 0) ? mTeamSize : mTotalActivePokemon;
         if (mCurrentActivePokemon == totalActive) {
             ArrayList<Integer> lineUp = new ArrayList<>();
             // starting with user selection
@@ -2070,7 +2071,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setTeamSize(int teamSize) {
-        this.teamSize = teamSize;
+        this.mTeamSize = teamSize;
         int[] switchIcons = {R.id.icon1, R.id.icon2, R.id.icon3, R.id.icon4, R.id.icon5, R.id.icon6};
         if (teamSize != 0) {
             for (int i = teamSize; i < getPlayer1Team().size(); i++) {
@@ -2081,13 +2082,13 @@ public class BattleFragment extends Fragment {
     }
 
     public int getTeamSize() {
-        return teamSize;
+        return mTeamSize;
     }
 
     public enum ViewBundle {
         ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
         REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, BATON_PASS, WAITING,
-        CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
+        CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE, TEAM_SIZE,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
         BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
         ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
