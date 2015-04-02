@@ -1768,6 +1768,9 @@ public class BattleFragment extends Fragment {
         final int currentActive = mCurrentActivePokemon;
         switch (target) {
             case "any": //can hit anything on the BG, filling the list
+                if ((foeIndex + allyIndex) < 2) {
+                    return null;
+                }
                 ArrayList<String> anyTargets = new ArrayList<>();
                 int anyFoes = 0;
                 for (int i = 0; i < getPlayer2Team().size(); i++) {
