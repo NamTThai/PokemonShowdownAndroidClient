@@ -55,7 +55,6 @@ public class MyApplication extends Application {
     private Onboarding mOnboarding;
     private CommunityLoungeData mCommunityLoungeData;
     private BattleFieldData mBattleFieldData;
-    private JSONObject mClientInitiationJson;
     private int mUserCount;
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
@@ -259,7 +258,7 @@ public class MyApplication extends Application {
                             final String rooms = messageDetail.substring(messageDetail.indexOf('|') + 1);
                             if (!rooms.equals("null")) {
                                 try {
-                                    setClientInitiationJson(new JSONObject(rooms));
+                                    processClientInitiationJson(new JSONObject(rooms));
                                 } catch (JSONException e) {
                                     Log.d(MTAG, e.toString());
                                 }
@@ -347,12 +346,7 @@ public class MyApplication extends Application {
         sendClientMessage("|/cmd rooms");
     }
 
-    public JSONObject getClientInitiationJson() {
-        return mClientInitiationJson;
-    }
-
-    public void setClientInitiationJson(JSONObject clientInitiationJson) {
-        mClientInitiationJson = clientInitiationJson;
+    public void processClientInitiationJson(JSONObject clientInitiationJson) {
         try {
             Iterator<String> keySet = clientInitiationJson.keys();
             while (keySet.hasNext()) {

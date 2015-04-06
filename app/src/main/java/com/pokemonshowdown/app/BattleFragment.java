@@ -1490,6 +1490,11 @@ public class BattleFragment extends Fragment {
             return;
         }
 
+        if (getView() != null) {
+            int chosenSprite = getTeamPreviewSpriteId("p1", id);
+            getView().findViewById(chosenSprite).setAlpha(0.5f);
+        }
+
         mChooseCommand.append(id + 1);
         mCurrentActivePokemon++;
 
@@ -1978,6 +1983,18 @@ public class BattleFragment extends Fragment {
                     .setOnClickListener(new PokemonSwitchListener(true, 4));
             getView().findViewById(R.id.p1f_prev)
                     .setOnClickListener(new PokemonSwitchListener(true, 5));
+            getView().findViewById(R.id.p1a_prev)
+                    .setAlpha(1f);
+            getView().findViewById(R.id.p1b_prev)
+                    .setAlpha(1f);
+            getView().findViewById(R.id.p1c_prev)
+                    .setAlpha(1f);
+            getView().findViewById(R.id.p1d_prev)
+                    .setAlpha(1f);
+            getView().findViewById(R.id.p1e_prev)
+                    .setAlpha(1f);
+            getView().findViewById(R.id.p1f_prev)
+                    .setAlpha(1f);
         } else {
             getView().findViewById(R.id.p1a_prev)
                     .setOnClickListener(new PokemonInfoListener(true, 0));
