@@ -86,7 +86,7 @@ public class MyApplication extends Application {
         mOnboarding = Onboarding.get(appContext);
         mBattleFieldData = BattleFieldData.get(appContext);
         mCommunityLoungeData = CommunityLoungeData.get(appContext);
-        mRoomCategoryList = new HashMap<>();
+        mRoomCategoryList = getRoomCategoryList();
 
         new UpdateCheckTask(this).execute();
     }
@@ -391,6 +391,9 @@ public class MyApplication extends Application {
     }
 
     public HashMap<String, JSONArray> getRoomCategoryList() {
+        if (mRoomCategoryList == null) {
+            mRoomCategoryList = new HashMap<>();
+        }
         return mRoomCategoryList;
     }
 
