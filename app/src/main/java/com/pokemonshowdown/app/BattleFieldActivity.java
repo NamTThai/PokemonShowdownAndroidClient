@@ -145,6 +145,8 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle_field);
 
+        MyApplication.getMyApplication().getWebSocketClient();
+
         mTitle = mDrawerTitle = getTitle();
         mLeftDrawerTitles = getResources().getStringArray(R.array.bar_left_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.layout_battle_field_drawer);

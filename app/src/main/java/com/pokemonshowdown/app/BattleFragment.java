@@ -1499,7 +1499,7 @@ public class BattleFragment extends Fragment {
         mCurrentActivePokemon++;
 
         chosen = mChooseCommand.toString();
-        int totalActive = (mTeamSize > 0) ? mTeamSize : mTotalActivePokemon;
+        int totalActive = (getTeamSize() > 0) ? getTeamSize() : mTotalActivePokemon;
         if (mCurrentActivePokemon == totalActive) {
             ArrayList<Integer> lineUp = new ArrayList<>();
             // starting with user selection
@@ -2088,7 +2088,7 @@ public class BattleFragment extends Fragment {
     }
 
     public void setTeamSize(int teamSize) {
-        this.mTeamSize = teamSize;
+        mTeamSize = teamSize;
         int[] switchIcons = {R.id.icon1, R.id.icon2, R.id.icon3, R.id.icon4, R.id.icon5, R.id.icon6};
         if (teamSize != 0) {
             for (int i = teamSize; i < getPlayer1Team().size(); i++) {
