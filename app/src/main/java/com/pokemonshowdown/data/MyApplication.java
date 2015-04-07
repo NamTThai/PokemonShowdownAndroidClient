@@ -43,7 +43,8 @@ public class MyApplication extends Application {
     public final static String EXTRA_ROOMID = "RoomId";
     public final static String EXTRA_UPDATE_AVAILABLE = "Update Available";
     public final static String EXTRA_SERVER_VERSION = "Server Version";
-    public final static String EXTRA_LOGIN_SUCCESSFUL = "EXTRA_LOGIN_SUCCESSFUL";
+    public final static String EXTRA_LOGIN_SUCCESSFUL = "Login Successful";
+    public final static String EXTRA_REPLAY_DATA = "Replay Data";
 
     private static MyApplication sMyApplication;
 
@@ -257,6 +258,10 @@ public class MyApplication extends Application {
                         case "roomlist":
                             String roomList = messageDetail.substring(messageDetail.indexOf('|') + 1);
                             BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomList);
+                            break;
+                        case "savereplay":
+                            final String replayData = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_REPLAY_DATA).putExtra(EXTRA_REPLAY_DATA, replayData));
                             break;
                         default:
                             Log.d(MTAG, message);

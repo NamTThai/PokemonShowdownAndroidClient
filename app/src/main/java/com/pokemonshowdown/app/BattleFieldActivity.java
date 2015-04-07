@@ -359,6 +359,11 @@ public class BattleFieldActivity extends FragmentActivity {
                 final String userName = intent.getExtras().getString(MyApplication.EXTRA_LOGIN_SUCCESSFUL);
                 Toast.makeText(this, String.format(getResources().getString(R.string.login_successful), userName), Toast.LENGTH_SHORT).show();
                 break;
+
+            case MyApplication.EXTRA_REPLAY_DATA:
+                final String replayData = intent.getExtras().getString(MyApplication.EXTRA_REPLAY_DATA);
+                new ExportReplayTask(this).execute(replayData);
+                break;
         }
     }
 

@@ -192,8 +192,12 @@ public class BattleFieldFragment extends Fragment {
                 .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
             if (fragment.getBattling() != 0) {
-                MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
-                Toast.makeText(getActivity(), R.string.forfeit, Toast.LENGTH_SHORT).show();
+                if (fragment.isBattleOver()) {
+                    MyApplication.getMyApplication().sendClientMessage(roomId + "|/leave");
+                } else {
+                    MyApplication.getMyApplication().sendClientMessage(roomId + "|/forfeit");
+                    Toast.makeText(getActivity(), R.string.forfeit, Toast.LENGTH_SHORT).show();
+                }
             }
             getChildFragmentManager().beginTransaction().remove(fragment).commit();
         }
