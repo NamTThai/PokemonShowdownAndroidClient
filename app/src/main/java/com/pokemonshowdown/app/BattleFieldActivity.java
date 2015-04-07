@@ -1,18 +1,14 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -24,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.pokemonshowdown.application.BroadcastListener;
 import com.pokemonshowdown.application.BroadcastSender;
 import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.BattleFieldData;
@@ -47,7 +44,7 @@ public class BattleFieldActivity extends FragmentActivity {
     private CharSequence mTitle;
     private String[] mLeftDrawerTitles;
 
-    private BroadcastReceiver mBroadcastReceiver;
+    private BroadcastListener mBroadcastListener;
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -210,20 +207,15 @@ public class BattleFieldActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        mBroadcastListener.unregister();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                processBroadcastMessage(intent);
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(BroadcastSender.ACTION_FROM_MY_APPLICATION));
+        mBroadcastListener = BroadcastListener.get(this);
+        mBroadcastListener.register();
     }
 
     @Override
@@ -232,7 +224,7 @@ public class BattleFieldActivity extends FragmentActivity {
         outState.putInt(DRAWER_POSITION, mPosition);
     }
 
-    private void processBroadcastMessage(Intent intent) {
+    public void processBroadcastMessage(Intent intent) {
         String details = intent.getExtras().getString(BroadcastSender.EXTRA_DETAILS);
         switch (details) {
             case BroadcastSender.EXTRA_UPDATE_SEARCH:
