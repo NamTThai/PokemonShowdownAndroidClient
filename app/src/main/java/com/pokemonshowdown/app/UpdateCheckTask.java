@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

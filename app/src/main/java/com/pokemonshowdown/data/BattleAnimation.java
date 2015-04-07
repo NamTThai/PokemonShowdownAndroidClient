@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 public class BattleAnimation {
     public final static String BTAG = BattleAnimation.class.getName();

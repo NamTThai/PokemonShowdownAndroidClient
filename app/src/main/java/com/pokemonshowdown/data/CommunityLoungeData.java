@@ -2,6 +2,8 @@ package com.pokemonshowdown.data;
 
 import android.content.Context;
 
+import com.pokemonshowdown.application.MyApplication;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 

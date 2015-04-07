@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;

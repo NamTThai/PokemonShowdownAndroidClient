@@ -7,6 +7,7 @@ import android.text.Spannable;
 import android.util.Log;
 
 import com.pokemonshowdown.app.BattleFragment;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;

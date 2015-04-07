@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 public class OnboardingDialog extends DialogFragment {

@@ -32,7 +32,7 @@ import com.pokemonshowdown.data.AnimatorListenerWithNet;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.RunWithNet;
@@ -60,6 +60,7 @@ public class BattleFragment extends Fragment {
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
     private ArrayDeque<String> mServerMessageQueue;
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
+    private Animator mCurrentBattleAnimation;
     private String mRoomId;
     /**
      * 0 if it's a simple watch battle
@@ -274,7 +275,12 @@ public class BattleFragment extends Fragment {
                 mAnimatorSetQueue.peekFirst().end();
             }
 
-            roomData.setViewBundle(saveViewBundle());
+            if (getCurrentBattleAnimation() != null) {
+                getCurrentBattleAnimation().end();
+                setCurrentBattleAnimation(null);
+            }
+
+            // roomData.setViewBundle(saveViewBundle());
         }
     }
 
@@ -391,6 +397,14 @@ public class BattleFragment extends Fragment {
                 BattleMessage.processMajorAction(BattleFragment.this, processedMessage);
             }
         }.run();
+    }
+
+    public Animator getCurrentBattleAnimation() {
+        return mCurrentBattleAnimation;
+    }
+
+    public void setCurrentBattleAnimation(Animator currentBattleAnimation) {
+        mCurrentBattleAnimation = currentBattleAnimation;
     }
 
     public String getPlayer1() {

@@ -1,4 +1,4 @@
-package com.pokemonshowdown.data;
+package com.pokemonshowdown.application;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,7 +8,8 @@ import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.pokemonshowdown.app.UpdateCheckTask;
+import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.Onboarding;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
