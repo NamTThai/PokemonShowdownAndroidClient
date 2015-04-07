@@ -22,14 +22,14 @@
             android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pokemonshowdown.app.BattleFieldActivity" />
+                android:value=".BattleFieldActivity" />
         </activity>
         <activity
             android:name=".DmgCalcActivity"
             android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pokemonshowdown.app.BattleFieldActivity" />
+                android:value=".BattleFieldActivity" />
         </activity>
         <activity
             android:name="com.pokemonshowdown.data.SearchableActivity"
@@ -50,7 +50,7 @@
             android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="BattleFieldActivity" />
+                android:value=".BattleFieldActivity" />
         </activity>
         <activity
             android:name=".WelcomeActivity"
