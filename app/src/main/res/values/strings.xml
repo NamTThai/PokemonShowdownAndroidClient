@@ -21,6 +21,13 @@
     <string name="update_available">Update %s available!</string>
     <string name="downloadingupdate">Downloading update</string>
 
+    <!-- These are available server lists -->
+    <!-- Need to update server destination in WelcomeActivity.java as well -->
+    <string-array name="server">
+        <item>Smogon University (official server)</item>
+        <item>Smogon Tournaments</item>
+    </string-array>
+
     <!-- These are for Onboarding -->
     <string name="choose_username">Choose Username</string>
     <string name="cancel">Cancel</string>
@@ -205,5 +212,6 @@
 
     <!-- These are for Settings -->
     <string name="animation">Animation</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
 
 </resources>
