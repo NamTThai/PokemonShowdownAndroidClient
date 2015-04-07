@@ -20,7 +20,7 @@ import java.net.URL;
 public class ExportReplayTask extends AsyncTask<String, String, Boolean> {
     private final static String REPLAY_EXPORT_URL = "https://play.pokemonshowdown.com/~~showdown/action.php?act=uploadreplay";
 
-    private ProgressDialog waitingDialog;
+    private ProgressDialog mWaitingDialog;
     private Context context;
     private Exception e;
     private String roomId;
@@ -32,11 +32,11 @@ public class ExportReplayTask extends AsyncTask<String, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        waitingDialog = new ProgressDialog(context);
-        waitingDialog.setIndeterminate(true);
-        waitingDialog.setCancelable(false);
-        waitingDialog.setMessage(context.getResources().getString(R.string.exporting_replay));
-        waitingDialog.show();
+        mWaitingDialog = new ProgressDialog(context);
+        mWaitingDialog.setIndeterminate(true);
+        mWaitingDialog.setCancelable(false);
+        mWaitingDialog.setMessage(context.getResources().getString(R.string.exporting_replay));
+        mWaitingDialog.show();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ExportReplayTask extends AsyncTask<String, String, Boolean> {
 
         builder.setPositiveButton(R.string.dialog_ok, null);
         final AlertDialog alert = builder.create();
-        waitingDialog.dismiss();
+        mWaitingDialog.dismiss();
         alert.show();
     }
 
@@ -81,11 +81,7 @@ public class ExportReplayTask extends AsyncTask<String, String, Boolean> {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((inputStream)));
             String output = bufferedReader.readLine();
             inputStream.close();
-            if (output.equals("success")) {
-                return true;
-            } else {
-                return false;
-            }
+            return output.equals("success");
         } catch (Exception e) {
             this.e = e;
             return false;

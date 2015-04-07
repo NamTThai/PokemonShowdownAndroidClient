@@ -2109,7 +2109,6 @@ public class BattleFragment extends Fragment {
         builder.setPositiveButton(R.string.share_replay, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // todo
                 MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/savereplay");
             }
         });
