@@ -22,8 +22,9 @@
     <string name="downloadingupdate">Downloading update</string>
 
     <!-- These are available server lists -->
+    <!-- Need to update server destination in WelcomeActivity.java as well -->
     <string-array name="server">
-        <item>Smogon University</item>
+        <item>Smogon University (official server)</item>
         <item>Smogon Tournaments</item>
     </string-array>
 

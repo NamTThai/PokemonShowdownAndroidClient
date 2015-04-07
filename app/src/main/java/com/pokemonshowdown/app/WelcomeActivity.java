@@ -13,6 +13,7 @@ import com.pokemonshowdown.data.MyApplication;
 
 public class WelcomeActivity extends Activity {
 
+    // Need to update server array in strings.xml as well
     public static final String[] SERVER_ADDRESSES = {
             "ws://sim.smogon.com:8000/showdown/websocket",
             "ws://sim.smogon.com:8001/showdown/websocket"
