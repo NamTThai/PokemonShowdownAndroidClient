@@ -59,20 +59,24 @@ public class DownloadUpdateTask extends AsyncTask<Void, Integer, Void> {
         HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
         HttpClient client = new DefaultHttpClient(httpParams);
         HttpGet httpget = new HttpGet(APK_LOCATION);
-        HttpResponse response = null;
+        HttpResponse response;
         try {
             response = client.execute(httpget);
             status = response.getStatusLine().getStatusCode();
             if (status == HttpStatus.SC_OK) {
                 HttpEntity entity = response.getEntity();
                 InputStream fileStream = entity.getContent();
-                File file = new File(battleFieldActivity.getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "temp.apk");
+                File file = new File(battleFieldActivity.getApplicationContext()
+                        .getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "temp.apk");
+                if (file.exists()) {
+                    file.delete();
+                }
                 file.createNewFile();
                 FileOutputStream fos = new FileOutputStream(file);
 
                 long totalLength = entity.getContentLength();
                 int readLength = 0;
-                int count = 0;
+                int count;
                 byte data[] = new byte[1024];
                 while ((count = fileStream.read(data)) != -1) {
                     readLength += count;

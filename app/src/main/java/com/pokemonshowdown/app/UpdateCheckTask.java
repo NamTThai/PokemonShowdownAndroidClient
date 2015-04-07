@@ -43,7 +43,7 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
         HttpConnectionParams.setConnectionTimeout(httpParams, 50000);
         HttpClient client = new DefaultHttpClient(httpParams);
         HttpGet httpget = new HttpGet(VERSION_URL);
-        HttpResponse response = null;
+        HttpResponse response;
         try {
             response = client.execute(httpget);
             status = response.getStatusLine().getStatusCode();
@@ -64,9 +64,14 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
         if (status == HttpStatus.SC_OK) {
             try {
-                int currentVersionCode = myApplication.getPackageManager().getPackageInfo(myApplication.getApplicationContext().getPackageName(), 0).versionCode;
+                int currentVersionCode = myApplication.getPackageManager()
+                        .getPackageInfo(myApplication.getApplicationContext().getPackageName(), 0)
+                        .versionCode;
                 if (currentVersionCode < serverVersionCode) {
-                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication()).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE).putExtra(MyApplication.EXTRA_SERVER_VERSION, serverVersionName));
+                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication())
+                            .sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION)
+                                    .putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE)
+                                    .putExtra(MyApplication.EXTRA_SERVER_VERSION, serverVersionName));
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();

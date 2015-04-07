@@ -72,8 +72,6 @@ public class MyApplication extends Application {
         sMyApplication = this;
 
         mRoomCategoryList = getRoomCategoryList();
-
-        new UpdateCheckTask(this).execute();
     }
 
     public WebSocketClient getWebSocketClient() {
