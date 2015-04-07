@@ -40,14 +40,14 @@ public class BroadcastSender {
     public void sendBroadcastFromMyApplication(String details) {
         Intent intent = new Intent(ACTION_FROM_MY_APPLICATION)
                 .putExtra(EXTRA_DETAILS, details);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     public void sendBroadcastFromMyApplication(String key, String value) {
         Intent intent = new Intent(ACTION_FROM_MY_APPLICATION)
                 .putExtra(EXTRA_DETAILS, key)
                 .putExtra(key, value);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     public void sendBroadcastFromMyApplication(String... s) {
@@ -59,7 +59,15 @@ public class BroadcastSender {
         for (int i = 0; i < s.length - 1; i+=2) {
             intent.putExtra(s[i], s[i+1]);
         }
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        sendBroadcast(intent);
+    }
+
+    private void sendBroadcast(Intent intent) {
+        if (BroadcastListener.get(mContext).isListening()) {
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        } else {
+            BroadcastListener.get(mContext).addPendingIntent(intent);
+        }
     }
 
 }

@@ -18,31 +18,41 @@ public class BroadcastListener extends BroadcastReceiver {
     private ArrayList<Intent> mPendingIntents;
     private boolean mListening;
 
-    private BroadcastListener(BattleFieldActivity battleFieldActivity) {
-        mContext = battleFieldActivity.getApplicationContext();
-        mBattleFieldActivity = battleFieldActivity;
+    private BroadcastListener(Context context) {
+        mContext = context;
     }
 
-    public static BroadcastListener get(BattleFieldActivity battleFieldActivity) {
+    public static BroadcastListener get(Context context) {
         if (sBroadcastListener == null) {
-            sBroadcastListener = new BroadcastListener(battleFieldActivity);
+            sBroadcastListener = new BroadcastListener(context.getApplicationContext());
         }
         return sBroadcastListener;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (mBattleFieldActivity == null) {
+            return;
+        }
+
         if (mListening) {
             mBattleFieldActivity.processBroadcastMessage(intent);
-        } else {
-            if (mPendingIntents == null) {
-                mPendingIntents = new ArrayList<>();
-            }
-            mPendingIntents.add(intent);
         }
     }
 
-    public void register() {
+    public void addPendingIntent(Intent intent) {
+        if (mPendingIntents == null) {
+            mPendingIntents = new ArrayList<>();
+        }
+        mPendingIntents.add(intent);
+    }
+
+    public boolean isListening() {
+        return mListening;
+    }
+
+    public void register(BattleFieldActivity battleFieldActivity) {
+        mBattleFieldActivity = battleFieldActivity;
         mListening = true;
         LocalBroadcastManager.getInstance(mBattleFieldActivity).registerReceiver(this,
                 new IntentFilter(BroadcastSender.ACTION_FROM_MY_APPLICATION));
@@ -56,7 +66,7 @@ public class BroadcastListener extends BroadcastReceiver {
 
     public void unregister() {
         mListening = false;
-        LocalBroadcastManager.getInstance(mBattleFieldActivity).registerReceiver(this,
-                new IntentFilter(BroadcastSender.ACTION_FROM_MY_APPLICATION));
+        LocalBroadcastManager.getInstance(mBattleFieldActivity).unregisterReceiver(this);
+        mBattleFieldActivity = null;
     }
 }

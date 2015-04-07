@@ -215,7 +215,7 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onResume();
 
         mBroadcastListener = BroadcastListener.get(this);
-        mBroadcastListener.register();
+        mBroadcastListener.register(this);
     }
 
     @Override
