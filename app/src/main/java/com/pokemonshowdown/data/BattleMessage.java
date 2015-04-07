@@ -697,6 +697,10 @@ public class BattleMessage {
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
+
+                if(battleFragment.getBattling() != 0) {
+                    battleFragment.showEndBattleDialog(toAppend);
+                }
                 break;
 
             case "tie":
@@ -704,6 +708,9 @@ public class BattleMessage {
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
+                if(battleFragment.getBattling() != 0) {
+                    battleFragment.showEndBattleDialog(toAppend);
+                }
                 break;
 
             case "cant":

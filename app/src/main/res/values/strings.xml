@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="request_sent">Waiting for server responses…</string>
-    <string name="forfeit">Left/Forfeited!</string>
+    <string name="forfeit">Forfeited!</string>
     <string name="loading">Loading…</string>
     <string name="weak_connection">Failed to connect to server… it needs a thing called \'Internet Connection\'</string>
     <string name="no_connection">Weak signal… maybe move your camp trailer to somewhere near civilization?</string>
@@ -196,6 +196,12 @@
     <string name="register_account">Register</string>
     <string name="login_successful">Successfully logged in as %s</string>
     <string name="ask_registration">Don\'t forget to register your account to keep your progress!</string>
+    <string name="share_replay">Share replay</string>
+    <string name="back_to_battle">Back to battle</string>
+    <string name="exporting_replay">Exporting replay…</string>
+    <string name="replay_exported">Replay exported : %s </string>
+    <string name="replay_exporting_failure">Error exporting replay</string>
+
 
     <!-- These are for Settings -->
     <string name="animation">Animation</string>

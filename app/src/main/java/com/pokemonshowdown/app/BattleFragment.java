@@ -67,6 +67,11 @@ public class BattleFragment extends Fragment {
      * -1 if player is p2
      */
     private int mBattling;
+
+    /**
+     * false if battle not over
+     */
+    private boolean mBattleEnd;
     private boolean mTimer;
     private String mPlayer1;
     private String mPlayer2;
@@ -115,6 +120,7 @@ public class BattleFragment extends Fragment {
         }
 
         mBattling = 0;
+        mBattleEnd = false;
 
         int id = new Random().nextInt(BACKGROUND_LIBRARY.length);
         ((ImageView) view.findViewById(R.id.battle_background)).setImageResource(BACKGROUND_LIBRARY[id]);
@@ -167,6 +173,7 @@ public class BattleFragment extends Fragment {
                     if (mBattling != 0) {
                         setUpTimer();
                     }
+                    mBattleEnd = (boolean) viewBundle.get(ViewBundle.BATTLE_OVER);
                     mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
                     mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
                     mRqid = (Integer) viewBundle.get(ViewBundle.REQUEST_ID);
@@ -276,6 +283,7 @@ public class BattleFragment extends Fragment {
         if (getView() != null) {
             viewBundle.put(ViewBundle.ROOM_ID, mRoomId);
             viewBundle.put(ViewBundle.BATTLING, mBattling);
+            viewBundle.put(ViewBundle.BATTLE_OVER, mBattleEnd);
             viewBundle.put(ViewBundle.CURRENT_WEATHER, mCurrentWeather);
             viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
             viewBundle.put(ViewBundle.REQUEST_ID, mRqid);
@@ -467,6 +475,11 @@ public class BattleFragment extends Fragment {
         }
         setUpTimer();
     }
+
+    public boolean isBattleOver() {
+        return mBattleEnd;
+    }
+
 
     private void switchUpPlayer() {
         // Switch player name
@@ -2063,8 +2076,26 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public void showEndBattleDialog(String battleStatusStatement) {
+        mBattleEnd = true;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(battleStatusStatement);
+
+        builder.setPositiveButton(R.string.share_replay, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // todo
+                MyApplication.getMyApplication().sendClientMessage(getRoomId() + "|/savereplay");
+            }
+        });
+        builder.setNegativeButton(R.string.back_to_battle, null);
+
+        builder.show();
+    }
+
     public enum ViewBundle {
-        ROOM_ID, BATTLING, CURRENT_WEATHER, WEATHER_EXIST,
+        ROOM_ID, BATTLING, BATTLE_OVER, CURRENT_WEATHER, WEATHER_EXIST,
         REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, BATON_PASS, WAITING,
         CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE,
         PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
