@@ -33,5 +33,5 @@ dependencies {
 task appStart(type: Exec, dependsOn: 'installDebug') {
     // linux
     def adb = android.plugin.extension.getAdbExe().toString()
-    commandLine adb, 'shell', 'am', 'start', '-n', 'com.pokemonshowdown.app/.BattleFieldActivity'
+    commandLine adb, 'shell', 'am', 'start', '-n', 'com.pokemonshowdown.app/.WelcomeActivity'
 }

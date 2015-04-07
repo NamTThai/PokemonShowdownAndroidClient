@@ -47,14 +47,8 @@ public class MyApplication extends Application {
 
     private static MyApplication sMyApplication;
 
-    private Pokedex mPokedex;
-    private MoveDex mMoveDex;
-    private AbilityDex mAbilityDex;
-    private ItemDex mItemDex;
+    private String mServerAddress;
     private WebSocketClient mWebSocketClient;
-    private Onboarding mOnboarding;
-    private CommunityLoungeData mCommunityLoungeData;
-    private BattleFieldData mBattleFieldData;
     private int mUserCount;
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
@@ -75,16 +69,7 @@ public class MyApplication extends Application {
         super.onCreate();
 
         sMyApplication = this;
-        Context appContext = getApplicationContext();
 
-        mWebSocketClient = getWebSocketClient();
-        mPokedex = Pokedex.get(appContext);
-        mMoveDex = MoveDex.get(appContext);
-        mAbilityDex = AbilityDex.get(appContext);
-        mItemDex = ItemDex.get(appContext);
-        mOnboarding = Onboarding.get(appContext);
-        mBattleFieldData = BattleFieldData.get(appContext);
-        mCommunityLoungeData = CommunityLoungeData.get(appContext);
         mRoomCategoryList = getRoomCategoryList();
 
         new UpdateCheckTask(this).execute();
@@ -107,8 +92,13 @@ public class MyApplication extends Application {
     }
 
     public WebSocketClient openNewConnection() {
+        if (getServerAddress() == null) {
+            Log.d(MTAG, "Setver address is null");
+            return null;
+        }
+
         try {
-            URI uri = new URI("ws://sim.smogon.com:8000/showdown/websocket");
+            URI uri = new URI(getServerAddress());
 
             WebSocketClient webSocketClient = new WebSocketClient(uri) {
                 @Override
@@ -384,14 +374,18 @@ public class MyApplication extends Application {
         mBattleCount = battleCount;
     }
 
+    public String getServerAddress() {
+        return mServerAddress;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        mServerAddress = serverAddress;
+    }
+
     public HashMap<String, JSONArray> getRoomCategoryList() {
         if (mRoomCategoryList == null) {
             mRoomCategoryList = new HashMap<>();
         }
         return mRoomCategoryList;
-    }
-
-    public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
-        mRoomCategoryList = roomCategoryList;
     }
 }
