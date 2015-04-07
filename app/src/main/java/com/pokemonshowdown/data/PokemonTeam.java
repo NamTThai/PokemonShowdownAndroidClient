@@ -3,6 +3,8 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.pokemonshowdown.application.MyApplication;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

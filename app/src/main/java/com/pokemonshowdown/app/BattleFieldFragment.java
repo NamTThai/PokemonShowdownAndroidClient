@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;

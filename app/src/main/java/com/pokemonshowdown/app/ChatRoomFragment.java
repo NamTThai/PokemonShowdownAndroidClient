@@ -21,7 +21,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;

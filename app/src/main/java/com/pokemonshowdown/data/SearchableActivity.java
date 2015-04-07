@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;

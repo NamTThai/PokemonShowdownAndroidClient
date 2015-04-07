@@ -1,11 +1,10 @@
 package com.pokemonshowdown.app;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.BroadcastSender;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -68,10 +67,9 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
                         .getPackageInfo(myApplication.getApplicationContext().getPackageName(), 0)
                         .versionCode;
                 if (currentVersionCode < serverVersionCode) {
-                    LocalBroadcastManager.getInstance(MyApplication.getMyApplication())
-                            .sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION)
-                                    .putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_UPDATE_AVAILABLE)
-                                    .putExtra(MyApplication.EXTRA_SERVER_VERSION, serverVersionName));
+                    BroadcastSender.get(MyApplication.getMyApplication()).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_UPDATE_AVAILABLE, null,
+                            BroadcastSender.EXTRA_SERVER_VERSION, serverVersionName);
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();

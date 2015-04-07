@@ -1,12 +1,12 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.util.Log;
 
 import com.pokemonshowdown.app.BattleFragment;
+import com.pokemonshowdown.application.BroadcastSender;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +67,8 @@ public class BattleFieldData {
                 message = (separator == -1) ? "" : message.substring(separator + 1);
             }
         }
-        LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_AVAILABLE_FORMATS));
+        BroadcastSender.get(mAppContext).sendBroadcastFromMyApplication(
+                BroadcastSender.EXTRA_AVAILABLE_FORMATS);
 
     }
 
@@ -112,7 +113,8 @@ public class BattleFieldData {
         try {
             JSONObject jsonObject = new JSONObject(message);
             mAvailableBattle = jsonObject.getJSONObject("rooms");
-            LocalBroadcastManager.getInstance(mAppContext).sendBroadcast(new Intent(MyApplication.ACTION_FROM_MY_APPLICATION).putExtra(MyApplication.EXTRA_DETAILS, MyApplication.EXTRA_WATCH_BATTLE_LIST_READY));
+            BroadcastSender.get(mAppContext).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_WATCH_BATTLE_LIST_READY);
         } catch (JSONException e) {
             Log.d(BTAG, e.toString());
         }

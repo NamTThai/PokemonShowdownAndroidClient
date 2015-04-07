@@ -24,9 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.pokemonshowdown.application.BroadcastSender;
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 import org.json.JSONException;
@@ -222,7 +223,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 processBroadcastMessage(intent);
             }
         };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(MyApplication.ACTION_FROM_MY_APPLICATION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(BroadcastSender.ACTION_FROM_MY_APPLICATION));
     }
 
     @Override
@@ -232,10 +233,10 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
     private void processBroadcastMessage(Intent intent) {
-        String details = intent.getExtras().getString(MyApplication.EXTRA_DETAILS);
+        String details = intent.getExtras().getString(BroadcastSender.EXTRA_DETAILS);
         switch (details) {
-            case MyApplication.EXTRA_UPDATE_SEARCH:
-                String updateSearchStatus = intent.getExtras().getString(MyApplication.EXTRA_UPDATE_SEARCH);
+            case BroadcastSender.EXTRA_UPDATE_SEARCH:
+                String updateSearchStatus = intent.getExtras().getString(BroadcastSender.EXTRA_UPDATE_SEARCH);
                 try {
                     JSONObject updateSearchJSon = new JSONObject(updateSearchStatus);
                     Object updateStatusObject = updateSearchJSon.get("searching");
@@ -264,7 +265,7 @@ public class BattleFieldActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
-            case MyApplication.EXTRA_NO_INTERNET_CONNECTION:
+            case BroadcastSender.EXTRA_NO_INTERNET_CONNECTION:
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -278,38 +279,38 @@ public class BattleFieldActivity extends FragmentActivity {
                     }
                 });
                 return;
-            case MyApplication.EXTRA_AVAILABLE_FORMATS:
+            case BroadcastSender.EXTRA_AVAILABLE_FORMATS:
                 BattleFieldFragment battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (battleFieldFragment != null) {
                     battleFieldFragment.setAvailableFormat();
                 }
                 return;
-            case MyApplication.EXTRA_WATCH_BATTLE_LIST_READY:
+            case BroadcastSender.EXTRA_WATCH_BATTLE_LIST_READY:
                 battleFieldFragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (battleFieldFragment != null) {
                     battleFieldFragment.generateAvailableWatchBattleDialog();
                 }
                 return;
-            case MyApplication.EXTRA_NEW_BATTLE_ROOM:
-                String roomId = intent.getExtras().getString(MyApplication.EXTRA_ROOMID);
+            case BroadcastSender.EXTRA_NEW_BATTLE_ROOM:
+                String roomId = intent.getExtras().getString(BroadcastSender.EXTRA_ROOMID);
                 BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (fragment != null) {
                     fragment.processNewRoomRequest(roomId);
                 }
                 return;
-            case MyApplication.EXTRA_SERVER_MESSAGE:
-                String serverMessage = intent.getExtras().getString(MyApplication.EXTRA_SERVER_MESSAGE);
-                int channel = intent.getExtras().getInt(MyApplication.EXTRA_CHANNEL);
-                roomId = intent.getExtras().getString(MyApplication.EXTRA_ROOMID);
+            case BroadcastSender.EXTRA_SERVER_MESSAGE:
+                String serverMessage = intent.getExtras().getString(BroadcastSender.EXTRA_SERVER_MESSAGE);
+                int channel = Integer.parseInt(intent.getExtras().getString(BroadcastSender.EXTRA_CHANNEL));
+                roomId = intent.getExtras().getString(BroadcastSender.EXTRA_ROOMID);
                 processMessage(channel, roomId, serverMessage);
                 return;
-            case MyApplication.EXTRA_REQUIRE_SIGN_IN:
+            case BroadcastSender.EXTRA_REQUIRE_SIGN_IN:
                 FragmentManager fm = getSupportFragmentManager();
                 OnboardingDialog dialog = new OnboardingDialog();
                 dialog.show(fm, OnboardingDialog.OTAG);
                 return;
-            case MyApplication.EXTRA_ERROR_MESSAGE:
-                final String errorMessage = intent.getExtras().getString(MyApplication.EXTRA_ERROR_MESSAGE);
+            case BroadcastSender.EXTRA_ERROR_MESSAGE:
+                final String errorMessage = intent.getExtras().getString(BroadcastSender.EXTRA_ERROR_MESSAGE);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -323,7 +324,7 @@ public class BattleFieldActivity extends FragmentActivity {
                     }
                 });
                 return;
-            case MyApplication.EXTRA_UNKNOWN_ERROR:
+            case BroadcastSender.EXTRA_UNKNOWN_ERROR:
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -340,8 +341,8 @@ public class BattleFieldActivity extends FragmentActivity {
                 });
                 break;
 
-            case MyApplication.EXTRA_UPDATE_AVAILABLE:
-                final String serverVersion = intent.getExtras().getString(MyApplication.EXTRA_SERVER_VERSION);
+            case BroadcastSender.EXTRA_UPDATE_AVAILABLE:
+                final String serverVersion = intent.getExtras().getString(BroadcastSender.EXTRA_SERVER_VERSION);
                 new AlertDialog.Builder(this)
                         .setMessage(String.format(
                                 getResources().getString(R.string.update_available), serverVersion.trim()))
@@ -357,13 +358,13 @@ public class BattleFieldActivity extends FragmentActivity {
                         .show();
                 break;
 
-            case MyApplication.EXTRA_LOGIN_SUCCESSFUL:
-                final String userName = intent.getExtras().getString(MyApplication.EXTRA_LOGIN_SUCCESSFUL);
+            case BroadcastSender.EXTRA_LOGIN_SUCCESSFUL:
+                final String userName = intent.getExtras().getString(BroadcastSender.EXTRA_LOGIN_SUCCESSFUL);
                 Toast.makeText(this, String.format(getResources().getString(R.string.login_successful), userName), Toast.LENGTH_SHORT).show();
                 break;
 
-            case MyApplication.EXTRA_REPLAY_DATA:
-                final String replayData = intent.getExtras().getString(MyApplication.EXTRA_REPLAY_DATA);
+            case BroadcastSender.EXTRA_REPLAY_DATA:
+                final String replayData = intent.getExtras().getString(BroadcastSender.EXTRA_REPLAY_DATA);
                 new ExportReplayTask(this).execute(replayData);
                 break;
         }

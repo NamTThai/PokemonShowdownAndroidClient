@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -489,6 +490,14 @@ public class BattleMessage {
                         if (!messageDetails.contains("[still]")) {
                             AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
                             if (animatorSet != null && Onboarding.get(battleFragment.getActivity()).isAnimation()) {
+                                battleFragment.setCurrentBattleAnimation(animatorSet);
+                                animatorSet.addListener(new AnimatorListenerWithNet() {
+                                    @Override
+                                    public void onAnimationEndWithNet(Animator animation) {
+                                        super.onAnimationEndWithNet(animation);
+                                        battleFragment.setCurrentBattleAnimation(null);
+                                    }
+                                });
                                 animatorSet.start();
                             }
                         }
@@ -1160,19 +1169,15 @@ public class BattleMessage {
                                 int pkmBHp = processHpFraction(split[3]);
                                 pkmB.setHp(pkmBHp);
 
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
+                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0])))
+                                        .setText(Integer.toString(pkmAHp));
+                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2])))
+                                        .setText(Integer.toString(pkmBHp));
 
-                                ProgressBar pkmAHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0]));
-                                ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
-                                pkmACountDown.setDuration(BattleFragment.ANIMATION_SHORT);
-                                pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
-                                ProgressBar pkmBHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2]));
-                                ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
-                                pkmBCountDown.setDuration(BattleFragment.ANIMATION_SHORT);
-                                pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
-                                pkmACountDown.start();
-                                pkmBCountDown.start();
+                                ((ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0])))
+                                        .setProgress(pkmAHp);
+                                ((ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2])))
+                                        .setProgress(pkmBHp);
                             }
                         });
                         battleFragment.startAnimation(toast, message);

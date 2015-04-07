@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 
 public class WelcomeActivity extends Activity {

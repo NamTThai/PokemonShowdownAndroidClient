@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pokemonshowdown.application.MyApplication;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
