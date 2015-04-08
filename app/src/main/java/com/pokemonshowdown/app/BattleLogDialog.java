@@ -69,7 +69,7 @@ public class BattleLogDialog extends DialogFragment {
         super.onResume();
 
         BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
-        if (battleLog != null) {
+        if (battleLog != null && getView() != null) {
             ((TextView) getView().findViewById(R.id.battlelog)).setText(battleLog.getChatBox());
             final ScrollView scrollView = (ScrollView) getView().findViewById(R.id.battlelog_scrollview);
             scrollView.post(new Runnable() {
@@ -81,7 +81,7 @@ public class BattleLogDialog extends DialogFragment {
 
             ArrayList<Spannable> pendingMessages = battleLog.getServerMessageOnHold();
             for (Spannable message : pendingMessages) {
-                processServerMessage(message);
+                appendToLog(message);
             }
 
             battleLog.setMessageListener(false);
@@ -92,7 +92,7 @@ public class BattleLogDialog extends DialogFragment {
     @Override
     public void onPause() {
         BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomInstance(mRoomId);
-        if (battleLog != null) {
+        if (battleLog != null && getView() != null) {
             battleLog.setMessageListener(true);
             CharSequence text = ((TextView) getView().findViewById(R.id.battlelog)).getText();
             battleLog.setChatBox(text);
@@ -100,11 +100,7 @@ public class BattleLogDialog extends DialogFragment {
         super.onPause();
     }
 
-    public void processServerMessage(Spannable message) {
-        appendServerMessage(message);
-    }
-
-    private void appendServerMessage(final Spannable message) {
+    public void appendToLog(final Spannable message) {
         if (getView() != null) {
             final TextView chatlog = (TextView) getView().findViewById(R.id.battlelog);
 

@@ -58,8 +58,6 @@ public class BattleFragment extends Fragment {
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
-    public final static String SERVER_MESSAGE_ARCHIVE = "Server Message Archive";
-    private ArrayList<String> mServerMessageArchive;
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private Animator mCurrentBattleAnimation;
     private String mRoomId;
@@ -168,10 +166,16 @@ public class BattleFragment extends Fragment {
             }
         });
 
-        if (savedInstanceState != null) {
-            mServerMessageArchive = savedInstanceState.getStringArrayList(SERVER_MESSAGE_ARCHIVE);
-            if (mServerMessageArchive != null) {
-                for (String serverMessage : mServerMessageArchive) {
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            ArrayList<String> serverMessageArchive = roomData.getServerMessageArchive();
+            roomData.setServerMessageArchive(null);
+            if (serverMessageArchive != null) {
+                BattleFieldData.BattleLog battleLog = BattleFieldData.get(getActivity()).getRoomDataHashMap().get(mRoomId);
+                if (battleLog != null) {
+                    battleLog.setChatBox(null);
+                }
+                for (String serverMessage : serverMessageArchive) {
                     processServerMessage(serverMessage);
                 }
                 endAllAnimations();
@@ -205,12 +209,6 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putStringArrayList(SERVER_MESSAGE_ARCHIVE, mServerMessageArchive);
-    }
-
     private void setUpTimer() {
         if (getView() == null) {
             return;
@@ -235,6 +233,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void processServerMessage(final String message) {
+        BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
+        if (roomData != null) {
+            roomData.addServerMessageArchive(message);
+        }
         new RunWithNet() {
             @Override
             public void runWithNet() throws Exception {
@@ -481,7 +483,7 @@ public class BattleFragment extends Fragment {
                     public void onAnimationStartWithNet(final Animator animation) {
                         if (getView() != null) {
                             getView().findViewById(R.id.back).setVisibility(View.GONE);
-                            getView().findViewById(R.id.skip).setVisibility(View.GONE);
+                            getView().findViewById(R.id.skip).setVisibility(View.VISIBLE);
                         }
 
                         try {
@@ -522,7 +524,7 @@ public class BattleFragment extends Fragment {
                     (BattleLogDialog) getActivity().getSupportFragmentManager().findFragmentByTag(mRoomId);
             if (battleLogDialog != null) {
                 if (logMessage.length() > 0) {
-                    battleLogDialog.processServerMessage(logMessage);
+                    battleLogDialog.appendToLog(logMessage);
                 }
             }
         }
@@ -1992,7 +1994,7 @@ public class BattleFragment extends Fragment {
     }
 
     private void endAllAnimations() {
-        if (getView() == null) {
+        if (getView() == null || mAnimatorSetQueue == null) {
             return;
         }
 

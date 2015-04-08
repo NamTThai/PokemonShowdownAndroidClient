@@ -289,6 +289,7 @@ public class BattleFieldData {
     public static class RoomData {
         private String mRoomId;
         private boolean mMessageListener;
+        private ArrayList<String> mServerMessageArchive;
         private ArrayList<String> mServerMessageOnHold;
 
         private String mPlayer1;
@@ -296,12 +297,28 @@ public class BattleFieldData {
 
         public RoomData(String roomId, boolean messageListener) {
             mRoomId = roomId;
+            mServerMessageArchive = new ArrayList<>();
             mServerMessageOnHold = new ArrayList<>();
             mMessageListener = messageListener;
         }
 
         public String getRoomId() {
             return mRoomId;
+        }
+
+        public void addServerMessageArchive(String message) {
+            getServerMessageArchive().add(message);
+        }
+
+        public ArrayList<String> getServerMessageArchive() {
+            if (mServerMessageArchive == null) {
+                mServerMessageArchive = new ArrayList<>();
+            }
+            return mServerMessageArchive;
+        }
+
+        public void setServerMessageArchive(ArrayList<String> serverMessageArchive) {
+            mServerMessageArchive = serverMessageArchive;
         }
 
         public ArrayList<String> getServerMessageOnHold() {
