@@ -28,11 +28,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.AnimatorListenerWithNet;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
-import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.RunWithNet;
@@ -44,21 +44,22 @@ import org.json.JSONObject;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Random;
 
 public class BattleFragment extends Fragment {
     public final static String BTAG = BattleFragment.class.getName();
     public final static String ROOM_ID = "Room Id";
-    public final static String FALSE = "false";
     public final static int ANIMATION_SHORT = 500;
     public final static int ANIMATION_LONG = 1000;
-    public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore, R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest, R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
+    public final static int[] BACKGROUND_LIBRARY = {R.drawable.bg, R.drawable.bg_beach, R.drawable.bg_beachshore,
+            R.drawable.bg_city, R.drawable.bg_desert, R.drawable.bg_earthycave, R.drawable.bg_forest,
+            R.drawable.bg_icecave, R.drawable.bg_meadow, R.drawable.bg_river, R.drawable.bg_route};
     public final static String[] STATS = {"atk", "def", "spa", "spd", "spe", "accuracy", "evasion"};
     public final static String[] STTUS = {"psn", "tox", "frz", "par", "slp", "brn"};
     public final static String[][] TEAMMATES = {{"p1a", "p1b", "p1c"}, {"p2a", "p2b", "p2c"}};
     public final static String[] MORPHS = {"Arceus", "Gourgeist", "Genesect", "Pumpkaboo", "Wormadam"};
-    private ArrayDeque<String> mServerMessageQueue;
+    public final static String SERVER_MESSAGE_ARCHIVE = "Server Message Archive";
+    private ArrayList<String> mServerMessageArchive;
     private ArrayDeque<AnimatorSet> mAnimatorSetQueue;
     private Animator mCurrentBattleAnimation;
     private String mRoomId;
@@ -163,9 +164,19 @@ public class BattleFragment extends Fragment {
         view.findViewById(R.id.skip).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                skipAllAnimations();
+                endAllAnimations();
             }
         });
+
+        if (savedInstanceState != null) {
+            mServerMessageArchive = savedInstanceState.getStringArrayList(SERVER_MESSAGE_ARCHIVE);
+            if (mServerMessageArchive != null) {
+                for (String serverMessage : mServerMessageArchive) {
+                    processServerMessage(serverMessage);
+                }
+                endAllAnimations();
+            }
+        }
     }
 
     @Override
@@ -173,93 +184,6 @@ public class BattleFragment extends Fragment {
         super.onResume();
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (roomData != null) {
-            if (getView() != null) {
-                HashMap<ViewBundle, Object> viewBundle = roomData.getViewBundle();
-
-                if (viewBundle != null) {
-                    mRoomId = (String) viewBundle.get(ViewBundle.ROOM_ID);
-                    mBattling = (int) viewBundle.get(ViewBundle.BATTLING);
-                    if (mBattling != 0) {
-                        setUpTimer();
-                    }
-                    mBattleEnd = (boolean) viewBundle.get(ViewBundle.BATTLE_OVER);
-                    mCurrentWeather = (String) viewBundle.get(ViewBundle.CURRENT_WEATHER);
-                    mWeatherExist = (Boolean) viewBundle.get(ViewBundle.WEATHER_EXIST);
-                    mRqid = (Integer) viewBundle.get(ViewBundle.REQUEST_ID);
-                    mTeamPreview = (Boolean) viewBundle.get(ViewBundle.TEAM_PREVIEW);
-                    mForceSwitch = (Boolean) viewBundle.get(ViewBundle.FORCE_SWITCH);
-                    mBatonPass = (Boolean) viewBundle.get(ViewBundle.BATON_PASS);
-                    mWaiting = (Boolean) viewBundle.get(ViewBundle.WAITING);
-                    mCurrentActivePokemon = (Integer) viewBundle.get(ViewBundle.CURRENT_ACTIVE);
-                    mTotalActivePokemon = (Integer) viewBundle.get(ViewBundle.TOTAL_ACTIVE);
-                    mChooseCommand = (StringBuilder) viewBundle.get(ViewBundle.CHOOSE_COMMAND);
-                    mUndoMessage = (JSONObject) viewBundle.get(ViewBundle.UNDO_MESSAGE);
-                    mTeamSize = (int) viewBundle.get(ViewBundle.TEAM_SIZE);
-                    ((TextView) getView().findViewById(R.id.username))
-                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER1_NAME));
-                    mPlayer1 = viewBundle.get(ViewBundle.PLAYER1_NAME).toString();
-                    ((ImageView) getView().findViewById(R.id.avatar))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER1_AVATAR));
-                    ((TextView) getView().findViewById(R.id.username_o))
-                            .setText((CharSequence) viewBundle.get(ViewBundle.PLAYER2_NAME));
-                    mPlayer2 = viewBundle.get(ViewBundle.PLAYER2_NAME).toString();
-                    ((ImageView) getView().findViewById(R.id.avatar_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.PLAYER2_AVATAR));
-                    ((ImageView) getView().findViewById(R.id.battle_background))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.BATTLE_BACKGROUND));
-                    ((ImageView) getView().findViewById(R.id.weather_background))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.WEATHER_BACKGROUND));
-                    ((ImageView) getView().findViewById(R.id.icon1))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1));
-                    ((ImageView) getView().findViewById(R.id.icon2))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2));
-                    ((ImageView) getView().findViewById(R.id.icon3))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3));
-                    ((ImageView) getView().findViewById(R.id.icon4))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4));
-                    ((ImageView) getView().findViewById(R.id.icon5))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5));
-                    ((ImageView) getView().findViewById(R.id.icon6))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6));
-                    ((ImageView) getView().findViewById(R.id.icon1_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON1_O));
-                    ((ImageView) getView().findViewById(R.id.icon2_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON2_O));
-                    ((ImageView) getView().findViewById(R.id.icon3_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON3_O));
-                    ((ImageView) getView().findViewById(R.id.icon4_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON4_O));
-                    ((ImageView) getView().findViewById(R.id.icon5_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON5_O));
-                    ((ImageView) getView().findViewById(R.id.icon6_o))
-                            .setImageDrawable((Drawable) viewBundle.get(ViewBundle.ICON6_O));
-                    FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
-                    frameLayout.removeAllViews();
-                    frameLayout.addView((View) viewBundle.get(ViewBundle.FRAME_LAYOUT));
-
-                    String turn = (String) viewBundle.get(ViewBundle.TURN);
-                    if (!turn.equals(FALSE)) {
-                        TextView turnView = (TextView) getView().findViewById(R.id.turn);
-                        turnView.setVisibility(View.VISIBLE);
-                        turnView.setText(turn);
-                    }
-
-                    ((TextView) getView().findViewById(R.id.weather))
-                            .setText((CharSequence) viewBundle.get(ViewBundle.WEATHER));
-
-                    mPlayer1Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER1_TEAM);
-                    mPlayer2Team = (ArrayList<PokemonInfo>) viewBundle.get(ViewBundle.PLAYER2_TEAM);
-
-                    ArrayDeque<String> pendingServerMessages = (ArrayDeque<String>) viewBundle.get(ViewBundle.SERVER_MESSAGE_QUEUE);
-                    if (pendingServerMessages != null) {
-                        while (!pendingServerMessages.isEmpty()) {
-                            processServerMessage(pendingServerMessages.pollFirst());
-                        }
-                    }
-
-                    roomData.setViewBundle(null);
-                }
-            }
             roomData.setMessageListener(false);
 
             ArrayList<String> pendingMessages = roomData.getServerMessageOnHold();
@@ -277,90 +201,14 @@ public class BattleFragment extends Fragment {
         BattleFieldData.RoomData roomData = BattleFieldData.get(getActivity()).getAnimationInstance(mRoomId);
         if (roomData != null) {
             roomData.setMessageListener(true);
-
-            skipAllAnimations();
-
-            // roomData.setViewBundle(saveViewBundle());
+            endAllAnimations();
         }
     }
 
-    public HashMap<ViewBundle, Object> saveViewBundle() {
-        HashMap<ViewBundle, Object> viewBundle = new HashMap<>();
-
-        if (getView() != null) {
-            viewBundle.put(ViewBundle.ROOM_ID, mRoomId);
-            viewBundle.put(ViewBundle.BATTLING, mBattling);
-            viewBundle.put(ViewBundle.BATTLE_OVER, mBattleEnd);
-            viewBundle.put(ViewBundle.CURRENT_WEATHER, mCurrentWeather);
-            viewBundle.put(ViewBundle.WEATHER_EXIST, mWeatherExist);
-            viewBundle.put(ViewBundle.REQUEST_ID, mRqid);
-            viewBundle.put(ViewBundle.TEAM_PREVIEW, mTeamPreview);
-            viewBundle.put(ViewBundle.FORCE_SWITCH, mForceSwitch);
-            viewBundle.put(ViewBundle.BATON_PASS, mBatonPass);
-            viewBundle.put(ViewBundle.WAITING, mWaiting);
-            viewBundle.put(ViewBundle.CURRENT_ACTIVE, mCurrentActivePokemon);
-            viewBundle.put(ViewBundle.TOTAL_ACTIVE, mTotalActivePokemon);
-            viewBundle.put(ViewBundle.CHOOSE_COMMAND, mChooseCommand);
-            viewBundle.put(ViewBundle.UNDO_MESSAGE, mUndoMessage);
-            viewBundle.put(ViewBundle.TEAM_SIZE, mTeamSize);
-            viewBundle.put(ViewBundle.PLAYER1_NAME,
-                    ((TextView) getView().findViewById(R.id.username)).getText());
-            viewBundle.put(ViewBundle.PLAYER1_AVATAR,
-                    ((ImageView) getView().findViewById(R.id.avatar)).getDrawable());
-            viewBundle.put(ViewBundle.PLAYER2_NAME,
-                    ((TextView) getView().findViewById(R.id.username_o)).getText());
-            viewBundle.put(ViewBundle.PLAYER2_AVATAR,
-                    ((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
-            viewBundle.put(ViewBundle.BATTLE_BACKGROUND,
-                    ((ImageView) getView().findViewById(R.id.battle_background)).getDrawable());
-            viewBundle.put(ViewBundle.WEATHER_BACKGROUND,
-                    ((ImageView) getView().findViewById(R.id.weather_background)).getDrawable());
-            viewBundle.put(ViewBundle.ICON1,
-                    ((ImageView) getView().findViewById(R.id.icon1)).getDrawable());
-            viewBundle.put(ViewBundle.ICON2,
-                    ((ImageView) getView().findViewById(R.id.icon2)).getDrawable());
-            viewBundle.put(ViewBundle.ICON3,
-                    ((ImageView) getView().findViewById(R.id.icon3)).getDrawable());
-            viewBundle.put(ViewBundle.ICON4,
-                    ((ImageView) getView().findViewById(R.id.icon4)).getDrawable());
-            viewBundle.put(ViewBundle.ICON5,
-                    ((ImageView) getView().findViewById(R.id.icon5)).getDrawable());
-            viewBundle.put(ViewBundle.ICON6,
-                    ((ImageView) getView().findViewById(R.id.icon6)).getDrawable());
-            viewBundle.put(ViewBundle.ICON1_O,
-                    ((ImageView) getView().findViewById(R.id.icon1_o)).getDrawable());
-            viewBundle.put(ViewBundle.ICON2_O,
-                    ((ImageView) getView().findViewById(R.id.icon2_o)).getDrawable());
-            viewBundle.put(ViewBundle.ICON3_O,
-                    ((ImageView) getView().findViewById(R.id.icon3_o)).getDrawable());
-            viewBundle.put(ViewBundle.ICON4_O,
-                    ((ImageView) getView().findViewById(R.id.icon4_o)).getDrawable());
-            viewBundle.put(ViewBundle.ICON5_O,
-                    ((ImageView) getView().findViewById(R.id.icon5_o)).getDrawable());
-            viewBundle.put(ViewBundle.ICON6_O,
-                    ((ImageView) getView().findViewById(R.id.icon6_o)).getDrawable());
-            FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.battle_interface);
-            viewBundle.put(ViewBundle.FRAME_LAYOUT,
-                    frameLayout.getChildAt(0));
-
-            frameLayout.removeViewAt(0);
-
-            TextView turn = (TextView) getView().findViewById(R.id.turn);
-            if (turn.getVisibility() == View.VISIBLE) {
-                viewBundle.put(ViewBundle.TURN, turn.getText());
-            } else {
-                viewBundle.put(ViewBundle.TURN, FALSE);
-            }
-
-            viewBundle.put(ViewBundle.WEATHER,
-                    ((TextView) getView().findViewById(R.id.weather)).getText());
-
-            viewBundle.put(ViewBundle.SERVER_MESSAGE_QUEUE, mServerMessageQueue);
-
-            viewBundle.put(ViewBundle.PLAYER1_TEAM, mPlayer1Team);
-            viewBundle.put(ViewBundle.PLAYER2_TEAM, mPlayer2Team);
-        }
-        return viewBundle;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(SERVER_MESSAGE_ARCHIVE, mServerMessageArchive);
     }
 
     private void setUpTimer() {
@@ -621,7 +469,6 @@ public class BattleFragment extends Fragment {
                         }
 
                         mAnimatorSetQueue.pollFirst();
-                        mServerMessageQueue.pollFirst();
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
@@ -654,12 +501,8 @@ public class BattleFragment extends Fragment {
                 if (mAnimatorSetQueue == null) {
                     mAnimatorSetQueue = new ArrayDeque<>();
                 }
-                if (mServerMessageQueue == null) {
-                    mServerMessageQueue = new ArrayDeque<>();
-                }
 
                 mAnimatorSetQueue.addLast(animator);
-                mServerMessageQueue.addLast(serverMessage);
 
                 if (mAnimatorSetQueue.size() == 1) {
                     animator.start();
@@ -2148,7 +1991,7 @@ public class BattleFragment extends Fragment {
         return mTeamSize;
     }
 
-    private void skipAllAnimations() {
+    private void endAllAnimations() {
         if (getView() == null) {
             return;
         }
@@ -2160,17 +2003,6 @@ public class BattleFragment extends Fragment {
                 setCurrentBattleAnimation(null);
             }
         }
-    }
-
-    public enum ViewBundle {
-        ROOM_ID, BATTLING, BATTLE_OVER, CURRENT_WEATHER, WEATHER_EXIST,
-        REQUEST_ID, TEAM_PREVIEW, FORCE_SWITCH, BATON_PASS, WAITING,
-        CURRENT_ACTIVE, TOTAL_ACTIVE, CHOOSE_COMMAND, UNDO_MESSAGE, TEAM_SIZE,
-        PLAYER1_NAME, PLAYER1_AVATAR, PLAYER2_NAME, PLAYER2_AVATAR, PLAYER1_TEAM, PLAYER2_TEAM,
-        BATTLE_BACKGROUND, WEATHER_BACKGROUND, TURN, WEATHER,
-        ICON1, ICON2, ICON3, ICON4, ICON5, ICON6,
-        ICON1_O, ICON2_O, ICON3_O, ICON4_O, ICON5_O, ICON6_O,
-        SERVER_MESSAGE_QUEUE, FRAME_LAYOUT
     }
 
     public class PokemonInfoListener implements View.OnClickListener {

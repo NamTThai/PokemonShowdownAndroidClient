@@ -132,7 +132,6 @@ public class BattleFieldFragment extends Fragment {
         super.onDetach();
         getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         getActivity().getActionBar().removeAllTabs();
-        BattleFieldData.get(getActivity()).leaveAllRooms();
     }
 
     @Override

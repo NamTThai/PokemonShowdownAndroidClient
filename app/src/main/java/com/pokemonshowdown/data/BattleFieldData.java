@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.Spannable;
 import android.util.Log;
 
-import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.application.BroadcastSender;
 import com.pokemonshowdown.application.MyApplication;
 
@@ -295,8 +294,6 @@ public class BattleFieldData {
         private String mPlayer1;
         private String mPlayer2;
 
-        private HashMap<BattleFragment.ViewBundle, Object> mViewBundle;
-
         public RoomData(String roomId, boolean messageListener) {
             mRoomId = roomId;
             mServerMessageOnHold = new ArrayList<>();
@@ -325,14 +322,6 @@ public class BattleFieldData {
 
         public void setMessageListener(boolean messageListener) {
             mMessageListener = messageListener;
-        }
-
-        public HashMap<BattleFragment.ViewBundle, Object> getViewBundle() {
-            return mViewBundle;
-        }
-
-        public void setViewBundle(HashMap<BattleFragment.ViewBundle, Object> viewBundle) {
-            mViewBundle = viewBundle;
         }
 
         public String getPlayer1() {
