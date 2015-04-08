@@ -1155,6 +1155,13 @@ public class BattleMessage {
                         toAppendBuilder.append("The battlers shared their pain!");
                         toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
 
+                        PokemonInfo pkmA = battleFragment.getPokemonInfo(split[0]);
+                        final int pkmAHp = processHpFraction(split[1]);
+                        pkmA.setHp(pkmAHp);
+                        PokemonInfo pkmB = battleFragment.getPokemonInfo(split[2]);
+                        final int pkmBHp = processHpFraction(split[3]);
+                        pkmB.setHp(pkmBHp);
+
                         toast.addListener(new AnimatorListenerWithNet() {
                             @Override
                             public void onAnimationStartWithNet(Animator animation) {
@@ -1162,25 +1169,29 @@ public class BattleMessage {
                                     return;
                                 }
 
-                                PokemonInfo pkmA = battleFragment.getPokemonInfo(split[0]);
-                                int pkmAHp = processHpFraction(split[1]);
-                                pkmA.setHp(pkmAHp);
-                                PokemonInfo pkmB = battleFragment.getPokemonInfo(split[2]);
-                                int pkmBHp = processHpFraction(split[3]);
-                                pkmB.setHp(pkmBHp);
-
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0])))
                                         .setText(Integer.toString(pkmAHp));
                                 ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2])))
                                         .setText(Integer.toString(pkmBHp));
-
-                                ((ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0])))
-                                        .setProgress(pkmAHp);
-                                ((ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2])))
-                                        .setProgress(pkmBHp);
                             }
                         });
-                        battleFragment.startAnimation(toast, message);
+
+                        ProgressBar pkmAHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0]));
+                        ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
+                        pkmACountDown.setDuration(BattleFragment.ANIMATION_SHORT);
+                        pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                        ProgressBar pkmBHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2]));
+                        ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
+                        pkmBCountDown.setDuration(BattleFragment.ANIMATION_SHORT);
+                        pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                        animatorSet = new AnimatorSet();
+                        animatorSet.play(toast);
+                        animatorSet.play(pkmACountDown).with(toast);
+                        animatorSet.play(pkmBCountDown).with(toast);
+
+                        battleFragment.startAnimation(animatorSet, message);
                         break;
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
