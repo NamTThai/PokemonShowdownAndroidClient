@@ -46,6 +46,7 @@
     <string name="battlelog">Battle Log</string>
     <string name="log">Log</string>
     <string name="timer">Timer</string>
+    <string name="skip_animation">Skip</string>
     <string name="pokemon_icon">Pokemon Icon</string>
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>
@@ -197,7 +198,6 @@
     </string-array>
     <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="mega_evolution">Mega-evolve</string>
 
     <string name="register_account">Register</string>

@@ -159,6 +159,13 @@ public class BattleFragment extends Fragment {
                 startRequest();
             }
         });
+
+        view.findViewById(R.id.skip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                skipAllAnimations();
+            }
+        });
     }
 
     @Override
@@ -271,14 +278,7 @@ public class BattleFragment extends Fragment {
         if (roomData != null) {
             roomData.setMessageListener(true);
 
-            if (mAnimatorSetQueue != null && mAnimatorSetQueue.peekFirst() != null) {
-                mAnimatorSetQueue.peekFirst().end();
-            }
-
-            if (getCurrentBattleAnimation() != null) {
-                getCurrentBattleAnimation().end();
-                setCurrentBattleAnimation(null);
-            }
+            skipAllAnimations();
 
             // roomData.setViewBundle(saveViewBundle());
         }
@@ -616,6 +616,10 @@ public class BattleFragment extends Fragment {
                 animator.addListener(new AnimatorListenerWithNet() {
                     @Override
                     public void onAnimationEndWithNet(Animator animation) {
+                        if (getView() != null) {
+                            getView().findViewById(R.id.skip).setVisibility(View.GONE);
+                        }
+
                         mAnimatorSetQueue.pollFirst();
                         mServerMessageQueue.pollFirst();
                         Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
@@ -627,12 +631,10 @@ public class BattleFragment extends Fragment {
                     }
 
                     @Override
-                    public void onAnimationStartWithNet(Animator animation) {
+                    public void onAnimationStartWithNet(final Animator animation) {
                         if (getView() != null) {
-                            View back = getView().findViewById(R.id.back);
-                            if (back.getVisibility() == View.VISIBLE) {
-                                back.setVisibility(View.GONE);
-                            }
+                            getView().findViewById(R.id.back).setVisibility(View.GONE);
+                            getView().findViewById(R.id.skip).setVisibility(View.GONE);
                         }
 
                         try {
@@ -2144,6 +2146,20 @@ public class BattleFragment extends Fragment {
 
     public int getTeamSize() {
         return mTeamSize;
+    }
+
+    private void skipAllAnimations() {
+        if (getView() == null) {
+            return;
+        }
+
+        while (mAnimatorSetQueue.peekFirst() != null) {
+            mAnimatorSetQueue.peekFirst().end();
+            if (getCurrentBattleAnimation() != null) {
+                getCurrentBattleAnimation().end();
+                setCurrentBattleAnimation(null);
+            }
+        }
     }
 
     public enum ViewBundle {
