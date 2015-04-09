@@ -534,6 +534,10 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
+        return mAnimatorSetQueue;
+    }
+
     /**
      * @param player can be p1 or p2
      */

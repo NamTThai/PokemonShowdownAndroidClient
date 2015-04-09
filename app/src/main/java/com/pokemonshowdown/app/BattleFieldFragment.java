@@ -170,10 +170,10 @@ public class BattleFieldFragment extends Fragment {
                                                 String roomId = getCurrentRoomId();
                                                 removeCurrentRoom(true);
                                                 processNewRoomRequest(roomId);
-                                                /*MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
+                                                MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
                                                 if (battling != 0) {
                                                     MyApplication.getMyApplication().sendClientMessage(roomId + "|/joinbattle");
-                                                }*/
+                                                }
                                             }
                                         })
                                 .create()

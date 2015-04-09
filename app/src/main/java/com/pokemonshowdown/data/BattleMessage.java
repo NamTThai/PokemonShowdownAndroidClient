@@ -71,6 +71,8 @@ public class BattleMessage {
 
         Spannable logMessage = new SpannableString("");
         switch (command) {
+            case "deinit":
+                return;
             case "askreg":
                 toast = battleFragment.makeToast(battleFragment.getResources().getString(R.string.ask_registration));
                 battleFragment.startAnimation(toast, message);
@@ -317,6 +319,9 @@ public class BattleMessage {
                 break;
 
             case "request":
+                if (messageDetails.equals("null")) {
+                    return;
+                }
                 JSONObject requestJson = new JSONObject(messageDetails);
                 if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
                     battleFragment.setBattling(requestJson);
@@ -368,6 +373,10 @@ public class BattleMessage {
 
                 battleFragment.setRequestJson(requestJson);
                 battleFragment.setUndoMessage(requestJson);
+
+                if (battleFragment.getAnimatorSetQueue().isEmpty()) {
+                    battleFragment.startRequest();
+                }
                 break;
 
             case "inactive":
