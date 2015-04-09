@@ -275,12 +275,18 @@ public class BattleMessage {
                             PokemonInfo pkm = team1.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), true, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
                         }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             PokemonInfo pkm = team2.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
                         }
                         battleFragment.setTeamSize(teamSelectionSizeFinal);
                         battleFragment.startRequest();

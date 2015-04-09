@@ -174,6 +174,9 @@ public class BattleFieldFragment extends Fragment {
                                                 if (battling != 0) {
                                                     MyApplication.getMyApplication().sendClientMessage(roomId + "|/joinbattle");
                                                 }
+                                                Toast.makeText(BattleFieldFragment.this.getActivity(),
+                                                        R.string.refreshing_patient, Toast.LENGTH_LONG)
+                                                        .show();
                                             }
                                         })
                                 .create()

@@ -367,6 +367,39 @@ public class BattleFragment extends Fragment {
         Drawable holderDrawable = ((ImageView) getView().findViewById(R.id.avatar)).getDrawable();
         ((ImageView) getView().findViewById(R.id.avatar)).setImageDrawable(((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
         ((ImageView) getView().findViewById(R.id.avatar_o)).setImageDrawable(holderDrawable);
+
+        ImageView p1a = (ImageView) getView().findViewById(getSpriteId("p1a"));
+        if (p1a != null && p1a.getVisibility() == View.VISIBLE) {
+            holderDrawable = p1a.getDrawable();
+            p1a.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2a"))).getDrawable());
+            ((ImageView) getView().findViewById(getSpriteId("p2a"))).setImageDrawable(holderDrawable);
+            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
+            ((ImageView) getView().findViewById(getIconId("p1", 0)))
+                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 0))).getDrawable());
+            ((ImageView) getView().findViewById(getIconId("p2", 0))).setImageDrawable(holderDrawable);
+        }
+
+        ImageView p1b = (ImageView) getView().findViewById(getSpriteId("p1b"));
+        if (p1b != null && p1b.getVisibility() == View.VISIBLE) {
+            holderDrawable = p1b.getDrawable();
+            p1b.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2b"))).getDrawable());
+            ((ImageView) getView().findViewById(getSpriteId("p2b"))).setImageDrawable(holderDrawable);
+            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 1))).getDrawable();
+            ((ImageView) getView().findViewById(getIconId("p1", 1)))
+                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 1))).getDrawable());
+            ((ImageView) getView().findViewById(getIconId("p2", 1))).setImageDrawable(holderDrawable);
+        }
+
+        ImageView p1c = (ImageView) getView().findViewById(getSpriteId("p1c"));
+        if (p1c != null && p1c.getVisibility() == View.VISIBLE) {
+            holderDrawable = p1c.getDrawable();
+            p1c.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2c"))).getDrawable());
+            ((ImageView) getView().findViewById(getSpriteId("p2c"))).setImageDrawable(holderDrawable);
+            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 2))).getDrawable();
+            ((ImageView) getView().findViewById(getIconId("p1", 2)))
+                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 2))).getDrawable());
+            ((ImageView) getView().findViewById(getIconId("p2", 2))).setImageDrawable(holderDrawable);
+        }
     }
 
     public JSONObject getRequestJson() {
@@ -474,8 +507,8 @@ public class BattleFragment extends Fragment {
                             getView().findViewById(R.id.skip).setVisibility(View.GONE);
                         }
 
-                        mAnimatorSetQueue.pollFirst();
-                        Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
+                        getAnimatorSetQueue().pollFirst();
+                        Animator nextOnQueue = getAnimatorSetQueue().peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
                         } else {
@@ -504,13 +537,9 @@ public class BattleFragment extends Fragment {
 
                 });
 
-                if (mAnimatorSetQueue == null) {
-                    mAnimatorSetQueue = new ArrayDeque<>();
-                }
+                getAnimatorSetQueue().addLast(animator);
 
-                mAnimatorSetQueue.addLast(animator);
-
-                if (mAnimatorSetQueue.size() == 1) {
+                if (getAnimatorSetQueue().size() == 1) {
                     animator.start();
                 }
             }
@@ -535,6 +564,9 @@ public class BattleFragment extends Fragment {
     }
 
     public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
+        if (mAnimatorSetQueue == null) {
+            mAnimatorSetQueue = new ArrayDeque<>();
+        }
         return mAnimatorSetQueue;
     }
 
