@@ -20,8 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.application.MyApplication;
+import com.pokemonshowdown.data.BattleFieldData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,6 +142,9 @@ public class BattleFieldFragment extends Fragment {
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        if (getCurrentRoomId().equals("global")) {
+                            return true;
+                        }
                         final String roomId = "http://play.pokemonshowdown.com/" + getCurrentRoomId();
                         new AlertDialog.Builder(getActivity())
                                 .setTitle(R.string.bar_room_id)
@@ -156,6 +159,23 @@ public class BattleFieldFragment extends Fragment {
                                                 clipboardManager.setPrimaryClip(clip);
                                             }
                                         })
+                                .setNegativeButton(R.string.refresh,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                BattleFragment fragment = (BattleFragment) getChildFragmentManager()
+                                                        .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":"
+                                                                + getActivity().getActionBar().getSelectedTab().getPosition());
+                                                int battling = fragment.getBattling();
+                                                String roomId = getCurrentRoomId();
+                                                removeCurrentRoom(true);
+                                                processNewRoomRequest(roomId);
+                                                /*MyApplication.getMyApplication().sendClientMessage("|/join " + roomId);
+                                                if (battling != 0) {
+                                                    MyApplication.getMyApplication().sendClientMessage(roomId + "|/joinbattle");
+                                                }*/
+                                            }
+                                        })
                                 .create()
                                 .show();
                         return true;
@@ -166,7 +186,7 @@ public class BattleFieldFragment extends Fragment {
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        removeCurrentRoom();
+                        removeCurrentRoom(false);
                         return true;
                     }
                 });
@@ -179,7 +199,7 @@ public class BattleFieldFragment extends Fragment {
         return mRoomList.get(tabPosition);
     }
 
-    private void removeCurrentRoom() {
+    private void removeCurrentRoom(boolean refresh) {
         ActionBar actionBar = getActivity().getActionBar();
         ActionBar.Tab tab = actionBar.getSelectedTab();
         int tabPosition = tab.getPosition();
@@ -190,7 +210,7 @@ public class BattleFieldFragment extends Fragment {
         BattleFragment fragment = (BattleFragment) getChildFragmentManager()
                 .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + tab.getPosition());
         if (fragment != null) {
-            if (fragment.getBattling() != 0) {
+            if (fragment.getBattling() != 0 && !refresh) {
                 if (fragment.isBattleOver()) {
                     MyApplication.getMyApplication().sendClientMessage(roomId + "|/leave");
                 } else {
@@ -307,7 +327,8 @@ public class BattleFieldFragment extends Fragment {
 
     public void generateAvailableWatchBattleDialog() {
         // this is so hacky
-        FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
+        FindBattleFragment fragment = (FindBattleFragment) getChildFragmentManager()
+                .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":" + 0);
         if (fragment == null) {
             return;
         }

@@ -460,6 +460,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void startAnimation(final AnimatorSet animator, final String serverMessage) {
+        if (animator == null) {
+            return;
+        }
+
         getActivity().runOnUiThread(new RunWithNet() {
             @Override
             public void runWithNet() {
