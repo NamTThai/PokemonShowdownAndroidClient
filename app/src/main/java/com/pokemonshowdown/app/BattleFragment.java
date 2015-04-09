@@ -353,6 +353,8 @@ public class BattleFragment extends Fragment {
             return;
         }
 
+        endAllAnimations();
+
         String holderString = mPlayer1;
         mPlayer1 = mPlayer2;
         mPlayer2 = holderString;
@@ -373,10 +375,6 @@ public class BattleFragment extends Fragment {
             holderDrawable = p1a.getDrawable();
             p1a.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2a"))).getDrawable());
             ((ImageView) getView().findViewById(getSpriteId("p2a"))).setImageDrawable(holderDrawable);
-            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
-            ((ImageView) getView().findViewById(getIconId("p1", 0)))
-                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 0))).getDrawable());
-            ((ImageView) getView().findViewById(getIconId("p2", 0))).setImageDrawable(holderDrawable);
         }
 
         ImageView p1b = (ImageView) getView().findViewById(getSpriteId("p1b"));
@@ -384,10 +382,6 @@ public class BattleFragment extends Fragment {
             holderDrawable = p1b.getDrawable();
             p1b.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2b"))).getDrawable());
             ((ImageView) getView().findViewById(getSpriteId("p2b"))).setImageDrawable(holderDrawable);
-            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 1))).getDrawable();
-            ((ImageView) getView().findViewById(getIconId("p1", 1)))
-                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 1))).getDrawable());
-            ((ImageView) getView().findViewById(getIconId("p2", 1))).setImageDrawable(holderDrawable);
         }
 
         ImageView p1c = (ImageView) getView().findViewById(getSpriteId("p1c"));
@@ -395,11 +389,32 @@ public class BattleFragment extends Fragment {
             holderDrawable = p1c.getDrawable();
             p1c.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2c"))).getDrawable());
             ((ImageView) getView().findViewById(getSpriteId("p2c"))).setImageDrawable(holderDrawable);
-            holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 2))).getDrawable();
-            ((ImageView) getView().findViewById(getIconId("p1", 2)))
-                    .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 2))).getDrawable());
-            ((ImageView) getView().findViewById(getIconId("p2", 2))).setImageDrawable(holderDrawable);
         }
+        
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 0)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 0))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 0))).setImageDrawable(holderDrawable);
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 1))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 1)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 1))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 1))).setImageDrawable(holderDrawable);
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 2))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 2)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 2))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 2))).setImageDrawable(holderDrawable);
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 3))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 3)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 3))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 3))).setImageDrawable(holderDrawable);
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 4))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 4)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 4))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 4))).setImageDrawable(holderDrawable);
+        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 5))).getDrawable();
+        ((ImageView) getView().findViewById(getIconId("p1", 5)))
+                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 5))).getDrawable());
+        ((ImageView) getView().findViewById(getIconId("p2", 5))).setImageDrawable(holderDrawable);
     }
 
     public JSONObject getRequestJson() {

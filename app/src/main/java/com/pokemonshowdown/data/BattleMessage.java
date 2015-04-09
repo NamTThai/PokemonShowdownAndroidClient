@@ -279,6 +279,10 @@ public class BattleMessage {
                                     .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                             MyApplication.toId(pkm.getName())));
                         }
+                        for (int i = team1.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
+                        }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             PokemonInfo pkm = team2.get(i);
@@ -287,6 +291,10 @@ public class BattleMessage {
                             ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
                                     .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                             MyApplication.toId(pkm.getName())));
+                        }
+                        for (int i = team2.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
                         }
                         battleFragment.setTeamSize(teamSelectionSizeFinal);
                         battleFragment.startRequest();
