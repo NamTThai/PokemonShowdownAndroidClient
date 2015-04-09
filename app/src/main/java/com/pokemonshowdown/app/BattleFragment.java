@@ -1376,22 +1376,30 @@ public class BattleFragment extends Fragment {
         int totalActive = (getTeamSize() > 0) ? getTeamSize() : mTotalActivePokemon;
         if (mCurrentActivePokemon == totalActive) {
             ArrayList<Integer> lineUp = new ArrayList<>();
+            for (int i = 0; i < mPlayer1Team.size(); i++) {
+                lineUp.add(i + 1); // 1 2 3 4 5 6
+            }
+
             // starting with user selection
             for (int i = 0; i < chosen.length(); i++) {
-                lineUp.add(Integer.parseInt(Character.toString(chosen.charAt(i))));
-            }
-            // filling with rest of ids
-            for (int i = 1; i <= mPlayer1Team.size(); i++) {
-                if (lineUp.indexOf(i) == -1) {
-                    lineUp.add(i);
-                }
+                // between 1 and 6, we find the place in the arayè and switch them
+                int newValue = Integer.parseInt(Character.toString(chosen.charAt(i)));
+                int idxNewValue = lineUp.indexOf(newValue);
+
+                int oldValue = lineUp.get(i);
+                int idxOldValue = i;
+
+                lineUp.set(idxOldValue, newValue);
+                lineUp.set(idxNewValue, oldValue);
+
+
+
             }
 
             mChooseCommand = new StringBuilder();
             mChooseCommand.append("|/team ");
 
-            // line up size should be 6
-            for (int i = 0; i < lineUp.size(); i++) {
+            for (int i = 0; i < mPlayer1Team.size(); i++) {
                 mChooseCommand.append(lineUp.get(i));
             }
 
