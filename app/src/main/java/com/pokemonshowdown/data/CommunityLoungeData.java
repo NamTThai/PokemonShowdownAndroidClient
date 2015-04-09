@@ -50,10 +50,10 @@ public class CommunityLoungeData {
         for (String roomId : mRoomList) {
             leaveRoom(roomId);
         }
+        mRoomList.clear();
     }
 
     public void leaveRoom(String roomId) {
-        mRoomList.remove(roomId);
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
     }
 
