@@ -52,7 +52,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2f_prev"
+        android:id="@+id/p2a_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -61,7 +61,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2e_prev"
+        android:id="@+id/p2b_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -70,7 +70,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2d_prev"
+        android:id="@+id/p2c_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -79,7 +79,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2c_prev"
+        android:id="@+id/p2d_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -88,7 +88,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2b_prev"
+        android:id="@+id/p2e_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -97,7 +97,7 @@
         android:contentDescription="@string/pokemon_icon"/>
 
     <ImageView
-        android:id="@+id/p2a_prev"
+        android:id="@+id/p2f_prev"
         style="@style/fragment_battle_teampreview_pokemon"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
