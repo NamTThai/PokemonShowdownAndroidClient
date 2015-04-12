@@ -1025,6 +1025,14 @@ public class BattleFragment extends Fragment {
             getView().findViewById(getSpriteId(tag)).setAlpha(1f);
             if (!isBatonPass()) {
                 ((LinearLayout) getView().findViewById(getTempStatusId(tag))).removeAllViews();
+            } else {
+                // baton pass removes staties (par,slp,frz,brn,tox,psn)
+                removeAddonStatus(tag, "slp");
+                removeAddonStatus(tag, "psn");
+                removeAddonStatus(tag, "tox");
+                removeAddonStatus(tag, "brn");
+                removeAddonStatus(tag, "par");
+                removeAddonStatus(tag, "frz");
             }
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
             if (sub != null) {
