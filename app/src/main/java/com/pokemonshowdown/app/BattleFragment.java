@@ -1383,6 +1383,9 @@ public class BattleFragment extends Fragment {
             ArrayList<Integer> lineUp = new ArrayList<>();
             for (int i = 0; i < mPlayer1Team.size(); i++) {
                 lineUp.add(i + 1); // 1 2 3 4 5 6
+                // here we reset the active flags for all the pokemons
+                // this is necessary for vgc as the pokemon 1 and 2 are active and if they are not selected they stay active until the end of the game since the next request item doenst have them in
+                mPlayer1Team.get(i).setActive(false);
             }
 
             // starting with user selection
@@ -1396,9 +1399,6 @@ public class BattleFragment extends Fragment {
 
                 lineUp.set(idxOldValue, newValue);
                 lineUp.set(idxNewValue, oldValue);
-
-
-
             }
 
             mChooseCommand = new StringBuilder();
