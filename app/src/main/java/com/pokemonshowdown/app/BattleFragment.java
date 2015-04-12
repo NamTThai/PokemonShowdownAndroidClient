@@ -1027,27 +1027,13 @@ public class BattleFragment extends Fragment {
                 ((LinearLayout) getView().findViewById(getTempStatusId(tag))).removeAllViews();
             } else {
                 // baton pass removes staties (par,slp,frz,brn,tox,psn)
-                LinearLayout statusLayout = ((LinearLayout) getView().findViewById(getTempStatusId(tag)));
-                ArrayList<TextView> statusRemoved = new ArrayList<>();
-                for (int i = 0; i < statusLayout.getChildCount(); i++) {
-                    TextView tv = (TextView) statusLayout.getChildAt(i);
-                    switch (tv.getText().toString()) {
-                        case "slp":
-                        case "psn":
-                        case "tox":
-                        case "brn":
-                        case "par":
-                        case "frz":
-                            statusRemoved.add(tv);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                for (TextView tv : statusRemoved) {
-                    statusLayout.removeView(tv);
-                }
-                statusRemoved.clear();
+                removeAddonStatus(tag, "slp");
+                removeAddonStatus(tag, "psn");
+                removeAddonStatus(tag, "tox");
+                removeAddonStatus(tag, "brn");
+                removeAddonStatus(tag, "par");
+                removeAddonStatus(tag, "slp");
+                removeAddonStatus(tag, "frz");
             }
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
             if (sub != null) {
