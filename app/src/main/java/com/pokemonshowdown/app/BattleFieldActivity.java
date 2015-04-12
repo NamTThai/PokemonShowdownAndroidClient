@@ -11,16 +11,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.braintreepayments.api.dropin.BraintreePaymentActivity;
+import com.braintreepayments.api.dropin.Customization;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.pokemonshowdown.application.BroadcastListener;
@@ -33,6 +36,8 @@ import com.pokemonshowdown.data.Onboarding;
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
@@ -237,11 +242,18 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_DONATION:
-                if (resultCode == BraintreePaymentActivity.RESULT_OK) {
-                    String paymentMethodNonce = data.getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
-                    //postNonceToServer(paymentMethodNonce);
+                switch (resultCode) {
+                    case BraintreePaymentActivity.RESULT_OK:
+                        String paymentMethodNonce = data.getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
+                        return;
+                    default:
+                        new AlertDialog.Builder(this)
+                                .setMessage("Problem processing donation, please try again")
+                                .create()
+                                .show();
+                        return;
                 }
-                return;
+            default:
         }
     }
 
@@ -263,7 +275,7 @@ public class BattleFieldActivity extends FragmentActivity {
         return mClientToken;
     }
 
-    public void donate() {
+    public void donate(float amount) {
         if (getClientToken() == null) {
             new AlertDialog.Builder(this)
                     .setMessage("Cannot access payment processing server, please try again")
@@ -272,10 +284,44 @@ public class BattleFieldActivity extends FragmentActivity {
             return;
         }
 
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        amount = Float.parseFloat(decimalFormat.format(amount));
+
         Intent intent = new Intent(this, BraintreePaymentActivity.class);
+        Customization customization = new Customization.CustomizationBuilder()
+                .amount(Float.toString(amount))
+                .build();
         intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, getClientToken());
+        intent.putExtra(BraintreePaymentActivity.EXTRA_CUSTOMIZATION, customization);
 
         startActivityForResult(intent, REQUEST_CODE_DONATION);
+    }
+
+    public void enterDonationAmount() {
+        final EditText editText = new EditText(this);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        new AlertDialog.Builder(this)
+                .setTitle("Please enter amount ($) :)")
+                .setView(editText)
+                .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        try {
+                            float amount = Float.parseFloat(editText.getText().toString());
+                            donate(amount);
+                        } catch (NumberFormatException e) {
+                            dialog.dismiss();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
     public void processBroadcastMessage(Intent intent) {

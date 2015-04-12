@@ -38,7 +38,7 @@ public class SettingsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 SettingsDialog.this.dismiss();
-                ((BattleFieldActivity) getActivity()).donate();
+                ((BattleFieldActivity) getActivity()).enterDonationAmount();
             }
         });
 
