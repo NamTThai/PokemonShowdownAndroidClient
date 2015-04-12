@@ -507,7 +507,12 @@ public class BattleFragment extends Fragment {
                 mAnimatorSetQueue.addLast(animator);
 
                 if (mAnimatorSetQueue.size() == 1) {
-                    animator.start();
+                    try {
+                        animator.start();
+                    } catch (Exception e) {
+                        Log.e(RunWithNet.RTAG, serverMessage, e);
+                        endAllAnimations();
+                    }
                 }
             }
         });
