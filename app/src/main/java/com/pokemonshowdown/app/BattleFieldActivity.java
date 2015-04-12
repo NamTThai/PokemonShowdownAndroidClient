@@ -20,6 +20,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.braintreepayments.api.dropin.BraintreePaymentActivity;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.pokemonshowdown.application.BroadcastListener;
 import com.pokemonshowdown.application.BroadcastSender;
 import com.pokemonshowdown.application.MyApplication;
@@ -27,13 +30,16 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.Onboarding;
 
+import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
+    public final static int REQUEST_CODE_DONATION = 100;
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
+    private String mClientToken;
     private int mPosition;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -143,6 +149,8 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle_field);
 
+        getClientToken();
+
         new UpdateCheckTask((MyApplication) getApplicationContext()).execute();
 
         MyApplication.getMyApplication().getWebSocketClient();
@@ -222,6 +230,52 @@ public class BattleFieldActivity extends FragmentActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(DRAWER_POSITION, mPosition);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_DONATION:
+                if (resultCode == BraintreePaymentActivity.RESULT_OK) {
+                    String paymentMethodNonce = data.getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
+                    //postNonceToServer(paymentMethodNonce);
+                }
+                return;
+        }
+    }
+
+    public String getClientToken() {
+        if (mClientToken == null) {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.get("http://nthai.cs.trincoll.edu/Showdown/client_token.php", new TextHttpResponseHandler() {
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    mClientToken = responseString;
+                }
+            });
+        }
+        return mClientToken;
+    }
+
+    public void donate() {
+        if (getClientToken() == null) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Cannot access payment processing server, please try again")
+                    .create()
+                    .show();
+            return;
+        }
+
+        Intent intent = new Intent(this, BraintreePaymentActivity.class);
+        intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, getClientToken());
+
+        startActivityForResult(intent, REQUEST_CODE_DONATION);
     }
 
     public void processBroadcastMessage(Intent intent) {
