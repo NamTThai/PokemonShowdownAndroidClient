@@ -1611,47 +1611,51 @@ public class BattleFragment extends Fragment {
                 .getJSONObject(moveId);
         String target = moveJson.getString("target");
 
-        int start = (mCurrentActivePokemon == 0) ? 0 : mCurrentActivePokemon - 1;
-        int endFoe = (mCurrentActivePokemon + 1 >= getPlayer2Team().size()) ?
-                getPlayer2Team().size() - 1 : mCurrentActivePokemon + 1;
-        int endAlly = (mCurrentActivePokemon + 1 >= getPlayer1Team().size()) ?
-                getPlayer1Team().size() - 1 : mCurrentActivePokemon + 1;
+        int maxAlly = 0;
+        int maxFoe = 0;
+        if (getView() != null) {
+            maxAlly += (getView().findViewById(R.id.p1a).getVisibility() != View.GONE) ? 1 : 0;
+            maxAlly += (getView().findViewById(R.id.p1b).getVisibility() != View.GONE) ? 1 : 0;
+            maxAlly += (getView().findViewById(R.id.p1c).getVisibility() != View.GONE) ? 1 : 0;
+            maxFoe += (getView().findViewById(R.id.p2a).getVisibility() != View.GONE) ? 1 : 0;
+            maxFoe += (getView().findViewById(R.id.p2b).getVisibility() != View.GONE) ? 1 : 0;
+            maxFoe += (getView().findViewById(R.id.p2c).getVisibility() != View.GONE) ? 1 : 0;
+        }
+
+        int startFoe = Math.max(0, maxFoe - mCurrentActivePokemon - 2);
+        int startAlly = Math.max(0, mCurrentActivePokemon - 1);
+        int endFoe = Math.min(maxFoe - 1, maxFoe - mCurrentActivePokemon);
+        int endAlly = Math.min(maxAlly - 1, mCurrentActivePokemon + 1);
 
         // counting foes
-        final String[] foes = new String[3];
-        final int[] foeIcons = new int[3];
+        final String[] foes = new String[maxFoe];
         int foeIndex = 0;
-        for (int i = start; i <= endFoe; i++) {
+        for (int i = startFoe; i <= endFoe; i++) {
             PokemonInfo pkm = getPlayer2Team().get(i);
             if (checkSwitchedOut(false, i)) {
                 foes[foeIndex] = pkm.getName();
-                foeIcons[foeIndex] = pkm.getIcon(getActivity());
                 foeIndex++;
             }
         }
 
         // counting allies and self
-        final String[] allyOrSelf = new String[3];
-        final int[] aosIcons = new int[3];
+        final String[] allyOrSelf = new String[maxAlly];
         int aosIndex = 0;
-        for (int i = start; i <= endAlly; i++) {
+        for (int i = startAlly; i <= endAlly; i++) {
             PokemonInfo pkm = getPlayer1Team().get(i);
             if (checkSwitchedOut(true, i)) {
                 allyOrSelf[aosIndex] = pkm.getName();
-                aosIcons[aosIndex] = pkm.getIcon(getActivity());
                 aosIndex++;
             }
         }
 
         // counting allies but not self
-        final String[] allies = new String[2];
-        final int[] allyIcons = new int[2];
+        final String[] allies = new String[maxAlly - 1];
         int allyIndex = 0;
-        for (int i = start; i <= endAlly; i++) {
+        for (int i = startAlly; i <= endAlly; i++) {
             PokemonInfo pkm = getPlayer1Team().get(i);
             if (i != mCurrentActivePokemon && checkSwitchedOut(true, i)) {
                 allies[allyIndex] = pkm.getName();
-                allyIcons[allyIndex] = pkm.getIcon(getActivity());
                 allyIndex++;
             }
         }
@@ -1728,7 +1732,7 @@ public class BattleFragment extends Fragment {
                             }
                         }).create();
             case "adjacentAlly":
-                if (allyIndex < 2) {
+                if (allyIndex == 0) {
                     return null;
                 }
 
