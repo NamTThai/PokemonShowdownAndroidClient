@@ -1032,7 +1032,6 @@ public class BattleFragment extends Fragment {
                 removeAddonStatus(tag, "tox");
                 removeAddonStatus(tag, "brn");
                 removeAddonStatus(tag, "par");
-                removeAddonStatus(tag, "slp");
                 removeAddonStatus(tag, "frz");
             }
             ImageView sub = (ImageView) relativeLayout.findViewWithTag("Substitute");
