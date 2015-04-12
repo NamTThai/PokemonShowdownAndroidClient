@@ -716,7 +716,7 @@ public class BattleMessage {
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
 
-                if(battleFragment.getBattling() != 0) {
+                if (battleFragment.getBattling() != 0) {
                     battleFragment.showEndBattleDialog(toAppend);
                 }
                 break;
@@ -726,7 +726,7 @@ public class BattleMessage {
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
-                if(battleFragment.getBattling() != 0) {
+                if (battleFragment.getBattling() != 0) {
                     battleFragment.showEndBattleDialog(toAppend);
                 }
                 break;
@@ -2184,7 +2184,53 @@ public class BattleMessage {
                 break;
 
             case "-formechange":
-                logMessage = new SpannableString("Forme Change");
+                final String oldForm = split[0];
+                final String oldFormPrintable = battleFragment.getPrintableOutputPokemonSide(split[0]);
+                final String newForm = split[1];
+
+                final String newFormPrintable = battleFragment.getPrintableOutputPokemonSide(split[1]);
+                switch (MyApplication.toId(newFormPrintable)) {
+                    case "darmanitanzen":
+                        toAppend = "Zen Mode triggered!";
+                        break;
+                    case "darmanitan":
+                        toAppend = "Zen Mode ended!";
+                        break;
+                    case "aegislashblade":
+                        toAppend = "Changed to Blade Forme!";
+                        break;
+                    case "aegislash":
+                        toAppend = "Changed to Shield Forme!";
+                        break;
+                    default:
+                        toAppend = oldForm + " transformed!";
+                        break;
+                }
+
+                String position = split[0].substring(0, 3);
+                battleFragment.formChange(position, newFormPrintable);
+                pokemonInfo = battleFragment.getPokemonInfo(position);
+
+                logMessage = new SpannableString(toAppend);
+                toast = battleFragment.makeToast(logMessage, BattleFragment.ANIMATION_SHORT);
+
+                toast.addListener(new AnimatorListenerWithNet() {
+                    @Override
+                    public void onAnimationStartWithNet(Animator animation) {
+                        if (battleFragment.getView() == null) {
+                            return;
+                        }
+
+                        boolean back = split[0].startsWith("p1");
+                        ImageView sprite = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(oldForm));
+                        sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
+                                MyApplication.toId(newFormPrintable), back, pokemonInfo.isFemale(), pokemonInfo.isShiny()));
+                        ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(oldForm));
+                        icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                MyApplication.toId(newFormPrintable)));
+                    }
+                });
+                battleFragment.startAnimation(toast, message);
                 break;
 
             case "-mega":
