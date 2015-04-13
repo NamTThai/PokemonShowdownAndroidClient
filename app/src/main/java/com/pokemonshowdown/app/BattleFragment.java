@@ -1671,6 +1671,8 @@ public class BattleFragment extends Fragment {
         String[] allTargets;
         final int numFoes = foeIndex;
         final int currentActive = mCurrentActivePokemon;
+        final int foeOffset = startFoe;
+        final int allyOffset = startAlly;
         switch (target) {
             case "any": //can hit anything on the BG, filling the list
                 if ((foeIndex + allyIndex) < 2) {
@@ -1717,9 +1719,9 @@ public class BattleFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which < numFoes) {
-                                    parseMoveCommandAndSend(active, moveId, which + 1);
+                                    parseMoveCommandAndSend(active, moveId, which + 1 + foeOffset);
                                 } else {
-                                    parseMoveCommandAndSend(active, moveId, (which - numFoes + 1) * -1);
+                                    parseMoveCommandAndSend(active, moveId, (which - numFoes + 1 + allyOffset) * -1);
                                 }
                                 dialog.dismiss();
                             }
@@ -1735,7 +1737,7 @@ public class BattleFragment extends Fragment {
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                parseMoveCommandAndSend(active, moveId, which + 1);
+                                parseMoveCommandAndSend(active, moveId, which + 1 + foeOffset);
                                 dialog.dismiss();
                             }
                         }).create();
@@ -1751,7 +1753,7 @@ public class BattleFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int pos = (which < currentActive) ? which : which + 1;
-                                parseMoveCommandAndSend(active, moveId, (pos + 1) * -1);
+                                parseMoveCommandAndSend(active, moveId, (pos + 1 + allyOffset) * -1);
                                 dialog.dismiss();
                             }
                         }).create();
@@ -1766,7 +1768,7 @@ public class BattleFragment extends Fragment {
                         .setSingleChoiceItems(allTargets, -1, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                parseMoveCommandAndSend(active, moveId, (which + 1) * -1);
+                                parseMoveCommandAndSend(active, moveId, (which + 1 + allyOffset) * -1);
                                 dialog.dismiss();
                             }
                         }).create();
