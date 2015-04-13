@@ -2035,11 +2035,10 @@ public class BattleFragment extends Fragment {
 
     public void setTeamSize(int teamSize) {
         mTeamSize = teamSize;
-        int[] switchIcons = {R.id.icon1, R.id.icon2, R.id.icon3, R.id.icon4, R.id.icon5, R.id.icon6};
-        if (teamSize != 0) {
-            for (int i = teamSize; i < getPlayer1Team().size(); i++) {
-                getView().findViewById(switchIcons[i]).setVisibility(View.GONE);
-                getView().findViewById(switchIcons[i]).setOnClickListener(null);
+        if (teamSize != 0 && getView() != null) {
+            for (int i = teamSize; i < 6; i++) {
+                ((ImageView) getView().findViewById(getIconId("p1", i))).setImageResource(R.drawable.pokeball_none);
+                getView().findViewById(getIconId("p1", i)).setOnClickListener(null);
             }
         }
     }
