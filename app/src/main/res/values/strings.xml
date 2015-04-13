@@ -76,7 +76,7 @@
     <string name="bar_dmg_calc">Damage Calculator</string>
     <string name="bar_login">Trainer</string>
     <string name="bar_settings">Settings</string>
-    <string name="donate">Please Donate :)</string>
+    <string name="donate">Please Contribute :)</string>
 
     <!-- These are for Pokedex -->
     <string name="bar_pokedex_search">Search for Pokemon</string>

@@ -84,6 +84,9 @@ public class BattleFieldActivity extends FragmentActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         switch (item.getItemId()) {
+            case R.id.donate:
+                enterDonationAmount();
+                return true;
             case R.id.team_building:
                 startActivity(new Intent(this, TeamBuildingActivity.class));
                 return true;
@@ -295,7 +298,7 @@ public class BattleFieldActivity extends FragmentActivity {
         final EditText editText = new EditText(this);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         new AlertDialog.Builder(this)
-                .setTitle("Please enter amount ($) :)")
+                .setTitle(R.string.donate)
                 .setView(editText)
                 .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
                     @Override
