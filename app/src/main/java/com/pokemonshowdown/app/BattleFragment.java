@@ -35,6 +35,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Onboarding;
+import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.RunWithNet;
 
@@ -1549,6 +1550,36 @@ public class BattleFragment extends Fragment {
             @Override
             public void runWithNet() throws Exception {
                 JSONObject requestJson = getRequestJson();
+
+                if (requestJson.has(("side"))) {
+                    if (requestJson.length() == 1) {
+                        setBattling(requestJson);
+                    }
+                    JSONObject sideJson = requestJson.getJSONObject("side");
+                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                    setPlayer1Team(new ArrayList<PokemonInfo>());
+                    for (int i = 0; i < teamJson.length(); i++) {
+                        JSONObject info = teamJson.getJSONObject(i);
+                        final PokemonInfo pkm = BattleMessage.parsePokemonInfo(BattleFragment.this, info);
+                        getPlayer1Team().add(pkm);
+                        final int pos = i;
+                        getActivity().runOnUiThread(new RunWithNet() {
+                            @Override
+                            public void runWithNet() {
+                                if (getView() == null) {
+                                    return;
+                                }
+
+                                int pkmIcon = Pokemon.getPokemonIcon(getActivity(),
+                                        MyApplication.toId(pkm.getName()));
+                                ImageView icon = (ImageView) getView().findViewById(getIconId("p1", pos));
+                                icon.setImageResource(pkmIcon);
+                                float alpha = pkm.getHp() == 0 ? 0.5f : 1f;
+                                icon.setAlpha(alpha);
+                            }
+                        });
+                    }
+                }
 
                 setRqid(requestJson.optInt("rqid", 0));
                 setTeamPreview(requestJson.optBoolean("teamPreview", false));

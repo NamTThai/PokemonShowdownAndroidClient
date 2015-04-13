@@ -337,31 +337,6 @@ public class BattleMessage {
                     return;
                 }
                 JSONObject requestJson = new JSONObject(messageDetails);
-                if (requestJson.has(("side"))) {
-                    battleFragment.setBattling(requestJson);
-                    JSONObject sideJson = requestJson.getJSONObject("side");
-                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                    battleFragment.setPlayer1Team(new ArrayList<PokemonInfo>());
-                    for (int i = 0; i < teamJson.length(); i++) {
-                        JSONObject info = teamJson.getJSONObject(i);
-                        final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                        battleFragment.getPlayer1Team().add(pkm);
-                        final int pos = i;
-                        battleFragment.getActivity().runOnUiThread(new RunWithNet() {
-                            @Override
-                            public void runWithNet() {
-                                if (battleFragment.getView() == null) {
-                                    return;
-                                }
-
-                                int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                        MyApplication.toId(pkm.getName()));
-                                ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", pos)))
-                                        .setImageResource(pkmIcon);
-                            }
-                        });
-                    }
-                }
 
                 battleFragment.setRequestJson(requestJson);
                 battleFragment.setUndoMessage(requestJson);
