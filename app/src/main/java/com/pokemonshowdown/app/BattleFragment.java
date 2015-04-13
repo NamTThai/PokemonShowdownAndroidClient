@@ -427,30 +427,20 @@ public class BattleFragment extends Fragment {
             }
         }
 
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 0)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 0))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 0))).setImageDrawable(holderDrawable);
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 1))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 1)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 1))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 1))).setImageDrawable(holderDrawable);
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 2))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 2)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 2))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 2))).setImageDrawable(holderDrawable);
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 3))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 3)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 3))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 3))).setImageDrawable(holderDrawable);
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 4))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 4)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 4))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 4))).setImageDrawable(holderDrawable);
-        holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 5))).getDrawable();
-        ((ImageView) getView().findViewById(getIconId("p1", 5)))
-                .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 5))).getDrawable());
-        ((ImageView) getView().findViewById(getIconId("p2", 5))).setImageDrawable(holderDrawable);
+        for (int i = 0; i < 6; i++) {
+            ImageView p1 = (ImageView) getView().findViewById(getIconId("p1", i));
+            ImageView p2 = (ImageView) getView().findViewById(getIconId("p2", i));
+            holderDrawable = p1.getDrawable();
+            float holderAlpha = p1.getAlpha();
+            p1.setImageDrawable(p2.getDrawable());
+            p1.setAlpha(p2.getAlpha());
+            p2.setImageDrawable(holderDrawable);
+            p2.setAlpha(holderAlpha);
+        }
+
+        if (getAnimatorSetQueue().isEmpty() && getRequestJson() != null) {
+            startRequest();
+        }
     }
 
     public JSONObject getRequestJson() {
