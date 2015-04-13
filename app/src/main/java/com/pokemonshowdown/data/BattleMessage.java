@@ -616,15 +616,7 @@ public class BattleMessage {
 
                         ImageView gender = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getGenderId(split[0]));
-                        if (pokemonInfo.getGender() != null) {
-                            if (pokemonInfo.getGender().equals("M")) {
-                                gender.setImageResource(R.drawable.ic_gender_male);
-                            } else {
-                                if (pokemonInfo.getGender().equals("F")) {
-                                    gender.setImageResource(R.drawable.ic_gender_female);
-                                }
-                            }
-                        }
+                        gender.setImageResource(getGenderSprite(pokemonInfo.getGender()));
 
                         TextView hpText = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
@@ -3586,6 +3578,21 @@ public class BattleMessage {
 
         logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         battleFragment.addToLog(logMessage);
+    }
+
+    public static int getGenderSprite(String gender) {
+        if (gender == null) {
+            return 0;
+        }
+
+        switch (gender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
     }
 
     private static String processSpecialName(String name) {

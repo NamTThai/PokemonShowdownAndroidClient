@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -370,25 +371,56 @@ public class BattleFragment extends Fragment {
         ((ImageView) getView().findViewById(R.id.avatar)).setImageDrawable(((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
         ((ImageView) getView().findViewById(R.id.avatar_o)).setImageDrawable(holderDrawable);
 
-        ImageView p1a = (ImageView) getView().findViewById(getSpriteId("p1a"));
-        if (p1a != null && p1a.getVisibility() == View.VISIBLE) {
-            holderDrawable = p1a.getDrawable();
-            p1a.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2a"))).getDrawable());
-            ((ImageView) getView().findViewById(getSpriteId("p2a"))).setImageDrawable(holderDrawable);
-        }
+        String[] team1 = {"p1a", "p1b", "p1c"};
+        String[] team2 = {"p2a", "p2b", "p2c"};
+        if (getView().findViewById(getPkmLayoutId("p1a")) != null) {
+            for (int i = 0; i < team1.length; i++) {
+                View team1View = getView().findViewById(getPkmLayoutId(team1[i]));
+                CharSequence team1Name = ((TextView) getView().findViewById(getSpriteNameid(team1[i]))).getText();
+                Drawable team1Gender = ((ImageView) getView().findViewById(getGenderId(team1[i]))).getDrawable();
+                int team1Hp = ((ProgressBar) getView().findViewById(getHpBarId(team1[i]))).getProgress();
+                Drawable team1Sprite = ((ImageView) getView().findViewById(getSpriteId(team1[i]))).getDrawable();
+                ArrayList<View> team1Statuses = new ArrayList<>();
+                LinearLayout team1StatusesParent = (LinearLayout) getView().findViewById(getTempStatusId(team1[i]));
+                for (int j = 0; j < team1StatusesParent.getChildCount(); j++) {
+                    team1Statuses.add(team1StatusesParent.getChildAt(j));
+                }
+                team1StatusesParent.removeAllViews();
 
-        ImageView p1b = (ImageView) getView().findViewById(getSpriteId("p1b"));
-        if (p1b != null && p1b.getVisibility() == View.VISIBLE) {
-            holderDrawable = p1b.getDrawable();
-            p1b.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2b"))).getDrawable());
-            ((ImageView) getView().findViewById(getSpriteId("p2b"))).setImageDrawable(holderDrawable);
-        }
+                View team2View = getView().findViewById(getPkmLayoutId(team2[i]));
+                CharSequence team2Name = ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).getText();
+                Drawable team2Gender = ((ImageView) getView().findViewById(getGenderId(team2[i]))).getDrawable();
+                int team2Hp = ((ProgressBar) getView().findViewById(getHpBarId(team2[i]))).getProgress();
+                Drawable team2Sprite = ((ImageView) getView().findViewById(getSpriteId(team2[i]))).getDrawable();
+                ArrayList<View> team2Statuses = new ArrayList<>();
+                LinearLayout team2StatusesParent = (LinearLayout) getView().findViewById(getTempStatusId(team2[i]));
+                for (int j = 0; j < team2StatusesParent.getChildCount(); j++) {
+                    team2Statuses.add(team2StatusesParent.getChildAt(j));
+                }
+                team2StatusesParent.removeAllViews();
+                
+                if (team1View.getVisibility() == View.VISIBLE) {
+                    ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).setText(team1Name);
+                    ((ImageView) getView().findViewById(getGenderId(team2[i]))).setImageDrawable(team1Gender);
+                    ((TextView) getView().findViewById(getHpId(team2[i]))).setText(Integer.toString(team1Hp));
+                    ((ProgressBar) getView().findViewById(getHpBarId(team2[i]))).setProgress(team1Hp);
+                    ((ImageView) getView().findViewById(getSpriteId(team2[i]))).setImageDrawable(team1Sprite);
+                    for (View v : team1Statuses) {
+                        team2StatusesParent.addView(v);
+                    }
+                }
 
-        ImageView p1c = (ImageView) getView().findViewById(getSpriteId("p1c"));
-        if (p1c != null && p1c.getVisibility() == View.VISIBLE) {
-            holderDrawable = p1c.getDrawable();
-            p1c.setImageDrawable(((ImageView) getView().findViewById(getSpriteId("p2c"))).getDrawable());
-            ((ImageView) getView().findViewById(getSpriteId("p2c"))).setImageDrawable(holderDrawable);
+                if (team2View.getVisibility() == View.VISIBLE) {
+                    ((TextView) getView().findViewById(getSpriteNameid(team1[i]))).setText(team2Name);
+                    ((ImageView) getView().findViewById(getGenderId(team1[i]))).setImageDrawable(team2Gender);
+                    ((TextView) getView().findViewById(getHpId(team1[i]))).setText(Integer.toString(team2Hp));
+                    ((ProgressBar) getView().findViewById(getHpBarId(team1[i]))).setProgress(team2Hp);
+                    ((ImageView) getView().findViewById(getSpriteId(team1[i]))).setImageDrawable(team2Sprite);
+                    for (View v : team2Statuses) {
+                        team1StatusesParent.addView(v);
+                    }
+                }
+            }
         }
         
         holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
