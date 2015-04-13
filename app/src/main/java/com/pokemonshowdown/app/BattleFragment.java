@@ -1552,7 +1552,7 @@ public class BattleFragment extends Fragment {
                 JSONObject requestJson = getRequestJson();
 
                 if (requestJson.has(("side"))) {
-                    if (requestJson.length() == 1) {
+                    if (getBattling() == 0) {
                         setBattling(requestJson);
                     }
                     JSONObject sideJson = requestJson.getJSONObject("side");
