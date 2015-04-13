@@ -422,7 +422,7 @@ public class BattleFragment extends Fragment {
                 }
             }
         }
-        
+
         holderDrawable = ((ImageView) getView().findViewById(getIconId("p1", 0))).getDrawable();
         ((ImageView) getView().findViewById(getIconId("p1", 0)))
                 .setImageDrawable(((ImageView) getView().findViewById(getIconId("p2", 0))).getDrawable());

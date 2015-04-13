@@ -163,6 +163,7 @@ public class BattleFieldFragment extends Fragment {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+                                                MyApplication.getMyApplication().sendClientMessage(roomId + "|/leave");
                                                 BattleFragment fragment = (BattleFragment) getChildFragmentManager()
                                                         .findFragmentByTag("android:switcher:" + mViewPager.getId() + ":"
                                                                 + getActivity().getActionBar().getSelectedTab().getPosition());
