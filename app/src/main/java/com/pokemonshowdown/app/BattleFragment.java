@@ -230,6 +230,9 @@ public class BattleFragment extends Fragment {
                     timer.setBackgroundResource(R.drawable.uneditable_frame_red);
                     MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer off");
                 }
+                if (getAnimatorSetQueue().isEmpty() && getRequestJson() != null) {
+                    startRequest();
+                }
             }
         });
     }
@@ -1552,9 +1555,6 @@ public class BattleFragment extends Fragment {
                 JSONObject requestJson = getRequestJson();
 
                 if (requestJson.has(("side"))) {
-                    if (getBattling() == 0) {
-                        setBattling(requestJson);
-                    }
                     JSONObject sideJson = requestJson.getJSONObject("side");
                     JSONArray teamJson = sideJson.getJSONArray("pokemon");
                     setPlayer1Team(new ArrayList<PokemonInfo>());
