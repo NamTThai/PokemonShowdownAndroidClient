@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import com.braintreepayments.api.dropin.BraintreePaymentActivity;
 import com.braintreepayments.api.dropin.Customization;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.pokemonshowdown.application.BroadcastListener;
 import com.pokemonshowdown.application.BroadcastSender;
@@ -38,13 +41,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
     public final static int REQUEST_CODE_DONATION = 100;
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
-    private String mClientToken;
+    private float mDonationAmount;
     private int mPosition;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -154,8 +158,6 @@ public class BattleFieldActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle_field);
 
-        getClientToken();
-
         new UpdateCheckTask((MyApplication) getApplicationContext()).execute();
 
         MyApplication.getMyApplication().getWebSocketClient();
@@ -245,6 +247,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 switch (resultCode) {
                     case BraintreePaymentActivity.RESULT_OK:
                         String paymentMethodNonce = data.getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
+                        sendPaymentToServer(paymentMethodNonce);
                         return;
                     default:
                         new AlertDialog.Builder(this)
@@ -257,44 +260,35 @@ public class BattleFieldActivity extends FragmentActivity {
         }
     }
 
-    public String getClientToken() {
-        if (mClientToken == null) {
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.get("http://nthai.cs.trincoll.edu/Showdown/client_token.php", new TextHttpResponseHandler() {
+    public void donate(final float amount) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get("http://nthai.cs.trincoll.edu/Showdown/client_token.php", new TextHttpResponseHandler() {
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                new AlertDialog.Builder(BattleFieldActivity.this)
+                        .setMessage("Cannot access payment processing server, please try again")
+                        .create()
+                        .show();
+            }
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    mClientToken = responseString;
-                }
-            });
-        }
-        return mClientToken;
-    }
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                mDonationAmount = Float.parseFloat(decimalFormat.format(amount));
 
-    public void donate(float amount) {
-        if (getClientToken() == null) {
-            new AlertDialog.Builder(this)
-                    .setMessage("Cannot access payment processing server, please try again")
-                    .create()
-                    .show();
-            return;
-        }
+                Intent intent = new Intent(BattleFieldActivity.this, BraintreePaymentActivity.class);
+                Customization customization = new Customization.CustomizationBuilder()
+                        .primaryDescription("Donation")
+                        .amount("$" + Float.toString(mDonationAmount))
+                        .submitButtonText("Donate")
+                        .build();
+                intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, responseString);
+                intent.putExtra(BraintreePaymentActivity.EXTRA_CUSTOMIZATION, customization);
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        amount = Float.parseFloat(decimalFormat.format(amount));
-
-        Intent intent = new Intent(this, BraintreePaymentActivity.class);
-        Customization customization = new Customization.CustomizationBuilder()
-                .amount(Float.toString(amount))
-                .build();
-        intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, getClientToken());
-        intent.putExtra(BraintreePaymentActivity.EXTRA_CUSTOMIZATION, customization);
-
-        startActivityForResult(intent, REQUEST_CODE_DONATION);
+                startActivityForResult(intent, REQUEST_CODE_DONATION);
+            }
+        });
     }
 
     public void enterDonationAmount() {
@@ -322,6 +316,33 @@ public class BattleFieldActivity extends FragmentActivity {
                     }
                 })
                 .create().show();
+    }
+
+    public void sendPaymentToServer(String nonce) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("nonce", nonce);
+        params.put("amount", mDonationAmount);
+        client.post("http://nthai.cs.trincoll.edu/Showdown/nonce.php", params,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        Log.d(BTAG, Arrays.toString(responseBody));
+                        new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage("Thanks :D")
+                                .create()
+                                .show();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage("Donation didn't go through :( Please try again")
+                                .create()
+                                .show();
+                    }
+                }
+        );
     }
 
     public void processBroadcastMessage(Intent intent) {
