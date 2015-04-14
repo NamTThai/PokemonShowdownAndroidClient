@@ -338,12 +338,13 @@ public class BattleMessage {
                 }
                 JSONObject requestJson = new JSONObject(messageDetails);
 
+                if (battleFragment.getBattling() == 0) {
+                    battleFragment.setBattling(1);
+                    battleFragment.setUpTimer();
+                }
+
                 battleFragment.setRequestJson(requestJson);
                 battleFragment.setUndoMessage(requestJson);
-
-                if (battleFragment.getBattling() == 0) {
-                    battleFragment.setBattling(requestJson);
-                }
                 break;
 
             case "inactive":

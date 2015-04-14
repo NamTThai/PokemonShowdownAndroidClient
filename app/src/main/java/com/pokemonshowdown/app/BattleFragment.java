@@ -211,7 +211,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setUpTimer() {
+    public void setUpTimer() {
         if (getView() == null) {
             return;
         }
@@ -336,6 +336,10 @@ public class BattleFragment extends Fragment {
         return mBattling;
     }
 
+    public void setBattling(int i) {
+        mBattling = i;
+    }
+
     public void setBattling(JSONObject object) throws JSONException {
         String side = object.getJSONObject("side").getString("id");
         if (side.equals("p1")) {
@@ -402,8 +406,11 @@ public class BattleFragment extends Fragment {
                     team2Statuses.add(team2StatusesParent.getChildAt(j));
                 }
                 team2StatusesParent.removeAllViews();
+
+                int visibility = team2View.getVisibility();
                 
                 if (team1View.getVisibility() == View.VISIBLE) {
+                    team2View.setVisibility(View.VISIBLE);
                     ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).setText(team1Name);
                     ((ImageView) getView().findViewById(getGenderId(team2[i]))).setImageDrawable(team1Gender);
                     ((TextView) getView().findViewById(getHpId(team2[i]))).setText(Integer.toString(team1Hp));
@@ -412,9 +419,12 @@ public class BattleFragment extends Fragment {
                     for (View v : team1Statuses) {
                         team2StatusesParent.addView(v);
                     }
+                } else {
+                    team2View.setVisibility(team1View.getVisibility());
                 }
 
-                if (team2View.getVisibility() == View.VISIBLE) {
+                if (visibility == View.VISIBLE) {
+                    team1View.setVisibility(View.VISIBLE);
                     ((TextView) getView().findViewById(getSpriteNameid(team1[i]))).setText(team2Name);
                     ((ImageView) getView().findViewById(getGenderId(team1[i]))).setImageDrawable(team2Gender);
                     ((TextView) getView().findViewById(getHpId(team1[i]))).setText(Integer.toString(team2Hp));
@@ -423,7 +433,22 @@ public class BattleFragment extends Fragment {
                     for (View v : team2Statuses) {
                         team1StatusesParent.addView(v);
                     }
+                } else {
+                    team1View.setVisibility(team2View.getVisibility());
                 }
+            }
+            
+            int[] p1Field = {R.id.field_lightscreen, R.id.field_reflect, R.id.field_rocks, R.id.field_spikes1, 
+                    R.id.field_spikes2, R.id.field_spikes3, R.id.field_tspikes1, R.id.field_tspikes2};
+            int[] p2Field = {R.id.field_lightscreen_o, R.id.field_reflect_o, R.id.field_rocks_o, R.id.field_spikes1_o,
+                    R.id.field_spikes2_o, R.id.field_spikes3_o, R.id.field_tspikes1_o, R.id.field_tspikes2_o};
+            for (int i = 0; i < p1Field.length; i++) {
+                int visibility;
+                View p1 = getView().findViewById(p1Field[i]);
+                View p2 = getView().findViewById(p2Field[i]);
+                visibility = p1.getVisibility();
+                p1.setVisibility(p2.getVisibility());
+                p2.setVisibility(visibility);
             }
         }
 
@@ -553,6 +578,7 @@ public class BattleFragment extends Fragment {
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
                         } else {
+                            Log.d(BTAG, "request started");
                             startRequest();
                         }
                     }
@@ -1536,6 +1562,9 @@ public class BattleFragment extends Fragment {
 
     public void startRequest() {
         if (getRequestJson() == null) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Oops, you skipped too quickly. Try tapping on Timer button :)")
+                    .create().show();
             return;
         }
 
@@ -1545,6 +1574,11 @@ public class BattleFragment extends Fragment {
                 JSONObject requestJson = getRequestJson();
 
                 if (requestJson.has(("side"))) {
+                    String side = requestJson.getJSONObject("side").getString("id");
+                    if (getBattling() == 1 && side.equals("p2")) {
+                        setBattling(-1);
+                        switchUpPlayer();
+                    }
                     JSONObject sideJson = requestJson.getJSONObject("side");
                     JSONArray teamJson = sideJson.getJSONArray("pokemon");
                     setPlayer1Team(new ArrayList<PokemonInfo>());
