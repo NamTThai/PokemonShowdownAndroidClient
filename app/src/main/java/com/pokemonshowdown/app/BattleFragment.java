@@ -379,6 +379,16 @@ public class BattleFragment extends Fragment {
         ((ImageView) getView().findViewById(R.id.avatar)).setImageDrawable(((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
         ((ImageView) getView().findViewById(R.id.avatar_o)).setImageDrawable(holderDrawable);
 
+        if (getView().findViewById(getTeamPreviewSpriteId("p1", 0)) != null) {
+            for (int i = 0; i < 6; i++) {
+                ImageView p1 = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p1", i));
+                ImageView p2 = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p2", i));
+                holderDrawable = p1.getDrawable();
+                p1.setImageDrawable(p2.getDrawable());
+                p1.setImageDrawable(holderDrawable);
+            }
+        }
+
         String[] team1 = {"p1a", "p1b", "p1c"};
         String[] team2 = {"p2a", "p2b", "p2c"};
         if (getView().findViewById(getPkmLayoutId("p1a")) != null) {
@@ -461,10 +471,6 @@ public class BattleFragment extends Fragment {
             p1.setAlpha(p2.getAlpha());
             p2.setImageDrawable(holderDrawable);
             p2.setAlpha(holderAlpha);
-        }
-
-        if (getAnimatorSetQueue().isEmpty() && getRequestJson() != null) {
-            startRequest();
         }
     }
 
