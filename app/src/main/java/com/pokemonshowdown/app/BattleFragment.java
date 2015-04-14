@@ -1588,9 +1588,11 @@ public class BattleFragment extends Fragment {
 
     public void startRequest() {
         if (getRequestJson() == null) {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage("Oops, you skipped too quickly. Try tapping on Timer button :)")
-                    .create().show();
+            if (getBattling() != 0) {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Oops, you skipped too quickly. Try tapping on Timer button :)")
+                        .create().show();
+            }
             return;
         }
 
