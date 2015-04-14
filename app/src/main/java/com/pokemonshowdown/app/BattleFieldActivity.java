@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -295,21 +294,25 @@ public class BattleFieldActivity extends FragmentActivity {
     }
 
     public void enterDonationAmount() {
-        final EditText editText = new EditText(this);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        final View view = View.inflate(this, R.layout.dialog_donate, null);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.donate)
-                .setView(editText)
+                .setView(view)
                 .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        try {
-                            float amount = Float.parseFloat(editText.getText().toString());
-                            donate(amount);
-                        } catch (NumberFormatException e) {
-                            dialog.dismiss();
+                        float amount;
+                        if (view.findViewById(R.id.donate_amount) != null) {
+                            try {
+                                amount = Float.parseFloat(((EditText) view.findViewById(R.id.donate_amount)).getText().toString());
+                            } catch (NumberFormatException e) {
+                                amount = 10f;
+                            }
+                        } else {
+                            amount = 10f;
                         }
+                        dialog.dismiss();
+                        donate(amount);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
