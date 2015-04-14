@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.BattleMessage;
 import com.pokemonshowdown.data.MoveDex;
 import com.pokemonshowdown.data.Onboarding;
+import com.pokemonshowdown.data.Pokemon;
 import com.pokemonshowdown.data.PokemonInfo;
 import com.pokemonshowdown.data.RunWithNet;
 
@@ -209,7 +211,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void setUpTimer() {
+    public void setUpTimer() {
         if (getView() == null) {
             return;
         }
@@ -227,6 +229,9 @@ public class BattleFragment extends Fragment {
                 } else {
                     timer.setBackgroundResource(R.drawable.uneditable_frame_red);
                     MyApplication.getMyApplication().sendClientMessage(mRoomId + "|/timer off");
+                }
+                if (getAnimatorSetQueue().isEmpty() && getRequestJson() != null) {
+                    startRequest();
                 }
             }
         });
@@ -331,6 +336,10 @@ public class BattleFragment extends Fragment {
         return mBattling;
     }
 
+    public void setBattling(int i) {
+        mBattling = i;
+    }
+
     public void setBattling(JSONObject object) throws JSONException {
         String side = object.getJSONObject("side").getString("id");
         if (side.equals("p1")) {
@@ -347,11 +356,13 @@ public class BattleFragment extends Fragment {
     }
 
 
-    private void switchUpPlayer() {
+    public void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
             return;
         }
+
+        endAllAnimations();
 
         String holderString = mPlayer1;
         mPlayer1 = mPlayer2;
@@ -367,6 +378,100 @@ public class BattleFragment extends Fragment {
         Drawable holderDrawable = ((ImageView) getView().findViewById(R.id.avatar)).getDrawable();
         ((ImageView) getView().findViewById(R.id.avatar)).setImageDrawable(((ImageView) getView().findViewById(R.id.avatar_o)).getDrawable());
         ((ImageView) getView().findViewById(R.id.avatar_o)).setImageDrawable(holderDrawable);
+
+        if (getView().findViewById(getTeamPreviewSpriteId("p1", 0)) != null) {
+            for (int i = 0; i < 6; i++) {
+                ImageView p1 = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p1", i));
+                ImageView p2 = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p2", i));
+                holderDrawable = p1.getDrawable();
+                p1.setImageDrawable(p2.getDrawable());
+                p2.setImageDrawable(holderDrawable);
+            }
+        }
+
+        String[] team1 = {"p1a", "p1b", "p1c"};
+        String[] team2 = {"p2a", "p2b", "p2c"};
+        if (getView().findViewById(getPkmLayoutId("p1a")) != null) {
+            for (int i = 0; i < team1.length; i++) {
+                View team1View = getView().findViewById(getPkmLayoutId(team1[i]));
+                CharSequence team1Name = ((TextView) getView().findViewById(getSpriteNameid(team1[i]))).getText();
+                Drawable team1Gender = ((ImageView) getView().findViewById(getGenderId(team1[i]))).getDrawable();
+                int team1Hp = ((ProgressBar) getView().findViewById(getHpBarId(team1[i]))).getProgress();
+                Drawable team1Sprite = ((ImageView) getView().findViewById(getSpriteId(team1[i]))).getDrawable();
+                ArrayList<View> team1Statuses = new ArrayList<>();
+                LinearLayout team1StatusesParent = (LinearLayout) getView().findViewById(getTempStatusId(team1[i]));
+                for (int j = 0; j < team1StatusesParent.getChildCount(); j++) {
+                    team1Statuses.add(team1StatusesParent.getChildAt(j));
+                }
+                team1StatusesParent.removeAllViews();
+
+                View team2View = getView().findViewById(getPkmLayoutId(team2[i]));
+                CharSequence team2Name = ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).getText();
+                Drawable team2Gender = ((ImageView) getView().findViewById(getGenderId(team2[i]))).getDrawable();
+                int team2Hp = ((ProgressBar) getView().findViewById(getHpBarId(team2[i]))).getProgress();
+                Drawable team2Sprite = ((ImageView) getView().findViewById(getSpriteId(team2[i]))).getDrawable();
+                ArrayList<View> team2Statuses = new ArrayList<>();
+                LinearLayout team2StatusesParent = (LinearLayout) getView().findViewById(getTempStatusId(team2[i]));
+                for (int j = 0; j < team2StatusesParent.getChildCount(); j++) {
+                    team2Statuses.add(team2StatusesParent.getChildAt(j));
+                }
+                team2StatusesParent.removeAllViews();
+
+                int visibility = team2View.getVisibility();
+                
+                if (team1View.getVisibility() == View.VISIBLE) {
+                    team2View.setVisibility(View.VISIBLE);
+                    ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).setText(team1Name);
+                    ((ImageView) getView().findViewById(getGenderId(team2[i]))).setImageDrawable(team1Gender);
+                    ((TextView) getView().findViewById(getHpId(team2[i]))).setText(Integer.toString(team1Hp));
+                    ((ProgressBar) getView().findViewById(getHpBarId(team2[i]))).setProgress(team1Hp);
+                    ((ImageView) getView().findViewById(getSpriteId(team2[i]))).setImageDrawable(team1Sprite);
+                    for (View v : team1Statuses) {
+                        team2StatusesParent.addView(v);
+                    }
+                } else {
+                    team2View.setVisibility(team1View.getVisibility());
+                }
+
+                if (visibility == View.VISIBLE) {
+                    team1View.setVisibility(View.VISIBLE);
+                    ((TextView) getView().findViewById(getSpriteNameid(team1[i]))).setText(team2Name);
+                    ((ImageView) getView().findViewById(getGenderId(team1[i]))).setImageDrawable(team2Gender);
+                    ((TextView) getView().findViewById(getHpId(team1[i]))).setText(Integer.toString(team2Hp));
+                    ((ProgressBar) getView().findViewById(getHpBarId(team1[i]))).setProgress(team2Hp);
+                    ((ImageView) getView().findViewById(getSpriteId(team1[i]))).setImageDrawable(team2Sprite);
+                    for (View v : team2Statuses) {
+                        team1StatusesParent.addView(v);
+                    }
+                } else {
+                    team1View.setVisibility(team2View.getVisibility());
+                }
+            }
+            
+            int[] p1Field = {R.id.field_lightscreen, R.id.field_reflect, R.id.field_rocks, R.id.field_spikes1, 
+                    R.id.field_spikes2, R.id.field_spikes3, R.id.field_tspikes1, R.id.field_tspikes2};
+            int[] p2Field = {R.id.field_lightscreen_o, R.id.field_reflect_o, R.id.field_rocks_o, R.id.field_spikes1_o,
+                    R.id.field_spikes2_o, R.id.field_spikes3_o, R.id.field_tspikes1_o, R.id.field_tspikes2_o};
+            for (int i = 0; i < p1Field.length; i++) {
+                int visibility;
+                View p1 = getView().findViewById(p1Field[i]);
+                View p2 = getView().findViewById(p2Field[i]);
+                visibility = p1.getVisibility();
+                p1.setVisibility(p2.getVisibility());
+                p2.setVisibility(visibility);
+            }
+        }
+
+        for (int i = 0; i < 6; i++) {
+            ImageView p1 = (ImageView) getView().findViewById(getIconId("p1", i));
+            ImageView p2 = (ImageView) getView().findViewById(getIconId("p2", i));
+            holderDrawable = p1.getDrawable();
+            float holderAlpha = p1.getAlpha();
+            p1.setImageDrawable(p2.getDrawable());
+            p1.setAlpha(p2.getAlpha());
+            p2.setImageDrawable(holderDrawable);
+            p2.setAlpha(holderAlpha);
+        }
     }
 
     public JSONObject getRequestJson() {
@@ -460,6 +565,10 @@ public class BattleFragment extends Fragment {
     }
 
     public void startAnimation(final AnimatorSet animator, final String serverMessage) {
+        if (animator == null) {
+            return;
+        }
+
         getActivity().runOnUiThread(new RunWithNet() {
             @Override
             public void runWithNet() {
@@ -470,8 +579,8 @@ public class BattleFragment extends Fragment {
                             getView().findViewById(R.id.skip).setVisibility(View.GONE);
                         }
 
-                        mAnimatorSetQueue.pollFirst();
-                        Animator nextOnQueue = mAnimatorSetQueue.peekFirst();
+                        getAnimatorSetQueue().pollFirst();
+                        Animator nextOnQueue = getAnimatorSetQueue().peekFirst();
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
                         } else {
@@ -500,11 +609,7 @@ public class BattleFragment extends Fragment {
 
                 });
 
-                if (mAnimatorSetQueue == null) {
-                    mAnimatorSetQueue = new ArrayDeque<>();
-                }
-
-                mAnimatorSetQueue.addLast(animator);
+                getAnimatorSetQueue().addLast(animator);
 
                 if (mAnimatorSetQueue.size() == 1) {
                     try {
@@ -533,6 +638,13 @@ public class BattleFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public ArrayDeque<AnimatorSet> getAnimatorSetQueue() {
+        if (mAnimatorSetQueue == null) {
+            mAnimatorSetQueue = new ArrayDeque<>();
+        }
+        return mAnimatorSetQueue;
     }
 
     /**
@@ -1476,6 +1588,9 @@ public class BattleFragment extends Fragment {
 
     public void startRequest() {
         if (getRequestJson() == null) {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Oops, you skipped too quickly. Try tapping on Timer button :)")
+                    .create().show();
             return;
         }
 
@@ -1483,6 +1598,38 @@ public class BattleFragment extends Fragment {
             @Override
             public void runWithNet() throws Exception {
                 JSONObject requestJson = getRequestJson();
+
+                if (requestJson.has(("side"))) {
+                    String side = requestJson.getJSONObject("side").getString("id");
+                    if (getBattling() == 1 && side.equals("p2")) {
+                        setBattling(-1);
+                        switchUpPlayer();
+                    }
+                    JSONObject sideJson = requestJson.getJSONObject("side");
+                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
+                    setPlayer1Team(new ArrayList<PokemonInfo>());
+                    for (int i = 0; i < teamJson.length(); i++) {
+                        JSONObject info = teamJson.getJSONObject(i);
+                        final PokemonInfo pkm = BattleMessage.parsePokemonInfo(BattleFragment.this, info);
+                        getPlayer1Team().add(pkm);
+                        final int pos = i;
+                        getActivity().runOnUiThread(new RunWithNet() {
+                            @Override
+                            public void runWithNet() {
+                                if (getView() == null) {
+                                    return;
+                                }
+
+                                int pkmIcon = Pokemon.getPokemonIcon(getActivity(),
+                                        MyApplication.toId(pkm.getName()));
+                                ImageView icon = (ImageView) getView().findViewById(getIconId("p1", pos));
+                                icon.setImageResource(pkmIcon);
+                                float alpha = pkm.getHp() == 0 ? 0.5f : 1f;
+                                icon.setAlpha(alpha);
+                            }
+                        });
+                    }
+                }
 
                 setRqid(requestJson.optInt("rqid", 0));
                 setTeamPreview(requestJson.optBoolean("teamPreview", false));
@@ -2007,11 +2154,10 @@ public class BattleFragment extends Fragment {
 
     public void setTeamSize(int teamSize) {
         mTeamSize = teamSize;
-        int[] switchIcons = {R.id.icon1, R.id.icon2, R.id.icon3, R.id.icon4, R.id.icon5, R.id.icon6};
-        if (teamSize != 0) {
-            for (int i = teamSize; i < getPlayer1Team().size(); i++) {
-                getView().findViewById(switchIcons[i]).setVisibility(View.GONE);
-                getView().findViewById(switchIcons[i]).setOnClickListener(null);
+        if (teamSize != 0 && getView() != null) {
+            for (int i = teamSize; i < 6; i++) {
+                ((ImageView) getView().findViewById(getIconId("p1", i))).setImageResource(R.drawable.pokeball_none);
+                getView().findViewById(getIconId("p1", i)).setOnClickListener(null);
             }
         }
     }

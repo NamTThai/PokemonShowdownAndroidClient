@@ -70,6 +70,8 @@
     <string name="bar_room">Room</string>
     <string name="bar_room_id">Show Room Id</string>
     <string name="clipboard">Copy to Clipboard</string>
+    <string name="refresh">Refresh</string>
+    <string name="refreshing_patient">Refreshing, please be patient ^^</string>
     <string name="bar_cancel">Cancel</string>
     <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>

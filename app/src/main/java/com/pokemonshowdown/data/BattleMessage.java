@@ -71,6 +71,8 @@ public class BattleMessage {
 
         Spannable logMessage = new SpannableString("");
         switch (command) {
+            case "deinit":
+                return;
             case "askreg":
                 toast = battleFragment.makeToast(battleFragment.getResources().getString(R.string.ask_registration));
                 battleFragment.startAnimation(toast, message);
@@ -273,15 +275,28 @@ public class BattleMessage {
                             PokemonInfo pkm = team1.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), true, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
+                        }
+                        for (int i = team1.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
                         }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             PokemonInfo pkm = team2.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
+                        }
+                        for (int i = team2.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
                         }
                         battleFragment.setTeamSize(teamSelectionSizeFinal);
-                        battleFragment.startRequest();
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -294,6 +309,10 @@ public class BattleMessage {
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 4));
                         battleFragment.getView().findViewById(R.id.p2f_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
+
+                        if (battleFragment.getAnimatorSetQueue().isEmpty() && battleFragment.getRequestJson() != null) {
+                            battleFragment.startRequest();
+                        }
 
                     }
                 });
@@ -317,53 +336,14 @@ public class BattleMessage {
                 break;
 
             case "request":
-                JSONObject requestJson = new JSONObject(messageDetails);
-                if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
-                    battleFragment.setBattling(requestJson);
-                    JSONObject sideJson = requestJson.getJSONObject("side");
-                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                    for (int i = 0; i < teamJson.length(); i++) {
-                        JSONObject info = teamJson.getJSONObject(i);
-                        final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                        if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
-                                pkm.getName()) == -1) {
-                            battleFragment.getPlayer1Team().add(i, pkm);
-                            battleFragment.getActivity().runOnUiThread(new RunWithNet() {
-                                @Override
-                                public void runWithNet() {
-                                    int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                            MyApplication.toId(pkm.getName()));
-                                    int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
-                                    if (battleFragment.getView() == null) {
-                                        viewData.addViewSetterOnHold(iconId, pkmIcon,
-                                                BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                                    } else {
-                                        ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                                        if (icon != null) {
-                                            icon.setImageResource(pkmIcon);
-                                        }
-                                    }
-                                }
-                            });
-                        } else {
-                            battleFragment.getPlayer1Team().set(i, pkm);
-                        }
-                    }
+                if (messageDetails.equals("null")) {
+                    return;
                 }
+                JSONObject requestJson = new JSONObject(messageDetails);
 
-                if (requestJson.has("side")) {
-                    JSONObject sideJson = requestJson.getJSONObject("side");
-                    JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                    for (int i = 0; i < teamJson.length(); i++) {
-                        JSONObject pkm = teamJson.getJSONObject(i);
-                        String pkmName = pkm.getString("details");
-                        separator = pkmName.indexOf(",");
-                        pkmName = (separator == -1) ? pkmName : pkmName.substring(0, separator);
-                        int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
-                        if (idx != -1) {
-                            battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
-                        }
-                    }
+                if (battleFragment.getBattling() == 0) {
+                    battleFragment.setBattling(1);
+                    battleFragment.setUpTimer();
                 }
 
                 battleFragment.setRequestJson(requestJson);
@@ -593,15 +573,7 @@ public class BattleMessage {
 
                         ImageView gender = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getGenderId(split[0]));
-                        if (pokemonInfo.getGender() != null) {
-                            if (pokemonInfo.getGender().equals("M")) {
-                                gender.setImageResource(R.drawable.ic_gender_male);
-                            } else {
-                                if (pokemonInfo.getGender().equals("F")) {
-                                    gender.setImageResource(R.drawable.ic_gender_female);
-                                }
-                            }
-                        }
+                        gender.setImageResource(getGenderSprite(pokemonInfo.getGender()));
 
                         TextView hpText = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
@@ -3609,6 +3581,21 @@ public class BattleMessage {
 
         logMessage.setSpan(new RelativeSizeSpan(0.8f), 0, logMessage.toString().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         battleFragment.addToLog(logMessage);
+    }
+
+    public static int getGenderSprite(String gender) {
+        if (gender == null) {
+            return 0;
+        }
+
+        switch (gender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
     }
 
     private static String processSpecialName(String name) {
