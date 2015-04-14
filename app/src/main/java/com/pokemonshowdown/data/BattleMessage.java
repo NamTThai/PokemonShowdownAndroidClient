@@ -310,7 +310,7 @@ public class BattleMessage {
                         battleFragment.getView().findViewById(R.id.p2f_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
 
-                        if (battleFragment.getBattling() == -1 && battleFragment.getAnimatorSetQueue().isEmpty()) {
+                        if (battleFragment.getAnimatorSetQueue().isEmpty() && battleFragment.getRequestJson() != null) {
                             battleFragment.startRequest();
                         }
 
