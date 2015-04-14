@@ -297,7 +297,6 @@ public class BattleMessage {
                                     .setImageResource(R.drawable.pokeball_none);
                         }
                         battleFragment.setTeamSize(teamSelectionSizeFinal);
-                        battleFragment.startRequest();
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -310,6 +309,10 @@ public class BattleMessage {
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 4));
                         battleFragment.getView().findViewById(R.id.p2f_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
+
+                        if (battleFragment.getBattling() == -1 && battleFragment.getAnimatorSetQueue().isEmpty()) {
+                            battleFragment.startRequest();
+                        }
 
                     }
                 });

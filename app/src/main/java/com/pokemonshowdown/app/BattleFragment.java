@@ -356,7 +356,7 @@ public class BattleFragment extends Fragment {
     }
 
 
-    private void switchUpPlayer() {
+    public void switchUpPlayer() {
         // Switch player name
         if (getView() == null) {
             return;
@@ -385,7 +385,7 @@ public class BattleFragment extends Fragment {
                 ImageView p2 = (ImageView) getView().findViewById(getTeamPreviewSpriteId("p2", i));
                 holderDrawable = p1.getDrawable();
                 p1.setImageDrawable(p2.getDrawable());
-                p1.setImageDrawable(holderDrawable);
+                p2.setImageDrawable(holderDrawable);
             }
         }
 
@@ -584,7 +584,6 @@ public class BattleFragment extends Fragment {
                         if (nextOnQueue != null) {
                             nextOnQueue.start();
                         } else {
-                            Log.d(BTAG, "request started");
                             startRequest();
                         }
                     }
