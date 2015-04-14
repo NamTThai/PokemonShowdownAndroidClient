@@ -2,27 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/donate"
+        android:icon="@drawable/ic_paypal"
+        android:showAsAction="always"
+        android:title="@string/donate"/>
+
+    <item
         android:id="@+id/community_lounge"
         android:icon="@drawable/ic_action_add_to_queue"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/bar_room"/>
 
     <item
         android:id="@+id/room_id"
         android:icon="@drawable/ic_action_labels"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/bar_room_id"/>
 
     <item
         android:id="@+id/cancel"
         android:icon="@drawable/ic_action_cancel"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/bar_cancel"/>
 
     <item
         android:id="@+id/menu_pokedex"
         android:icon="@drawable/ic_pokedex"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/bar_pokedex"/>
 
     <!-- More -->
