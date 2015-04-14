@@ -1452,7 +1452,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Critical!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-supereffective":
@@ -1460,7 +1460,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Super Effective!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-resisted":
@@ -1468,7 +1468,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Resisted!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-immune":
