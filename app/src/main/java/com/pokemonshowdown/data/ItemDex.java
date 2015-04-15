@@ -1,6 +1,7 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.pokemonshowdown.app.R;
@@ -15,17 +16,34 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ItemDex {
     private final static String ITAG = ItemDex.class.getName();
     private static ItemDex sItemDex;
-    private HashMap<String, String> mItemDexEntries;
+    private HashMap<String, LazyString> mItemDexEntries;
+    private Context mAppContext;
 
     private ItemDex(Context appContext) {
-        mItemDexEntries = readFile(appContext);
+        mAppContext = appContext;
+        mItemDexEntries = initItemDex(appContext);
+        //mItemDexEntries = readFile(appContext);
     }
 
-    private HashMap<String, String> readFile(Context appContext) {
+    private HashMap<String, LazyString> initItemDex(Context appContext) {
+        Resources resources = appContext.getResources();
+        String[] itemIds = resources.getStringArray(R.array.itemdex_ids);
+
+        HashMap<String, LazyString> itemDexEntries = new HashMap<>();
+        for(String itemId : itemIds) {
+            String res  = appContext.getString(resources.getIdentifier(itemId, "string", appContext.getPackageName()));
+            itemDexEntries.put(itemId.replaceFirst("itemdex_", ""), new LazyString(itemId));
+        }
+        return itemDexEntries;
+    }
+
+    // No longer needed
+    /*private HashMap<String, String> readFile(Context appContext) {
         HashMap<String, String> ItemDexEntries = new HashMap<>();
         String jsonString;
         try {
@@ -57,7 +75,7 @@ public class ItemDex {
         }
 
         return ItemDexEntries;
-    }
+    }*/
 
     public static ItemDex get(Context c) {
         if (sItemDex == null) {
@@ -71,7 +89,7 @@ public class ItemDex {
                 .getIdentifier("item_" + MyApplication.toId(itemName), "drawable", appContext.getPackageName());
     }
 
-    public HashMap<String, String> getItemDexEntries() {
+    public HashMap<String, LazyString> getItemDexEntries() {
         return mItemDexEntries;
     }
 
@@ -79,7 +97,7 @@ public class ItemDex {
         name = MyApplication.toId(name);
         String item;
         try {
-            item = mItemDexEntries.get(name);
+            item = mItemDexEntries.get(name).get(mAppContext);
             if (item != null) {
                 JSONObject itemEntries = new JSONObject(item);
                 item = itemEntries.getString("name");
@@ -92,10 +110,23 @@ public class ItemDex {
 
     public JSONObject getItemJsonObject(String name) {
         try {
-            String item = mItemDexEntries.get(MyApplication.toId(name));
+            String item = mItemDexEntries.get(MyApplication.toId(name)).get(mAppContext);
             return new JSONObject(item);
         } catch (NullPointerException | JSONException e) {
+            e.printStackTrace();
             return null;
+        }
+    }
+
+    public class LazyString {
+        private String mId;
+
+        public LazyString(String id) {
+            mId = id;
+        }
+
+        public String get(Context context) {
+            return context.getString(context.getResources().getIdentifier(mId, "string", context.getPackageName()));
         }
     }
 }

@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="itemdex_abomasite">{\"gen\":6,\"spritenum\":575,\"num\":674,\"name\":\"Abomasite\",\"megaEvolves\":\"Abomasnow\",\"megaStone\":\"Abomasnow-Mega\",\"id\":\"abomasite\",\"desc\":\"Mega-evolves Abomasnow.\"}</string>
+    <string name="itemdex_absolite">{\"gen\":6,\"spritenum\":576,\"num\":677,\"name\":\"Absolite\",\"megaEvolves\":\"Absol\",\"megaStone\":\"Absol-Mega\",\"id\":\"absolite\",\"desc\":\"Mega-evolves Absol.\"}</string>
+    <string name="itemdex_absorbbulb">{\"gen\":5,\"spritenum\":2,\"num\":545,\"name\":\"Absorb Bulb\",\"id\":\"absorbbulb\",\"fling\":{\"basePower\":30},\"desc\":\"Raises Sp. Atk by 1 if hit by a Water-type attack. Single use.\"}</string>
+    <string name="itemdex_adamantorb">{\"gen\":4,\"spritenum\":4,\"onBasePowerPriority\":6,\"num\":135,\"name\":\"Adamant Orb\",\"id\":\"adamantorb\",\"fling\":{\"basePower\":60},\"desc\":\"If holder is a Dialga, its Steel- and Dragon-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_aerodactylite">{\"gen\":6,\"spritenum\":577,\"num\":672,\"name\":\"Aerodactylite\",\"megaEvolves\":\"Aerodactyl\",\"megaStone\":\"Aerodactyl-Mega\",\"id\":\"aerodactylite\",\"desc\":\"Mega-evolves Aerodactyl.\"}</string>
+    <string name="itemdex_aggronite">{\"gen\":6,\"spritenum\":578,\"num\":667,\"name\":\"Aggronite\",\"megaEvolves\":\"Aggron\",\"megaStone\":\"Aggron-Mega\",\"id\":\"aggronite\",\"desc\":\"Mega-evolves Aggron.\"}</string>
+    <string name="itemdex_aguavberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":5,\"num\":162,\"name\":\"Aguav Berry\",\"id\":\"aguavberry\",\"naturalGift\":{\"basePower\":60,\"type\":\"Dragon\"},\"desc\":\"Restores 1/8 max HP when at 1/2 max HP or less. May confuse. Single use.\"}</string>
+    <string name="itemdex_airballoon">{\"gen\":5,\"spritenum\":6,\"num\":541,\"name\":\"Air Balloon\",\"id\":\"airballoon\",\"fling\":{\"basePower\":10},\"desc\":\"Holder is immune to Ground-type attacks. Pops when holder is hit.\"}</string>
+    <string name="itemdex_alakazite">{\"gen\":6,\"spritenum\":579,\"num\":-6,\"name\":\"Alakazite\",\"megaEvolves\":\"Alakazam\",\"megaStone\":\"Alakazam-Mega\",\"id\":\"alakazite\",\"desc\":\"Mega-evolves Alakazam.\"}</string>
+    <string name="itemdex_altarianite">{\"gen\":6,\"spritenum\":615,\"num\":755,\"name\":\"Altarianite\",\"megaEvolves\":\"Altaria\",\"megaStone\":\"Altaria-Mega\",\"id\":\"altarianite\",\"desc\":\"Mega-evolves Altaria.\"}</string>
+    <string name="itemdex_ampharosite">{\"gen\":6,\"spritenum\":580,\"num\":-6,\"name\":\"Ampharosite\",\"megaEvolves\":\"Ampharos\",\"megaStone\":\"Ampharos-Mega\",\"id\":\"ampharosite\",\"desc\":\"Mega-evolves Ampharos.\"}</string>
+    <string name="itemdex_apicotberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":10,\"num\":205,\"name\":\"Apicot Berry\",\"id\":\"apicotberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Ground\"},\"desc\":\"Raises Sp. Def by 1 when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_armorfossil">{\"gen\":4,\"spritenum\":12,\"num\":104,\"name\":\"Armor Fossil\",\"id\":\"armorfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Shieldon.\"}</string>
+    <string name="itemdex_aspearberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":13,\"num\":153,\"name\":\"Aspear Berry\",\"id\":\"aspearberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ice\"},\"desc\":\"Holder is cured if it is frozen. Single use.\"}</string>
+    <string name="itemdex_assaultvest">{\"gen\":6,\"onModifySpDPriority\":1,\"spritenum\":581,\"num\":-6,\"name\":\"Assault Vest\",\"id\":\"assaultvest\",\"fling\":{\"basePower\":80},\"desc\":\"Holder\'s Sp. Def is 1.5x, but it can only use damaging moves.\"}</string>
+    <string name="itemdex_audinite">{\"gen\":6,\"spritenum\":617,\"num\":757,\"name\":\"Audinite\",\"megaEvolves\":\"Audino\",\"megaStone\":\"Audino-Mega\",\"id\":\"audinite\",\"desc\":\"Mega-evolves Audino.\"}</string>
+    <string name="itemdex_babiriberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":17,\"num\":199,\"name\":\"Babiri Berry\",\"id\":\"babiriberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Steel\"},\"desc\":\"Halves damage taken from a super effective Steel-type attack. Single use.\"}</string>
+    <string name="itemdex_banettite">{\"gen\":6,\"spritenum\":582,\"num\":668,\"name\":\"Banettite\",\"megaEvolves\":\"Banette\",\"megaStone\":\"Banette-Mega\",\"id\":\"banettite\",\"desc\":\"Mega-evolves Banette.\"}</string>
+    <string name="itemdex_beedrillite">{\"gen\":6,\"spritenum\":628,\"num\":770,\"name\":\"Beedrillite\",\"megaEvolves\":\"Beedrill\",\"megaStone\":\"Beedrill-Mega\",\"id\":\"beedrillite\",\"desc\":\"Mega-evolves Beedrill.\"}</string>
+    <string name="itemdex_belueberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":21,\"num\":183,\"name\":\"Belue Berry\",\"id\":\"belueberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Electric\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_berryjuice">{\"gen\":2,\"spritenum\":22,\"num\":43,\"name\":\"Berry Juice\",\"id\":\"berryjuice\",\"fling\":{\"basePower\":30},\"desc\":\"Restores 20HP when at 1/2 max HP or less. Single use.\"}</string>
+    <string name="itemdex_bigroot">{\"gen\":4,\"onTryHealPriority\":1,\"spritenum\":29,\"num\":296,\"name\":\"Big Root\",\"id\":\"bigroot\",\"fling\":{\"basePower\":10},\"desc\":\"Holder gains 1.3x HP from draining moves, Aqua Ring, Ingrain, and Leech Seed.\"}</string>
+    <string name="itemdex_bindingband">{\"gen\":5,\"spritenum\":31,\"num\":544,\"name\":\"Binding Band\",\"id\":\"bindingband\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s partial-trapping moves deal 1/6 max HP per turn instead of 1/8.\"}</string>
+    <string name="itemdex_blackbelt">{\"gen\":2,\"spritenum\":32,\"onBasePowerPriority\":6,\"num\":241,\"name\":\"Black Belt\",\"id\":\"blackbelt\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Fighting-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_blackglasses">{\"gen\":2,\"spritenum\":35,\"onBasePowerPriority\":6,\"num\":240,\"name\":\"Black Glasses\",\"id\":\"blackglasses\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Dark-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_blacksludge">{\"gen\":4,\"spritenum\":34,\"num\":281,\"name\":\"Black Sludge\",\"onResidualSubOrder\":2,\"id\":\"blacksludge\",\"fling\":{\"basePower\":30},\"onResidualOrder\":5,\"desc\":\"Each turn, if holder is a Poison-type, restores 1/16 max HP; loses 1/8 if not.\"}</string>
+    <string name="itemdex_blastoisinite">{\"gen\":6,\"spritenum\":583,\"num\":-6,\"name\":\"Blastoisinite\",\"megaEvolves\":\"Blastoise\",\"megaStone\":\"Blastoise-Mega\",\"id\":\"blastoisinite\",\"desc\":\"Mega-evolves Blastoise.\"}</string>
+    <string name="itemdex_blazikenite">{\"gen\":6,\"spritenum\":584,\"num\":664,\"name\":\"Blazikenite\",\"megaEvolves\":\"Blaziken\",\"megaStone\":\"Blaziken-Mega\",\"id\":\"blazikenite\",\"desc\":\"Mega-evolves Blaziken.\"}</string>
+    <string name="itemdex_blueorb">{\"gen\":6,\"spritenum\":41,\"num\":-6,\"name\":\"Blue Orb\",\"onSwitchInPriority\":-6,\"id\":\"blueorb\",\"desc\":\"Reverts Kyogre to its Primal form.\"}</string>
+    <string name="itemdex_blukberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":44,\"num\":165,\"name\":\"Bluk Berry\",\"id\":\"blukberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Fire\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_brightpowder">{\"gen\":2,\"spritenum\":51,\"num\":213,\"name\":\"BrightPowder\",\"id\":\"brightpowder\",\"fling\":{\"basePower\":10},\"desc\":\"The accuracy of attacks against the holder is 0.9x.\"}</string>
+    <string name="itemdex_buggem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":53,\"num\":558,\"name\":\"Bug Gem\",\"isGem\":true,\"id\":\"buggem\",\"desc\":\"Holder\'s first successful Bug-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_burndrive">{\"gen\":5,\"spritenum\":54,\"onDrive\":\"Fire\",\"num\":118,\"name\":\"Burn Drive\",\"id\":\"burndrive\",\"desc\":\"Holder\'s Techno Blast is Fire-type.\"}</string>
+    <string name="itemdex_cameruptite">{\"gen\":6,\"spritenum\":625,\"num\":767,\"name\":\"Cameruptite\",\"megaEvolves\":\"Camerupt\",\"megaStone\":\"Camerupt-Mega\",\"id\":\"cameruptite\",\"desc\":\"Mega-evolves Camerupt.\"}</string>
+    <string name="itemdex_cellbattery">{\"gen\":5,\"spritenum\":60,\"num\":546,\"name\":\"Cell Battery\",\"id\":\"cellbattery\",\"fling\":{\"basePower\":30},\"desc\":\"Raises Attack by 1 if hit by an Electric-type attack. Single use.\"}</string>
+    <string name="itemdex_charcoal">{\"gen\":2,\"spritenum\":61,\"onBasePowerPriority\":6,\"num\":249,\"name\":\"Charcoal\",\"id\":\"charcoal\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Fire-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_charizarditex">{\"gen\":6,\"spritenum\":585,\"num\":660,\"name\":\"Charizardite X\",\"megaEvolves\":\"Charizard\",\"megaStone\":\"Charizard-Mega-X\",\"id\":\"charizarditex\",\"desc\":\"Mega-evolves Charizard into Mega Charizard X.\"}</string>
+    <string name="itemdex_charizarditey">{\"gen\":6,\"spritenum\":586,\"num\":678,\"name\":\"Charizardite Y\",\"megaEvolves\":\"Charizard\",\"megaStone\":\"Charizard-Mega-Y\",\"id\":\"charizarditey\",\"desc\":\"Mega-evolves Charizard into Mega Charizard Y.\"}</string>
+    <string name="itemdex_chartiberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":62,\"num\":195,\"name\":\"Charti Berry\",\"id\":\"chartiberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Rock\"},\"desc\":\"Halves damage taken from a super effective Rock-type attack. Single use.\"}</string>
+    <string name="itemdex_cheriberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":63,\"num\":149,\"name\":\"Cheri Berry\",\"id\":\"cheriberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Fire\"},\"desc\":\"Holder cures itself if it is paralyzed. Single use.\"}</string>
+    <string name="itemdex_cherishball">{\"gen\":4,\"spritenum\":64,\"num\":16,\"name\":\"Cherish Ball\",\"id\":\"cherishball\",\"desc\":\"A rare Poke Ball that has been crafted to commemorate an occasion.\"}</string>
+    <string name="itemdex_chestoberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":65,\"num\":150,\"name\":\"Chesto Berry\",\"id\":\"chestoberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Water\"},\"desc\":\"Holder wakes up if it is asleep. Single use.\"}</string>
+    <string name="itemdex_chilanberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":66,\"num\":200,\"name\":\"Chilan Berry\",\"id\":\"chilanberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Normal\"},\"desc\":\"Halves damage taken from a Normal-type attack. Single use.\"}</string>
+    <string name="itemdex_chilldrive">{\"gen\":5,\"spritenum\":67,\"onDrive\":\"Ice\",\"num\":119,\"name\":\"Chill Drive\",\"id\":\"chilldrive\",\"desc\":\"Holder\'s Techno Blast is Ice-type.\"}</string>
+    <string name="itemdex_choiceband">{\"isChoice\":true,\"gen\":3,\"onModifyAtkPriority\":1,\"spritenum\":68,\"num\":220,\"name\":\"Choice Band\",\"id\":\"choiceband\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Attack is 1.5x, but it can only use the first move it selects.\"}</string>
+    <string name="itemdex_choicescarf">{\"isChoice\":true,\"gen\":4,\"spritenum\":69,\"num\":287,\"name\":\"Choice Scarf\",\"id\":\"choicescarf\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Speed is 1.5x, but it can only use the first move it selects.\"}</string>
+    <string name="itemdex_choicespecs">{\"isChoice\":true,\"gen\":4,\"onModifySpAPriority\":1,\"spritenum\":70,\"num\":297,\"name\":\"Choice Specs\",\"id\":\"choicespecs\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Sp. Atk is 1.5x, but it can only use the first move it selects.\"}</string>
+    <string name="itemdex_chopleberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":71,\"num\":189,\"name\":\"Chople Berry\",\"id\":\"chopleberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Fighting\"},\"desc\":\"Halves damage taken from a super effective Fighting-type attack. Single use.\"}</string>
+    <string name="itemdex_clawfossil">{\"gen\":3,\"spritenum\":72,\"num\":100,\"name\":\"Claw Fossil\",\"id\":\"clawfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Anorith.\"}</string>
+    <string name="itemdex_cobaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":76,\"num\":192,\"name\":\"Coba Berry\",\"id\":\"cobaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Flying\"},\"desc\":\"Halves damage taken from a super effective Flying-type attack. Single use.\"}</string>
+    <string name="itemdex_colburberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":78,\"num\":198,\"name\":\"Colbur Berry\",\"id\":\"colburberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Dark\"},\"desc\":\"Halves damage taken from a super effective Dark-type attack. Single use.\"}</string>
+    <string name="itemdex_cornnberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":81,\"num\":175,\"name\":\"Cornn Berry\",\"id\":\"cornnberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Bug\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_coverfossil">{\"gen\":5,\"spritenum\":85,\"num\":572,\"name\":\"Cover Fossil\",\"id\":\"coverfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Tirtouga.\"}</string>
+    <string name="itemdex_custapberry">{\"isBerry\":true,\"gen\":4,\"isUnreleased\":true,\"spritenum\":86,\"num\":210,\"name\":\"Custap Berry\",\"id\":\"custapberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Ghost\"},\"desc\":\"Holder moves first in its priority bracket when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_damprock">{\"gen\":4,\"spritenum\":88,\"num\":285,\"name\":\"Damp Rock\",\"id\":\"damprock\",\"fling\":{\"basePower\":60},\"desc\":\"Holder\'s use of Rain Dance lasts 8 turns instead of 5.\"}</string>
+    <string name="itemdex_darkgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":89,\"num\":562,\"name\":\"Dark Gem\",\"isGem\":true,\"id\":\"darkgem\",\"desc\":\"Holder\'s first successful Dark-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_deepseascale">{\"gen\":3,\"onModifySpDPriority\":2,\"spritenum\":93,\"num\":227,\"name\":\"DeepSeaScale\",\"id\":\"deepseascale\",\"fling\":{\"basePower\":30},\"desc\":\"If holder is a Clamperl, its Sp. Def is doubled.\"}</string>
+    <string name="itemdex_deepseatooth">{\"gen\":3,\"onModifySpAPriority\":1,\"spritenum\":94,\"num\":226,\"name\":\"DeepSeaTooth\",\"id\":\"deepseatooth\",\"fling\":{\"basePower\":90},\"desc\":\"If holder is a Clamperl, its Sp. Atk is doubled.\"}</string>
+    <string name="itemdex_destinyknot">{\"gen\":4,\"spritenum\":95,\"num\":280,\"name\":\"Destiny Knot\",\"id\":\"destinyknot\",\"fling\":{\"basePower\":10},\"onAttractPriority\":-100,\"desc\":\"If holder becomes infatuated, the other Pokemon also becomes infatuated.\"}</string>
+    <string name="itemdex_diancite">{\"gen\":6,\"spritenum\":624,\"num\":764,\"name\":\"Diancite\",\"megaEvolves\":\"Diancie\",\"megaStone\":\"Diancie-Mega\",\"id\":\"diancite\",\"desc\":\"Mega-evolves Diancie.\"}</string>
+    <string name="itemdex_diveball">{\"gen\":3,\"spritenum\":101,\"num\":7,\"name\":\"Dive Ball\",\"id\":\"diveball\",\"desc\":\"A Poke Ball that works especially well on Pokemon that live underwater.\"}</string>
+    <string name="itemdex_domefossil">{\"gen\":3,\"spritenum\":102,\"num\":102,\"name\":\"Dome Fossil\",\"id\":\"domefossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Kabuto.\"}</string>
+    <string name="itemdex_dousedrive">{\"gen\":5,\"spritenum\":103,\"onDrive\":\"Water\",\"num\":116,\"name\":\"Douse Drive\",\"id\":\"dousedrive\",\"desc\":\"Holder\'s Techno Blast is Water-type.\"}</string>
+    <string name="itemdex_dracoplate">{\"gen\":4,\"onPlate\":\"Dragon\",\"spritenum\":105,\"onBasePowerPriority\":6,\"num\":311,\"name\":\"Draco Plate\",\"id\":\"dracoplate\",\"desc\":\"Holder\'s Dragon-type attacks have 1.2x power. Judgment is Dragon-type.\"}</string>
+    <string name="itemdex_dragonfang">{\"gen\":2,\"spritenum\":106,\"onBasePowerPriority\":6,\"num\":250,\"name\":\"Dragon Fang\",\"id\":\"dragonfang\",\"fling\":{\"basePower\":70},\"desc\":\"Holder\'s Dragon-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_dragongem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":107,\"num\":561,\"name\":\"Dragon Gem\",\"isGem\":true,\"id\":\"dragongem\",\"desc\":\"Holder\'s first successful Dragon-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_dreadplate">{\"gen\":4,\"onPlate\":\"Dark\",\"spritenum\":110,\"onBasePowerPriority\":6,\"num\":312,\"name\":\"Dread Plate\",\"id\":\"dreadplate\",\"desc\":\"Holder\'s Dark-type attacks have 1.2x power. Judgment is Dark-type.\"}</string>
+    <string name="itemdex_dreamball">{\"gen\":5,\"spritenum\":111,\"num\":576,\"name\":\"Dream Ball\",\"id\":\"dreamball\",\"desc\":\"A special Poke Ball that appears out of nowhere in a bag at the Entree Forest.\"}</string>
+    <string name="itemdex_durinberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":114,\"num\":182,\"name\":\"Durin Berry\",\"id\":\"durinberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Water\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_duskball">{\"gen\":4,\"spritenum\":115,\"num\":13,\"name\":\"Dusk Ball\",\"id\":\"duskball\",\"desc\":\"A Poke Ball that makes it easier to catch wild Pokemon at night or in caves.\"}</string>
+    <string name="itemdex_earthplate">{\"gen\":4,\"onPlate\":\"Ground\",\"spritenum\":117,\"onBasePowerPriority\":6,\"num\":305,\"name\":\"Earth Plate\",\"id\":\"earthplate\",\"desc\":\"Holder\'s Ground-type attacks have 1.2x power. Judgment is Ground-type.\"}</string>
+    <string name="itemdex_ejectbutton">{\"gen\":5,\"spritenum\":118,\"num\":547,\"name\":\"Eject Button\",\"id\":\"ejectbutton\",\"fling\":{\"basePower\":30},\"desc\":\"If holder is hit, it immediately switches out with a chosen ally. Single use.\"}</string>
+    <string name="itemdex_electirizer">{\"gen\":4,\"spritenum\":119,\"num\":322,\"name\":\"Electirizer\",\"id\":\"electirizer\",\"fling\":{\"basePower\":80},\"desc\":\"Evolves Electabuzz into Electivire when traded.\"}</string>
+    <string name="itemdex_electricgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":120,\"num\":550,\"name\":\"Electric Gem\",\"isGem\":true,\"id\":\"electricgem\",\"desc\":\"Holder\'s first successful Electric-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_energypowder">{\"gen\":2,\"spritenum\":123,\"num\":34,\"name\":\"EnergyPowder\",\"id\":\"energypowder\",\"fling\":{\"basePower\":30},\"desc\":\"Restores 50HP to one Pokemon but lowers Happiness.\"}</string>
+    <string name="itemdex_enigmaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":124,\"effect\":{\"duration\":1},\"num\":208,\"name\":\"Enigma Berry\",\"id\":\"enigmaberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Bug\"},\"desc\":\"Restores 1/4 max HP when holder is hit by a super effective move. Single use.\"}</string>
+    <string name="itemdex_eviolite">{\"gen\":5,\"onModifySpDPriority\":2,\"spritenum\":130,\"num\":538,\"name\":\"Eviolite\",\"id\":\"eviolite\",\"fling\":{\"basePower\":40},\"onModifyDefPriority\":2,\"desc\":\"If holder\'s species can evolve, its Defense and Sp. Def are 1.5x.\"}</string>
+    <string name="itemdex_expertbelt">{\"gen\":4,\"spritenum\":132,\"num\":268,\"name\":\"Expert Belt\",\"id\":\"expertbelt\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s super effective attacks against other Pokemon do 1.2x damage.\"}</string>
+    <string name="itemdex_fairygem">{\"gen\":6,\"isUnreleased\":true,\"spritenum\":611,\"num\":-6,\"name\":\"Fairy Gem\",\"isGem\":true,\"id\":\"fairygem\",\"desc\":\"Holder\'s first successful Fairy-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_fastball">{\"gen\":2,\"spritenum\":137,\"num\":492,\"name\":\"Fast Ball\",\"id\":\"fastball\",\"desc\":\"A Poke Ball that makes it easier to catch Pokemon which are quick to run away.\"}</string>
+    <string name="itemdex_fightinggem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":139,\"num\":553,\"name\":\"Fighting Gem\",\"isGem\":true,\"id\":\"fightinggem\",\"desc\":\"Holder\'s first successful Fighting-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_figyberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":140,\"num\":159,\"name\":\"Figy Berry\",\"id\":\"figyberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Bug\"},\"desc\":\"Restores 1/8 max HP when at 1/2 max HP or less. May confuse. Single use.\"}</string>
+    <string name="itemdex_firegem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":141,\"num\":548,\"name\":\"Fire Gem\",\"isGem\":true,\"id\":\"firegem\",\"desc\":\"Holder\'s first successful Fire-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_fistplate">{\"gen\":4,\"onPlate\":\"Fighting\",\"spritenum\":143,\"onBasePowerPriority\":6,\"num\":303,\"name\":\"Fist Plate\",\"id\":\"fistplate\",\"desc\":\"Holder\'s Fighting-type attacks have 1.2x power. Judgment is Fighting-type.\"}</string>
+    <string name="itemdex_flameorb">{\"gen\":4,\"spritenum\":145,\"num\":273,\"name\":\"Flame Orb\",\"onResidualSubOrder\":2,\"id\":\"flameorb\",\"fling\":{\"basePower\":30,\"status\":\"brn\"},\"onResidualOrder\":26,\"desc\":\"At the end of every turn, this item attempts to burn the holder.\"}</string>
+    <string name="itemdex_flameplate">{\"gen\":4,\"onPlate\":\"Fire\",\"spritenum\":146,\"onBasePowerPriority\":6,\"num\":298,\"name\":\"Flame Plate\",\"id\":\"flameplate\",\"desc\":\"Holder\'s Fire-type attacks have 1.2x power. Judgment is Fire-type.\"}</string>
+    <string name="itemdex_floatstone">{\"gen\":5,\"spritenum\":147,\"num\":539,\"name\":\"Float Stone\",\"id\":\"floatstone\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s weight is halved.\"}</string>
+    <string name="itemdex_flyinggem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":149,\"num\":556,\"name\":\"Flying Gem\",\"isGem\":true,\"id\":\"flyinggem\",\"desc\":\"Holder\'s first successful Flying-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_focusband">{\"gen\":2,\"spritenum\":150,\"num\":230,\"name\":\"Focus Band\",\"id\":\"focusband\",\"fling\":{\"basePower\":10},\"desc\":\"Holder has a 10% chance to survive an attack that would KO it with 1HP.\"}</string>
+    <string name="itemdex_focussash">{\"gen\":4,\"spritenum\":151,\"num\":275,\"name\":\"Focus Sash\",\"id\":\"focussash\",\"fling\":{\"basePower\":10},\"desc\":\"If holder\'s HP is full, will survive an attack that would KO it with 1HP. Single use.\"}</string>
+    <string name="itemdex_friendball">{\"gen\":2,\"spritenum\":153,\"num\":497,\"name\":\"Friend Ball\",\"id\":\"friendball\",\"desc\":\"A Poke Ball that makes caught Pokemon more friendly.\"}</string>
+    <string name="itemdex_fullincense">{\"gen\":4,\"spritenum\":155,\"num\":316,\"name\":\"Full Incense\",\"id\":\"fullincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder moves last in its priority bracket.\"}</string>
+    <string name="itemdex_galladite">{\"gen\":6,\"spritenum\":616,\"num\":756,\"name\":\"Galladite\",\"megaEvolves\":\"Gallade\",\"megaStone\":\"Gallade-Mega\",\"id\":\"galladite\",\"desc\":\"Mega-evolves Gallade.\"}</string>
+    <string name="itemdex_ganlonberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":158,\"num\":202,\"name\":\"Ganlon Berry\",\"id\":\"ganlonberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Ice\"},\"desc\":\"Raises Defense by 1 when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_garchompite">{\"gen\":6,\"spritenum\":589,\"num\":683,\"name\":\"Garchompite\",\"megaEvolves\":\"Garchomp\",\"megaStone\":\"Garchomp-Mega\",\"id\":\"garchompite\",\"desc\":\"Mega-evolves Garchomp.\"}</string>
+    <string name="itemdex_gardevoirite">{\"gen\":6,\"spritenum\":587,\"num\":657,\"name\":\"Gardevoirite\",\"megaEvolves\":\"Gardevoir\",\"megaStone\":\"Gardevoir-Mega\",\"id\":\"gardevoirite\",\"desc\":\"Mega-evolves Gardevoir.\"}</string>
+    <string name="itemdex_gengarite">{\"gen\":6,\"spritenum\":588,\"num\":656,\"name\":\"Gengarite\",\"megaEvolves\":\"Gengar\",\"megaStone\":\"Gengar-Mega\",\"id\":\"gengarite\",\"desc\":\"Mega-evolves Gengar.\"}</string>
+    <string name="itemdex_ghostgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":161,\"num\":560,\"name\":\"Ghost Gem\",\"isGem\":true,\"id\":\"ghostgem\",\"desc\":\"Holder\'s first successful Ghost-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_glalitite">{\"gen\":6,\"spritenum\":623,\"num\":763,\"name\":\"Glalitite\",\"megaEvolves\":\"Glalie\",\"megaStone\":\"Glalie-Mega\",\"id\":\"glalitite\",\"desc\":\"Mega-evolves Glalie.\"}</string>
+    <string name="itemdex_grassgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":172,\"num\":551,\"name\":\"Grass Gem\",\"isGem\":true,\"id\":\"grassgem\",\"desc\":\"Holder\'s first successful Grass-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_greatball">{\"gen\":1,\"spritenum\":174,\"num\":3,\"name\":\"Great Ball\",\"id\":\"greatball\",\"desc\":\"A high-performance Ball that provides a higher catch rate than a Poke Ball.\"}</string>
+    <string name="itemdex_grepaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":178,\"num\":173,\"name\":\"Grepa Berry\",\"id\":\"grepaberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Flying\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_gripclaw">{\"gen\":4,\"spritenum\":179,\"num\":286,\"name\":\"Grip Claw\",\"id\":\"gripclaw\",\"fling\":{\"basePower\":90},\"desc\":\"Holder\'s partial-trapping moves always last 7 turns.\"}</string>
+    <string name="itemdex_griseousorb">{\"gen\":4,\"spritenum\":180,\"onBasePowerPriority\":6,\"num\":112,\"name\":\"Griseous Orb\",\"id\":\"griseousorb\",\"fling\":{\"basePower\":60},\"desc\":\"If holder is a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_groundgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":182,\"num\":555,\"name\":\"Ground Gem\",\"isGem\":true,\"id\":\"groundgem\",\"desc\":\"Holder\'s first successful Ground-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_gyaradosite">{\"gen\":6,\"spritenum\":589,\"num\":676,\"name\":\"Gyaradosite\",\"megaEvolves\":\"Gyarados\",\"megaStone\":\"Gyarados-Mega\",\"id\":\"gyaradosite\",\"desc\":\"Mega-evolves Gyarados.\"}</string>
+    <string name="itemdex_habanberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":185,\"num\":197,\"name\":\"Haban Berry\",\"id\":\"habanberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Dragon\"},\"desc\":\"Halves damage taken from a super effective Dragon-type attack. Single use.\"}</string>
+    <string name="itemdex_hardstone">{\"gen\":2,\"spritenum\":187,\"onBasePowerPriority\":6,\"num\":238,\"name\":\"Hard Stone\",\"id\":\"hardstone\",\"fling\":{\"basePower\":100},\"desc\":\"Holder\'s Rock-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_healball">{\"gen\":4,\"spritenum\":188,\"num\":14,\"name\":\"Heal Ball\",\"id\":\"healball\",\"desc\":\"A remedial Poke Ball that restores the caught Pokemon\'s HP and status problem.\"}</string>
+    <string name="itemdex_heatrock">{\"gen\":4,\"spritenum\":193,\"num\":284,\"name\":\"Heat Rock\",\"id\":\"heatrock\",\"fling\":{\"basePower\":60},\"desc\":\"Holder\'s use of Sunny Day lasts 8 turns instead of 5.\"}</string>
+    <string name="itemdex_heavyball">{\"gen\":2,\"spritenum\":194,\"num\":495,\"name\":\"Heavy Ball\",\"id\":\"heavyball\",\"desc\":\"A Poke Ball for catching very heavy Pokemon.\"}</string>
+    <string name="itemdex_helixfossil">{\"gen\":3,\"spritenum\":195,\"num\":101,\"name\":\"Helix Fossil\",\"id\":\"helixfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Omanyte.\"}</string>
+    <string name="itemdex_heracronite">{\"gen\":6,\"spritenum\":590,\"num\":680,\"name\":\"Heracronite\",\"megaEvolves\":\"Heracross\",\"megaStone\":\"Heracross-Mega\",\"id\":\"heracronite\",\"desc\":\"Mega-evolves Heracross.\"}</string>
+    <string name="itemdex_hondewberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":213,\"num\":172,\"name\":\"Hondew Berry\",\"id\":\"hondewberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Ground\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_houndoominite">{\"gen\":6,\"spritenum\":591,\"num\":666,\"name\":\"Houndoominite\",\"megaEvolves\":\"Houndoom\",\"megaStone\":\"Houndoom-Mega\",\"id\":\"houndoominite\",\"desc\":\"Mega-evolves Houndoom.\"}</string>
+    <string name="itemdex_iapapaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":217,\"num\":163,\"name\":\"Iapapa Berry\",\"id\":\"iapapaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Dark\"},\"desc\":\"Restores 1/8 max HP when at 1/2 max HP or less. May confuse. Single use.\"}</string>
+    <string name="itemdex_icegem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":218,\"num\":552,\"name\":\"Ice Gem\",\"isGem\":true,\"id\":\"icegem\",\"desc\":\"Holder\'s first successful Ice-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_icicleplate">{\"gen\":4,\"onPlate\":\"Ice\",\"spritenum\":220,\"onBasePowerPriority\":6,\"num\":302,\"name\":\"Icicle Plate\",\"id\":\"icicleplate\",\"desc\":\"Holder\'s Ice-type attacks have 1.2x power. Judgment is Ice-type.\"}</string>
+    <string name="itemdex_icyrock">{\"gen\":4,\"spritenum\":221,\"num\":282,\"name\":\"Icy Rock\",\"id\":\"icyrock\",\"fling\":{\"basePower\":40},\"desc\":\"Holder\'s use of Hail lasts 8 turns instead of 5.\"}</string>
+    <string name="itemdex_insectplate">{\"gen\":4,\"onPlate\":\"Bug\",\"spritenum\":223,\"onBasePowerPriority\":6,\"num\":308,\"name\":\"Insect Plate\",\"id\":\"insectplate\",\"desc\":\"Holder\'s Bug-type attacks have 1.2x power. Judgment is Bug-type.\"}</string>
+    <string name="itemdex_ironball">{\"gen\":4,\"spritenum\":224,\"num\":278,\"name\":\"Iron Ball\",\"id\":\"ironball\",\"fling\":{\"basePower\":130},\"desc\":\"Holder\'s Speed halved, becomes grounded, and takes 1x from Ground.\"}</string>
+    <string name="itemdex_ironplate">{\"gen\":4,\"onPlate\":\"Steel\",\"spritenum\":225,\"onBasePowerPriority\":6,\"num\":313,\"name\":\"Iron Plate\",\"id\":\"ironplate\",\"desc\":\"Holder\'s Steel-type attacks have 1.2x power. Judgment is Steel-type.\"}</string>
+    <string name="itemdex_jabocaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":230,\"num\":211,\"name\":\"Jaboca Berry\",\"id\":\"jabocaberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Dragon\"},\"desc\":\"If holder is hit by a physical move, attacker loses 1/8 of its max HP. Single use.\"}</string>
+    <string name="itemdex_kangaskhanite">{\"gen\":6,\"spritenum\":592,\"num\":675,\"name\":\"Kangaskhanite\",\"megaEvolves\":\"Kangaskhan\",\"megaStone\":\"Kangaskhan-Mega\",\"id\":\"kangaskhanite\",\"desc\":\"Mega-evolves Kangaskhan.\"}</string>
+    <string name="itemdex_kasibberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":233,\"num\":196,\"name\":\"Kasib Berry\",\"id\":\"kasibberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ghost\"},\"desc\":\"Halves damage taken from a super effective Ghost-type attack. Single use.\"}</string>
+    <string name="itemdex_kebiaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":234,\"num\":190,\"name\":\"Kebia Berry\",\"id\":\"kebiaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Poison\"},\"desc\":\"Halves damage taken from a super effective Poison-type attack. Single use.\"}</string>
+    <string name="itemdex_keeberry">{\"isBerry\":true,\"gen\":6,\"spritenum\":593,\"num\":-6,\"name\":\"Kee Berry\",\"id\":\"keeberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Fairy\"},\"desc\":\"Raises Defense by 1 if hit by a Physical attack. Single use.\"}</string>
+    <string name="itemdex_kelpsyberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":235,\"num\":170,\"name\":\"Kelpsy Berry\",\"id\":\"kelpsyberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Fighting\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_kingsrock">{\"gen\":2,\"spritenum\":236,\"num\":221,\"name\":\"King\'s Rock\",\"id\":\"kingsrock\",\"fling\":{\"basePower\":30,\"volatileStatus\":\"flinch\"},\"desc\":\"Holder\'s attacks without a chance to flinch gain a 10% chance to flinch.\"}</string>
+    <string name="itemdex_laggingtail">{\"gen\":4,\"spritenum\":237,\"num\":279,\"name\":\"Lagging Tail\",\"id\":\"laggingtail\",\"fling\":{\"basePower\":10},\"desc\":\"Holder moves last in its priority bracket.\"}</string>
+    <string name="itemdex_lansatberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":238,\"num\":206,\"name\":\"Lansat Berry\",\"id\":\"lansatberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Flying\"},\"desc\":\"Holder gains the Focus Energy effect when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_latiasite">{\"gen\":6,\"spritenum\":629,\"num\":-6,\"name\":\"Latiasite\",\"megaEvolves\":\"Latias\",\"megaStone\":\"Latias-Mega\",\"id\":\"latiasite\",\"desc\":\"Mega-evolves Latias.\"}</string>
+    <string name="itemdex_latiosite">{\"gen\":6,\"spritenum\":630,\"num\":-6,\"name\":\"Latiosite\",\"megaEvolves\":\"Latios\",\"megaStone\":\"Latios-Mega\",\"id\":\"latiosite\",\"desc\":\"Mega-evolves Latios.\"}</string>
+    <string name="itemdex_laxincense">{\"gen\":3,\"spritenum\":240,\"num\":255,\"name\":\"Lax Incense\",\"id\":\"laxincense\",\"fling\":{\"basePower\":10},\"desc\":\"The accuracy of attacks against the holder is 0.9x.\"}</string>
+    <string name="itemdex_leftovers">{\"gen\":2,\"spritenum\":242,\"num\":234,\"name\":\"Leftovers\",\"onResidualSubOrder\":2,\"id\":\"leftovers\",\"fling\":{\"basePower\":10},\"onResidualOrder\":5,\"desc\":\"At the end of every turn, holder restores 1/16 of its max HP.\"}</string>
+    <string name="itemdex_leppaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":244,\"num\":154,\"name\":\"Leppa Berry\",\"id\":\"leppaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Fighting\"},\"desc\":\"Restores 10PP to the first of the holder\'s moves to reach 0PP. Single use.\"}</string>
+    <string name="itemdex_levelball">{\"gen\":2,\"spritenum\":246,\"num\":493,\"name\":\"Level Ball\",\"id\":\"levelball\",\"desc\":\"A Poke Ball for catching Pokemon that are a lower level than your own.\"}</string>
+    <string name="itemdex_liechiberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":248,\"num\":201,\"name\":\"Liechi Berry\",\"id\":\"liechiberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Grass\"},\"desc\":\"Raises Attack by 1 when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_lifeorb">{\"gen\":4,\"spritenum\":249,\"effect\":{\"duration\":1},\"num\":270,\"name\":\"Life Orb\",\"id\":\"lifeorb\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s damaging moves do 1.3x damage; loses 1/10 max HP after the attack.\"}</string>
+    <string name="itemdex_lightball">{\"gen\":2,\"onModifyAtkPriority\":1,\"onModifySpAPriority\":1,\"spritenum\":251,\"num\":236,\"name\":\"Light Ball\",\"id\":\"lightball\",\"fling\":{\"basePower\":30,\"status\":\"par\"},\"desc\":\"If holder is a Pikachu, its Attack and Sp. Atk are doubled.\"}</string>
+    <string name="itemdex_lightclay">{\"gen\":4,\"spritenum\":252,\"num\":269,\"name\":\"Light Clay\",\"id\":\"lightclay\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s use of Light Screen or Reflect lasts 8 turns instead of 5.\"}</string>
+    <string name="itemdex_lopunnite">{\"gen\":6,\"spritenum\":626,\"num\":768,\"name\":\"Lopunnite\",\"megaEvolves\":\"Lopunny\",\"megaStone\":\"Lopunny-Mega\",\"id\":\"lopunnite\",\"desc\":\"Mega-evolves Lopunny.\"}</string>
+    <string name="itemdex_loveball">{\"gen\":2,\"spritenum\":258,\"num\":496,\"name\":\"Love Ball\",\"id\":\"loveball\",\"desc\":\"Poke Ball for catching Pokemon that are the opposite gender of your Pokemon.\"}</string>
+    <string name="itemdex_lucarionite">{\"gen\":6,\"spritenum\":594,\"num\":673,\"name\":\"Lucarionite\",\"megaEvolves\":\"Lucario\",\"megaStone\":\"Lucario-Mega\",\"id\":\"lucarionite\",\"desc\":\"Mega-evolves Lucario.\"}</string>
+    <string name="itemdex_luckypunch">{\"gen\":2,\"spritenum\":261,\"num\":256,\"name\":\"Lucky Punch\",\"id\":\"luckypunch\",\"fling\":{\"basePower\":40},\"desc\":\"If holder is a Chansey, its critical hit ratio is boosted by 2.\"}</string>
+    <string name="itemdex_lumberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":262,\"num\":157,\"name\":\"Lum Berry\",\"id\":\"lumberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Flying\"},\"desc\":\"Holder cures itself if it is confused or has a major status problem. Single use.\"}</string>
+    <string name="itemdex_luminousmoss">{\"gen\":6,\"spritenum\":595,\"num\":-6,\"name\":\"Luminous Moss\",\"id\":\"luminousmoss\",\"fling\":{\"basePower\":30},\"desc\":\"Raises Special Defense by 1 if hit by a Water-type attack. Single use.\"}</string>
+    <string name="itemdex_lureball">{\"gen\":2,\"spritenum\":264,\"num\":494,\"name\":\"Lure Ball\",\"id\":\"lureball\",\"desc\":\"A Poke Ball for catching Pokemon hooked by a Rod when fishing.\"}</string>
+    <string name="itemdex_lustrousorb">{\"gen\":4,\"spritenum\":265,\"onBasePowerPriority\":6,\"num\":136,\"name\":\"Lustrous Orb\",\"id\":\"lustrousorb\",\"fling\":{\"basePower\":60},\"desc\":\"If holder is a Palkia, its Water- and Dragon-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_luxuryball">{\"gen\":3,\"spritenum\":266,\"num\":11,\"name\":\"Luxury Ball\",\"id\":\"luxuryball\",\"desc\":\"A comfortable Poke Ball that makes a caught wild Pokemon quickly grow friendly.\"}</string>
+    <string name="itemdex_machobrace">{\"gen\":3,\"spritenum\":269,\"num\":215,\"name\":\"Macho Brace\",\"id\":\"machobrace\",\"fling\":{\"basePower\":60},\"desc\":\"Holder\'s Speed is halved.\"}</string>
+    <string name="itemdex_magnet">{\"gen\":2,\"spritenum\":273,\"onBasePowerPriority\":6,\"num\":242,\"name\":\"Magnet\",\"id\":\"magnet\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Electric-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_magoberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":274,\"num\":161,\"name\":\"Mago Berry\",\"id\":\"magoberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ghost\"},\"desc\":\"Restores 1/8 max HP when at 1/2 max HP or less. May confuse. Single use.\"}</string>
+    <string name="itemdex_magostberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":275,\"num\":176,\"name\":\"Magost Berry\",\"id\":\"magostberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Rock\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_mail">{\"gen\":2,\"spritenum\":403,\"isUnreleased\":true,\"name\":\"Mail\",\"id\":\"mail\",\"onTakeItem\":false,\"desc\":\"This item cannot be given to or taken from a Pokemon, except by Knock Off.\"}</string>
+    <string name="itemdex_manectite">{\"gen\":6,\"spritenum\":596,\"num\":682,\"name\":\"Manectite\",\"megaEvolves\":\"Manectric\",\"megaStone\":\"Manectric-Mega\",\"id\":\"manectite\",\"desc\":\"Mega-evolves Manectric.\"}</string>
+    <string name="itemdex_marangaberry">{\"isBerry\":true,\"gen\":6,\"spritenum\":597,\"num\":-6,\"name\":\"Maranga Berry\",\"id\":\"marangaberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Dark\"},\"desc\":\"Raises Special Defense by 1 if hit by a Special attack. Single use.\"}</string>
+    <string name="itemdex_masterball">{\"gen\":1,\"spritenum\":276,\"num\":1,\"name\":\"Master Ball\",\"id\":\"masterball\",\"desc\":\"The best Ball with the ultimate performance. It will catch any wild Pokemon.\"}</string>
+    <string name="itemdex_mawilite">{\"gen\":6,\"spritenum\":598,\"num\":681,\"name\":\"Mawilite\",\"megaEvolves\":\"Mawile\",\"megaStone\":\"Mawile-Mega\",\"id\":\"mawilite\",\"desc\":\"Mega-evolves Mawile.\"}</string>
+    <string name="itemdex_meadowplate">{\"gen\":4,\"onPlate\":\"Grass\",\"spritenum\":282,\"onBasePowerPriority\":6,\"num\":301,\"name\":\"Meadow Plate\",\"id\":\"meadowplate\",\"desc\":\"Holder\'s Grass-type attacks have 1.2x power. Judgment is Grass-type.\"}</string>
+    <string name="itemdex_medichamite">{\"gen\":6,\"spritenum\":599,\"num\":665,\"name\":\"Medichamite\",\"megaEvolves\":\"Medicham\",\"megaStone\":\"Medicham-Mega\",\"id\":\"medichamite\",\"desc\":\"Mega-evolves Medicham.\"}</string>
+    <string name="itemdex_mentalherb">{\"gen\":3,\"spritenum\":285,\"num\":219,\"name\":\"Mental Herb\",\"id\":\"mentalherb\",\"fling\":{\"basePower\":10},\"desc\":\"Cures holder if affected by Attract, Disable, Encore, Taunt, Torment. Single use.\"}</string>
+    <string name="itemdex_metagrossite">{\"gen\":6,\"spritenum\":618,\"num\":758,\"name\":\"Metagrossite\",\"megaEvolves\":\"Metagross\",\"megaStone\":\"Metagross-Mega\",\"id\":\"metagrossite\",\"desc\":\"Mega-evolves Metagross.\"}</string>
+    <string name="itemdex_metalcoat">{\"gen\":2,\"spritenum\":286,\"onBasePowerPriority\":6,\"num\":233,\"name\":\"Metal Coat\",\"id\":\"metalcoat\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Steel-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_metalpowder">{\"gen\":2,\"spritenum\":287,\"num\":257,\"name\":\"Metal Powder\",\"id\":\"metalpowder\",\"fling\":{\"basePower\":10},\"onModifyDefPriority\":2,\"desc\":\"If holder is a Ditto that hasn\'t Transformed, its Defense is doubled.\"}</string>
+    <string name="itemdex_metronome">{\"gen\":4,\"spritenum\":289,\"effect\":{},\"num\":277,\"name\":\"Metronome\",\"id\":\"metronome\",\"fling\":{\"basePower\":30},\"desc\":\"Damage of moves used on consecutive turns is increased. Max 2x after 5 turns.\"}</string>
+    <string name="itemdex_mewtwonitex">{\"gen\":6,\"spritenum\":600,\"num\":662,\"name\":\"Mewtwonite X\",\"megaEvolves\":\"Mewtwo\",\"megaStone\":\"Mewtwo-Mega-X\",\"id\":\"mewtwonitex\",\"desc\":\"Mega-evolves Mewtwo into Mega Mewtwo X.\"}</string>
+    <string name="itemdex_mewtwonitey">{\"gen\":6,\"spritenum\":601,\"num\":663,\"name\":\"Mewtwonite Y\",\"megaEvolves\":\"Mewtwo\",\"megaStone\":\"Mewtwo-Mega-Y\",\"id\":\"mewtwonitey\",\"desc\":\"Mega-evolves Mewtwo into Mega Mewtwo Y.\"}</string>
+    <string name="itemdex_micleberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":290,\"effect\":{\"duration\":2},\"num\":209,\"name\":\"Micle Berry\",\"id\":\"micleberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Rock\"},\"desc\":\"Holder\'s next move has 1.2x accuracy when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_mindplate">{\"gen\":4,\"onPlate\":\"Psychic\",\"spritenum\":291,\"onBasePowerPriority\":6,\"num\":307,\"name\":\"Mind Plate\",\"id\":\"mindplate\",\"desc\":\"Holder\'s Psychic-type attacks have 1.2x power. Judgment is Psychic-type.\"}</string>
+    <string name="itemdex_miracleseed">{\"gen\":2,\"spritenum\":292,\"onBasePowerPriority\":6,\"num\":239,\"name\":\"Miracle Seed\",\"id\":\"miracleseed\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Grass-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_moonball">{\"gen\":2,\"spritenum\":294,\"num\":498,\"name\":\"Moon Ball\",\"id\":\"moonball\",\"desc\":\"A Poke Ball for catching Pokemon that evolve using the Moon Stone.\"}</string>
+    <string name="itemdex_muscleband">{\"gen\":4,\"spritenum\":297,\"onBasePowerPriority\":6,\"num\":266,\"name\":\"Muscle Band\",\"id\":\"muscleband\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s physical attacks have 1.1x power.\"}</string>
+    <string name="itemdex_mysticwater">{\"gen\":2,\"spritenum\":300,\"onBasePowerPriority\":6,\"num\":243,\"name\":\"Mystic Water\",\"id\":\"mysticwater\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Water-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_nanabberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":302,\"num\":166,\"name\":\"Nanab Berry\",\"id\":\"nanabberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Water\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_nestball">{\"gen\":3,\"spritenum\":303,\"num\":8,\"name\":\"Nest Ball\",\"id\":\"nestball\",\"desc\":\"A Poke Ball that works especially well on weaker Pokemon in the wild.\"}</string>
+    <string name="itemdex_netball">{\"gen\":3,\"spritenum\":304,\"num\":6,\"name\":\"Net Ball\",\"id\":\"netball\",\"desc\":\"A Poke Ball that works especially well on Water- and Bug-type Pokemon.\"}</string>
+    <string name="itemdex_nevermeltice">{\"gen\":2,\"spritenum\":305,\"onBasePowerPriority\":6,\"num\":246,\"name\":\"Never-Melt Ice\",\"id\":\"nevermeltice\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Ice-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_nomelberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":306,\"num\":178,\"name\":\"Nomel Berry\",\"id\":\"nomelberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Dragon\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_normalgem">{\"gen\":5,\"spritenum\":307,\"num\":564,\"name\":\"Normal Gem\",\"isGem\":true,\"id\":\"normalgem\",\"desc\":\"Holder\'s first successful Normal-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_occaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":311,\"num\":184,\"name\":\"Occa Berry\",\"id\":\"occaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Fire\"},\"desc\":\"Halves damage taken from a super effective Fire-type attack. Single use.\"}</string>
+    <string name="itemdex_oddincense">{\"gen\":4,\"spritenum\":312,\"onBasePowerPriority\":6,\"num\":314,\"name\":\"Odd Incense\",\"id\":\"oddincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Psychic-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_oldamber">{\"gen\":3,\"spritenum\":314,\"num\":103,\"name\":\"Old Amber\",\"id\":\"oldamber\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Aerodactyl.\"}</string>
+    <string name="itemdex_oranberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":319,\"num\":155,\"name\":\"Oran Berry\",\"id\":\"oranberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Poison\"},\"desc\":\"Restores 10HP when at 1/2 max HP or less. Single use.\"}</string>
+    <string name="itemdex_pamtreberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":323,\"num\":180,\"name\":\"Pamtre Berry\",\"id\":\"pamtreberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Steel\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_parkball">{\"gen\":2,\"spritenum\":325,\"num\":500,\"name\":\"Park Ball\",\"id\":\"parkball\",\"desc\":\"A special Poke Ball for the Pal Park.\"}</string>
+    <string name="itemdex_passhoberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":329,\"num\":185,\"name\":\"Passho Berry\",\"id\":\"passhoberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Water\"},\"desc\":\"Halves damage taken from a super effective Water-type attack. Single use.\"}</string>
+    <string name="itemdex_payapaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":330,\"num\":193,\"name\":\"Payapa Berry\",\"id\":\"payapaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Psychic\"},\"desc\":\"Halves damage taken from a super effective Psychic-type attack. Single use.\"}</string>
+    <string name="itemdex_pechaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":333,\"num\":151,\"name\":\"Pecha Berry\",\"id\":\"pechaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Electric\"},\"desc\":\"Holder is cured if it is poisoned. Single use.\"}</string>
+    <string name="itemdex_persimberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":334,\"num\":156,\"name\":\"Persim Berry\",\"id\":\"persimberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ground\"},\"desc\":\"Holder is cured if it is confused. Single use.\"}</string>
+    <string name="itemdex_petayaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":335,\"num\":204,\"name\":\"Petaya Berry\",\"id\":\"petayaberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Poison\"},\"desc\":\"Raises Sp. Atk by 1 when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_pidgeotite">{\"gen\":6,\"spritenum\":622,\"num\":762,\"name\":\"Pidgeotite\",\"megaEvolves\":\"Pidgeot\",\"megaStone\":\"Pidgeot-Mega\",\"id\":\"pidgeotite\",\"desc\":\"Mega-evolves Pidgeot.\"}</string>
+    <string name="itemdex_pinapberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":337,\"num\":168,\"name\":\"Pinap Berry\",\"id\":\"pinapberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Grass\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_pinsirite">{\"gen\":6,\"spritenum\":602,\"num\":671,\"name\":\"Pinsirite\",\"megaEvolves\":\"Pinsir\",\"megaStone\":\"Pinsir-Mega\",\"id\":\"pinsirite\",\"desc\":\"Mega-evolves Pinsir.\"}</string>
+    <string name="itemdex_pixieplate">{\"gen\":6,\"onPlate\":\"Fairy\",\"spritenum\":610,\"onBasePowerPriority\":6,\"num\":-6,\"name\":\"Pixie Plate\",\"id\":\"pixieplate\",\"desc\":\"Holder\'s Fairy-type attacks have 1.2x power. Judgment is Fairy-type.\"}</string>
+    <string name="itemdex_plumefossil">{\"gen\":5,\"spritenum\":339,\"num\":573,\"name\":\"Plume Fossil\",\"id\":\"plumefossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Archen.\"}</string>
+    <string name="itemdex_poisonbarb">{\"gen\":2,\"spritenum\":343,\"onBasePowerPriority\":6,\"num\":245,\"name\":\"Poison Barb\",\"id\":\"poisonbarb\",\"fling\":{\"basePower\":70,\"status\":\"psn\"},\"desc\":\"Holder\'s Poison-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_poisongem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":344,\"num\":554,\"name\":\"Poison Gem\",\"isGem\":true,\"id\":\"poisongem\",\"desc\":\"Holder\'s first successful Poison-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_pokeball">{\"gen\":1,\"spritenum\":345,\"num\":4,\"name\":\"Poke Ball\",\"id\":\"pokeball\",\"desc\":\"A device for catching wild Pokemon. It is designed as a capsule system.\"}</string>
+    <string name="itemdex_pomegberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":351,\"num\":169,\"name\":\"Pomeg Berry\",\"id\":\"pomegberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ice\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_powerherb">{\"gen\":4,\"spritenum\":358,\"num\":271,\"name\":\"Power Herb\",\"id\":\"powerherb\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s two-turn moves complete in one turn (except Sky Drop). Single use.\"}</string>
+    <string name="itemdex_premierball">{\"gen\":3,\"spritenum\":363,\"num\":12,\"name\":\"Premier Ball\",\"id\":\"premierball\",\"desc\":\"A rare Poke Ball that has been crafted to commemorate an event.\"}</string>
+    <string name="itemdex_psychicgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":369,\"num\":557,\"name\":\"Psychic Gem\",\"isGem\":true,\"id\":\"psychicgem\",\"desc\":\"Holder\'s first successful Psychic-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_qualotberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":371,\"num\":171,\"name\":\"Qualot Berry\",\"id\":\"qualotberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Poison\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_quickball">{\"gen\":4,\"spritenum\":372,\"num\":15,\"name\":\"Quick Ball\",\"id\":\"quickball\",\"desc\":\"A Poke Ball that provides a better catch rate at the start of a wild encounter.\"}</string>
+    <string name="itemdex_quickclaw">{\"gen\":2,\"spritenum\":373,\"num\":217,\"name\":\"Quick Claw\",\"id\":\"quickclaw\",\"fling\":{\"basePower\":80},\"desc\":\"Each turn, holder has a 20% chance to move first in its priority bracket.\"}</string>
+    <string name="itemdex_quickpowder">{\"gen\":4,\"spritenum\":374,\"num\":274,\"name\":\"Quick Powder\",\"id\":\"quickpowder\",\"fling\":{\"basePower\":10},\"desc\":\"If holder is a Ditto that hasn\'t Transformed, its Speed is doubled.\"}</string>
+    <string name="itemdex_rabutaberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":375,\"num\":177,\"name\":\"Rabuta Berry\",\"id\":\"rabutaberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Ghost\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_rarebone">{\"gen\":4,\"spritenum\":379,\"num\":106,\"name\":\"Rare Bone\",\"id\":\"rarebone\",\"fling\":{\"basePower\":100},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_rawstberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":381,\"num\":152,\"name\":\"Rawst Berry\",\"id\":\"rawstberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Grass\"},\"desc\":\"Holder is cured if it is burned. Single use.\"}</string>
+    <string name="itemdex_razorclaw">{\"gen\":4,\"spritenum\":382,\"num\":326,\"name\":\"Razor Claw\",\"id\":\"razorclaw\",\"fling\":{\"basePower\":80},\"desc\":\"Holder\'s critical hit ratio is boosted by 1.\"}</string>
+    <string name="itemdex_razorfang">{\"gen\":4,\"spritenum\":383,\"num\":327,\"name\":\"Razor Fang\",\"id\":\"razorfang\",\"fling\":{\"basePower\":30,\"volatileStatus\":\"flinch\"},\"desc\":\"Holder\'s attacks without a chance to flinch gain a 10% chance to flinch.\"}</string>
+    <string name="itemdex_razzberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":384,\"num\":164,\"name\":\"Razz Berry\",\"id\":\"razzberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Steel\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_redcard">{\"gen\":5,\"spritenum\":387,\"num\":542,\"name\":\"Red Card\",\"id\":\"redcard\",\"fling\":{\"basePower\":10},\"desc\":\"If holder is hit, it forces the attacker to switch to a random ally. Single use.\"}</string>
+    <string name="itemdex_redorb">{\"gen\":6,\"spritenum\":390,\"num\":-6,\"name\":\"Red Orb\",\"onSwitchInPriority\":-6,\"id\":\"redorb\",\"desc\":\"Reverts Groudon to its Primal form.\"}</string>
+    <string name="itemdex_repeatball">{\"gen\":3,\"spritenum\":401,\"num\":9,\"name\":\"Repeat Ball\",\"id\":\"repeatball\",\"desc\":\"A Poke Ball that works well on Pokemon species that were previously caught.\"}</string>
+    <string name="itemdex_rindoberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":409,\"num\":187,\"name\":\"Rindo Berry\",\"id\":\"rindoberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Grass\"},\"desc\":\"Halves damage taken from a super effective Grass-type attack. Single use.\"}</string>
+    <string name="itemdex_ringtarget">{\"gen\":5,\"spritenum\":410,\"num\":543,\"name\":\"Ring Target\",\"id\":\"ringtarget\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s type immunities granted by its own typing are negated.\"}</string>
+    <string name="itemdex_rockgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":415,\"num\":559,\"name\":\"Rock Gem\",\"isGem\":true,\"id\":\"rockgem\",\"desc\":\"Holder\'s first successful Rock-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_rockincense">{\"gen\":4,\"spritenum\":416,\"onBasePowerPriority\":6,\"num\":315,\"name\":\"Rock Incense\",\"id\":\"rockincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Rock-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_rockyhelmet">{\"onAfterDamageOrder\":2,\"gen\":5,\"spritenum\":417,\"num\":540,\"name\":\"Rocky Helmet\",\"id\":\"rockyhelmet\",\"fling\":{\"basePower\":60},\"desc\":\"If holder is hit by a contact move, the attacker loses 1/6 of its max HP.\"}</string>
+    <string name="itemdex_rootfossil">{\"gen\":3,\"spritenum\":418,\"num\":99,\"name\":\"Root Fossil\",\"id\":\"rootfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Lileep.\"}</string>
+    <string name="itemdex_roseincense">{\"gen\":4,\"spritenum\":419,\"onBasePowerPriority\":6,\"num\":318,\"name\":\"Rose Incense\",\"id\":\"roseincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Grass-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_roseliberry">{\"isBerry\":true,\"gen\":6,\"spritenum\":603,\"num\":-6,\"name\":\"Roseli Berry\",\"id\":\"roseliberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Fairy\"},\"desc\":\"Halves damage taken from a super effective Fairy-type attack. Single use.\"}</string>
+    <string name="itemdex_rowapberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":420,\"num\":212,\"name\":\"Rowap Berry\",\"id\":\"rowapberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Dark\"},\"desc\":\"If holder is hit by a special move, attacker loses 1/8 of its max HP. Single use.\"}</string>
+    <string name="itemdex_sablenite">{\"gen\":6,\"spritenum\":614,\"num\":754,\"name\":\"Sablenite\",\"megaEvolves\":\"Sableye\",\"megaStone\":\"Sableye-Mega\",\"id\":\"sablenite\",\"desc\":\"Mega-evolves Sableye.\"}</string>
+    <string name="itemdex_safariball">{\"gen\":1,\"spritenum\":425,\"num\":5,\"name\":\"Safari Ball\",\"id\":\"safariball\",\"desc\":\"A special Poke Ball that is used only in the Safari Zone and Great Marsh.\"}</string>
+    <string name="itemdex_safetygoggles">{\"gen\":6,\"spritenum\":604,\"num\":-6,\"name\":\"Safety Goggles\",\"id\":\"safetygoggles\",\"fling\":{\"basePower\":80},\"desc\":\"Protects the holder from weather-related damage and powder moves.\"}</string>
+    <string name="itemdex_salacberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":426,\"num\":203,\"name\":\"Salac Berry\",\"id\":\"salacberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Fighting\"},\"desc\":\"Raises Speed by 1 when at 1/4 max HP or less. Single use.\"}</string>
+    <string name="itemdex_salamencite">{\"gen\":6,\"spritenum\":627,\"num\":769,\"name\":\"Salamencite\",\"megaEvolves\":\"Salamence\",\"megaStone\":\"Salamence-Mega\",\"id\":\"salamencite\",\"desc\":\"Mega-evolves Salamence.\"}</string>
+    <string name="itemdex_sceptilite">{\"gen\":6,\"spritenum\":613,\"num\":753,\"name\":\"Sceptilite\",\"megaEvolves\":\"Sceptile\",\"megaStone\":\"Sceptile-Mega\",\"id\":\"sceptilite\",\"desc\":\"Mega-evolves Sceptile.\"}</string>
+    <string name="itemdex_scizorite">{\"gen\":6,\"spritenum\":605,\"num\":670,\"name\":\"Scizorite\",\"megaEvolves\":\"Scizor\",\"megaStone\":\"Scizor-Mega\",\"id\":\"scizorite\",\"desc\":\"Mega-evolves Scizor.\"}</string>
+    <string name="itemdex_scopelens">{\"gen\":2,\"spritenum\":429,\"num\":232,\"name\":\"Scope Lens\",\"id\":\"scopelens\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s critical hit ratio is boosted by 1.\"}</string>
+    <string name="itemdex_seaincense">{\"gen\":3,\"spritenum\":430,\"onBasePowerPriority\":6,\"num\":254,\"name\":\"Sea Incense\",\"id\":\"seaincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Water-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_sharpbeak">{\"gen\":2,\"spritenum\":436,\"onBasePowerPriority\":6,\"num\":244,\"name\":\"Sharp Beak\",\"id\":\"sharpbeak\",\"fling\":{\"basePower\":50},\"desc\":\"Holder\'s Flying-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_sharpedonite">{\"gen\":6,\"spritenum\":619,\"num\":759,\"name\":\"Sharpedonite\",\"megaEvolves\":\"Sharpedo\",\"megaStone\":\"Sharpedo-Mega\",\"id\":\"sharpedonite\",\"desc\":\"Mega-evolves Sharpedo.\"}</string>
+    <string name="itemdex_shedshell">{\"gen\":4,\"spritenum\":437,\"num\":295,\"name\":\"Shed Shell\",\"id\":\"shedshell\",\"fling\":{\"basePower\":10},\"onModifyPokemonPriority\":-10,\"desc\":\"Holder may switch out even when trapped by another Pokemon.\"}</string>
+    <string name="itemdex_shellbell">{\"gen\":3,\"onAfterMoveSecondarySelfPriority\":-1,\"spritenum\":438,\"num\":253,\"name\":\"Shell Bell\",\"id\":\"shellbell\",\"fling\":{\"basePower\":30},\"desc\":\"After an attack, holder gains 1/8 of the damage in HP dealt to other Pokemon.\"}</string>
+    <string name="itemdex_shockdrive">{\"gen\":5,\"spritenum\":442,\"onDrive\":\"Electric\",\"num\":117,\"name\":\"Shock Drive\",\"id\":\"shockdrive\",\"desc\":\"Holder\'s Techno Blast is Electric-type.\"}</string>
+    <string name="itemdex_shucaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":443,\"num\":191,\"name\":\"Shuca Berry\",\"id\":\"shucaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ground\"},\"desc\":\"Halves damage taken from a super effective Ground-type attack. Single use.\"}</string>
+    <string name="itemdex_silkscarf">{\"gen\":3,\"spritenum\":444,\"onBasePowerPriority\":6,\"num\":251,\"name\":\"Silk Scarf\",\"id\":\"silkscarf\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Normal-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_silverpowder">{\"gen\":2,\"spritenum\":447,\"onBasePowerPriority\":6,\"num\":222,\"name\":\"SilverPowder\",\"id\":\"silverpowder\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Bug-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_sitrusberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":448,\"num\":158,\"name\":\"Sitrus Berry\",\"id\":\"sitrusberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Psychic\"},\"desc\":\"Restores 1/4 max HP when at 1/2 max HP or less. Single use.\"}</string>
+    <string name="itemdex_skullfossil">{\"gen\":4,\"spritenum\":449,\"num\":105,\"name\":\"Skull Fossil\",\"id\":\"skullfossil\",\"fling\":{\"basePower\":100},\"desc\":\"Can be revived into Cranidos.\"}</string>
+    <string name="itemdex_skyplate">{\"gen\":4,\"onPlate\":\"Flying\",\"spritenum\":450,\"onBasePowerPriority\":6,\"num\":306,\"name\":\"Sky Plate\",\"id\":\"skyplate\",\"desc\":\"Holder\'s Flying-type attacks have 1.2x power. Judgment is Flying-type.\"}</string>
+    <string name="itemdex_slowbronite">{\"gen\":6,\"spritenum\":620,\"num\":760,\"name\":\"Slowbronite\",\"megaEvolves\":\"Slowbro\",\"megaStone\":\"Slowbro-Mega\",\"id\":\"slowbronite\",\"desc\":\"Mega-evolves Slowbro.\"}</string>
+    <string name="itemdex_smoothrock">{\"gen\":4,\"spritenum\":453,\"num\":283,\"name\":\"Smooth Rock\",\"id\":\"smoothrock\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s use of Sandstorm lasts 8 turns instead of 5.\"}</string>
+    <string name="itemdex_snowball">{\"gen\":6,\"spritenum\":606,\"num\":-6,\"name\":\"Snowball\",\"id\":\"snowball\",\"fling\":{\"basePower\":30},\"desc\":\"Raises Attack by 1 if hit by an Ice-type attack. Single use.\"}</string>
+    <string name="itemdex_softsand">{\"gen\":2,\"spritenum\":456,\"onBasePowerPriority\":6,\"num\":237,\"name\":\"Soft Sand\",\"id\":\"softsand\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Ground-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_souldew">{\"gen\":3,\"onModifySpDPriority\":2,\"onModifySpAPriority\":1,\"isUnreleased\":true,\"spritenum\":459,\"num\":225,\"name\":\"Soul Dew\",\"id\":\"souldew\",\"fling\":{\"basePower\":30},\"desc\":\"If holder is a Latias or a Latios, its Sp. Atk and Sp. Def are 1.5x.\"}</string>
+    <string name="itemdex_spelltag">{\"gen\":2,\"spritenum\":461,\"onBasePowerPriority\":6,\"num\":247,\"name\":\"Spell Tag\",\"id\":\"spelltag\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Ghost-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_spelonberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":462,\"num\":179,\"name\":\"Spelon Berry\",\"id\":\"spelonberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Dark\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_splashplate">{\"gen\":4,\"onPlate\":\"Water\",\"spritenum\":463,\"onBasePowerPriority\":6,\"num\":299,\"name\":\"Splash Plate\",\"id\":\"splashplate\",\"desc\":\"Holder\'s Water-type attacks have 1.2x power. Judgment is Water-type.\"}</string>
+    <string name="itemdex_spookyplate">{\"gen\":4,\"onPlate\":\"Ghost\",\"spritenum\":464,\"onBasePowerPriority\":6,\"num\":310,\"name\":\"Spooky Plate\",\"id\":\"spookyplate\",\"desc\":\"Holder\'s Ghost-type attacks have 1.2x power. Judgment is Ghost-type.\"}</string>
+    <string name="itemdex_sportball">{\"gen\":4,\"spritenum\":465,\"num\":499,\"name\":\"Sport Ball\",\"id\":\"sportball\",\"desc\":\"A special Poke Ball for the Bug-Catching Contest.\"}</string>
+    <string name="itemdex_starfberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":472,\"num\":207,\"name\":\"Starf Berry\",\"id\":\"starfberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Psychic\"},\"desc\":\"Raises a random stat by 2 when at 1/4 max HP or less (not acc/eva). Single use.\"}</string>
+    <string name="itemdex_steelgem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":473,\"num\":563,\"name\":\"Steel Gem\",\"isGem\":true,\"id\":\"steelgem\",\"desc\":\"Holder\'s first successful Steel-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_steelixite">{\"gen\":6,\"spritenum\":621,\"num\":761,\"name\":\"Steelixite\",\"megaEvolves\":\"Steelix\",\"megaStone\":\"Steelix-Mega\",\"id\":\"steelixite\",\"desc\":\"Mega-evolves Steelix.\"}</string>
+    <string name="itemdex_stick">{\"gen\":2,\"spritenum\":475,\"num\":259,\"name\":\"Stick\",\"id\":\"stick\",\"fling\":{\"basePower\":60},\"desc\":\"If holder is a Farfetch\'d, its critical hit ratio is boosted by 2.\"}</string>
+    <string name="itemdex_stickybarb">{\"gen\":4,\"spritenum\":476,\"num\":288,\"name\":\"Sticky Barb\",\"onResidualSubOrder\":2,\"id\":\"stickybarb\",\"fling\":{\"basePower\":80},\"onResidualOrder\":26,\"desc\":\"Each turn, holder loses 1/8 max HP. An attacker making contact can receive it.\"}</string>
+    <string name="itemdex_stoneplate">{\"gen\":4,\"onPlate\":\"Rock\",\"spritenum\":477,\"onBasePowerPriority\":6,\"num\":309,\"name\":\"Stone Plate\",\"id\":\"stoneplate\",\"desc\":\"Holder\'s Rock-type attacks have 1.2x power. Judgment is Rock-type.\"}</string>
+    <string name="itemdex_swampertite">{\"gen\":6,\"spritenum\":612,\"num\":752,\"name\":\"Swampertite\",\"megaEvolves\":\"Swampert\",\"megaStone\":\"Swampert-Mega\",\"id\":\"swampertite\",\"desc\":\"Mega-evolves Swampert.\"}</string>
+    <string name="itemdex_tamatoberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":486,\"num\":174,\"name\":\"Tamato Berry\",\"id\":\"tamatoberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Psychic\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_tangaberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":487,\"num\":194,\"name\":\"Tanga Berry\",\"id\":\"tangaberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Bug\"},\"desc\":\"Halves damage taken from a super effective Bug-type attack. Single use.\"}</string>
+    <string name="itemdex_thickclub">{\"gen\":2,\"onModifyAtkPriority\":1,\"spritenum\":491,\"num\":258,\"name\":\"Thick Club\",\"id\":\"thickclub\",\"fling\":{\"basePower\":90},\"desc\":\"If holder is a Cubone or a Marowak, its Attack is doubled.\"}</string>
+    <string name="itemdex_timerball">{\"gen\":3,\"spritenum\":494,\"num\":10,\"name\":\"Timer Ball\",\"id\":\"timerball\",\"desc\":\"A Poke Ball that becomes better the more turns there are in a battle.\"}</string>
+    <string name="itemdex_toxicorb">{\"gen\":4,\"spritenum\":515,\"num\":272,\"name\":\"Toxic Orb\",\"onResidualSubOrder\":2,\"id\":\"toxicorb\",\"fling\":{\"basePower\":30,\"status\":\"tox\"},\"onResidualOrder\":26,\"desc\":\"At the end of every turn, this item attempts to badly poison the holder.\"}</string>
+    <string name="itemdex_toxicplate">{\"gen\":4,\"onPlate\":\"Poison\",\"spritenum\":516,\"onBasePowerPriority\":6,\"num\":304,\"name\":\"Toxic Plate\",\"id\":\"toxicplate\",\"desc\":\"Holder\'s Poison-type attacks have 1.2x power. Judgment is Poison-type.\"}</string>
+    <string name="itemdex_twistedspoon">{\"gen\":2,\"spritenum\":520,\"onBasePowerPriority\":6,\"num\":248,\"name\":\"TwistedSpoon\",\"id\":\"twistedspoon\",\"fling\":{\"basePower\":30},\"desc\":\"Holder\'s Psychic-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_tyranitarite">{\"gen\":6,\"spritenum\":607,\"num\":669,\"name\":\"Tyranitarite\",\"megaEvolves\":\"Tyranitar\",\"megaStone\":\"Tyranitar-Mega\",\"id\":\"tyranitarite\",\"desc\":\"Mega-evolves Tyranitar.\"}</string>
+    <string name="itemdex_ultraball">{\"gen\":1,\"spritenum\":521,\"num\":2,\"name\":\"Ultra Ball\",\"id\":\"ultraball\",\"desc\":\"An ultra-performance Ball that provides a higher catch rate than a Great Ball.\"}</string>
+    <string name="itemdex_venusaurite">{\"gen\":6,\"spritenum\":608,\"num\":659,\"name\":\"Venusaurite\",\"megaEvolves\":\"Venusaur\",\"megaStone\":\"Venusaur-Mega\",\"id\":\"venusaurite\",\"desc\":\"Mega-evolves Venusaur.\"}</string>
+    <string name="itemdex_wacanberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":526,\"num\":186,\"name\":\"Wacan Berry\",\"id\":\"wacanberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Electric\"},\"desc\":\"Halves damage taken from a super effective Electric-type attack. Single use.\"}</string>
+    <string name="itemdex_watergem">{\"gen\":5,\"isUnreleased\":true,\"spritenum\":528,\"num\":549,\"name\":\"Water Gem\",\"isGem\":true,\"id\":\"watergem\",\"desc\":\"Holder\'s first successful Water-type attack will have 1.3x power. Single use.\"}</string>
+    <string name="itemdex_watmelberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":530,\"num\":181,\"name\":\"Watmel Berry\",\"id\":\"watmelberry\",\"naturalGift\":{\"basePower\":100,\"type\":\"Fire\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_waveincense">{\"gen\":4,\"spritenum\":531,\"onBasePowerPriority\":6,\"num\":317,\"name\":\"Wave Incense\",\"id\":\"waveincense\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s Water-type attacks have 1.2x power.\"}</string>
+    <string name="itemdex_weaknesspolicy">{\"gen\":6,\"spritenum\":609,\"num\":-6,\"name\":\"Weakness Policy\",\"id\":\"weaknesspolicy\",\"fling\":{\"basePower\":80},\"desc\":\"Attack and Sp. Atk sharply increase when hit super effectively. Single use.\"}</string>
+    <string name="itemdex_wepearberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":533,\"num\":167,\"name\":\"Wepear Berry\",\"id\":\"wepearberry\",\"naturalGift\":{\"basePower\":90,\"type\":\"Electric\"},\"desc\":\"No competitive use.\"}</string>
+    <string name="itemdex_whiteherb">{\"gen\":3,\"spritenum\":535,\"num\":214,\"name\":\"White Herb\",\"id\":\"whiteherb\",\"fling\":{\"basePower\":10},\"desc\":\"Restores all lowered stat stages to 0 when one is less than 0. Single use.\"}</string>
+    <string name="itemdex_widelens">{\"gen\":4,\"spritenum\":537,\"num\":265,\"name\":\"Wide Lens\",\"id\":\"widelens\",\"fling\":{\"basePower\":10},\"desc\":\"The accuracy of attacks by the holder is 1.1x.\"}</string>
+    <string name="itemdex_wikiberry">{\"isBerry\":true,\"gen\":3,\"spritenum\":538,\"num\":160,\"name\":\"Wiki Berry\",\"id\":\"wikiberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Rock\"},\"desc\":\"Restores 1/8 max HP when at 1/2 max HP or less. May confuse. Single use.\"}</string>
+    <string name="itemdex_wiseglasses">{\"gen\":4,\"spritenum\":539,\"onBasePowerPriority\":6,\"num\":267,\"name\":\"Wise Glasses\",\"id\":\"wiseglasses\",\"fling\":{\"basePower\":10},\"desc\":\"Holder\'s special attacks have 1.1x power.\"}</string>
+    <string name="itemdex_yacheberry">{\"isBerry\":true,\"gen\":4,\"spritenum\":567,\"num\":188,\"name\":\"Yache Berry\",\"id\":\"yacheberry\",\"naturalGift\":{\"basePower\":80,\"type\":\"Ice\"},\"desc\":\"Halves damage taken from a super effective Ice-type attack. Single use.\"}</string>
+    <string name="itemdex_zapplate">{\"gen\":4,\"onPlate\":\"Electric\",\"spritenum\":572,\"onBasePowerPriority\":6,\"num\":300,\"name\":\"Zap Plate\",\"id\":\"zapplate\",\"desc\":\"Holder\'s Electric-type attacks have 1.2x power. Judgment is Electric-type.\"}</string>
+    <string name="itemdex_zoomlens">{\"gen\":4,\"spritenum\":574,\"num\":276,\"name\":\"Zoom Lens\",\"id\":\"zoomlens\",\"fling\":{\"basePower\":10},\"desc\":\"The accuracy of attacks by the holder is 1.2x if it is the last to move in a turn.\"}</string>
+    <string-array name="itemdex_ids">
+        <item>itemdex_abomasite</item>
+        <item>itemdex_absolite</item>
+        <item>itemdex_absorbbulb</item>
+        <item>itemdex_adamantorb</item>
+        <item>itemdex_aerodactylite</item>
+        <item>itemdex_aggronite</item>
+        <item>itemdex_aguavberry</item>
+        <item>itemdex_airballoon</item>
+        <item>itemdex_alakazite</item>
+        <item>itemdex_altarianite</item>
+        <item>itemdex_ampharosite</item>
+        <item>itemdex_apicotberry</item>
+        <item>itemdex_armorfossil</item>
+        <item>itemdex_aspearberry</item>
+        <item>itemdex_assaultvest</item>
+        <item>itemdex_audinite</item>
+        <item>itemdex_babiriberry</item>
+        <item>itemdex_banettite</item>
+        <item>itemdex_beedrillite</item>
+        <item>itemdex_belueberry</item>
+        <item>itemdex_berryjuice</item>
+        <item>itemdex_bigroot</item>
+        <item>itemdex_bindingband</item>
+        <item>itemdex_blackbelt</item>
+        <item>itemdex_blackglasses</item>
+        <item>itemdex_blacksludge</item>
+        <item>itemdex_blastoisinite</item>
+        <item>itemdex_blazikenite</item>
+        <item>itemdex_blueorb</item>
+        <item>itemdex_blukberry</item>
+        <item>itemdex_brightpowder</item>
+        <item>itemdex_buggem</item>
+        <item>itemdex_burndrive</item>
+        <item>itemdex_cameruptite</item>
+        <item>itemdex_cellbattery</item>
+        <item>itemdex_charcoal</item>
+        <item>itemdex_charizarditex</item>
+        <item>itemdex_charizarditey</item>
+        <item>itemdex_chartiberry</item>
+        <item>itemdex_cheriberry</item>
+        <item>itemdex_cherishball</item>
+        <item>itemdex_chestoberry</item>
+        <item>itemdex_chilanberry</item>
+        <item>itemdex_chilldrive</item>
+        <item>itemdex_choiceband</item>
+        <item>itemdex_choicescarf</item>
+        <item>itemdex_choicespecs</item>
+        <item>itemdex_chopleberry</item>
+        <item>itemdex_clawfossil</item>
+        <item>itemdex_cobaberry</item>
+        <item>itemdex_colburberry</item>
+        <item>itemdex_cornnberry</item>
+        <item>itemdex_coverfossil</item>
+        <item>itemdex_custapberry</item>
+        <item>itemdex_damprock</item>
+        <item>itemdex_darkgem</item>
+        <item>itemdex_deepseascale</item>
+        <item>itemdex_deepseatooth</item>
+        <item>itemdex_destinyknot</item>
+        <item>itemdex_diancite</item>
+        <item>itemdex_diveball</item>
+        <item>itemdex_domefossil</item>
+        <item>itemdex_dousedrive</item>
+        <item>itemdex_dracoplate</item>
+        <item>itemdex_dragonfang</item>
+        <item>itemdex_dragongem</item>
+        <item>itemdex_dreadplate</item>
+        <item>itemdex_dreamball</item>
+        <item>itemdex_durinberry</item>
+        <item>itemdex_duskball</item>
+        <item>itemdex_earthplate</item>
+        <item>itemdex_ejectbutton</item>
+        <item>itemdex_electirizer</item>
+        <item>itemdex_electricgem</item>
+        <item>itemdex_energypowder</item>
+        <item>itemdex_enigmaberry</item>
+        <item>itemdex_eviolite</item>
+        <item>itemdex_expertbelt</item>
+        <item>itemdex_fairygem</item>
+        <item>itemdex_fastball</item>
+        <item>itemdex_fightinggem</item>
+        <item>itemdex_figyberry</item>
+        <item>itemdex_firegem</item>
+        <item>itemdex_fistplate</item>
+        <item>itemdex_flameorb</item>
+        <item>itemdex_flameplate</item>
+        <item>itemdex_floatstone</item>
+        <item>itemdex_flyinggem</item>
+        <item>itemdex_focusband</item>
+        <item>itemdex_focussash</item>
+        <item>itemdex_friendball</item>
+        <item>itemdex_fullincense</item>
+        <item>itemdex_galladite</item>
+        <item>itemdex_ganlonberry</item>
+        <item>itemdex_garchompite</item>
+        <item>itemdex_gardevoirite</item>
+        <item>itemdex_gengarite</item>
+        <item>itemdex_ghostgem</item>
+        <item>itemdex_glalitite</item>
+        <item>itemdex_grassgem</item>
+        <item>itemdex_greatball</item>
+        <item>itemdex_grepaberry</item>
+        <item>itemdex_gripclaw</item>
+        <item>itemdex_griseousorb</item>
+        <item>itemdex_groundgem</item>
+        <item>itemdex_gyaradosite</item>
+        <item>itemdex_habanberry</item>
+        <item>itemdex_hardstone</item>
+        <item>itemdex_healball</item>
+        <item>itemdex_heatrock</item>
+        <item>itemdex_heavyball</item>
+        <item>itemdex_helixfossil</item>
+        <item>itemdex_heracronite</item>
+        <item>itemdex_hondewberry</item>
+        <item>itemdex_houndoominite</item>
+        <item>itemdex_iapapaberry</item>
+        <item>itemdex_icegem</item>
+        <item>itemdex_icicleplate</item>
+        <item>itemdex_icyrock</item>
+        <item>itemdex_insectplate</item>
+        <item>itemdex_ironball</item>
+        <item>itemdex_ironplate</item>
+        <item>itemdex_jabocaberry</item>
+        <item>itemdex_kangaskhanite</item>
+        <item>itemdex_kasibberry</item>
+        <item>itemdex_kebiaberry</item>
+        <item>itemdex_keeberry</item>
+        <item>itemdex_kelpsyberry</item>
+        <item>itemdex_kingsrock</item>
+        <item>itemdex_laggingtail</item>
+        <item>itemdex_lansatberry</item>
+        <item>itemdex_latiasite</item>
+        <item>itemdex_latiosite</item>
+        <item>itemdex_laxincense</item>
+        <item>itemdex_leftovers</item>
+        <item>itemdex_leppaberry</item>
+        <item>itemdex_levelball</item>
+        <item>itemdex_liechiberry</item>
+        <item>itemdex_lifeorb</item>
+        <item>itemdex_lightball</item>
+        <item>itemdex_lightclay</item>
+        <item>itemdex_lopunnite</item>
+        <item>itemdex_loveball</item>
+        <item>itemdex_lucarionite</item>
+        <item>itemdex_luckypunch</item>
+        <item>itemdex_lumberry</item>
+        <item>itemdex_luminousmoss</item>
+        <item>itemdex_lureball</item>
+        <item>itemdex_lustrousorb</item>
+        <item>itemdex_luxuryball</item>
+        <item>itemdex_machobrace</item>
+        <item>itemdex_magnet</item>
+        <item>itemdex_magoberry</item>
+        <item>itemdex_magostberry</item>
+        <item>itemdex_mail</item>
+        <item>itemdex_manectite</item>
+        <item>itemdex_marangaberry</item>
+        <item>itemdex_masterball</item>
+        <item>itemdex_mawilite</item>
+        <item>itemdex_meadowplate</item>
+        <item>itemdex_medichamite</item>
+        <item>itemdex_mentalherb</item>
+        <item>itemdex_metagrossite</item>
+        <item>itemdex_metalcoat</item>
+        <item>itemdex_metalpowder</item>
+        <item>itemdex_metronome</item>
+        <item>itemdex_mewtwonitex</item>
+        <item>itemdex_mewtwonitey</item>
+        <item>itemdex_micleberry</item>
+        <item>itemdex_mindplate</item>
+        <item>itemdex_miracleseed</item>
+        <item>itemdex_moonball</item>
+        <item>itemdex_muscleband</item>
+        <item>itemdex_mysticwater</item>
+        <item>itemdex_nanabberry</item>
+        <item>itemdex_nestball</item>
+        <item>itemdex_netball</item>
+        <item>itemdex_nevermeltice</item>
+        <item>itemdex_nomelberry</item>
+        <item>itemdex_normalgem</item>
+        <item>itemdex_occaberry</item>
+        <item>itemdex_oddincense</item>
+        <item>itemdex_oldamber</item>
+        <item>itemdex_oranberry</item>
+        <item>itemdex_pamtreberry</item>
+        <item>itemdex_parkball</item>
+        <item>itemdex_passhoberry</item>
+        <item>itemdex_payapaberry</item>
+        <item>itemdex_pechaberry</item>
+        <item>itemdex_persimberry</item>
+        <item>itemdex_petayaberry</item>
+        <item>itemdex_pidgeotite</item>
+        <item>itemdex_pinapberry</item>
+        <item>itemdex_pinsirite</item>
+        <item>itemdex_pixieplate</item>
+        <item>itemdex_plumefossil</item>
+        <item>itemdex_poisonbarb</item>
+        <item>itemdex_poisongem</item>
+        <item>itemdex_pokeball</item>
+        <item>itemdex_pomegberry</item>
+        <item>itemdex_powerherb</item>
+        <item>itemdex_premierball</item>
+        <item>itemdex_psychicgem</item>
+        <item>itemdex_qualotberry</item>
+        <item>itemdex_quickball</item>
+        <item>itemdex_quickclaw</item>
+        <item>itemdex_quickpowder</item>
+        <item>itemdex_rabutaberry</item>
+        <item>itemdex_rarebone</item>
+        <item>itemdex_rawstberry</item>
+        <item>itemdex_razorclaw</item>
+        <item>itemdex_razorfang</item>
+        <item>itemdex_razzberry</item>
+        <item>itemdex_redcard</item>
+        <item>itemdex_redorb</item>
+        <item>itemdex_repeatball</item>
+        <item>itemdex_rindoberry</item>
+        <item>itemdex_ringtarget</item>
+        <item>itemdex_rockgem</item>
+        <item>itemdex_rockincense</item>
+        <item>itemdex_rockyhelmet</item>
+        <item>itemdex_rootfossil</item>
+        <item>itemdex_roseincense</item>
+        <item>itemdex_roseliberry</item>
+        <item>itemdex_rowapberry</item>
+        <item>itemdex_sablenite</item>
+        <item>itemdex_safariball</item>
+        <item>itemdex_safetygoggles</item>
+        <item>itemdex_salacberry</item>
+        <item>itemdex_salamencite</item>
+        <item>itemdex_sceptilite</item>
+        <item>itemdex_scizorite</item>
+        <item>itemdex_scopelens</item>
+        <item>itemdex_seaincense</item>
+        <item>itemdex_sharpbeak</item>
+        <item>itemdex_sharpedonite</item>
+        <item>itemdex_shedshell</item>
+        <item>itemdex_shellbell</item>
+        <item>itemdex_shockdrive</item>
+        <item>itemdex_shucaberry</item>
+        <item>itemdex_silkscarf</item>
+        <item>itemdex_silverpowder</item>
+        <item>itemdex_sitrusberry</item>
+        <item>itemdex_skullfossil</item>
+        <item>itemdex_skyplate</item>
+        <item>itemdex_slowbronite</item>
+        <item>itemdex_smoothrock</item>
+        <item>itemdex_snowball</item>
+        <item>itemdex_softsand</item>
+        <item>itemdex_souldew</item>
+        <item>itemdex_spelltag</item>
+        <item>itemdex_spelonberry</item>
+        <item>itemdex_splashplate</item>
+        <item>itemdex_spookyplate</item>
+        <item>itemdex_sportball</item>
+        <item>itemdex_starfberry</item>
+        <item>itemdex_steelgem</item>
+        <item>itemdex_steelixite</item>
+        <item>itemdex_stick</item>
+        <item>itemdex_stickybarb</item>
+        <item>itemdex_stoneplate</item>
+        <item>itemdex_swampertite</item>
+        <item>itemdex_tamatoberry</item>
+        <item>itemdex_tangaberry</item>
+        <item>itemdex_thickclub</item>
+        <item>itemdex_timerball</item>
+        <item>itemdex_toxicorb</item>
+        <item>itemdex_toxicplate</item>
+        <item>itemdex_twistedspoon</item>
+        <item>itemdex_tyranitarite</item>
+        <item>itemdex_ultraball</item>
+        <item>itemdex_venusaurite</item>
+        <item>itemdex_wacanberry</item>
+        <item>itemdex_watergem</item>
+        <item>itemdex_watmelberry</item>
+        <item>itemdex_waveincense</item>
+        <item>itemdex_weaknesspolicy</item>
+        <item>itemdex_wepearberry</item>
+        <item>itemdex_whiteherb</item>
+        <item>itemdex_widelens</item>
+        <item>itemdex_wikiberry</item>
+        <item>itemdex_wiseglasses</item>
+        <item>itemdex_yacheberry</item>
+        <item>itemdex_zapplate</item>
+        <item>itemdex_zoomlens</item>
+    </string-array>
+</resources>
