@@ -21,7 +21,23 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/sprites/item',
+                            'src/main/res/sprites/trainer',
+                            'src/main/res/sprites/pokemon/small',
+                            'src/main/res/sprites/pokemon/normal',
+                            'src/main/res/sprites/pokemon/shiny',
+                            'src/main/res'
+                    ]
+        }
+    }
 }
+
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -35,3 +51,4 @@ task appStart(type: Exec, dependsOn: 'installDebug') {
     def adb = android.plugin.extension.getAdbExe().toString()
     commandLine adb, 'shell', 'am', 'start', '-n', 'com.pokemonshowdown.app/.WelcomeActivity'
 }
+
