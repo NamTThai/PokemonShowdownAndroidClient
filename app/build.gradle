@@ -26,12 +26,19 @@ android {
         main {
             res.srcDirs =
                     [
+                            'src/main/res',
+                            'src/main/res/sprites/animation',
+                            'src/main/res/sprites/background',
+                            'src/main/res/sprites/category',
+                            'src/main/res/sprites/coder',
+                            'src/main/res/sprites/field',
                             'src/main/res/sprites/item',
-                            'src/main/res/sprites/trainer',
                             'src/main/res/sprites/pokemon/small',
                             'src/main/res/sprites/pokemon/normal',
                             'src/main/res/sprites/pokemon/shiny',
-                            'src/main/res'
+                            'src/main/res/sprites/trainer',
+                            'src/main/res/sprites/types',
+                            'src/main/res/sprites/weather'
                     ]
         }
     }
