@@ -65,7 +65,7 @@ public class SearchableActivity extends ListActivity {
                 getActionBar().setTitle(R.string.search_label_ability);
                 break;
             case REQUEST_CODE_SEARCH_ITEM:
-                HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
+                HashMap<String, Integer> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
                 mAdapterList = new ArrayList<>(itemDex.keySet());
                 mAdapter = new ItemAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
@@ -151,7 +151,7 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchItem(String query) {
-        HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
+        HashMap<String, Integer> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
         mAdapterList = new ArrayList<>();
         for (String itemName : itemDex.keySet()) {
             if (itemName.contains(query.toLowerCase())) {
