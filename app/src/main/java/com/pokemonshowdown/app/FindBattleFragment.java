@@ -13,11 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.application.MyApplication;
+import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.PokemonTeam;
 
@@ -65,8 +64,7 @@ public class FindBattleFragment extends Fragment {
         mWaitingDialog = new ProgressDialog(getActivity());
         mFormatListView = (ListView) view.findViewById(R.id.available_formats);
 
-        TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
-        findBattle.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.find_battle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isQuota()) {
@@ -125,8 +123,7 @@ public class FindBattleFragment extends Fragment {
             }
         });
 
-        TextView watchBattle = (TextView) view.findViewById(R.id.watch_battle);
-        watchBattle.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.watch_battle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isQuota()) {
@@ -154,8 +151,7 @@ public class FindBattleFragment extends Fragment {
             }
         });
 
-        final TextView cancelSearch = (TextView) getView().findViewById(R.id.cancel_search);
-        cancelSearch.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.cancel_search).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancelSearchingButton();

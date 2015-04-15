@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Created by c.bouvet on 4/7/2015.
@@ -62,7 +63,7 @@ public class ExportReplayTask extends AsyncTask<String, String, Boolean> {
         try {
             JSONObject jsonObject = new JSONObject(replayData);
             roomId = jsonObject.getString("id");
-            String postData = "log=" + jsonObject.getString("log") + "&id=" + jsonObject.getString("id");
+            String postData = "log=" + URLEncoder.encode(jsonObject.getString("log"), "UTF-8") + "&id=" + URLEncoder.encode(jsonObject.getString("id"), "UTF-8");
             URL url = new URL(REPLAY_EXPORT_URL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

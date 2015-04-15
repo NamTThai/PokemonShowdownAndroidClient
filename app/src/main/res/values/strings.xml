@@ -70,12 +70,17 @@
     <string name="bar_room">Room</string>
     <string name="bar_room_id">Show Room Id</string>
     <string name="clipboard">Copy to Clipboard</string>
+    <string name="refresh">Refresh</string>
+    <string name="refreshing_patient">Refreshing, please be patient ^^</string>
     <string name="bar_cancel">Cancel</string>
     <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>
     <string name="bar_dmg_calc">Damage Calculator</string>
     <string name="bar_login">Trainer</string>
     <string name="bar_settings">Settings</string>
+    <string name="donate">Please Contribute :)</string>
+    <string name="dollar">$</string>
+    <string name="donate_security">You can enter credentials on the next secured page. We don\'t save anything!</string>
 
     <!-- These are for Pokedex -->
     <string name="bar_pokedex_search">Search for Pokemon</string>

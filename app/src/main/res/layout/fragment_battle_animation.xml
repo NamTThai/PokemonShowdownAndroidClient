@@ -44,7 +44,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="36dp"
         android:layout_marginLeft="4dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1a_pkm"
@@ -117,7 +117,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="120dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1b_pkm"
@@ -190,7 +190,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="236dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1c_pkm"
@@ -264,7 +264,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="236dp"
         android:layout_marginTop="4dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2c_pkm"
@@ -338,7 +338,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="120dp"
         android:layout_marginTop="20dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2b_pkm"
@@ -412,7 +412,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="4dp"
         android:layout_marginTop="36dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2a_pkm"
