@@ -60,7 +60,7 @@ public class PokedexActivity extends FragmentActivity {
                         break;
                     case REQUEST_CODE_SEARCH_ITEM:
                         String item = data.getExtras().getString(SearchableActivity.SEARCH);
-                        JSONObject itemJson = ItemDex.get(getApplicationContext()).getItemJsonObject(item);
+                        JSONObject itemJson = ItemDex.getItemJsonObject(getApplicationContext(), item);
                         dialog = new AlertDialog.Builder(this)
                                 .setTitle(itemJson.getString("name"))
                                 .setMessage(itemJson.getString("desc"))

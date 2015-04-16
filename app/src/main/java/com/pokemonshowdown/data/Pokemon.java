@@ -846,7 +846,7 @@ public class Pokemon implements Serializable {
                 sb.append(" (").append(getGender().toUpperCase()).append(")");
             }
             if (getItem().length() > 0) {
-                JSONObject itemJSon = ItemDex.get(appContext).getItemJsonObject(getItem());
+                JSONObject itemJSon = ItemDex.getItemJsonObject(appContext, getItem());
                 if (itemJSon != null) {
                     try {
                         String itemName = itemJSon.getString("name");

@@ -118,7 +118,7 @@ public class PokemonFragment extends DialogFragment {
             getPokemon().setItem(item);
 
             if (mPokemonItem != null) {
-                JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
+                JSONObject itemObject = ItemDex.getItemJsonObject(getActivity(), item);
                 if (itemObject != null) {
                     int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
                     mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);
@@ -312,7 +312,7 @@ public class PokemonFragment extends DialogFragment {
         mPokemonItem = (TextView) view.findViewById(R.id.pokemon_fragment_item);
         String item = getPokemon().getItem();
         if (getPokemon().getItem() != null && !getPokemon().getItem().isEmpty()) {
-            JSONObject itemObject = ItemDex.get(getActivity()).getItemJsonObject(item);
+            JSONObject itemObject = ItemDex.getItemJsonObject(getActivity(), item);
             if (itemObject != null) {
                 int itemDrawable = ItemDex.getItemIcon(getActivity(), item);
                 mPokemonItem.setCompoundDrawablesWithIntrinsicBounds(itemDrawable != 0 ? getResources().getDrawable(itemDrawable) : null, null, null, null);

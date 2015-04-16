@@ -517,7 +517,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
     private String modifyAttackType(String move, String type) {
         String attackerAbility = getAttacker().getAbility();
         if ("naturalgift".equals(move)) {
-            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            JSONObject itemObject = ItemDex.getItemJsonObject(this, getAttacker().getItem());
             JSONObject naturalGiftObject = itemObject == null ? null : itemObject.optJSONObject("naturalGift");
             if (naturalGiftObject != null) {
                 type = naturalGiftObject.optString("type", type);
@@ -546,10 +546,10 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
         } else if (attackerAbility.equals("Normalize")) {
             type = "Normal";
         } else if ("technoblast".equals(move)) {
-            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            JSONObject itemObject = ItemDex.getItemJsonObject(this, getAttacker().getItem());
             type = itemObject == null ? null : itemObject.optString("onDrive", type);
         } else if ("judgement".equals(move)) {
-            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            JSONObject itemObject = ItemDex.getItemJsonObject(this, getAttacker().getItem());
             type = itemObject == null ? "Normal" : itemObject.optString("onPlate", "Normal");
         }
         return type;
@@ -842,7 +842,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                     break;
             }
         } else if ("Multitype".equals(pokemon.getAbility()) && pokemon.getName().contains("Arceus")) {
-            JSONObject itemObject = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+            JSONObject itemObject = ItemDex.getItemJsonObject(this, getAttacker().getItem());
             typing = itemObject == null ? new String[]{"Normal"} : new String[]{itemObject.optString("onPlate", "Normal")};
         }
         return typing;
@@ -948,7 +948,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 bp = getDefender().getItem().isEmpty() || getDefender().getItem() == null ? 65 : 97.5;
                 break;
             case "fling":
-                JSONObject obj = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+                JSONObject obj = ItemDex.getItemJsonObject(this, getAttacker().getItem());
                 JSONObject flingObject = obj == null ? null : obj.optJSONObject("fling");
                 if (flingObject != null) {
                     bp = flingObject.optInt("basePower", 0);
@@ -990,7 +990,7 @@ public class DmgCalcActivity extends FragmentActivity implements FieldFragment.F
                 bp = 102;
                 break;
             case "naturalgift":
-                obj = ItemDex.get(this).getItemJsonObject(getAttacker().getItem());
+                obj = ItemDex.getItemJsonObject(this, getAttacker().getItem());
                 JSONObject naturalGiftObject = obj == null ? null : obj.optJSONObject("naturalGift");
                 if (naturalGiftObject != null) {
                     bp = naturalGiftObject.optInt("basePower", 0);
