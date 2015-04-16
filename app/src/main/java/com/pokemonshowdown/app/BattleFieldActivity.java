@@ -464,7 +464,7 @@ public class BattleFieldActivity extends FragmentActivity {
                         break;
                     }
 
-                    if (updateChallengeJSon.getString("challengeTo") == "null") {
+                    if (updateChallengeJSon.getString("challengeTo").equals("null")) {
                         if (mDialog != null && mDialog.isShowing()) {
                             mDialog.dismiss();
                         }
