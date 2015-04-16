@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/onclick_blue"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:weightSum="16">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/onclick_blue"
+              android:orientation="horizontal"
+              android:padding="8dp"
+              android:weightSum="16">
 
     <TextView
         android:id="@+id/short_pokemon_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:layout_weight="6"
         android:gravity="center_vertical"
-        android:layout_weight="6"/>
+        android:textSize="20sp"/>
 
     <ImageView
         android:id="@+id/type_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/type_1"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:contentDescription="@string/type_1"/>
 
     <ImageView
         android:id="@+id/type_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@string/type_2"
-        android:layout_weight="1"/>
-    
+        android:layout_weight="1"
+        android:contentDescription="@string/type_2"/>
+
     <View
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,8 +46,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_HP"
             android:layout_gravity="center"
+            android:text="@string/stats_HP"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -55,8 +55,8 @@
             android:id="@+id/pokemon_short_hp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_HP"
             android:layout_gravity="center"
+            android:text="@string/stats_HP"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -70,8 +70,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Atk"
             android:layout_gravity="center"
+            android:text="@string/stats_Atk"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -79,8 +79,8 @@
             android:id="@+id/pokemon_short_Atk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Atk"
             android:layout_gravity="center"
+            android:text="@string/stats_Atk"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -94,8 +94,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Def"
             android:layout_gravity="center"
+            android:text="@string/stats_Def"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -103,8 +103,8 @@
             android:id="@+id/pokemon_short_Def"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Def"
             android:layout_gravity="center"
+            android:text="@string/stats_Def"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -118,8 +118,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_SpAtk"
             android:layout_gravity="center"
+            android:text="@string/stats_SpAtk"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -127,8 +127,8 @@
             android:id="@+id/pokemon_short_SpAtk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_SpAtk"
             android:layout_gravity="center"
+            android:text="@string/stats_SpAtk"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -142,8 +142,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_SpDef"
             android:layout_gravity="center"
+            android:text="@string/stats_SpDef"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -151,8 +151,8 @@
             android:id="@+id/pokemon_short_SpDef"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_SpDef"
             android:layout_gravity="center"
+            android:text="@string/stats_SpDef"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -166,8 +166,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Spd"
             android:layout_gravity="center"
+            android:text="@string/stats_Spd"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -175,8 +175,8 @@
             android:id="@+id/pokemon_short_Spd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_Spd"
             android:layout_gravity="center"
+            android:text="@string/stats_Spd"
             android:textSize="12sp"/>
 
     </LinearLayout>
@@ -190,8 +190,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_BST"
             android:layout_gravity="center"
+            android:text="@string/stats_BST"
             android:textSize="12sp"
             android:textStyle="italic"/>
 
@@ -199,8 +199,8 @@
             android:id="@+id/pokemon_short_BST"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stats_BST"
             android:layout_gravity="center"
+            android:text="@string/stats_BST"
             android:textSize="12sp"/>
 
     </LinearLayout>

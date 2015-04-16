@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/donate"
+        android:icon="@drawable/ic_paypal"
+        android:showAsAction="always"
+        android:title="@string/donate"/>
 
     <item
         android:id="@+id/community_lounge"
         android:icon="@drawable/ic_action_add_to_queue"
-        android:title="@string/bar_room"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always"
+        android:title="@string/bar_room"/>
 
     <item
         android:id="@+id/room_id"
         android:icon="@drawable/ic_action_labels"
-        android:title="@string/bar_room_id"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always"
+        android:title="@string/bar_room_id"/>
 
     <item
         android:id="@+id/cancel"
         android:icon="@drawable/ic_action_cancel"
-        android:title="@string/bar_cancel"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always"
+        android:title="@string/bar_cancel"/>
 
     <item
         android:id="@+id/menu_pokedex"
         android:icon="@drawable/ic_pokedex"
-        android:title="@string/bar_pokedex"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always"
+        android:title="@string/bar_pokedex"/>
 
     <!-- More -->
     <item
@@ -38,26 +44,26 @@
             <item
                 android:id="@+id/team_building"
                 android:icon="@drawable/ic_action_computer"
-                android:title="@string/team_builder"
-                android:showAsAction="never" />
+                android:showAsAction="never"
+                android:title="@string/team_builder"/>
 
             <item
                 android:id="@+id/menu_dmg_calc"
                 android:icon="@drawable/ic_dmg_calc"
-                android:title="@string/bar_dmg_calc"
-                android:showAsAction="never" />
+                android:showAsAction="never"
+                android:title="@string/bar_dmg_calc"/>
 
             <item
                 android:id="@+id/menu_login"
                 android:icon="@drawable/ic_action_person"
-                android:title="@string/bar_login"
-                android:showAsAction="never" />
+                android:showAsAction="never"
+                android:title="@string/bar_login"/>
 
             <item
                 android:id="@+id/menu_settings"
                 android:icon="@drawable/ic_action_settings"
-                android:title="@string/bar_settings"
-                android:showAsAction="never" />
+                android:showAsAction="never"
+                android:title="@string/bar_settings"/>
 
         </menu>
 

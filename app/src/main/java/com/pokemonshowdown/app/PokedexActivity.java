@@ -31,50 +31,6 @@ public class PokedexActivity extends FragmentActivity {
     public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pokedex);
-        getActionBar().setTitle(R.string.bar_pokedex);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        findViewById(R.id.pokedex).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
-                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_POKEMON);
-            }
-        });
-
-        findViewById(R.id.abilitydex).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ABILITY);
-                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ABILITY);
-            }
-        });
-
-        findViewById(R.id.itemdex).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
-                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ITEM);
-            }
-        });
-
-        findViewById(R.id.movedex).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
-                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
-                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_MOVES);
-            }
-        });
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
@@ -130,6 +86,50 @@ public class PokedexActivity extends FragmentActivity {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pokedex);
+        getActionBar().setTitle(R.string.bar_pokedex);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        findViewById(R.id.pokedex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_POKEMON);
+            }
+        });
+
+        findViewById(R.id.abilitydex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ABILITY);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ABILITY);
+            }
+        });
+
+        findViewById(R.id.itemdex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_ITEM);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_ITEM);
+            }
+        });
+
+        findViewById(R.id.movedex).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PokedexActivity.this, SearchableActivity.class);
+                intent.putExtra("Search Type", SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                PokedexActivity.this.startActivityForResult(intent, REQUEST_CODE_SEARCH_MOVES);
+            }
+        });
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.clear();
@@ -138,7 +138,7 @@ public class PokedexActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 if (NavUtils.getParentActivityName(this) != null)
                     NavUtils.navigateUpFromSameTask(this);

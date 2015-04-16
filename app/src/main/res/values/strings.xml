@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="request_sent">Waiting for server responses…</string>
-    <string name="forfeit">Left/Forfeited!</string>
+    <string name="forfeit">Forfeited!</string>
     <string name="loading">Loading…</string>
     <string name="weak_connection">Failed to connect to server… it needs a thing called \'Internet Connection\'</string>
     <string name="no_connection">Weak signal… maybe move your camp trailer to somewhere near civilization?</string>
@@ -16,6 +16,17 @@
     <string name="request_error">Server error :( plz close this battle</string>
     <string name="waiting_for_server">Waiting for server…</string>
     <string name="ok">OK</string>
+
+    <string name="error_server_notavailable">Server not available</string>
+    <string name="update_available">Update %s available!</string>
+    <string name="downloadingupdate">Downloading update</string>
+
+    <!-- These are available server lists -->
+    <!-- Need to update server destination in WelcomeActivity.java as well -->
+    <string-array name="server">
+        <item>Smogon University (official server)</item>
+        <item>Smogon Tournaments</item>
+    </string-array>
 
     <!-- These are for Onboarding -->
     <string name="choose_username">Choose Username</string>
@@ -37,6 +48,7 @@
     <string name="battlelog">Battle Log</string>
     <string name="log">Log</string>
     <string name="timer">Timer</string>
+    <string name="skip_animation">Skip</string>
     <string name="pokemon_icon">Pokemon Icon</string>
     <string name="turn">Turn 0</string>
     <string name="weather">Normal Weather</string>
@@ -63,12 +75,17 @@
     <string name="bar_room">Room</string>
     <string name="bar_room_id">Show Room Id</string>
     <string name="clipboard">Copy to Clipboard</string>
+    <string name="refresh">Refresh</string>
+    <string name="refreshing_patient">Refreshing, please be patient ^^</string>
     <string name="bar_cancel">Cancel</string>
     <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>
     <string name="bar_dmg_calc">Damage Calculator</string>
     <string name="bar_login">Trainer</string>
     <string name="bar_settings">Settings</string>
+    <string name="donate">Please Contribute :)</string>
+    <string name="dollar">$</string>
+    <string name="donate_security">You can enter credentials on the next secured page. We don\'t save anything!</string>
 
     <!-- These are for Pokedex -->
     <string name="bar_pokedex_search">Search for Pokemon</string>
@@ -191,6 +208,20 @@
     </string-array>
     <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="mega_evolution">Mega-evolve</string>
+
+    <string name="register_account">Register</string>
+    <string name="login_successful">Successfully logged in as %s</string>
+    <string name="ask_registration">Don\'t forget to register your account to keep your progress!</string>
+    <string name="share_replay">Share replay</string>
+    <string name="back_to_battle">Back to battle</string>
+    <string name="exporting_replay">Exporting replay…</string>
+    <string name="replay_exported">Replay exported : %s </string>
+    <string name="replay_exporting_failure">Error exporting replay</string>
+
+
+    <!-- These are for Settings -->
+    <string name="animation">Animation</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+
 </resources>

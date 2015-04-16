@@ -52,6 +52,10 @@ public class TeamBuildingFragment extends Fragment {
     private int mSelectedPos;
     private int mSelectedMove;
 
+    public TeamBuildingFragment() {
+
+    }
+
     public static TeamBuildingFragment newInstance(PokemonTeam team) {
         TeamBuildingFragment fragment = new TeamBuildingFragment();
         Bundle bundle = new Bundle();
@@ -60,16 +64,55 @@ public class TeamBuildingFragment extends Fragment {
         return fragment;
     }
 
-    public TeamBuildingFragment() {
-
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
-        mPokemonListAdapter.notifyDataSetChanged();
-        // Notify parent activity that the mPokemonTeam changed (so to reprint in the drawer)
-        ((TeamBuildingActivity) getActivity()).updateList();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_POKEMON) {
+                Pokemon pokemon = new Pokemon(getActivity(), data.getExtras().getString("Search"));
+                if (mSelectedPos != -1) {
+                    mPokemonTeam.replacePokemon(mSelectedPos, pokemon);
+                } else {
+                    mPokemonTeam.addPokemon(pokemon);
+                }
+
+                if (mPokemonTeam.isFull()) {
+                    mFooterButton.setVisibility(View.GONE);
+                } else {
+                    mFooterButton.setVisibility(View.VISIBLE);
+                }
+
+                mPokemonListAdapter.notifyDataSetChanged();
+                ((TeamBuildingActivity) getActivity()).updateList();
+            } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
+                String item = data.getExtras().getString("Search");
+
+                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
+                pkmn.setItem(item);
+
+                mPokemonListAdapter.notifyDataSetChanged();
+            } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_MOVES) {
+                String move = data.getExtras().getString("Search");
+
+                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
+                switch (mSelectedMove) {
+                    case 1:
+                        pkmn.setMove1(move);
+                        break;
+                    case 2:
+                        pkmn.setMove2(move);
+                        break;
+                    case 3:
+                        pkmn.setMove3(move);
+                        break;
+                    case 4:
+                        pkmn.setMove4(move);
+                        break;
+                    default:
+                        break;
+                }
+                mPokemonListAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -133,6 +176,20 @@ public class TeamBuildingFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.setFocusableInTouchMode(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPokemonListAdapter.notifyDataSetChanged();
+        // Notify parent activity that the mPokemonTeam changed (so to reprint in the drawer)
+        ((TeamBuildingActivity) getActivity()).updateList();
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(Menu.NONE, 1, Menu.NONE, R.string.remove_pokemon);
@@ -167,62 +224,8 @@ public class TeamBuildingFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        view.setFocusableInTouchMode(true);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_POKEMON) {
-                Pokemon pokemon = new Pokemon(getActivity(), data.getExtras().getString("Search"));
-                if (mSelectedPos != -1) {
-                    mPokemonTeam.replacePokemon(mSelectedPos, pokemon);
-                } else {
-                    mPokemonTeam.addPokemon(pokemon);
-                }
-
-                if (mPokemonTeam.isFull()) {
-                    mFooterButton.setVisibility(View.GONE);
-                } else {
-                    mFooterButton.setVisibility(View.VISIBLE);
-                }
-
-                mPokemonListAdapter.notifyDataSetChanged();
-                ((TeamBuildingActivity) getActivity()).updateList();
-            } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_ITEM) {
-                String item = data.getExtras().getString("Search");
-
-                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
-                pkmn.setItem(item);
-
-                mPokemonListAdapter.notifyDataSetChanged();
-            } else if (requestCode == SearchableActivity.REQUEST_CODE_SEARCH_MOVES) {
-                String move = data.getExtras().getString("Search");
-
-                Pokemon pkmn = mPokemonTeam.getPokemon(mSelectedPos);
-                switch (mSelectedMove) {
-                    case 1:
-                        pkmn.setMove1(move);
-                        break;
-                    case 2:
-                        pkmn.setMove2(move);
-                        break;
-                    case 3:
-                        pkmn.setMove3(move);
-                        break;
-                    case 4:
-                        pkmn.setMove4(move);
-                        break;
-                    default:
-                        break;
-                }
-                mPokemonListAdapter.notifyDataSetChanged();
-            }
-        }
+    public void updateList() {
+        mPokemonListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -479,9 +482,5 @@ public class TeamBuildingFragment extends Fragment {
 
             return convertView;
         }
-    }
-
-    public void updateList() {
-        mPokemonListAdapter.notifyDataSetChanged();
     }
 }

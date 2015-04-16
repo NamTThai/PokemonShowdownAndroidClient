@@ -3,6 +3,8 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.pokemonshowdown.application.MyApplication;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -105,56 +107,6 @@ public class PokemonTeam implements Serializable {
         }
     }
 
-    public static void savePokemonTeams(Context c) {
-        FileOutputStream fos = null;
-        try {
-            fos = c.openFileOutput(pokemonTeamStorageName, Context.MODE_PRIVATE);
-            StringBuilder sb = new StringBuilder();
-
-            for (PokemonTeam pokemonTeam : mPokemonTeamList) {
-                sb.append("=== ");
-                if (!pokemonTeam.getTier().isEmpty()) {
-                    sb.append("[").append(MyApplication.toId(pokemonTeam.getTier())).append("] ");
-                }
-                sb.append(pokemonTeam.getNickname()).append(" ===\n");
-                sb.append(pokemonTeam.exportPokemonTeam(c));
-            }
-
-            fos.write(sb.toString().getBytes());
-            fos.close();
-        } catch (IOException e) {
-            Log.e(TAG, e.toString());
-        }
-    }
-
-    public String exportForVerification() {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Pokemon pokemon : mPokemons) {
-            if (pokemon != null) {
-                if (first == false) {
-                    sb.append("]");
-                }
-                sb.append(pokemon.exportForVerification());
-                first = false;
-            }
-        }
-        return sb.toString();
-    }
-
-    public String exportPokemonTeam(Context appContext) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Pokemon pokemon : mPokemons) {
-            if (pokemon != null) {
-                sb.append(pokemon.exportPokemon(appContext));
-                sb.append("\n");
-            }
-        }
-
-        return sb.toString();
-    }
-
     public static PokemonTeam importPokemonTeam(String importString, Context c, boolean withAppContest) {
         PokemonTeam pt = new PokemonTeam();
         if (importString.isEmpty()) {
@@ -185,6 +137,36 @@ public class PokemonTeam implements Serializable {
         return pt;
     }
 
+    public void addPokemon(Pokemon p) {
+        mPokemons.add(p);
+    }
+
+    public static void savePokemonTeams(Context c) {
+        FileOutputStream fos = null;
+        try {
+            fos = c.openFileOutput(pokemonTeamStorageName, Context.MODE_PRIVATE);
+            StringBuilder sb = new StringBuilder();
+
+            for (PokemonTeam pokemonTeam : mPokemonTeamList) {
+                sb.append("=== ");
+                if (!pokemonTeam.getTier().isEmpty()) {
+                    sb.append("[").append(MyApplication.toId(pokemonTeam.getTier())).append("] ");
+                }
+                sb.append(pokemonTeam.getNickname()).append(" ===\n");
+                sb.append(pokemonTeam.exportPokemonTeam(c));
+            }
+
+            fos.write(sb.toString().getBytes());
+            fos.close();
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    public String getTier() {
+        return mTier;
+    }
+
     /**
      * Accessors
      */
@@ -192,16 +174,44 @@ public class PokemonTeam implements Serializable {
         return mNickname;
     }
 
+    public String exportPokemonTeam(Context appContext) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Pokemon pokemon : mPokemons) {
+            if (pokemon != null) {
+                sb.append(pokemon.exportPokemon(appContext));
+                sb.append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
     public void setNickname(String nickname) {
         this.mNickname = nickname;
     }
 
-    public ArrayList<Pokemon> getPokemons() {
-        return mPokemons;
+    public void setTier(String tier) {
+        this.mTier = tier;
     }
 
-    public void addPokemon(Pokemon p) {
-        mPokemons.add(p);
+    public String exportForVerification() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Pokemon pokemon : mPokemons) {
+            if (pokemon != null) {
+                if (first == false) {
+                    sb.append("]");
+                }
+                sb.append(pokemon.exportForVerification());
+                first = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    public ArrayList<Pokemon> getPokemons() {
+        return mPokemons;
     }
 
     public void replacePokemon(int oldIndex, Pokemon p) {
@@ -222,13 +232,5 @@ public class PokemonTeam implements Serializable {
 
     public void removePokemon(int index) {
         mPokemons.remove(index);
-    }
-
-    public void setTier(String tier) {
-        this.mTier = tier;
-    }
-
-    public String getTier() {
-        return mTier;
     }
 }

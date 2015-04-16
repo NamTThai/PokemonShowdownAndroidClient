@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 public class SignInDialog extends DialogFragment {
@@ -51,7 +51,7 @@ public class SignInDialog extends DialogFragment {
                     if (assertion.charAt(0) == ';') {
                         passwordBox.setText("");
                     } else {
-                        MyApplication.getMyApplication().processGlobalMessage("|assertion|"+username+"|"+assertion);
+                        MyApplication.getMyApplication().processGlobalMessage("|assertion|" + username + "|" + assertion);
                         getDialog().dismiss();
                     }
                 }

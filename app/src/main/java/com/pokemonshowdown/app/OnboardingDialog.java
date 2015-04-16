@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 
 public class OnboardingDialog extends DialogFragment {
@@ -48,6 +48,7 @@ public class OnboardingDialog extends DialogFragment {
                         return;
                     }
                     if (assertion.equals(";")) {
+                        Onboarding.get(getActivity()).setAccountRegistered(true);
                         getDialog().dismiss();
                         FragmentManager fm = getActivity().getSupportFragmentManager();
                         SignInDialog fragment = new SignInDialog();
@@ -56,7 +57,8 @@ public class OnboardingDialog extends DialogFragment {
                         fragment.setArguments(bundle);
                         fragment.show(fm, SignInDialog.STAG);
                     } else {
-                        MyApplication.getMyApplication().processGlobalMessage("|assertion|"+name+"|"+assertion);
+                        Onboarding.get(getActivity()).setAccountRegistered(false);
+                        MyApplication.getMyApplication().processGlobalMessage("|assertion|" + name + "|" + assertion);
                         getDialog().dismiss();
                     }
                 }

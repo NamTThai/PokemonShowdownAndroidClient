@@ -46,11 +46,8 @@ public class StatsDialog extends DialogFragment {
     public final static String ARGUMENT_IV = "IVs";
     public final static String ARGUMENT_LEVEL = "Level";
     public final static String ARGUMENT_NATURE_MULTIPLIER = "NatureMultiplier";
-
-    private final static List<String> SPINNER_STAGES = Arrays.asList(new String[]{"-6", "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5", "+6"});
-
     public static final int maxEV = 508;
-
+    private final static List<String> SPINNER_STAGES = Arrays.asList(new String[]{"-6", "-5", "-4", "-3", "-2", "-1", "0", "+1", "+2", "+3", "+4", "+5", "+6"});
     private int[] mStats;
     private int[] mBaseStats;
     private int[] mEVs;
@@ -536,168 +533,20 @@ public class StatsDialog extends DialogFragment {
         setStats(stats[0], stats[1], stats[2], stats[3], stats[4], stats[5]);
     }
 
-    private void setStats(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
-        TextView textView;
-        if (HP != -1) {
-            mStats[0] = HP;
-            textView = (TextView) getView().findViewById(R.id.final_HP);
-            textView.setText(Integer.toString(HP), TextView.BufferType.EDITABLE);
-        }
-        if (Atk != -1) {
-            mStats[1] = Atk;
-            textView = (TextView) getView().findViewById(R.id.final_Atk);
-            textView.setText(Integer.toString(Atk), TextView.BufferType.EDITABLE);
-        }
-        if (Def != -1) {
-            mStats[2] = Def;
-            textView = (TextView) getView().findViewById(R.id.final_Def);
-            textView.setText(Integer.toString(Def), TextView.BufferType.EDITABLE);
-        }
-        if (SpAtk != -1) {
-            mStats[3] = SpAtk;
-            textView = (TextView) getView().findViewById(R.id.final_SpAtk);
-            textView.setText(Integer.toString(SpAtk), TextView.BufferType.EDITABLE);
-        }
-        if (SpDef != -1) {
-            mStats[4] = SpDef;
-            textView = (TextView) getView().findViewById(R.id.final_SpDef);
-            textView.setText(Integer.toString(SpDef), TextView.BufferType.EDITABLE);
-        }
-        if (Spd != -1) {
-            mStats[5] = Spd;
-            textView = (TextView) getView().findViewById(R.id.final_Spd);
-            textView.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
-        }
-    }
-
-    private int getRemainingEVs() {
-        return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
-    }
-
-    private int getRemainingEVsForFilter(int avoid) {
-        switch (avoid) {
-            case 0:
-                return maxEV - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
-            case 1:
-                return maxEV - mEVs[0] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
-            case 2:
-                return maxEV - mEVs[0] - mEVs[1] - mEVs[3] - mEVs[4] - mEVs[5];
-            case 3:
-                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[4] - mEVs[5];
-            case 4:
-                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[5];
-            case 5:
-                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4];
-            default:
-                return getRemainingEVs();
-        }
-    }
-
     private void setEVs(int[] EVs) {
         setEVs(EVs[0], EVs[1], EVs[2], EVs[3], EVs[4], EVs[5]);
-    }
-
-    private void setEVs(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
-        if (HP != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_HP);
-            seekBar.setProgress(HP / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_HP);
-            textView.setText(Integer.toString(HP));
-        }
-        if (Atk != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Atk);
-            seekBar.setProgress(Atk / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_Atk);
-            textView.setText(Integer.toString(Atk));
-        }
-        if (Def != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Def);
-            seekBar.setProgress(Def / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_Def);
-            textView.setText(Integer.toString(Def));
-        }
-        if (SpAtk != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_SpAtk);
-            seekBar.setProgress(SpAtk / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_SpAtk);
-            textView.setText(Integer.toString(SpAtk));
-        }
-        if (SpDef != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_SpDef);
-            seekBar.setProgress(SpDef / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_SpDef);
-            textView.setText(Integer.toString(SpDef));
-        }
-        if (Spd != -1) {
-            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Spd);
-            seekBar.setProgress(Spd / 4);
-            TextView textView = (TextView) getView().findViewById(R.id.EV_Spd);
-            textView.setText(Integer.toString(Spd));
-        }
     }
 
     private void setIVs(int[] IVs) {
         setIVs(IVs[0], IVs[1], IVs[2], IVs[3], IVs[4], IVs[5]);
     }
 
-    private void setIVs(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
-        EditText editText;
-        if (HP != -1) {
-            mIVs[0] = HP;
-            editText = (EditText) getView().findViewById(R.id.IV_HP);
-            editText.setText(Integer.toString(HP), TextView.BufferType.EDITABLE);
-        }
-        if (Atk != -1) {
-            mIVs[1] = Atk;
-            editText = (EditText) getView().findViewById(R.id.IV_Atk);
-            editText.setText(Integer.toString(Atk), TextView.BufferType.EDITABLE);
-        }
-        if (Def != -1) {
-            mIVs[2] = Def;
-            editText = (EditText) getView().findViewById(R.id.IV_Def);
-            editText.setText(Integer.toString(Def), TextView.BufferType.EDITABLE);
-        }
-        if (SpAtk != -1) {
-            mIVs[3] = SpAtk;
-            editText = (EditText) getView().findViewById(R.id.IV_SpAtk);
-            editText.setText(Integer.toString(SpAtk), TextView.BufferType.EDITABLE);
-        }
-        if (SpDef != -1) {
-            mIVs[4] = SpDef;
-            editText = (EditText) getView().findViewById(R.id.IV_SpDef);
-            editText.setText(Integer.toString(SpDef), TextView.BufferType.EDITABLE);
-        }
-        if (Spd != -1) {
-            mIVs[5] = Spd;
-            editText = (EditText) getView().findViewById(R.id.IV_Spd);
-            editText.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
-        }
-    }
-
-    public void setStages(int[] stages) {
-        setStages(stages[1], stages[2], stages[3], stages[4], stages[5]);
-    }
-
-    public void setStages(int atk, int def, int spAtk, int spDef, int spd) {
-        if (atk != -1) {
-            mStages[1] = atk;
-        }
-
-        if (def != -1) {
-            mStages[2] = def;
-        }
-
-        if (spAtk != -1) {
-            mStages[3] = spAtk;
-        }
-
-        if (spDef != -1) {
-            mStages[4] = spDef;
-        }
-
-        if (spd != -1) {
-            mStages[5] = spd;
-        }
+    private void initializeSpinner() {
+        initializeSpinner(R.id.Stages_Atk, mStages[1], 1);
+        initializeSpinner(R.id.Stages_Def, mStages[2], 2);
+        initializeSpinner(R.id.Stages_SpAtk, mStages[3], 3);
+        initializeSpinner(R.id.Stages_SpDef, mStages[4], 4);
+        initializeSpinner(R.id.Stages_Spd, mStages[5], 5);
     }
 
     private void highlightNature() {
@@ -745,12 +594,115 @@ public class StatsDialog extends DialogFragment {
         }
     }
 
-    private void initializeSpinner() {
-        initializeSpinner(R.id.Stages_Atk, mStages[1], 1);
-        initializeSpinner(R.id.Stages_Def, mStages[2], 2);
-        initializeSpinner(R.id.Stages_SpAtk, mStages[3], 3);
-        initializeSpinner(R.id.Stages_SpDef, mStages[4], 4);
-        initializeSpinner(R.id.Stages_Spd, mStages[5], 5);
+    private int getRemainingEVs() {
+        return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
+    }
+
+    private void setStats(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
+        TextView textView;
+        if (HP != -1) {
+            mStats[0] = HP;
+            textView = (TextView) getView().findViewById(R.id.final_HP);
+            textView.setText(Integer.toString(HP), TextView.BufferType.EDITABLE);
+        }
+        if (Atk != -1) {
+            mStats[1] = Atk;
+            textView = (TextView) getView().findViewById(R.id.final_Atk);
+            textView.setText(Integer.toString(Atk), TextView.BufferType.EDITABLE);
+        }
+        if (Def != -1) {
+            mStats[2] = Def;
+            textView = (TextView) getView().findViewById(R.id.final_Def);
+            textView.setText(Integer.toString(Def), TextView.BufferType.EDITABLE);
+        }
+        if (SpAtk != -1) {
+            mStats[3] = SpAtk;
+            textView = (TextView) getView().findViewById(R.id.final_SpAtk);
+            textView.setText(Integer.toString(SpAtk), TextView.BufferType.EDITABLE);
+        }
+        if (SpDef != -1) {
+            mStats[4] = SpDef;
+            textView = (TextView) getView().findViewById(R.id.final_SpDef);
+            textView.setText(Integer.toString(SpDef), TextView.BufferType.EDITABLE);
+        }
+        if (Spd != -1) {
+            mStats[5] = Spd;
+            textView = (TextView) getView().findViewById(R.id.final_Spd);
+            textView.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
+        }
+    }
+
+    private void setEVs(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
+        if (HP != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_HP);
+            seekBar.setProgress(HP / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_HP);
+            textView.setText(Integer.toString(HP));
+        }
+        if (Atk != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Atk);
+            seekBar.setProgress(Atk / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_Atk);
+            textView.setText(Integer.toString(Atk));
+        }
+        if (Def != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Def);
+            seekBar.setProgress(Def / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_Def);
+            textView.setText(Integer.toString(Def));
+        }
+        if (SpAtk != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_SpAtk);
+            seekBar.setProgress(SpAtk / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_SpAtk);
+            textView.setText(Integer.toString(SpAtk));
+        }
+        if (SpDef != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_SpDef);
+            seekBar.setProgress(SpDef / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_SpDef);
+            textView.setText(Integer.toString(SpDef));
+        }
+        if (Spd != -1) {
+            SeekBar seekBar = (SeekBar) getView().findViewById(R.id.bar_Spd);
+            seekBar.setProgress(Spd / 4);
+            TextView textView = (TextView) getView().findViewById(R.id.EV_Spd);
+            textView.setText(Integer.toString(Spd));
+        }
+    }
+
+    private void setIVs(int HP, int Atk, int Def, int SpAtk, int SpDef, int Spd) {
+        EditText editText;
+        if (HP != -1) {
+            mIVs[0] = HP;
+            editText = (EditText) getView().findViewById(R.id.IV_HP);
+            editText.setText(Integer.toString(HP), TextView.BufferType.EDITABLE);
+        }
+        if (Atk != -1) {
+            mIVs[1] = Atk;
+            editText = (EditText) getView().findViewById(R.id.IV_Atk);
+            editText.setText(Integer.toString(Atk), TextView.BufferType.EDITABLE);
+        }
+        if (Def != -1) {
+            mIVs[2] = Def;
+            editText = (EditText) getView().findViewById(R.id.IV_Def);
+            editText.setText(Integer.toString(Def), TextView.BufferType.EDITABLE);
+        }
+        if (SpAtk != -1) {
+            mIVs[3] = SpAtk;
+            editText = (EditText) getView().findViewById(R.id.IV_SpAtk);
+            editText.setText(Integer.toString(SpAtk), TextView.BufferType.EDITABLE);
+        }
+        if (SpDef != -1) {
+            mIVs[4] = SpDef;
+            editText = (EditText) getView().findViewById(R.id.IV_SpDef);
+            editText.setText(Integer.toString(SpDef), TextView.BufferType.EDITABLE);
+        }
+        if (Spd != -1) {
+            mIVs[5] = Spd;
+            editText = (EditText) getView().findViewById(R.id.IV_Spd);
+            editText.setText(Integer.toString(Spd), TextView.BufferType.EDITABLE);
+        }
     }
 
     private Spinner initializeSpinner(int id, int initialPosition, final int stagePosition) {
@@ -779,5 +731,50 @@ public class StatsDialog extends DialogFragment {
 
         });
         return spinner;
+    }
+
+    public void setStages(int[] stages) {
+        setStages(stages[1], stages[2], stages[3], stages[4], stages[5]);
+    }
+
+    public void setStages(int atk, int def, int spAtk, int spDef, int spd) {
+        if (atk != -1) {
+            mStages[1] = atk;
+        }
+
+        if (def != -1) {
+            mStages[2] = def;
+        }
+
+        if (spAtk != -1) {
+            mStages[3] = spAtk;
+        }
+
+        if (spDef != -1) {
+            mStages[4] = spDef;
+        }
+
+        if (spd != -1) {
+            mStages[5] = spd;
+        }
+    }
+
+    private int getRemainingEVsForFilter(int avoid) {
+        switch (avoid) {
+            case 0:
+                return maxEV - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
+            case 1:
+                return maxEV - mEVs[0] - mEVs[2] - mEVs[3] - mEVs[4] - mEVs[5];
+            case 2:
+                return maxEV - mEVs[0] - mEVs[1] - mEVs[3] - mEVs[4] - mEVs[5];
+            case 3:
+                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[4] - mEVs[5];
+            case 4:
+                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[5];
+            case 5:
+                return maxEV - mEVs[0] - mEVs[1] - mEVs[2] - mEVs[3] - mEVs[4];
+            default:
+                return getRemainingEVs();
+        }
     }
 }

@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,14 +79,6 @@ public class SearchableActivity extends ListActivity {
                 getActionBar().setTitle(R.string.search_label_moves);
                 break;
         }
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent = new Intent();
-        intent.putExtra(SEARCH, mAdapterList.get(position));
-        setResult(Activity.RESULT_OK, intent);
-        finish();
     }
 
     @Override
@@ -179,6 +172,14 @@ public class SearchableActivity extends ListActivity {
         }
         mAdapter = new MovesAdapter(this, mAdapterList);
         setListAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent();
+        intent.putExtra(SEARCH, mAdapterList.get(position));
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     private class PokemonAdapter extends ArrayAdapter<String> {

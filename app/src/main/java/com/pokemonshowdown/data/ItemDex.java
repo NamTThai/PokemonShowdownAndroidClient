@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,40 @@ public class ItemDex {
 
     private ItemDex(Context appContext) {
         mItemDexEntries = readFile(appContext);
+    }
+
+    private HashMap<String, String> readFile(Context appContext) {
+        HashMap<String, String> ItemDexEntries = new HashMap<>();
+        String jsonString;
+        try {
+            InputStream inputStream = appContext.getResources().openRawResource(R.raw.item);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append("\n");
+            }
+            jsonString = stringBuilder.toString();
+            inputStream.close();
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            Iterator<String> keys = jsonObject.keys();
+
+            while (keys.hasNext()) {
+                String key = keys.next();
+                JSONObject entry = jsonObject.getJSONObject(key);
+                ItemDexEntries.put(key, entry.toString());
+            }
+        } catch (JSONException e) {
+            Log.d(ITAG, "JSON Exception");
+        } catch (IOException e) {
+            Log.d(ITAG, "Input Output problem");
+        }
+
+        return ItemDexEntries;
     }
 
     public static ItemDex get(Context c) {
@@ -62,39 +97,5 @@ public class ItemDex {
         } catch (NullPointerException | JSONException e) {
             return null;
         }
-    }
-
-    private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> ItemDexEntries = new HashMap<>();
-        String jsonString;
-        try {
-            InputStream inputStream = appContext.getResources().openRawResource(R.raw.item);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder stringBuilder = new StringBuilder();
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append("\n");
-            }
-            jsonString = stringBuilder.toString();
-            inputStream.close();
-
-            JSONObject jsonObject = new JSONObject(jsonString);
-
-            Iterator<String> keys = jsonObject.keys();
-
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject entry = jsonObject.getJSONObject(key);
-                ItemDexEntries.put(key, entry.toString());
-            }
-        } catch (JSONException e) {
-            Log.d(ITAG, "JSON Exception");
-        } catch (IOException e) {
-            Log.d(ITAG, "Input Output problem");
-        }
-
-        return ItemDexEntries;
     }
 }

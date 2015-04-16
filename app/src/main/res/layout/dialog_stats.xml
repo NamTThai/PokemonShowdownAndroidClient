@@ -2,14 +2,14 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
     android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     >
 
     <TableLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -18,8 +18,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_HP"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_HP"
                 />
 
             <TextView
@@ -48,8 +48,8 @@
                 android:id="@+id/IV_HP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
         </TableRow>
@@ -61,8 +61,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_Atk"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_Atk"
                 />
 
             <TextView
@@ -91,15 +91,15 @@
                 android:id="@+id/IV_Atk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
             <Spinner
+                android:id="@+id/Stages_Atk"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/Stages_Atk"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"/>
 
         </TableRow>
 
@@ -110,8 +110,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_Def"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_Def"
                 />
 
             <TextView
@@ -140,15 +140,15 @@
                 android:id="@+id/IV_Def"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
             <Spinner
+                android:id="@+id/Stages_Def"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/Stages_Def"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"/>
 
         </TableRow>
 
@@ -159,8 +159,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_SpAtk"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_SpAtk"
                 />
 
             <TextView
@@ -189,15 +189,15 @@
                 android:id="@+id/IV_SpAtk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
             <Spinner
+                android:id="@+id/Stages_SpAtk"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/Stages_SpAtk"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"/>
 
         </TableRow>
 
@@ -208,8 +208,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_SpDef"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_SpDef"
                 />
 
             <TextView
@@ -238,15 +238,15 @@
                 android:id="@+id/IV_SpDef"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
             <Spinner
+                android:id="@+id/Stages_SpDef"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/Stages_SpDef"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"/>
 
         </TableRow>
 
@@ -257,8 +257,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/stats_Spd"
                 android:layout_marginLeft="8dp"
+                android:text="@string/stats_Spd"
                 />
 
             <TextView
@@ -287,30 +287,30 @@
                 android:id="@+id/IV_Spd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 />
 
             <Spinner
+                android:id="@+id/Stages_Spd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/Stages_Spd"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"/>
 
         </TableRow>
 
     </TableLayout>
 
-    <View style="@style/divider" />
+    <View style="@style/divider"/>
 
     <TextView
         android:id="@+id/save_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/save"
-        android:textColor="@drawable/dialog_button"
-        android:gravity="center"/>
+        android:textColor="@drawable/dialog_button"/>
 
 </LinearLayout>

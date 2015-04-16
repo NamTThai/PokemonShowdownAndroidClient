@@ -21,27 +21,28 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pokemonshowdown.data.CommunityLoungeData;
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Random;
 
 public class ChatRoomFragment extends android.support.v4.app.Fragment {
     public final static String CTAG = ChatRoomFragment.class.getName();
-    private final static String ROOM_ID = "Room Id";
     public final static String[] COLOR_STRONG = {"#0099CC", "#9933CC", "#669900", "#FF8800", "#CC0000"};
     public final static String[] COLOR_WEAK = {"#33B5E5", "#AA66CC", "#99CC00", "#FFBB33", "#FF4444"};
     public final static String USER_PRIORITY = "~#@%+ ";
-
+    private final static String ROOM_ID = "Room Id";
     private String mRoomId;
 
     private ArrayList<String> mUserListData;
     private UserAdapter mUserAdapter;
     private LayoutInflater mLayoutInflater;
+
+    public ChatRoomFragment() {
+        // Required empty public constructor
+    }
 
     public static ChatRoomFragment newInstance(String roomId) {
         ChatRoomFragment fragment = new ChatRoomFragment();
@@ -49,9 +50,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         args.putString(ROOM_ID, roomId);
         fragment.setArguments(args);
         return fragment;
-    }
-    public ChatRoomFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -93,14 +91,6 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
-        CharSequence text = ((TextView) getView().findViewById(R.id.community_chat_log)).getText();
-        roomDataHashMap.put(mRoomId, new CommunityLoungeData.RoomData(mRoomId, mUserListData, text, true));
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
@@ -120,6 +110,14 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
 
             roomDataHashMap.remove(mRoomId);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        HashMap<String, CommunityLoungeData.RoomData> roomDataHashMap = CommunityLoungeData.get(getActivity()).getRoomDataHashMap();
+        CharSequence text = ((TextView) getView().findViewById(R.id.community_chat_log)).getText();
+        roomDataHashMap.put(mRoomId, new CommunityLoungeData.RoomData(mRoomId, mUserListData, text, true));
     }
 
     public void processServerMessage(String message) {
@@ -265,8 +263,36 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    /**
+     * @return 1 if a should appear after b
+     */
+    private int compareUser(String a, String b) {
+        char a1 = a.charAt(0);
+        int a1pos = USER_PRIORITY.indexOf(a1);
+        a1pos = (a1pos == -1) ? USER_PRIORITY.length() : a1pos;
+        char b1 = b.charAt(0);
+        int b1pos = USER_PRIORITY.indexOf(b1);
+        b1pos = (b1pos == -1) ? USER_PRIORITY.length() : b1pos;
+        if (a1pos != b1pos) {
+            return (a1pos > b1pos) ? 1 : -1;
+        } else {
+            return sanitizeUsername(a).compareTo(sanitizeUsername(b));
+        }
+    }
+
+    private void removeUserFromList(ArrayList<String> userList, String username) {
+        username = sanitizeUsername(username);
+        for (int i = 0; i < userList.size(); i++) {
+            String user = sanitizeUsername(userList.get(i));
+            if (user.equals(username)) {
+                userList.remove(i);
+                return;
+            }
+        }
+    }
+
     private void addUserToList(ArrayList<String> userList, String username) {
-        for(int i=0; i < userList.size(); i++) {
+        for (int i = 0; i < userList.size(); i++) {
             int compare = compareUser(username, userList.get(i));
             if (compare == 0) {
                 return;
@@ -279,36 +305,12 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         userList.add(username);
     }
 
-    /**
-     * @return 1 if a should appear after b
-     */
-    private int compareUser(String a, String b) {
-        char a1 = a.charAt(0); int a1pos = USER_PRIORITY.indexOf(a1); a1pos = (a1pos == -1) ? USER_PRIORITY.length() : a1pos;
-        char b1 = b.charAt(0); int b1pos = USER_PRIORITY.indexOf(b1); b1pos = (b1pos == -1) ? USER_PRIORITY.length() : b1pos;
-        if (a1pos != b1pos) {
-            return (a1pos > b1pos) ? 1 : -1;
-        } else {
-            return sanitizeUsername(a).compareTo(sanitizeUsername(b));
-        }
-    }
-
     public static int getColorStrong(String name) {
         if (name.length() < 2) {
             return Color.parseColor(COLOR_STRONG[0]);
         }
         int value = (int) name.charAt(1) + (int) name.charAt(name.length() - 1);
         return Color.parseColor(COLOR_STRONG[value % COLOR_STRONG.length]);
-    }
-
-    private void removeUserFromList(ArrayList<String> userList, String username) {
-        username = sanitizeUsername(username);
-        for(int i=0; i < userList.size(); i++) {
-            String user = sanitizeUsername(userList.get(i));
-            if (user.equals(username)) {
-                userList.remove(i);
-                return;
-            }
-        }
     }
 
     /**

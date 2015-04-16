@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.MyApplication;
+import com.pokemonshowdown.application.MyApplication;
 
 public class CreditsFragment extends Fragment {
     public final static String CTAG = CreditsFragment.class.getName();
@@ -29,21 +29,21 @@ public class CreditsFragment extends Fragment {
             {"Zarel", Integer.toString(R.drawable.coder_zarel), "Guangcong Luo", "Showdown Creator"}
     };
 
-    public static CreditsFragment newInstance() {
-        return new CreditsFragment();
-    }
-
     public CreditsFragment() {
 
     }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	} 
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+    public static CreditsFragment newInstance() {
+        return new CreditsFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_credits, parent, false);
     }
 
@@ -67,9 +67,19 @@ public class CreditsFragment extends Fragment {
         ((TextView) view.findViewById(R.id.active_battle)).setText(activeBattles);
 
         LinearLayout androidContributors = (LinearLayout) view.findViewById(R.id.android_contributors);
+        ImageView donation = new ImageView(getActivity());
+        donation.setImageResource(R.drawable.paypal);
+        donation.setAdjustViewBounds(true);
+        donation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BattleFieldActivity) getActivity()).enterDonationAmount();
+            }
+        });
+        androidContributors.addView(donation);
         for (String[] androidContributor : ANDROID_CONTRIBUTOR) {
             LinearLayout contributor = (LinearLayout) getLayoutInflater(savedInstanceState)
-                    .inflate(R.layout.listwidget_contributors, androidContributors,  false);
+                    .inflate(R.layout.listwidget_contributors, androidContributors, false);
             ((TextView) contributor.findViewById(R.id.nickname)).setText(androidContributor[0]);
             ((ImageView) contributor.findViewById(R.id.avatar)).setImageResource(Integer.parseInt(androidContributor[1]));
             ((TextView) contributor.findViewById(R.id.real_name)).setText(androidContributor[2]);

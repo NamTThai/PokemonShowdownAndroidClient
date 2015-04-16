@@ -4,26 +4,20 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.PokemonTeam;
 
 import java.util.Arrays;
 
-/**
- * Created by clement on 04/01/2015.
- */
 public class ChallengeDialog extends DialogFragment {
     public static final String CTAG = ChallengeDialog.class.getName();
     public static final String CHALLENGER_TAG = "CHALLENGER_TAG";

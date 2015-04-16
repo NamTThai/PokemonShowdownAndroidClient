@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/animation_layout"
+<RelativeLayout android:id="@+id/animation_layout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -9,22 +9,22 @@
         android:id="@+id/field_reflect"
         android:layout_width="192dp"
         android:layout_height="72dp"
-        android:src="@drawable/field_reflect"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
         android:layout_marginBottom="48dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_reflect"/>
+        android:layout_marginLeft="8dp"
+        android:contentDescription="@string/dmg_calc_field_reflect"
+        android:src="@drawable/field_reflect"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_lightscreen"
         android:layout_width="192dp"
         android:layout_height="72dp"
-        android:src="@drawable/field_lightscreen"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="56dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_lightscreen"/>
+        android:contentDescription="@string/dmg_calc_field_lightscreen"
+        android:src="@drawable/field_lightscreen"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/toast"
@@ -32,19 +32,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/editable_frame_blackwhite"
+        android:layout_margin="4dp"
         android:alpha="0"
-        android:padding="2dp"
-        android:layout_margin="4dp"/>
+        android:background="@drawable/editable_frame_blackwhite"
+        android:padding="2dp"/>
 
     <RelativeLayout
         android:id="@+id/p1a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="4dp"
         android:layout_marginBottom="36dp"
-        android:visibility="invisible">
+        android:layout_marginLeft="4dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1a_pkm"
@@ -58,9 +58,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p1a_pkm"
+            android:layout_toRightOf="@id/p1a_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p1a_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p1a_hp_layout"
@@ -74,8 +74,8 @@
                 android:id="@+id/p1a_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -94,17 +94,17 @@
             android:id="@+id/p1a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p1a_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1a_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p1a_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p1a_hp_layout"
             android:layout_below="@id/p1a_hp_layout"
-            android:layout_alignLeft="@id/p1a_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -115,9 +115,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="120dp"
         android:layout_marginBottom="20dp"
-        android:visibility="invisible">
+        android:layout_marginLeft="120dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1b_pkm"
@@ -131,9 +131,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p1b_pkm"
+            android:layout_toRightOf="@id/p1b_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p1b_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p1b_hp_layout"
@@ -147,8 +147,8 @@
                 android:id="@+id/p1b_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -167,17 +167,17 @@
             android:id="@+id/p1b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p1b_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1b_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p1b_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p1b_hp_layout"
             android:layout_below="@id/p1b_hp_layout"
-            android:layout_alignLeft="@id/p1b_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -188,9 +188,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="236dp"
         android:layout_marginBottom="4dp"
-        android:visibility="invisible">
+        android:layout_marginLeft="236dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p1c_pkm"
@@ -204,9 +204,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p1c_pkm"
+            android:layout_toRightOf="@id/p1c_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p1c_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p1c_hp_layout"
@@ -220,8 +220,8 @@
                 android:id="@+id/p1c_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -240,17 +240,17 @@
             android:id="@+id/p1c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p1c_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p1c_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p1c_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p1c_hp_layout"
             android:layout_below="@id/p1c_hp_layout"
-            android:layout_alignLeft="@id/p1c_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -260,11 +260,11 @@
         android:id="@+id/p2c"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="236dp"
         android:layout_marginTop="4dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2c_pkm"
@@ -278,9 +278,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p2c_pkm"
+            android:layout_toRightOf="@id/p2c_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p2c_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p2c_hp_layout"
@@ -294,8 +294,8 @@
                 android:id="@+id/p2c_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -314,17 +314,17 @@
             android:id="@+id/p2c_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p2c_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2c_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p2c_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p2c_hp_layout"
             android:layout_below="@id/p2c_hp_layout"
-            android:layout_alignLeft="@id/p2c_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -334,11 +334,11 @@
         android:id="@+id/p2b"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="120dp"
         android:layout_marginTop="20dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2b_pkm"
@@ -352,9 +352,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p2b_pkm"
+            android:layout_toRightOf="@id/p2b_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p2b_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p2b_hp_layout"
@@ -368,8 +368,8 @@
                 android:id="@+id/p2b_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -388,17 +388,17 @@
             android:id="@+id/p2b_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p2b_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2b_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p2b_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p2b_hp_layout"
             android:layout_below="@id/p2b_hp_layout"
-            android:layout_alignLeft="@id/p2b_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -408,11 +408,11 @@
         android:id="@+id/p2a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="4dp"
         android:layout_marginTop="36dp"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/p2a_pkm"
@@ -426,9 +426,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/p2a_pkm"
+            android:layout_toRightOf="@id/p2a_pkm"
             android:contentDescription="@string/gender"
-            android:paddingLeft="2dp"
-            android:layout_toRightOf="@id/p2a_pkm"/>
+            android:paddingLeft="2dp"/>
 
         <LinearLayout
             android:id="@+id/p2a_hp_layout"
@@ -442,8 +442,8 @@
                 android:id="@+id/p2a_hp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
                 android:minEms="2"
+                android:padding="2dp"
                 android:textColor="@color/android:white"/>
 
             <ProgressBar
@@ -462,17 +462,17 @@
             android:id="@+id/p2a_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sprites_abomasnow"
+            android:layout_below="@id/p2a_hp_layout"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/p2a_hp_layout"/>
+            android:src="@drawable/sprites_abomasnow"/>
 
         <LinearLayout
             android:id="@+id/p2a_temp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_alignLeft="@id/p2a_hp_layout"
             android:layout_below="@id/p2a_hp_layout"
-            android:layout_alignLeft="@id/p2a_hp_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -482,161 +482,161 @@
         android:id="@+id/field_rocks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_rocks"
-        android:alpha="0.6"
-        android:layout_alignRight="@id/p1a"
         android:layout_alignBottom="@id/p1a"
+        android:layout_alignRight="@id/p1a"
         android:layout_marginRight="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_rocks"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toRightOf="@id/p1a"
         android:layout_alignBottom="@id/p1a"
         android:layout_marginLeft="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toRightOf="@id/p1a"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toRightOf="@id/p1a"
         android:layout_alignBottom="@id/p1a"
         android:layout_marginBottom="16dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toRightOf="@id/p1a"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toLeftOf="@id/field_rocks"
         android:layout_alignBottom="@id/field_rocks"
         android:layout_marginRight="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toLeftOf="@id/field_rocks"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_tspikes1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_tspikes"
-        android:alpha="0.6"
-        android:layout_toRightOf="@id/field_spikes1"
         android:layout_alignBottom="@id/field_spikes1"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toRightOf="@id/field_spikes1"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_tspikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_tspikes2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_tspikes"
-        android:alpha="0.6"
-        android:layout_toRightOf="@id/field_spikes2"
         android:layout_alignBottom="@id/field_spikes2"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toRightOf="@id/field_spikes2"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_tspikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_rocks_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_rocks"
-        android:alpha="0.6"
-        android:layout_alignLeft="@id/p2a"
         android:layout_alignBottom="@id/p2a"
+        android:layout_alignLeft="@id/p2a"
         android:layout_marginLeft="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_rocks"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes1_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toLeftOf="@id/p2a"
         android:layout_alignBottom="@id/p2a"
         android:layout_marginRight="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toLeftOf="@id/p2a"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes2_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toLeftOf="@id/p2a"
         android:layout_alignBottom="@id/p2a"
         android:layout_marginBottom="16dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toLeftOf="@id/p2a"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_spikes3_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_spikes"
-        android:alpha="0.6"
-        android:layout_toRightOf="@id/field_rocks_o"
         android:layout_alignBottom="@id/field_rocks_o"
         android:layout_marginLeft="8dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toRightOf="@id/field_rocks_o"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_spikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_tspikes1_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_tspikes"
-        android:alpha="0.6"
-        android:layout_toLeftOf="@id/field_spikes1_o"
         android:layout_alignBottom="@id/field_spikes1_o"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toLeftOf="@id/field_spikes1_o"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_tspikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_tspikes2_o"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/field_tspikes"
-        android:alpha="0.6"
-        android:layout_toLeftOf="@id/field_spikes2_o"
         android:layout_alignBottom="@id/field_spikes2_o"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_sr"/>
+        android:layout_toLeftOf="@id/field_spikes2_o"
+        android:alpha="0.6"
+        android:contentDescription="@string/dmg_calc_field_sr"
+        android:src="@drawable/field_tspikes"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_reflect_o"
         android:layout_width="192dp"
         android:layout_height="72dp"
-        android:src="@drawable/field_reflect"
         android:layout_alignParentRight="true"
         android:layout_marginRight="8dp"
         android:layout_marginTop="80dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_reflect"/>
+        android:contentDescription="@string/dmg_calc_field_reflect"
+        android:src="@drawable/field_reflect"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/field_lightscreen_o"
         android:layout_width="192dp"
         android:layout_height="72dp"
-        android:src="@drawable/field_lightscreen"
         android:layout_alignParentRight="true"
         android:layout_marginTop="88dp"
-        android:visibility="invisible"
-        android:contentDescription="@string/dmg_calc_field_lightscreen"/>
+        android:contentDescription="@string/dmg_calc_field_lightscreen"
+        android:src="@drawable/field_lightscreen"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

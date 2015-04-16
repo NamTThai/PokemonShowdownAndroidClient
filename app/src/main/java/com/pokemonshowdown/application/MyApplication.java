@@ -1,12 +1,13 @@
-package com.pokemonshowdown.data;
+package com.pokemonshowdown.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import com.pokemonshowdown.data.BattleFieldData;
+import com.pokemonshowdown.data.Onboarding;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
@@ -26,63 +27,33 @@ import java.util.Iterator;
  */
 public class MyApplication extends Application {
     public final static String MTAG = MyApplication.class.getName();
-    public final static String ACTION_FROM_MY_APPLICATION = "From My Application";
-    public final static String EXTRA_DETAILS = "Details";
-    public final static String EXTRA_NO_INTERNET_CONNECTION = "No Internet Connection";
-    public final static String EXTRA_WATCH_BATTLE_LIST_READY = "Watch Battle List Ready";
-    public final static String EXTRA_AVAILABLE_FORMATS = "Available Formats";
-    public final static String EXTRA_NEW_BATTLE_ROOM = "New Room";
-    public final static String EXTRA_SERVER_MESSAGE = "New Server Message";
-    public final static String EXTRA_REQUIRE_SIGN_IN = "Require Sign In";
-    public final static String EXTRA_ERROR_MESSAGE = "Error Message";
-    public final static String EXTRA_UNKNOWN_ERROR = "Unknown Error";
-    public final static String EXTRA_UPDATE_SEARCH = "Search Update";
-    public final static String EXTRA_CHANNEL = "Channel";
-    public final static String EXTRA_ROOMID = "RoomId";
-    public final static String EXTRA_UPDATE_CHALLENGE = "Challenges ";
 
     private static MyApplication sMyApplication;
 
-    private Pokedex mPokedex;
-    private MoveDex mMoveDex;
-    private AbilityDex mAbilityDex;
-    private ItemDex mItemDex;
+    private String mServerAddress;
     private WebSocketClient mWebSocketClient;
-    private Onboarding mOnboarding;
-    private CommunityLoungeData mCommunityLoungeData;
-    private BattleFieldData mBattleFieldData;
-    private JSONObject mClientInitiationJson;
     private int mUserCount;
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
+
+    public static MyApplication getMyApplication() {
+        return sMyApplication;
+    }
+
+    public static String toId(String name) {
+        if (name == null) {
+            return null;
+        }
+        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         sMyApplication = this;
-        Context appContext = getApplicationContext();
 
-        mWebSocketClient = getWebSocketClient();
-        mPokedex = Pokedex.get(appContext);
-        mMoveDex = MoveDex.get(appContext);
-        mAbilityDex = AbilityDex.get(appContext);
-        mItemDex = ItemDex.get(appContext);
-        mOnboarding = Onboarding.get(appContext);
-        mBattleFieldData = BattleFieldData.get(appContext);
-        mCommunityLoungeData = CommunityLoungeData.get(appContext);
-        mRoomCategoryList = new HashMap<>();
-
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
-                handleException(thread, ex);
-            }
-        });
-    }
-
-    public static MyApplication getMyApplication() {
-        return sMyApplication;
+        mRoomCategoryList = getRoomCategoryList();
     }
 
     public WebSocketClient getWebSocketClient() {
@@ -95,16 +66,20 @@ public class MyApplication extends Application {
                 return mWebSocketClient = openNewConnection();
             }
         } else {
-            Intent intent = new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_NO_INTERNET_CONNECTION);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_NO_INTERNET_CONNECTION);
             return null;
         }
     }
 
     public WebSocketClient openNewConnection() {
+        if (getServerAddress() == null) {
+            Log.d(MTAG, "Setver address is null");
+            return null;
+        }
+
         try {
-            URI uri = new URI("ws://sim.smogon.com:8000/showdown/websocket");
-            // URI uri = new URI("ws://nthai.cs.trincoll.edu:8000/showdown/websocket");
+            URI uri = new URI(getServerAddress());
 
             WebSocketClient webSocketClient = new WebSocketClient(uri) {
                 @Override
@@ -150,7 +125,8 @@ public class MyApplication extends Application {
             try {
                 webSocketClient.send(message);
             } catch (WebsocketNotConnectedException e) {
-                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_NO_INTERNET_CONNECTION));
+                BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                        BroadcastSender.EXTRA_NO_INTERNET_CONNECTION);
             }
         }
     }
@@ -237,12 +213,16 @@ public class MyApplication extends Application {
                         onboarding.setUsername(username);
                         onboarding.setSignedIn(true);
                         onboarding.setAvatar(avatar);
+
+                        BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                                BroadcastSender.EXTRA_LOGIN_SUCCESSFUL, username);
                     }
                     break;
                 case "nametaken":
                     channel = -1;
                     final String errorMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_ERROR_MESSAGE).putExtra(EXTRA_ERROR_MESSAGE, errorMessage));
+                    BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_ERROR_MESSAGE, errorMessage);
                     break;
                 case "queryresponse":
                     channel = -1;
@@ -252,7 +232,7 @@ public class MyApplication extends Application {
                             final String rooms = messageDetail.substring(messageDetail.indexOf('|') + 1);
                             if (!rooms.equals("null")) {
                                 try {
-                                    setClientInitiationJson(new JSONObject(rooms));
+                                    processClientInitiationJson(new JSONObject(rooms));
                                 } catch (JSONException e) {
                                     Log.d(MTAG, e.toString());
                                 }
@@ -261,6 +241,11 @@ public class MyApplication extends Application {
                         case "roomlist":
                             String roomList = messageDetail.substring(messageDetail.indexOf('|') + 1);
                             BattleFieldData.get(getApplicationContext()).parseAvailableWatchBattleList(roomList);
+                            break;
+                        case "savereplay":
+                            final String replayData = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                                    BroadcastSender.EXTRA_REPLAY_DATA, replayData);
                             break;
                         default:
                             Log.d(MTAG, message);
@@ -273,23 +258,22 @@ public class MyApplication extends Application {
                 case "popup":
                     channel = -1;
                     final String popupMessage = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_ERROR_MESSAGE).putExtra(EXTRA_ERROR_MESSAGE, popupMessage));
+                    BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_ERROR_MESSAGE, popupMessage);
                     break;
                 case "updatesearch":
                     channel = -1;
                     final String searchStatus = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UPDATE_SEARCH).putExtra(EXTRA_UPDATE_SEARCH, searchStatus));
+                    BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_UPDATE_SEARCH, searchStatus);
                     break;
                 case "pm":
                 case "usercount":
                 case "updatechallenges":
-                    //|updatechallenges|{"challengesFrom":{},"challengeTo":{"to":"tetonator","format":"randombattle"}}
-                    //|updatechallenges|{"challengesFrom":{"tetonator2":"randombattle"},"challengeTo":null}
-                    //|updatechallenges|{"challengesFrom":{},"challengeTo":null}
-                    //|updatechallenges|{"challengesFrom":{"fezfzefzef":"randombattle","sdadafezf":"randombattle"},"challengeTo":null}
                     channel = -1;
                     final String challengesStatus = messageDetail.substring(messageDetail.indexOf('|') + 1);
-                    LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UPDATE_CHALLENGE).putExtra(EXTRA_UPDATE_CHALLENGE, challengesStatus));
+                    BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_UPDATE_CHALLENGE, challengesStatus);
                     break;
 
                 case "deinit":
@@ -303,7 +287,10 @@ public class MyApplication extends Application {
         }
 
         if (channel == 1) {
-            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, "lobby"));
+            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_SERVER_MESSAGE, message,
+                    BroadcastSender.EXTRA_CHANNEL, Integer.toString(channel),
+                    BroadcastSender.EXTRA_ROOMID, "lobby");
         }
 
     }
@@ -325,9 +312,14 @@ public class MyApplication extends Application {
         }
 
         if (message.startsWith("init") && channel == 0) {
-            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_NEW_BATTLE_ROOM).putExtra(EXTRA_ROOMID, roomId));
+            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_NEW_BATTLE_ROOM, null,
+                    BroadcastSender.EXTRA_ROOMID, roomId);
         } else {
-            LocalBroadcastManager.getInstance(MyApplication.this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_SERVER_MESSAGE).putExtra(EXTRA_SERVER_MESSAGE, message).putExtra(EXTRA_CHANNEL, channel).putExtra(EXTRA_ROOMID, roomId));
+            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_SERVER_MESSAGE, message,
+                    BroadcastSender.EXTRA_CHANNEL, Integer.toString(channel),
+                    BroadcastSender.EXTRA_ROOMID, roomId);
         }
     }
 
@@ -336,10 +328,12 @@ public class MyApplication extends Application {
         if (!onboarding.isSignedIn()) {
             if (onboarding.getKeyId() == null || onboarding.getChallenge() == null) {
                 getWebSocketClient();
-                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_NO_INTERNET_CONNECTION));
+                BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                        BroadcastSender.EXTRA_NO_INTERNET_CONNECTION);
                 return false;
             }
-            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_REQUIRE_SIGN_IN));
+            BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                    BroadcastSender.EXTRA_REQUIRE_SIGN_IN);
             return false;
         }
         return true;
@@ -349,12 +343,7 @@ public class MyApplication extends Application {
         sendClientMessage("|/cmd rooms");
     }
 
-    public JSONObject getClientInitiationJson() {
-        return mClientInitiationJson;
-    }
-
-    public void setClientInitiationJson(JSONObject clientInitiationJson) {
-        mClientInitiationJson = clientInitiationJson;
+    public void processClientInitiationJson(JSONObject clientInitiationJson) {
         try {
             Iterator<String> keySet = clientInitiationJson.keys();
             while (keySet.hasNext()) {
@@ -392,24 +381,18 @@ public class MyApplication extends Application {
         mBattleCount = battleCount;
     }
 
+    public String getServerAddress() {
+        return mServerAddress;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        mServerAddress = serverAddress;
+    }
+
     public HashMap<String, JSONArray> getRoomCategoryList() {
-        return mRoomCategoryList;
-    }
-
-    public void setRoomCategoryList(HashMap<String, JSONArray> roomCategoryList) {
-        mRoomCategoryList = roomCategoryList;
-    }
-
-    public static String toId(String name) {
-        if (name == null) {
-            return null;
+        if (mRoomCategoryList == null) {
+            mRoomCategoryList = new HashMap<>();
         }
-        return name.toLowerCase().replaceAll("[^a-z0-9]", "");
-    }
-
-    private void handleException(Thread thread, Throwable ex) {
-        ex.printStackTrace();
-        Intent intent = new Intent(ACTION_FROM_MY_APPLICATION).putExtra(EXTRA_DETAILS, EXTRA_UNKNOWN_ERROR);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        return mRoomCategoryList;
     }
 }

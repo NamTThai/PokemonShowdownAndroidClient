@@ -25,10 +25,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pokemonshowdown.app.BattleFieldActivity;
 import com.pokemonshowdown.app.BattleFragment;
 import com.pokemonshowdown.app.ChatRoomFragment;
 import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +40,8 @@ import java.util.Random;
 
 public class BattleMessage {
 
-    public static void processMajorAction(final BattleFragment battleFragment, final String message) {
+    public static void processMajorAction(final BattleFragment battleFragment, final String message)
+            throws JSONException {
         BattleFieldData.RoomData roomData = BattleFieldData.get(battleFragment.getActivity()).getAnimationInstance(battleFragment.getRoomId());
         final BattleFieldData.ViewData viewData = BattleFieldData.get(battleFragment.getActivity()).getViewData(battleFragment.getRoomId());
         String command = (message.indexOf('|') == -1) ? message : message.substring(0, message.indexOf('|'));
@@ -70,6 +71,13 @@ public class BattleMessage {
 
         Spannable logMessage = new SpannableString("");
         switch (command) {
+            case "deinit":
+                return;
+            case "askreg":
+                toast = battleFragment.makeToast(battleFragment.getResources().getString(R.string.ask_registration));
+                battleFragment.startAnimation(toast, message);
+                logMessage = new SpannableString(messageDetails);
+                break;
             case "title":
             case "J":
             case "L":
@@ -142,9 +150,9 @@ public class BattleMessage {
                 }
                 if (playerType.equals("p1")) {
                     roomData.setPlayer1(playerName);
-                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                    battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                         @Override
-                        public void run() {
+                        public void runWithNet() {
                             if (battleFragment.getView() == null) {
                                 viewData.addViewSetterOnHold(R.id.username, playerName,
                                         BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
@@ -159,9 +167,9 @@ public class BattleMessage {
                     battleFragment.setPlayer1(playerName);
                 } else {
                     roomData.setPlayer2(playerName);
-                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                    battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                         @Override
-                        public void run() {
+                        public void runWithNet() {
                             if (battleFragment.getView() == null) {
                                 viewData.addViewSetterOnHold(R.id.username_o, playerName,
                                         BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
@@ -223,9 +231,9 @@ public class BattleMessage {
                         pokemonInfo.getName()) == -1) {
                     team.add(pokemonInfo);
 
-                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                    battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                         @Override
-                        public void run() {
+                        public void runWithNet() {
                             int imageResource = Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                     MyApplication.toId(pokeName));
                             if (battleFragment.getView() == null) {
@@ -243,9 +251,18 @@ public class BattleMessage {
                 break;
 
             case "teampreview":
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                int teamSelectionSize;
+                try {
+                    teamSelectionSize = Integer.parseInt(messageDetails);
+                    // sometimes messageDetails is the number of mons (for VGC), sometimes it's just teampreview
+                } catch (NumberFormatException e) {
+                    teamSelectionSize = 0;
+                }
+
+                final int teamSelectionSizeFinal = teamSelectionSize;
+                battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                     @Override
-                    public void run() {
+                    public void runWithNet() {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -258,15 +275,28 @@ public class BattleMessage {
                             PokemonInfo pkm = team1.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), true, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
+                        }
+                        for (int i = team1.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p1", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
                         }
                         for (int i = 0; i < team2.size(); i++) {
                             ImageView sprites = (ImageView) battleFragment.getView().findViewById(battleFragment.getTeamPreviewSpriteId("p2", i));
                             PokemonInfo pkm = team2.get(i);
                             sprites.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
                                     MyApplication.toId(pkm.getName()), false, pkm.isFemale(), pkm.isShiny()));
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                            MyApplication.toId(pkm.getName())));
                         }
-
-                        battleFragment.startRequest();
+                        for (int i = team2.size(); i < 6; i++) {
+                            ((ImageView) battleFragment.getView().findViewById(battleFragment.getIconId("p2", i)))
+                                    .setImageResource(R.drawable.pokeball_none);
+                        }
+                        battleFragment.setTeamSize(teamSelectionSizeFinal);
                         battleFragment.getView().findViewById(R.id.p2a_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 0));
                         battleFragment.getView().findViewById(R.id.p2b_prev)
@@ -279,6 +309,10 @@ public class BattleMessage {
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 4));
                         battleFragment.getView().findViewById(R.id.p2f_prev)
                                 .setOnClickListener(battleFragment.new PokemonInfoListener(false, 5));
+
+                        if (battleFragment.getAnimatorSetQueue().isEmpty() && battleFragment.getRequestJson() != null) {
+                            battleFragment.startRequest();
+                        }
 
                     }
                 });
@@ -302,62 +336,18 @@ public class BattleMessage {
                 break;
 
             case "request":
-                try {
-                    JSONObject requestJson = new JSONObject(messageDetails);
-                    if (requestJson.length() == 1 && requestJson.keys().next().equals("side")) {
-                        battleFragment.setBattling(requestJson);
-                        JSONObject sideJson = requestJson.getJSONObject("side");
-                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        for (int i = 0; i < teamJson.length(); i++) {
-                            JSONObject info = teamJson.getJSONObject(i);
-                            final PokemonInfo pkm = parsePokemonInfo(battleFragment, info);
-                            if (battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(),
-                                    pkm.getName()) == -1) {
-                                battleFragment.getPlayer1Team().add(i, pkm);
-                                battleFragment.getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int pkmIcon = Pokemon.getPokemonIcon(battleFragment.getActivity(),
-                                                MyApplication.toId(pkm.getName()));
-                                        int iconId = battleFragment.getIconId("p1", battleFragment.getPlayer1Team().size() - 1);
-                                        if (battleFragment.getView() == null) {
-                                            viewData.addViewSetterOnHold(iconId, pkmIcon,
-                                                    BattleFieldData.ViewData.SetterType.IMAGEVIEW_SETIMAGERESOURCE);
-                                        } else {
-                                            ImageView icon = (ImageView) battleFragment.getView().findViewById(iconId);
-                                            if (icon != null) {
-                                                icon.setImageResource(pkmIcon);
-                                                }
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    battleFragment.getPlayer1Team().set(i, pkm);
-                                }
-                        }
-                    }
-
-                    if (requestJson.has("side")) {
-                        JSONObject sideJson = requestJson.getJSONObject("side");
-                        JSONArray teamJson = sideJson.getJSONArray("pokemon");
-                        for (int i = 0; i < teamJson.length(); i++) {
-                            JSONObject pkm = teamJson.getJSONObject(i);
-                            String pkmName = pkm.getString("details");
-                            separator = pkmName.indexOf(",");
-                            pkmName = (separator == -1) ? pkmName : pkmName.substring(0, separator);
-                            int idx = battleFragment.findPokemonInTeam(battleFragment.getPlayer1Team(), pkmName);
-                            if (idx != -1) {
-                                battleFragment.getPlayer1Team().get(idx).setActive(pkm.getBoolean("active"));
-                            }
-                        }
-                    }
-
-                    battleFragment.setRequestJson(requestJson);
-                    battleFragment.setUndoMessage(requestJson);
-                } catch (JSONException e) {
-                    ((BattleFieldActivity) battleFragment.getActivity()).showErrorAlert(e);
-                    break;
+                if (messageDetails.equals("null")) {
+                    return;
                 }
+                JSONObject requestJson = new JSONObject(messageDetails);
+
+                if (battleFragment.getBattling() == 0) {
+                    battleFragment.setBattling(1);
+                    battleFragment.setUpTimer();
+                }
+
+                battleFragment.setRequestJson(requestJson);
+                battleFragment.setUndoMessage(requestJson);
                 break;
 
             case "inactive":
@@ -366,9 +356,9 @@ public class BattleMessage {
                     remaining = messageDetails.substring(0, messageDetails.indexOf(" seconds left"));
                     inactive = remaining.substring(remaining.lastIndexOf(' ')) + "s";
 
-                    battleFragment.getActivity().runOnUiThread(new Runnable() {
+                    battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                         @Override
-                        public void run() {
+                        public void runWithNet() {
                             if (battleFragment.getView() == null) {
                                 viewData.addViewSetterOnHold(R.id.inactive, inactive,
                                         BattleFieldData.ViewData.SetterType.TEXTVIEW_SETTEXT);
@@ -389,9 +379,9 @@ public class BattleMessage {
                 break;
 
             case "inactiveoff":
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                     @Override
-                    public void run() {
+                    public void runWithNet() {
                         if (battleFragment.getView() == null) {
                             viewData.addViewSetterOnHold(R.id.inactive, null,
                                     BattleFieldData.ViewData.SetterType.VIEW_GONE);
@@ -407,9 +397,9 @@ public class BattleMessage {
                 break;
 
             case "start":
-                battleFragment.getActivity().runOnUiThread(new Runnable() {
+                battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                     @Override
-                    public void run() {
+                    public void runWithNet() {
                         if (battleFragment.getView() == null) {
                             viewData.addViewSetterOnHold(R.id.battle_interface, null,
                                     BattleFieldData.ViewData.SetterType.BATTLE_START);
@@ -460,9 +450,9 @@ public class BattleMessage {
                 logMessage = toAppendSpannable;
                 toast = battleFragment.makeToast(logMessage);
 
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -479,25 +469,18 @@ public class BattleMessage {
 
                         if (!messageDetails.contains("[still]")) {
                             AnimatorSet animatorSet = BattleAnimation.processMove(move, battleFragment, split);
-                            if (animatorSet != null) {
+                            if (animatorSet != null && Onboarding.get(battleFragment.getActivity()).isAnimation()) {
+                                battleFragment.setCurrentBattleAnimation(animatorSet);
+                                animatorSet.addListener(new AnimatorListenerWithNet() {
+                                    @Override
+                                    public void onAnimationEndWithNet(Animator animation) {
+                                        super.onAnimationEndWithNet(animation);
+                                        battleFragment.setCurrentBattleAnimation(null);
+                                    }
+                                });
                                 animatorSet.start();
                             }
                         }
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -553,9 +536,9 @@ public class BattleMessage {
                 }
 
                 toast = battleFragment.makeToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -590,15 +573,7 @@ public class BattleMessage {
 
                         ImageView gender = (ImageView) battleFragment.getView()
                                 .findViewById(battleFragment.getGenderId(split[0]));
-                        if (pokemonInfo.getGender() != null) {
-                            if (pokemonInfo.getGender().equals("M")) {
-                                gender.setImageResource(R.drawable.ic_gender_male);
-                            } else {
-                                if (pokemonInfo.getGender().equals("F")) {
-                                    gender.setImageResource(R.drawable.ic_gender_female);
-                                }
-                            }
-                        }
+                        gender.setImageResource(getGenderSprite(pokemonInfo.getGender()));
 
                         TextView hpText = (TextView) battleFragment.getView()
                                 .findViewById(battleFragment.getHpId(messageDetails.substring(0, 3)));
@@ -615,21 +590,6 @@ public class BattleMessage {
                             battleFragment.setAddonStatus(split[0], status.toLowerCase());
                         }
                     }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 });
                 logMessage = new SpannableString(toAppendBuilder);
                 battleFragment.startAnimation(toast, message);
@@ -639,16 +599,15 @@ public class BattleMessage {
                 final String forme = (split[1].contains(",")) ? split[1].substring(0, split[1].indexOf(',')) : split[1];
 
                 position = split[0].substring(0, 3);
-                species = split[0].substring(5);
 
-                battleFragment.formChange(position, species, forme);
+                battleFragment.formChange(position, forme);
 
                 pokemonInfo = battleFragment.getPokemonInfo(position);
 
                 toast = battleFragment.makeToast("Transforming", BattleFragment.ANIMATION_SHORT);
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -660,21 +619,6 @@ public class BattleMessage {
                         ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(position));
                         icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
                                 MyApplication.toId(forme)));
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -689,9 +633,9 @@ public class BattleMessage {
                 }
                 toAppendBuilder.append(attacker).append(" fainted!");
                 toast = battleFragment.makeToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -700,21 +644,6 @@ public class BattleMessage {
                         faintedPokemon.setHp(0);
                         battleFragment.hidePokemon(position);
                         battleFragment.getView().findViewById(battleFragment.getIconId(position)).setAlpha(0.5f);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
 
@@ -729,30 +658,15 @@ public class BattleMessage {
                 TextView turn = (TextView) battleFragment.getView().findViewById(R.id.turn);
                 animator = ObjectAnimator.ofFloat(turn, "alpha", 0f, 1f);
                 toAppend = "TURN " + messageDetails;
-                animator.addListener(new Animator.AnimatorListener() {
+                animator.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
                         battleFragment.getView().findViewById(R.id.turn).setVisibility(View.VISIBLE);
                         ((TextView) battleFragment.getView().findViewById(R.id.turn)).setText(toAppend);
                         (battleFragment.getView().findViewById(R.id.inactive)).setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 animator.setDuration(BattleFragment.ANIMATION_SHORT);
@@ -773,13 +687,20 @@ public class BattleMessage {
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
+
+                if (battleFragment.getBattling() != 0) {
+                    battleFragment.showEndBattleDialog(toAppend);
+                }
                 break;
 
             case "tie":
-                toAppend ="The battle is a tie!";
+                toAppend = "The battle is a tie!";
                 toast = battleFragment.makeToast(new SpannableString(toAppend));
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableString(toAppend);
+                if (battleFragment.getBattling() != 0) {
+                    battleFragment.showEndBattleDialog(toAppend);
+                }
                 break;
 
             case "cant":
@@ -1017,9 +938,9 @@ public class BattleMessage {
                 damage.setPadding(2, 2, 2, 2);
                 damage.setAlpha(0f);
 
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -1036,23 +957,13 @@ public class BattleMessage {
                     }
 
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEndWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
 
                         RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         relativeLayout.removeView(damage);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
 
@@ -1157,9 +1068,9 @@ public class BattleMessage {
                 heal.setPadding(2, 2, 2, 2);
                 heal.setAlpha(0f);
 
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -1176,23 +1087,13 @@ public class BattleMessage {
                     }
 
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEndWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
 
                         RelativeLayout relativeLayout = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(messageDetails));
                         relativeLayout.removeView(heal);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
 
@@ -1226,51 +1127,43 @@ public class BattleMessage {
                         toAppendBuilder.append("The battlers shared their pain!");
                         toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
 
-                        toast.addListener(new Animator.AnimatorListener() {
+                        PokemonInfo pkmA = battleFragment.getPokemonInfo(split[0]);
+                        final int pkmAHp = processHpFraction(split[1]);
+                        pkmA.setHp(pkmAHp);
+                        PokemonInfo pkmB = battleFragment.getPokemonInfo(split[2]);
+                        final int pkmBHp = processHpFraction(split[3]);
+                        pkmB.setHp(pkmBHp);
+
+                        toast.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
 
-                                PokemonInfo pkmA = battleFragment.getPokemonInfo(split[0]);
-                                int pkmAHp = processHpFraction(split[1]);
-                                pkmA.setHp(pkmAHp);
-                                PokemonInfo pkmB = battleFragment.getPokemonInfo(split[2]);
-                                int pkmBHp = processHpFraction(split[3]);
-                                pkmB.setHp(pkmBHp);
-
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0]))).setText(Integer.toString(pkmAHp));
-                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2]))).setText(Integer.toString(pkmBHp));
-
-                                ProgressBar pkmAHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0]));
-                                ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
-                                pkmACountDown.setDuration(BattleFragment.ANIMATION_SHORT);
-                                pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
-                                ProgressBar pkmBHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2]));
-                                ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
-                                pkmBCountDown.setDuration(BattleFragment.ANIMATION_SHORT);
-                                pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
-                                pkmACountDown.start();
-                                pkmBCountDown.start();
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
+                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[0])))
+                                        .setText(Integer.toString(pkmAHp));
+                                ((TextView) battleFragment.getView().findViewById(battleFragment.getHpId(split[2])))
+                                        .setText(Integer.toString(pkmBHp));
                             }
                         });
-                        battleFragment.startAnimation(toast, message);
+
+                        ProgressBar pkmAHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[0]));
+                        ObjectAnimator pkmACountDown = ObjectAnimator.ofInt(pkmAHpBar, "progress", pkmAHp);
+                        pkmACountDown.setDuration(BattleFragment.ANIMATION_SHORT);
+                        pkmACountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                        ProgressBar pkmBHpBar = (ProgressBar) battleFragment.getView().findViewById(battleFragment.getHpBarId(split[2]));
+                        ObjectAnimator pkmBCountDown = ObjectAnimator.ofInt(pkmBHpBar, "progress", pkmBHp);
+                        pkmBCountDown.setDuration(BattleFragment.ANIMATION_SHORT);
+                        pkmBCountDown.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                        animatorSet = new AnimatorSet();
+                        animatorSet.play(toast);
+                        animatorSet.play(pkmACountDown).with(toast);
+                        animatorSet.play(pkmBCountDown).with(toast);
+
+                        battleFragment.startAnimation(animatorSet, message);
                         break;
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
@@ -1322,25 +1215,10 @@ public class BattleMessage {
 
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
 
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.processBoost(messageDetails, increasedStat, intAmount);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1392,25 +1270,10 @@ public class BattleMessage {
                 }
 
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.processBoost(messageDetails, increasedStat, intAmount);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1424,25 +1287,10 @@ public class BattleMessage {
                         case "bellydrum":
                             toAppendBuilder.append(attackerOutputName).append(" cut its own HP and maximized its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
-                            toast.addListener(new Animator.AnimatorListener() {
+                            toast.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.processBoost(split[0], "atk", 6);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                             battleFragment.startAnimation(toast, message);
@@ -1451,26 +1299,11 @@ public class BattleMessage {
                         case "angerpoint":
                             toAppendBuilder.append(attackerOutputName).append(" maxed its Attack!");
                             toast = battleFragment.makeMinorToast(new SpannableString(toAppendBuilder));
-                            toast.addListener(new Animator.AnimatorListener() {
+                            toast.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.processBoost(split[0], "atk", 6);
                                     battleFragment.getPokemonInfo(split[0]).setAbility("angerpoint");
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                             battleFragment.startAnimation(toast, message);
@@ -1487,25 +1320,10 @@ public class BattleMessage {
                         case "guardswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Defense and Sp. Def with the target!");
                             toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                            toast.addListener(new Animator.AnimatorListener() {
+                            toast.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.swapBoost(split[0], split[1], "def", "spd");
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                             battleFragment.startAnimation(toast, message);
@@ -1514,25 +1332,10 @@ public class BattleMessage {
                         case "heartswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched stat changes with the target!");
                             toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                            toast.addListener(new Animator.AnimatorListener() {
+                            toast.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.swapBoost(split[0], split[1], BattleFragment.STATS);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                             battleFragment.startAnimation(toast, message);
@@ -1541,25 +1344,10 @@ public class BattleMessage {
                         case "powerswap":
                             toAppendBuilder.append(attackerOutputName).append(" switched all changes to its Attack and Sp. Atk with the target!");
                             toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                            toast.addListener(new Animator.AnimatorListener() {
+                            toast.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.swapBoost(split[0], split[1], "atk", "spa");
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                             battleFragment.startAnimation(toast, message);
@@ -1573,28 +1361,13 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName).append("'s negative stat changes were removed!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
                         battleFragment.restoreBoost(split[0]);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1606,25 +1379,10 @@ public class BattleMessage {
                 defenderOutputName = battleFragment.getPrintableOutputPokemonSide(split[1], false);
                 toAppendBuilder.append(attackerOutputName).append(" copied ").append(defenderOutputName).append("'s stat changes!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.copyBoost(split[0], split[1]);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1635,9 +1393,9 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName).append("'s stat changes were removed!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -1646,21 +1404,6 @@ public class BattleMessage {
                             TextView v = (TextView) linearLayout.findViewWithTag(stat);
                             linearLayout.removeView(v);
                         }
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1671,25 +1414,10 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 toAppendBuilder.append(attackerOutputName).append("'s stat changes were inverted!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.invertBoost(split[0], BattleFragment.STATS);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -1699,9 +1427,9 @@ public class BattleMessage {
             case "-clearallboost":
                 toAppendBuilder.append("All stat changes were eliminated!");
                 toast = battleFragment.makeMinorToast(new SpannableStringBuilder(toAppendBuilder));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -1714,21 +1442,6 @@ public class BattleMessage {
                             }
                         }
                     }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 });
                 battleFragment.startAnimation(toast, message);
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
@@ -1739,7 +1452,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Critical!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-supereffective":
@@ -1747,7 +1460,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Super Effective!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-resisted":
@@ -1755,7 +1468,7 @@ public class BattleMessage {
                 toast = battleFragment.makeMinorToast(toAppendSpannable);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString("Resisted!"));
                 battleFragment.startAnimation(animatorSet, message);
-                logMessage = new SpannableStringBuilder(toAppendBuilder);
+                logMessage = new SpannableStringBuilder(toAppendSpannable);
                 break;
 
             case "-immune":
@@ -1985,9 +1698,9 @@ public class BattleMessage {
                 final String status;
                 status = remaining;
                 final boolean rest = (fromEffectId != null && fromEffectId.equals("moverest"));
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.setAddonStatus(split[0], status);
                         if (rest) {
                             for (String stt : BattleFragment.STTUS) {
@@ -1996,21 +1709,6 @@ public class BattleMessage {
                                 }
                             }
                         }
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -2091,25 +1789,10 @@ public class BattleMessage {
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.removeAddonStatus(split[0], split[1]);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -2133,9 +1816,9 @@ public class BattleMessage {
                 }
                 logMessage = new SpannableStringBuilder(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         String[] teammate;
                         if (split[0].startsWith("p1")) {
                             teammate = BattleFragment.TEAMMATES[0];
@@ -2147,21 +1830,6 @@ public class BattleMessage {
                                 battleFragment.removeAddonStatus(mate, stt);
                             }
                         }
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(toast, message);
@@ -2219,25 +1887,10 @@ public class BattleMessage {
                     }
                     logMessage = new SpannableString(toAppendBuilder);
                     toast = battleFragment.makeMinorToast(logMessage);
-                    toast.addListener(new Animator.AnimatorListener() {
+                    toast.addListener(new AnimatorListenerWithNet() {
                         @Override
-                        public void onAnimationStart(Animator animation) {
+                        public void onAnimationStartWithNet(Animator animation) {
                             battleFragment.setAddonStatus(split[0], item);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
                         }
                     });
                     battleFragment.startAnimation(toast, message);
@@ -2335,27 +1988,12 @@ public class BattleMessage {
                 logMessage = new SpannableString(toAppendBuilder);
                 toast = battleFragment.makeMinorToast(logMessage);
                 animatorSet = battleFragment.createFlyingMessage(split[0], toast, new SpannableString(item));
-                animatorSet.addListener(new Animator.AnimatorListener() {
+                animatorSet.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         PokemonInfo pkm = battleFragment.getPokemonInfo(split[0]);
                         pkm.setItem(null);
                         battleFragment.removeAddonStatus(split[0], item);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 battleFragment.startAnimation(animatorSet, message);
@@ -2502,9 +2140,9 @@ public class BattleMessage {
                 toAppend = attacker + " transformed into " + defender + "!";
                 logMessage = new SpannableString(toAppend);
                 toast = battleFragment.makeMinorToast(logMessage);
-                toast.addListener(new Animator.AnimatorListener() {
+                toast.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         if (battleFragment.getView() == null) {
                             return;
                         }
@@ -2513,27 +2151,58 @@ public class BattleMessage {
                         orgn.setImageDrawable(dest.getDrawable());
                         battleFragment.copyBoost(split[1], split[0]);
                     }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 });
                 battleFragment.startAnimation(toast, message);
                 break;
 
             case "-formechange":
-                logMessage = new SpannableString("Forme Change");
+                final String oldForm = split[0];
+                final String oldFormPrintable = battleFragment.getPrintableOutputPokemonSide(split[0]);
+                final String newForm = split[1];
+
+                final String newFormPrintable = battleFragment.getPrintableOutputPokemonSide(split[1]);
+                switch (MyApplication.toId(newFormPrintable)) {
+                    case "darmanitanzen":
+                        toAppend = "Zen Mode triggered!";
+                        break;
+                    case "darmanitan":
+                        toAppend = "Zen Mode ended!";
+                        break;
+                    case "aegislashblade":
+                        toAppend = "Changed to Blade Forme!";
+                        break;
+                    case "aegislash":
+                        toAppend = "Changed to Shield Forme!";
+                        break;
+                    default:
+                        toAppend = oldForm + " transformed!";
+                        break;
+                }
+
+                String position = split[0].substring(0, 3);
+                battleFragment.formChange(position, newFormPrintable);
+                pokemonInfo = battleFragment.getPokemonInfo(position);
+
+                logMessage = new SpannableString(toAppend);
+                toast = battleFragment.makeToast(logMessage, BattleFragment.ANIMATION_SHORT);
+
+                toast.addListener(new AnimatorListenerWithNet() {
+                    @Override
+                    public void onAnimationStartWithNet(Animator animation) {
+                        if (battleFragment.getView() == null) {
+                            return;
+                        }
+
+                        boolean back = split[0].startsWith("p1");
+                        ImageView sprite = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(oldForm));
+                        sprite.setImageResource(Pokemon.getPokemonSprite(battleFragment.getActivity(),
+                                MyApplication.toId(newFormPrintable), back, pokemonInfo.isFemale(), pokemonInfo.isShiny()));
+                        ImageView icon = (ImageView) battleFragment.getView().findViewById(battleFragment.getIconId(oldForm));
+                        icon.setImageResource(Pokemon.getPokemonIcon(battleFragment.getActivity(),
+                                MyApplication.toId(newFormPrintable)));
+                    }
+                });
+                battleFragment.startAnimation(toast, message);
                 break;
 
             case "-mega":
@@ -2585,25 +2254,10 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" is already confused!");
                         } else {
                             toAppendBuilder.append(attackerOutputName).append(" became confused!");
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     battleFragment.setAddonStatus(split[0], newEffect);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -2611,25 +2265,10 @@ public class BattleMessage {
 
                     case "leechseed":
                         toAppendBuilder.append(attackerOutputName).append(" was seeded!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2644,25 +2283,10 @@ public class BattleMessage {
 
                     case "yawn":
                         toAppendBuilder.append(attackerOutputName).append(" grew drowsy!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2670,100 +2294,40 @@ public class BattleMessage {
                     case "flashfire":
                         attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                         toAppendBuilder.append("The power of ").append(attackerOutputName).append("'s Fire-type moves rose!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "taunt":
                         toAppendBuilder.append(attackerOutputName).append(" fell for the taunt!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "imprison":
                         toAppendBuilder.append(attackerOutputName).append(" sealed the opponent's move(s)!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "disable":
                         toAppendBuilder.append(attackerOutputName).append("'s").append(battleFragment.getPrintable(split[2])).append(" was disabled!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2774,50 +2338,20 @@ public class BattleMessage {
 
                     case "ingrain":
                         toAppendBuilder.append(attackerOutputName).append(" planted its roots!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "aquaring":
                         toAppendBuilder.append(attackerOutputName).append(" surrounded itself with a veil of water!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2852,25 +2386,10 @@ public class BattleMessage {
 
                     case "encore":
                         toAppendBuilder.append(attackerOutputName).append(" received an encore!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2881,25 +2400,10 @@ public class BattleMessage {
 
                     case "slowstart":
                         toAppendBuilder.append(attackerOutputName).append(" can't get it going because of its Slow Start!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2910,50 +2414,20 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append(attackerOutputName).append(" fell in love!");
                         }
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "autotomize":
                         toAppendBuilder.append(attackerOutputName).append(" became nimble!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -2965,100 +2439,40 @@ public class BattleMessage {
                     case "curse":
                         attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0], false);
                         toAppendBuilder.append(battleFragment.getPrintableOutputPokemonSide(ofSource)).append(" cut its own HP and laid a curse on ").append(attackerOutputName).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "nightmare":
                         toAppendBuilder.append(attackerOutputName).append(" began having a nightmare!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "magnetrise":
                         toAppendBuilder.append(attackerOutputName).append(" levitated with electromagnetism!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "smackdown":
                         toAppendBuilder.append(attackerOutputName).append(" fell straight down!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3073,9 +2487,9 @@ public class BattleMessage {
                             toAppendBuilder.append(attackerOutputName).append(" already has a substitute!");
                         } else {
                             toAppendBuilder.append(attackerOutputName).append(" put in a substitute!");
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
@@ -3091,21 +2505,6 @@ public class BattleMessage {
                                     layoutParams.addRule(RelativeLayout.ALIGN_LEFT, battleFragment.getSpriteId(split[0]));
                                     relativeLayout.addView(substitute, layoutParams);
                                 }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
-                                }
                             });
                         }
                         break;
@@ -3120,50 +2519,20 @@ public class BattleMessage {
 
                     case "doomdesire":
                         toAppendBuilder.append(attackerOutputName).append(" chose Doom Desire as its destiny!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "futuresight":
                         toAppendBuilder.append(attackerOutputName).append(" foresaw an attack!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 battleFragment.setAddonStatus(split[0], newEffect);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3196,25 +2565,10 @@ public class BattleMessage {
                 attackerOutputName = battleFragment.getPrintableOutputPokemonSide(split[0]);
                 animatorSet = new AnimatorSet();
                 newEffect = battleFragment.getPrintable(split[1]);
-                animatorSet.addListener(new Animator.AnimatorListener() {
+                animatorSet.addListener(new AnimatorListenerWithNet() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
+                    public void onAnimationStartWithNet(Animator animation) {
                         battleFragment.removeAddonStatus(split[0], newEffect);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
                 switch (MyApplication.toId(battleFragment.getPrintable(split[1]))) {
@@ -3281,9 +2635,9 @@ public class BattleMessage {
 
                     case "substitute":
                         toAppendBuilder.append(attackerOutputName).append("'s substitute faded!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
@@ -3294,21 +2648,6 @@ public class BattleMessage {
                                 }
                                 ImageView imageView = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
                                 imageView.setAlpha(1f);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3677,85 +3016,40 @@ public class BattleMessage {
                 switch (fromEffectId) {
                     case "stealthrock":
                         toAppendBuilder.append("Pointed stones float in the air around ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
                             }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
-                            }
                         });
                         break;
 
                     case "spikes":
                         toAppendBuilder.append("Spikes were scattered all around the feet of ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, true)).setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "toxicspikes":
                         toAppendBuilder.append("Toxic spikes were scattered all around the feet of ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, true)).setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3770,58 +3064,28 @@ public class BattleMessage {
 
                     case "reflect":
                         toAppendBuilder.append("Reflect raised ").append(side).append("'s Defense!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
                             }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
-                            }
                         });
                         break;
 
                     case "lightscreen":
                         toAppendBuilder.append("Light Screen raised ").append(side).append("'s Special Defense!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3877,88 +3141,43 @@ public class BattleMessage {
                 switch (fromEffectId) {
                     case "stealthrock":
                         toAppendBuilder.append("The pointed stones disappeared from around ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_rocks : R.id.field_rocks_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
                             }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
-                            }
                         });
                         break;
 
                     case "spikes":
                         toAppendBuilder.append("The spikes disappeared from around ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
 
                     case "toxicspikes":
                         toAppendBuilder.append("The poison spikes disappeared from around ").append(side).append("!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
                                 battleFragment.getView().findViewById(battleFragment.getLastVisibleTSpike(messageDetails, false)).setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -3975,29 +3194,14 @@ public class BattleMessage {
                     case "reflect":
                         side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
                         toAppendBuilder.append(side).append("'s Reflect wore off!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_reflect : R.id.field_reflect_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -4005,29 +3209,14 @@ public class BattleMessage {
                     case "lightscreen":
                         side = Character.toUpperCase(side.charAt(0)) + side.substring(1);
                         toAppendBuilder.append(side).append("'s Light Screen wore off!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = (messageDetails.startsWith("p1")) ? R.id.field_lightscreen : R.id.field_lightscreen_o;
                                 battleFragment.getView().findViewById(id).setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -4084,29 +3273,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("It started to rain!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4117,29 +3291,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("A heavy rain began to fall!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_raindance);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4150,29 +3309,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("A sandstorm kicked up!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sandstorm);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4183,30 +3327,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("The sunlight turned harsh!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
-
                                 }
                             });
                         }
@@ -4217,29 +3345,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("The sunlight turned extremely harsh!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_sunnyday);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4250,29 +3363,14 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("It started to hail!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(R.drawable.weather_hail);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4283,28 +3381,13 @@ public class BattleMessage {
                         } else {
                             toAppendBuilder.append("A mysterious air current starts to blow!");
                             battleFragment.setWeatherExist(true);
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(weather);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4333,29 +3416,14 @@ public class BattleMessage {
                                 case "DeltaStream":
                                     toAppendBuilder.append("The mysterious wind stopped.");
                             }
-                            animatorSet.addListener(new Animator.AnimatorListener() {
+                            animatorSet.addListener(new AnimatorListenerWithNet() {
                                 @Override
-                                public void onAnimationStart(Animator animation) {
+                                public void onAnimationStartWithNet(Animator animation) {
                                     if (battleFragment.getView() == null) {
                                         return;
                                     }
                                     ((ImageView) battleFragment.getView().findViewById(R.id.weather_background)).setImageResource(0);
                                     ((TextView) battleFragment.getView().findViewById(R.id.weather)).setText(null);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
                                 }
                             });
                         }
@@ -4375,28 +3443,13 @@ public class BattleMessage {
                 switch (MyApplication.toId(battleFragment.getPrintable(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append(attackerOutputName).append(" twisted the dimensions!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 ((ImageView) battleFragment.getView().findViewById(R.id.battle_background)).setImageResource(R.drawable.weather_trickroom);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -4436,29 +3489,14 @@ public class BattleMessage {
                 switch (MyApplication.toId(battleFragment.getPrintable(split[0]))) {
                     case "trickroom":
                         toAppendBuilder.append("The twisted dimensions returned to normal!");
-                        animatorSet.addListener(new Animator.AnimatorListener() {
+                        animatorSet.addListener(new AnimatorListenerWithNet() {
                             @Override
-                            public void onAnimationStart(Animator animation) {
+                            public void onAnimationStartWithNet(Animator animation) {
                                 if (battleFragment.getView() == null) {
                                     return;
                                 }
                                 int id = new Random().nextInt(BattleFragment.BACKGROUND_LIBRARY.length);
                                 ((ImageView) battleFragment.getView().findViewById(R.id.battle_background)).setImageResource(BattleFragment.BACKGROUND_LIBRARY[id]);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
                             }
                         });
                         break;
@@ -4545,6 +3583,51 @@ public class BattleMessage {
         battleFragment.addToLog(logMessage);
     }
 
+    public static int getGenderSprite(String gender) {
+        if (gender == null) {
+            return 0;
+        }
+
+        switch (gender) {
+            case "M":
+                return R.drawable.ic_gender_male;
+            case "F":
+                return R.drawable.ic_gender_female;
+            default:
+                return 0;
+        }
+    }
+
+    private static String processSpecialName(String name) {
+        for (String sp : BattleFragment.MORPHS) {
+            if (name.contains(sp)) {
+                return sp;
+            }
+        }
+        return name;
+    }
+
+    private static void processPokemonDetailString(PokemonInfo pkm, String details) {
+        int separator = details.indexOf(",");
+        String name = (separator == -1) ? details : details.substring(0, separator);
+        pkm.setName(name);
+        if (details.contains(", L")) {
+            String level = details.substring(details.indexOf(", L") + 3);
+            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
+            pkm.setLevel(Integer.parseInt(level));
+        }
+        if (details.contains(", M")) {
+            pkm.setGender("M");
+        } else {
+            if (details.contains(", F")) {
+                pkm.setGender("F");
+            }
+        }
+        if (details.contains("shiny")) {
+            pkm.setShiny(true);
+        }
+    }
+
     public static PokemonInfo parsePokemonInfo(BattleFragment battleFragment, JSONObject info) throws JSONException {
         String details = info.getString("details");
         String name = !details.contains(",") ? details : details.substring(0, details.indexOf(","));
@@ -4603,36 +3686,6 @@ public class BattleMessage {
             return null;
         } else {
             return statusFraction.substring(status + 1);
-        }
-    }
-
-    private static String processSpecialName(String name) {
-        for (String sp : BattleFragment.MORPHS) {
-            if (name.contains(sp)) {
-                return sp;
-            }
-        }
-        return name;
-    }
-
-    private static void processPokemonDetailString(PokemonInfo pkm, String details) {
-        int separator = details.indexOf(",");
-        String name = (separator == -1) ? details : details.substring(0, separator);
-        pkm.setName(name);
-        if (details.contains(", L")) {
-            String level = details.substring(details.indexOf(", L") + 3);
-            level = !level.contains(",") ? level : level.substring(0, level.indexOf(","));
-            pkm.setLevel(Integer.parseInt(level));
-        }
-        if (details.contains(", M")) {
-            pkm.setGender("M");
-        } else {
-            if (details.contains(", F")) {
-                pkm.setGender("F");
-            }
-        }
-        if (details.contains("shiny")) {
-            pkm.setShiny(true);
         }
     }
 

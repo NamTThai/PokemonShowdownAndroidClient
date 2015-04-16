@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
 
         <TextView
             android:id="@+id/switch_pokemon1_name"
@@ -19,7 +19,7 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
 
         <TextView
             android:id="@+id/switch_pokemon2_name"
@@ -29,7 +29,7 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
 
         <TextView
             android:id="@+id/switch_pokemon3_name"
@@ -39,13 +39,13 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
 
         <TextView
             android:id="@+id/switch_pokemon4_name"
@@ -55,7 +55,7 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
 
         <TextView
             android:id="@+id/switch_pokemon5_name"
@@ -65,7 +65,7 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
 
         <TextView
             android:id="@+id/switch_pokemon6_name"
@@ -75,7 +75,7 @@
             android:background="@drawable/editable_frame"
             android:gravity="center"
             android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"/>
 
     </LinearLayout>
 

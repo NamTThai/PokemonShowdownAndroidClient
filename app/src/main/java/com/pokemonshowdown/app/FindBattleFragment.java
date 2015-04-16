@@ -18,8 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.BattleFieldData;
-import com.pokemonshowdown.data.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
 import com.pokemonshowdown.data.PokemonTeam;
 
@@ -39,12 +39,12 @@ public class FindBattleFragment extends Fragment {
     private ArrayAdapter<String> mNoTeamsAdapter;
     private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
 
-    public static FindBattleFragment newInstance() {
-        return new FindBattleFragment();
-    }
-
     public FindBattleFragment() {
 
+    }
+
+    public static FindBattleFragment newInstance() {
+        return new FindBattleFragment();
     }
 
     @Override
@@ -67,8 +67,7 @@ public class FindBattleFragment extends Fragment {
         mWaitingDialog = new ProgressDialog(getActivity());
         mFormatListView = (ListView) view.findViewById(R.id.available_formats);
 
-        TextView findBattle = (TextView) view.findViewById(R.id.find_battle);
-        findBattle.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.find_battle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 findBattle();
@@ -192,12 +191,12 @@ public class FindBattleFragment extends Fragment {
             return;
         }
 
-        AlertDialog.Builder renameDialog = new AlertDialog.Builder(getActivity());
-        renameDialog.setTitle(R.string.challenge_dialog_title);
+        AlertDialog.Builder challengedNameEntryDialog = new AlertDialog.Builder(getActivity());
+        challengedNameEntryDialog.setTitle(R.string.challenge_dialog_title);
         final EditText teamNameEditText = new EditText(getActivity());
-        renameDialog.setView(teamNameEditText);
+        challengedNameEntryDialog.setView(teamNameEditText);
 
-        renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+        challengedNameEntryDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 Toast.makeText(getActivity(), R.string.request_sent, Toast.LENGTH_SHORT).show();
                 String toChallenge = teamNameEditText.getText().toString();
@@ -235,14 +234,13 @@ public class FindBattleFragment extends Fragment {
             }
         });
 
-        renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+        challengedNameEntryDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 arg0.dismiss();
             }
         });
 
-        renameDialog.show();
-
+        challengedNameEntryDialog.show();
     }
 
     @Override
@@ -256,14 +254,6 @@ public class FindBattleFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-    }
-
-    public boolean isQuota() {
-        return mQuota;
-    }
-
-    public void setQuota(boolean quota) {
-        mQuota = quota;
     }
 
     public void setAvailableFormat() {
@@ -334,18 +324,12 @@ public class FindBattleFragment extends Fragment {
         listView.performItemClick(null, 0, 0);
     }
 
-    public boolean dismissWaitingDialog() {
-        if (mWaitingDialog.isShowing()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mWaitingDialog.dismiss();
-                }
-            });
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isQuota() {
+        return mQuota;
+    }
+
+    public void setQuota(boolean quota) {
+        mQuota = quota;
     }
 
     public void showSearchingButton() {
@@ -370,6 +354,20 @@ public class FindBattleFragment extends Fragment {
         getView().findViewById(R.id.cancel_search).setVisibility(View.GONE);
 
         MyApplication.getMyApplication().sendClientMessage("|/cancelsearch");
+    }
+
+    public boolean dismissWaitingDialog() {
+        if (mWaitingDialog.isShowing()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mWaitingDialog.dismiss();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
