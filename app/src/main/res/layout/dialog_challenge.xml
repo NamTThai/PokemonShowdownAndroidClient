@@ -11,7 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp" />
 
-    <TextView
+    <Spinner
         android:id="@+id/challenger_format"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:layout_margin="8dp" />
 
     <Spinner
-        android:id="@+id/challenger_spinner"
+        android:id="@+id/challenger_team_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
