@@ -40,6 +40,8 @@
     <!-- These are for BattleField -->
     <string name="find_battle">Find Battle</string>
     <string name="watch_battle">Watch Battle</string>
+    <string name="challenge_battle">Challenge</string>
+    <string name="waiting_challenge_dialog">Challenging %1$s in %2$s</string>
     <string name="cancel_search">Chicken Out</string>
     <string name="no_available_battle">There is no active battle in this format</string>
     <string name="background">Background</string>
@@ -52,9 +54,14 @@
     <string name="weather">Normal Weather</string>
     <string name="battle_switch">Switch</string>
     <string name="battle_attack">Attack</string>
-    <string name="battle_pokemon_name">What will %s do?</string>
     <string name="download_matches_inprogress">Tickets sold out! Sneaking into the stadium…</string>
     <string name="no_teams">Go catch some Pokémons first!</string>
+    <string name="challenge_dialog_title">User to challenge</string>
+    <string name="challenged_by"><b>%1$s</b> challenged you to</string>
+    <string name="challenging">Challenging <b>%1$s</b> to</string>
+
+    <string name="accept_challenge">Accept</string>
+    <string name="reject_challenge">Reject</string>
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
 
     <!-- These are for Battle Field Action Bar -->
@@ -156,9 +163,13 @@
     <!-- These are for Chat Room -->
     <string name="bar_chatroom">Community Lounge</string>
     <string name="hint_chatroom">Please login to chat</string>
-    <string name="title_activity_team_building">Bill\'s PC</string>
+    <string-array name="actions_user_chatroom">
+        <item>Challenge</item>
+    </string-array>
+
 
     <!-- These are for teambuilder -->
+    <string name="title_activity_team_building">Bill\'s PC</string>
     <string name="create_team">Create team</string>
     <string name="delete_team">Remove team</string>
     <string name="rename_team">Rename team</string>

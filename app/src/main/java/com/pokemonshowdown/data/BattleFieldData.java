@@ -216,7 +216,6 @@ public class BattleFieldData {
             leaveRoom(roomId);
         }
     }
-
     public ArrayList<String> getRoomList() {
         return mRoomList;
     }

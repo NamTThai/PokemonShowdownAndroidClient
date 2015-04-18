@@ -270,6 +270,12 @@ public class MyApplication extends Application {
                 case "pm":
                 case "usercount":
                 case "updatechallenges":
+                    channel = -1;
+                    final String challengesStatus = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                    BroadcastSender.get(this).sendBroadcastFromMyApplication(
+                            BroadcastSender.EXTRA_UPDATE_CHALLENGE, challengesStatus);
+                    break;
+
                 case "deinit":
                     channel = -1;
                     Log.d(MTAG, message);
