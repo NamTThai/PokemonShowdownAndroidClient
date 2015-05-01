@@ -26,7 +26,7 @@ public class ItemDex {
     }
 
     public static int getItemIcon(Context appContext, String itemName) {
-        if (itemName != null) {
+        if (appContext != null && itemName != null) {
             return appContext.getResources()
                     .getIdentifier("item_" + MyApplication.toId(itemName), "drawable", appContext.getPackageName());
         } else {
@@ -38,34 +38,33 @@ public class ItemDex {
         return Arrays.asList(context.getResources().getStringArray(R.array.itemdex_ids));
     }
 
-    public static String getItemName(Context context, String name) {
-        if (name != null) {
-            name = MyApplication.toId(name);
-            String itemName;
+    public static String getItemName(Context context, String itemId) {
+        if (context != null && itemId != null) {
+            itemId = MyApplication.toId(itemId);
             try {
-                int stringId = context.getResources().getIdentifier(name, "string", context.getPackageName());
-                itemName = context.getResources().getString(stringId);
-                JSONObject itemEntries = new JSONObject(itemName);
-                return itemEntries.getString("name");
+                int stringId = context.getResources().getIdentifier(itemId, "string", context.getPackageName());
+                if(stringId != 0) {
+                    String itemName = context.getResources().getString(stringId);
+                    JSONObject itemEntries = new JSONObject(itemName);
+                    return itemEntries.getString("name");
+                }
             } catch (JSONException e) {
-                //Handled in return statement the same way as an null name.
             }
         }
         return DUMMY_ITEM;
     }
 
     public static JSONObject getItemJsonObject(Context context, String name) {
-        try {
-            name = MyApplication.toId(name);
-            if(name != null) {
+        if(context != null && name != null) {
+            try {
+                name = MyApplication.toId(name);
                 int stringId = context.getResources().getIdentifier(name, "string", context.getPackageName());
-                if (stringId > 0) {
+                if (stringId != 0) {
                     String item = context.getString(stringId);
                     return new JSONObject(item);
                 }
+            } catch (JSONException e) {
             }
-        } catch (JSONException e) {
-            //Handled in return statement
         }
         return DUMMY_JSON_ITEM;
     }
