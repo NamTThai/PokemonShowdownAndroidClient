@@ -34,14 +34,6 @@ public class SettingsDialog extends DialogFragment {
             }
         });
 
-        view.findViewById(R.id.donate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingsDialog.this.dismiss();
-                ((BattleFieldActivity) getActivity()).enterDonationAmount();
-            }
-        });
-
         return view;
     }
 }

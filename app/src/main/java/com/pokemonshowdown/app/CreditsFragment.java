@@ -67,16 +67,6 @@ public class CreditsFragment extends Fragment {
         ((TextView) view.findViewById(R.id.active_battle)).setText(activeBattles);
 
         LinearLayout androidContributors = (LinearLayout) view.findViewById(R.id.android_contributors);
-        ImageView donation = new ImageView(getActivity());
-        donation.setImageResource(R.drawable.paypal);
-        donation.setAdjustViewBounds(true);
-        donation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((BattleFieldActivity) getActivity()).enterDonationAmount();
-            }
-        });
-        androidContributors.addView(donation);
         for (String[] androidContributor : ANDROID_CONTRIBUTOR) {
             LinearLayout contributor = (LinearLayout) getLayoutInflater(savedInstanceState)
                     .inflate(R.layout.listwidget_contributors, androidContributors, false);
