@@ -15,6 +15,9 @@ This software qualifies for Academic Fair Use under the following terms and cond
 of the original work.
 3. The amount of copyrighted materials shall not reduce market value of the original work.
 
+Portions of this software are reproduced from work created and shared by the Android Open 
+Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.
+
 This software is provided "as is", without warranty of any kind, express or implied, including but
 not limited to, non-infringement. In no event shall the owner be subjected to any liability or 
 responsibility associated with derivative works.
