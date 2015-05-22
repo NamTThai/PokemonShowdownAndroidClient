@@ -1,0 +1,20 @@
+This software is part of an academic work at Trinity College, Hartford, Connecticut,
+the United States of America. Under Academic Fair Use, this software uses the following 
+materials Copyrighted (c) by Nintendo 2015:
+1. Pokemon sprites/icons
+2. Pokemon name and all related attributes, including but not limited to, its abilities, 
+moves, base stats, evolutions, etc.
+3. Pokemon game mechanism, including but not limited to, effort value, damage formula, etc.
+4. Items in Pokemon game and their attributes
+5. Other sprites/drawings from Pokemon game, including but not limited to, items, trainers,
+type categories, etc.
+
+This software qualifies for Academic Fair Use under the following terms and conditions:
+1. This software is meant for not-for-profit education purpose only and not for commercial purpose.
+2. The amount of copyrighted materials in this software constitutes less than 10% 
+of the original work.
+3. The amount of copyrighted materials shall not reduce market value of the original work.
+
+This software is provided "as is", without warranty of any kind, express or implied, including but
+not limited to, non-infringement. In no event shall the owner be subjected to any liability or 
+responsibility associated with derivative works.
