@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SearchableActivity extends ListActivity {
     public final static String STAG = SearchableActivity.class.getName();
@@ -65,8 +66,7 @@ public class SearchableActivity extends ListActivity {
                 getActionBar().setTitle(R.string.search_label_ability);
                 break;
             case REQUEST_CODE_SEARCH_ITEM:
-                HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
-                mAdapterList = new ArrayList<>(itemDex.keySet());
+                mAdapterList = new ArrayList<>(ItemDex.getItemDexEntries(getApplicationContext()));
                 mAdapter = new ItemAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_item);
@@ -151,9 +151,9 @@ public class SearchableActivity extends ListActivity {
     }
 
     private void searchItem(String query) {
-        HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
+        List<String> itemDex = ItemDex.getItemDexEntries(getApplicationContext());
         mAdapterList = new ArrayList<>();
-        for (String itemName : itemDex.keySet()) {
+        for (String itemName : itemDex) {
             if (itemName.contains(query.toLowerCase())) {
                 mAdapterList.add(itemName);
             }
@@ -321,7 +321,7 @@ public class SearchableActivity extends ListActivity {
 
             try {
                 String itemTag = getItem(position);
-                JSONObject itemJson = ItemDex.get(getApplicationContext()).getItemJsonObject(itemTag);
+                JSONObject itemJson = ItemDex.getItemJsonObject(getApplicationContext(), itemTag);
                 TextView textView = (TextView) convertView.findViewById(R.id.short_item_name);
                 textView.setText(itemJson.getString("name"));
                 textView.setCompoundDrawablesWithIntrinsicBounds(ItemDex.getItemIcon(getApplicationContext(), itemTag), 0, 0, 0);

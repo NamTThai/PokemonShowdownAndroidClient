@@ -1,7 +1,6 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.pokemonshowdown.app.R;
 import com.pokemonshowdown.application.MyApplication;
@@ -9,93 +8,64 @@ import com.pokemonshowdown.application.MyApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
 public class ItemDex {
     private final static String ITAG = ItemDex.class.getName();
-    private static ItemDex sItemDex;
-    private HashMap<String, String> mItemDexEntries;
+    public final static JSONObject DUMMY_JSON_ITEM;
+    public final static String DUMMY_ITEM = "Item not loadable.";
 
-    private ItemDex(Context appContext) {
-        mItemDexEntries = readFile(appContext);
-    }
-
-    private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> ItemDexEntries = new HashMap<>();
-        String jsonString;
+    static {
         try {
-            InputStream inputStream = appContext.getResources().openRawResource(R.raw.item);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder stringBuilder = new StringBuilder();
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append("\n");
-            }
-            jsonString = stringBuilder.toString();
-            inputStream.close();
-
-            JSONObject jsonObject = new JSONObject(jsonString);
-
-            Iterator<String> keys = jsonObject.keys();
-
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject entry = jsonObject.getJSONObject(key);
-                ItemDexEntries.put(key, entry.toString());
-            }
+            DUMMY_JSON_ITEM = new JSONObject("{\"gen\":1,\"spritenum\":0,\"num\":0,\"name\":\"Broken Item ID\",\"id\":\"dummy\",\"desc\":\"This item should not be displayed here. Please report this bug.\"}");
         } catch (JSONException e) {
-            Log.d(ITAG, "JSON Exception");
-        } catch (IOException e) {
-            Log.d(ITAG, "Input Output problem");
+            // Will not happen, but is needed because it's final.
+            throw new Error();
         }
-
-        return ItemDexEntries;
-    }
-
-    public static ItemDex get(Context c) {
-        if (sItemDex == null) {
-            sItemDex = new ItemDex(c.getApplicationContext());
-        }
-        return sItemDex;
     }
 
     public static int getItemIcon(Context appContext, String itemName) {
-        return appContext.getResources()
-                .getIdentifier("item_" + MyApplication.toId(itemName), "drawable", appContext.getPackageName());
+        if (appContext != null && itemName != null) {
+            return appContext.getResources()
+                    .getIdentifier("item_" + MyApplication.toId(itemName), "drawable", appContext.getPackageName());
+        } else {
+            return R.drawable.sprites_0;
+        }
     }
 
-    public HashMap<String, String> getItemDexEntries() {
-        return mItemDexEntries;
+    public static List<String> getItemDexEntries(Context context) {
+        return Arrays.asList(context.getResources().getStringArray(R.array.itemdex_ids));
     }
 
-    public String getItemName(String name) {
-        name = MyApplication.toId(name);
-        String item;
-        try {
-            item = mItemDexEntries.get(name);
-            if (item != null) {
-                JSONObject itemEntries = new JSONObject(item);
-                item = itemEntries.getString("name");
+    public static String getItemName(Context context, String itemId) {
+        if (context != null && itemId != null) {
+            itemId = MyApplication.toId(itemId);
+            try {
+                int stringId = context.getResources().getIdentifier(itemId, "string", context.getPackageName());
+                if(stringId != 0) {
+                    String itemName = context.getResources().getString(stringId);
+                    JSONObject itemEntries = new JSONObject(itemName);
+                    return itemEntries.getString("name");
+                }
+            } catch (JSONException e) {
             }
-        } catch (JSONException e) {
-            item = null;
         }
-        return item;
+        return DUMMY_ITEM;
     }
 
-    public JSONObject getItemJsonObject(String name) {
-        try {
-            String item = mItemDexEntries.get(MyApplication.toId(name));
-            return new JSONObject(item);
-        } catch (NullPointerException | JSONException e) {
-            return null;
+    public static JSONObject getItemJsonObject(Context context, String name) {
+        if(context != null && name != null) {
+            try {
+                name = MyApplication.toId(name);
+                int stringId = context.getResources().getIdentifier(name, "string", context.getPackageName());
+                if (stringId != 0) {
+                    String item = context.getString(stringId);
+                    return new JSONObject(item);
+                }
+            } catch (JSONException e) {
+            }
         }
+        return DUMMY_JSON_ITEM;
     }
 }

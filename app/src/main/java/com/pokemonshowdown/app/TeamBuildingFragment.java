@@ -289,7 +289,7 @@ public class TeamBuildingFragment extends Fragment {
                 itemNameTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             } else {
                 String itemString = pokemon.getItem();
-                JSONObject itemJSon = ItemDex.get(getActivity()).getItemJsonObject(itemString);
+                JSONObject itemJSon = ItemDex.getItemJsonObject(getActivity(), itemString);
                 if (itemJSon != null) {
                     try {
                         String itemName = itemJSon.getString("name");
