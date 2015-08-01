@@ -27,6 +27,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.Onboarding;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -233,9 +234,9 @@ public class BattleFieldActivity extends FragmentActivity {
                 String updateSearchStatus = intent.getExtras().getString(BroadcastSender.EXTRA_UPDATE_SEARCH);
                 try {
                     JSONObject updateSearchJSon = new JSONObject(updateSearchStatus);
-                    Object updateStatusObject = updateSearchJSon.get("searching");
+                    JSONArray updateStatusObject = updateSearchJSon.getJSONArray("searching");
                     // is only boolean when search is done or maybe canceled
-                    if (updateStatusObject instanceof Boolean) {
+                    if (updateStatusObject.length() == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
