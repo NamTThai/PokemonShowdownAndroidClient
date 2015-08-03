@@ -225,7 +225,7 @@ public class BattleMessage {
                 final String pokeName = (comma == -1) ? split[1] : split[1].substring(0, comma);
                 team = (playerType.equals("p1")) ? team1 : team2;
                 iconId = battleFragment.getIconId(playerType, team.size());
-                pokemonInfo = new PokemonInfo(battleFragment.getActivity(), processSpecialName(pokeName));
+                pokemonInfo = new PokemonInfo(battleFragment.getActivity(),pokeName);
                 processPokemonDetailString(pokemonInfo, split[1]);
                 if (battleFragment.findPokemonInTeam(team,
                         pokemonInfo.getName()) == -1) {
