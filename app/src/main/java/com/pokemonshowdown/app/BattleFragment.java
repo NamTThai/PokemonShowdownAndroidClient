@@ -418,7 +418,7 @@ public class BattleFragment extends Fragment {
                 team2StatusesParent.removeAllViews();
 
                 int visibility = team2View.getVisibility();
-                
+
                 if (team1View.getVisibility() == View.VISIBLE) {
                     team2View.setVisibility(View.VISIBLE);
                     ((TextView) getView().findViewById(getSpriteNameid(team2[i]))).setText(team1Name);
@@ -447,8 +447,8 @@ public class BattleFragment extends Fragment {
                     team1View.setVisibility(team2View.getVisibility());
                 }
             }
-            
-            int[] p1Field = {R.id.field_lightscreen, R.id.field_reflect, R.id.field_rocks, R.id.field_spikes1, 
+
+            int[] p1Field = {R.id.field_lightscreen, R.id.field_reflect, R.id.field_rocks, R.id.field_spikes1,
                     R.id.field_spikes2, R.id.field_spikes3, R.id.field_tspikes1, R.id.field_tspikes2};
             int[] p2Field = {R.id.field_lightscreen_o, R.id.field_reflect_o, R.id.field_rocks_o, R.id.field_spikes1_o,
                     R.id.field_spikes2_o, R.id.field_spikes3_o, R.id.field_tspikes1_o, R.id.field_tspikes2_o};
@@ -1713,7 +1713,12 @@ public class BattleFragment extends Fragment {
                 for (int i = 0; i < moves.length(); i++) {
                     JSONObject moveJson = moves.getJSONObject(i);
                     moveNames[i].setText(moveJson.getString("move"));
-                    movePps[i].setText(moveJson.optString("pp", "0"));
+                    if (moveJson.optString("maxpp", "0").equals("0")) {
+                        //sttruggle has noppinfo
+                        movePps[i].setText("");
+                    } else {
+                        movePps[i].setText(moveJson.optString("pp", "0"));
+                    }
                     int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
                     moveIcons[i].setImageResource(typeIcon);
                     moveViews[i].setOnClickListener(parseMoveTarget(active, i));
@@ -1766,8 +1771,12 @@ public class BattleFragment extends Fragment {
         final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
                 .getJSONArray("moves")
                 .getJSONObject(moveId);
-        String target = moveJson.getString("target");
 
+        // null happens with struggle
+        String target = moveJson.optString("target", null);
+        if (target == null) {
+            return null;
+        }
         int maxAlly = 0;
         int maxFoe = 0;
         if (getView() != null) {
