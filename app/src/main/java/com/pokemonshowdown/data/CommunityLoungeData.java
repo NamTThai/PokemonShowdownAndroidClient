@@ -55,6 +55,7 @@ public class CommunityLoungeData {
 
     public void leaveRoom(String roomId) {
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
+        mRoomList.remove(roomId);
     }
 
     public static class RoomData {
