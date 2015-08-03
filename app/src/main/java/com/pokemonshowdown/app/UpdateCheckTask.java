@@ -24,9 +24,12 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
 
     // version.txt contains versionCode versionName
     private final static String VERSION_URL = "http://ns3367227.ip-37-187-3.eu/showdown/version.txt";
+    private final static String CHANGELOG_URL = "http://ns3367227.ip-37-187-3.eu/showdown/changelog.txt";
 
     private int status;
     private String serverVersionName = null;
+    private String changelogData = null;
+
     private int serverVersionCode = 0;
 
     private MyApplication myApplication;
@@ -42,6 +45,8 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
         HttpConnectionParams.setConnectionTimeout(httpParams, 50000);
         HttpClient client = new DefaultHttpClient(httpParams);
         HttpGet httpget = new HttpGet(VERSION_URL);
+        HttpGet httpGetChangelog = new HttpGet(CHANGELOG_URL);
+
         HttpResponse response;
         try {
             response = client.execute(httpget);
@@ -52,9 +57,17 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
                 serverVersionCode = Integer.parseInt(serverOutput[0]);
                 serverVersionName = serverOutput[1];
             }
+
+            response = client.execute(httpGetChangelog);
+            int changelogStatus = response.getStatusLine().getStatusCode();
+            if (changelogStatus == HttpStatus.SC_OK) {
+                HttpEntity entity = response.getEntity();
+                changelogData = EntityUtils.toString(entity);
+            }
         } catch (IOException e) {
             return null;
         }
+
         return null;
     }
 
@@ -69,7 +82,8 @@ public class UpdateCheckTask extends AsyncTask<Void, Void, Void> {
                 if (currentVersionCode < serverVersionCode) {
                     BroadcastSender.get(MyApplication.getMyApplication()).sendBroadcastFromMyApplication(
                             BroadcastSender.EXTRA_UPDATE_AVAILABLE, null,
-                            BroadcastSender.EXTRA_SERVER_VERSION, serverVersionName);
+                            BroadcastSender.EXTRA_SERVER_VERSION, serverVersionName,
+                            BroadcastSender.EXTRA_CHANGELOG, changelogData);
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();

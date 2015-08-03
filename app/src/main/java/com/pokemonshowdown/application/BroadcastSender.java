@@ -22,6 +22,7 @@ public class BroadcastSender {
     public final static String EXTRA_SERVER_VERSION = "Server Version";
     public final static String EXTRA_LOGIN_SUCCESSFUL = "Login Successful";
     public final static String EXTRA_REPLAY_DATA = "Replay Data";
+    public static final String EXTRA_CHANGELOG = "Changelog";
 
     private static BroadcastSender sBroadcastSender;
     private Context mContext;
