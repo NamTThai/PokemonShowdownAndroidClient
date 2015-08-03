@@ -17,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.application.MyApplication;
@@ -145,19 +147,46 @@ public class CommunityLoungeFragment extends android.support.v4.app.Fragment {
         final HashMap<String, JSONArray> rooms = MyApplication.getMyApplication().getRoomCategoryList();
         Set<String> roomSet = rooms.keySet();
         final String[] roomCategoryNames = roomSet.toArray(new String[roomSet.size()]);
-        final String[] roomCategories = new String[roomSet.size()];
+        final String[] roomCategories = new String[roomSet.size() + 1];
         int count = 0;
         for (String room : roomSet) {
             roomCategories[count] = room.toUpperCase();
             count++;
         }
+        roomCategories[count] = "Join other room";
+        final int finalCount = count;
         Dialog dialog = new AlertDialog.Builder(getActivity())
                 .setItems(roomCategories, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String roomCategory = roomCategoryNames[which];
-                        generateRoomList(rooms.get(roomCategory));
-                        dialog.dismiss();
+                        if (which == finalCount) {
+                            // private room popup
+                            AlertDialog.Builder renameDialog = new AlertDialog.Builder(CommunityLoungeFragment.this.getActivity());
+                            renameDialog.setTitle(R.string.join_private_chatroom);
+                            final EditText teamNameEditText = new EditText(CommunityLoungeFragment.this.getActivity());
+                            renameDialog.setView(teamNameEditText);
+
+                            renameDialog.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    processNewRoomRequest(teamNameEditText.getText().toString());
+                                    arg0.dismiss();
+                                }
+                            });
+
+                            renameDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    arg0.dismiss();
+                                }
+                            });
+
+                            renameDialog.show();
+
+
+                        } else {
+                            String roomCategory = roomCategoryNames[which];
+                            generateRoomList(rooms.get(roomCategory));
+                            dialog.dismiss();
+                        }
                     }
                 })
                 .show();
