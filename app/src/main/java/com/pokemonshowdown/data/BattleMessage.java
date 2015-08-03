@@ -129,7 +129,7 @@ public class BattleMessage {
             case "player":
                 final String playerType;
                 final String playerName;
-                final String avatar;
+                String avatar;
                 if (separator == -1) {
                     playerType = messageDetails;
                     playerName = "";
@@ -138,6 +138,9 @@ public class BattleMessage {
                     playerType = split[0];
                     playerName = split[1];
                     avatar = split[2];
+                    while (avatar.length() < 3) {
+                        avatar = "0" + avatar;
+                    }
                 }
                 final int avatarResource;
                 if (avatar != null) {
@@ -225,7 +228,7 @@ public class BattleMessage {
                 final String pokeName = (comma == -1) ? split[1] : split[1].substring(0, comma);
                 team = (playerType.equals("p1")) ? team1 : team2;
                 iconId = battleFragment.getIconId(playerType, team.size());
-                pokemonInfo = new PokemonInfo(battleFragment.getActivity(),pokeName);
+                pokemonInfo = new PokemonInfo(battleFragment.getActivity(), pokeName);
                 processPokemonDetailString(pokemonInfo, split[1]);
                 if (battleFragment.findPokemonInTeam(team,
                         pokemonInfo.getName()) == -1) {
