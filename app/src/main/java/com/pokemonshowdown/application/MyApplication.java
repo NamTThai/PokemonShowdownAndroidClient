@@ -247,6 +247,28 @@ public class MyApplication extends Application {
                             BroadcastSender.get(this).sendBroadcastFromMyApplication(
                                     BroadcastSender.EXTRA_REPLAY_DATA, replayData);
                             break;
+                        case "userdetails":
+                            final String details = messageDetail.substring(messageDetail.indexOf('|') + 1);
+                            try {
+                                JSONObject userDetailsJSON = new JSONObject(details);
+                                String userIDDetails = userDetailsJSON.optString("userid", null);
+                                if (userIDDetails != null && userIDDetails.equals(Onboarding.get(this).getUsername())) {
+                                    //we update our avatar for now
+                                    int avatarId = userDetailsJSON.optInt("avatar", 0);
+                                    if (avatarId > 0) {
+                                        String avatarString = String.valueOf(avatarId);
+                                        while (avatarString.length() < 3) {
+                                            avatarString = "0" + avatarString;
+                                        }
+                                        Onboarding.get(this).setAvatar(avatarString);
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                Log.d(MTAG, e.toString());
+                            }
+
+                            break;
                         default:
                             Log.d(MTAG, message);
                     }

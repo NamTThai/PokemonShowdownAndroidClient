@@ -8,8 +8,11 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.application.MyApplication;
 import com.pokemonshowdown.data.Onboarding;
@@ -17,8 +20,11 @@ import com.pokemonshowdown.data.Onboarding;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class UserDialog extends DialogFragment {
     public static final String UTAG = UserDialog.class.getName();
+    private static final int NB_AVATARS = 294;
 
     public UserDialog() {
 
@@ -32,10 +38,60 @@ public class UserDialog extends DialogFragment {
 
         getDialog().setTitle(onboarding.getUsername());
         String avatarId = onboarding.getAvatar();
-        int avatar = getActivity().getApplicationContext()
+        final int avatar = getActivity().getApplicationContext()
                 .getResources().getIdentifier("avatar_" + avatarId, "drawable", getActivity().getApplicationContext().getPackageName());
-        ((ImageView) view.findViewById(R.id.avatar)).setImageResource(avatar);
 
+        final ImageView avatarImageView = ((ImageView) view.findViewById(R.id.avatar));
+        avatarImageView.setImageResource(avatar);
+        avatarImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Select Avatar");
+
+                GridView gridView = new GridView(getActivity());
+                ArrayList<Integer> avatarIconIdList = new ArrayList<Integer>();
+                for (int i = 1; i < NB_AVATARS; i++) {
+                    String avatarIconName = String.valueOf(i);
+                    while (avatarIconName.length() < 3) {
+                        avatarIconName = "0" + avatarIconName;
+                    }
+                    avatarIconIdList.add(getActivity().getApplicationContext()
+                            .getResources().getIdentifier("avatar_" + avatarIconName, "drawable", getActivity().getApplicationContext().getPackageName()));
+
+                }
+
+                ImageAdapter iconItems = new ImageAdapter(getActivity(), avatarIconIdList);
+
+                gridView.setAdapter(iconItems);
+                gridView.setNumColumns(6);
+                gridView.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+                builder.setView(gridView);
+                final AlertDialog alert = builder.create();
+
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        MyApplication.getMyApplication().sendClientMessage("|/avatar " + (position + 1));
+                        //request profile update from server
+                        MyApplication.getMyApplication().sendClientMessage("|/cmd userdetails " + Onboarding.get(getActivity()).getUsername());
+
+                        String avatarIconName = String.valueOf(position + 1);
+                        while (avatarIconName.length() < 3) {
+                            avatarIconName = "0" + avatarIconName;
+                        }
+
+                        avatarImageView.setImageResource(getActivity().getApplicationContext()
+                                .getResources().getIdentifier("avatar_" + avatarIconName, "drawable", getActivity().getApplicationContext().getPackageName()));
+                        alert.dismiss();
+                    }
+                });
+
+                alert.show();
+
+
+            }
+        });
         view.findViewById(R.id.sign_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

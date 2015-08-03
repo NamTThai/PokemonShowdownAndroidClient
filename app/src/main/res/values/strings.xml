@@ -157,6 +157,8 @@
     <string name="bar_chatroom">Community Lounge</string>
     <string name="hint_chatroom">Please login to chat</string>
     <string name="title_activity_team_building">Bill\'s PC</string>
+    <string name="join_private_chatroom">Join other room</string>
+
 
     <!-- These are for teambuilder -->
     <string name="create_team">Create team</string>

@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pokemonshowdown.application.BroadcastListener;
@@ -338,19 +342,33 @@ public class BattleFieldActivity extends FragmentActivity {
 
             case BroadcastSender.EXTRA_UPDATE_AVAILABLE:
                 final String serverVersion = intent.getExtras().getString(BroadcastSender.EXTRA_SERVER_VERSION);
-                new AlertDialog.Builder(this)
-                        .setMessage(String.format(
-                                getResources().getString(R.string.update_available), serverVersion.trim()))
-                        .setPositiveButton(R.string.dialog_ok,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new DownloadUpdateTask(BattleFieldActivity.this).execute();
-                                    }
-                                })
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create()
-                        .show();
+                if (serverVersion != null) {
+                    final String changelog = intent.getExtras().getString(BroadcastSender.EXTRA_CHANGELOG);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    String serverVersionPrintable = String.format(
+                            getResources().getString(R.string.update_available), serverVersion.trim());
+
+                    builder.setTitle(serverVersionPrintable);
+                    if (changelog != null) {
+                        TextView message = new TextView(this);
+                        message.setMovementMethod(new ScrollingMovementMethod());
+                        message.setText(Html.fromHtml(changelog));
+                        builder.setView(message);
+                    }
+                    builder.setPositiveButton(R.string.dialog_ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    new DownloadUpdateTask(BattleFieldActivity.this).execute();
+                                }
+                            })
+                            .setNegativeButton(R.string.dialog_cancel, null)
+                            .create()
+                            .show();
+                }
+
                 break;
 
             case BroadcastSender.EXTRA_LOGIN_SUCCESSFUL:
@@ -363,6 +381,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 new ExportReplayTask(this).execute(replayData);
                 break;
         }
+
     }
 
     /**

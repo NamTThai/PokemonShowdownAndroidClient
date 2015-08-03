@@ -48,9 +48,3 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile files('libs/android-integration-3.1.0.jar')
 }
-
-task appStart(type: Exec, dependsOn: 'installDebug') {
-    // linux
-    def adb = android.plugin.extension.getAdbExe().toString()
-    commandLine adb, 'shell', 'am', 'start', '-n', 'com.pokemonshowdown.app/.WelcomeActivity'
-}
