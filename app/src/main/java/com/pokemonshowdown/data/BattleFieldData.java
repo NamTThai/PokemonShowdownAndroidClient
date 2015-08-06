@@ -73,26 +73,22 @@ public class BattleFieldData {
 
     public Format processSpecialRoomTrait(String query) {
         int separator = query.indexOf(',');
+        int teamBitMask = 0x1;
+        int searchShowBitMask = 0x2;
+        int challengeShowMask = 0x4;
+        int tournamentShow = 0x8;
+
+
         Format format;
         if (separator == -1) {
             format = new Format(query);
         } else {
             format = new Format(query.substring(0, separator));
-            String special = query.substring(separator);
-            int specs = special.indexOf(",#");
-            if (specs != -1) {
-                format.getSpecialTrait().add(",#");
-                special = special.substring(0, specs);
-            }
-            specs = special.indexOf(",,");
-            if (specs != -1) {
-                format.getSpecialTrait().add(",,");
-                special = special.substring(0, specs);
-            }
-            specs = special.indexOf(",");
-            if (specs != -1) {
-                format.getSpecialTrait().add(",");
-            }
+            int formatInt = Integer.valueOf(query.substring(separator+1), 16);
+            format.setTeamNeeded(((formatInt & teamBitMask) > 0));
+            format.setCanSearch(((formatInt & searchShowBitMask) > 0));
+            format.setCanChallenge(((formatInt & challengeShowMask) > 0));
+            format.setCanTournament(((formatInt & tournamentShow) > 0));
         }
         return format;
     }
@@ -430,7 +426,7 @@ public class BattleFieldData {
         public ArrayList<String> getSearchableFormatList() {
             ArrayList<String> formatList = new ArrayList<>();
             for (Format format : mFormatList) {
-                if (!format.getSpecialTrait().contains(",")) {
+                if (format.isCanSearch()) {
                     formatList.add(format.getName());
                 }
             }
@@ -447,13 +443,50 @@ public class BattleFieldData {
     }
 
     public static class Format {
-        private static final String RANDOM_FORMAT_TRAIT = ",#";
         private String mName;
-        private ArrayList<String> mSpecialTrait;
+        private boolean teamNeeded;
+        private boolean canSearch;
+        private boolean canChallenge;
+        private boolean canTournament;
+
+        public boolean isCanChallenge() {
+            return canChallenge;
+        }
+
+        public boolean isCanSearch() {
+            return canSearch;
+        }
+
+        public boolean isCanTournament() {
+            return canTournament;
+        }
+
+        public boolean isTeamNeeded() {
+            return teamNeeded;
+        }
+
+        public void setCanChallenge(boolean canChallenge) {
+            this.canChallenge = canChallenge;
+        }
+
+        public void setCanSearch(boolean canSearch) {
+            this.canSearch = canSearch;
+        }
+
+        public void setCanTournament(boolean canTournament) {
+            this.canTournament = canTournament;
+        }
+
+        public void setTeamNeeded(boolean teamNeeded) {
+            this.teamNeeded = teamNeeded;
+        }
 
         public Format(String name) {
             mName = name;
-            mSpecialTrait = new ArrayList<>();
+            teamNeeded = false;
+            canSearch = false;
+            canChallenge = false;
+            canTournament = false;
         }
 
         public String getName() {
@@ -464,21 +497,8 @@ public class BattleFieldData {
             mName = name;
         }
 
-        public ArrayList<String> getSpecialTrait() {
-            return mSpecialTrait;
-        }
-
-        public void setSpecialTrait(ArrayList<String> specialTrait) {
-            mSpecialTrait = specialTrait;
-        }
-
         public boolean isRandomFormat() {
-            for (String s : mSpecialTrait) {
-                if (s.equals(RANDOM_FORMAT_TRAIT)) {
-                    return true;
-                }
-            }
-            return false;
+            return teamNeeded;
         }
     }
 }

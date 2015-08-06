@@ -72,7 +72,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         mUserAdapter = new UserAdapter(getActivity(), mUserListData);
         final ListView listView = (ListView) view.findViewById(R.id.user_list);
         listView.setAdapter(mUserAdapter);
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final String userName = (String) listView.getItemAtPosition(position);
@@ -99,7 +99,7 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
                 );
                 builder.show();
             }
-        });*/
+        });
 
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);

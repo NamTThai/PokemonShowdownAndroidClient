@@ -30,19 +30,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
 
-        </RelativeLayout>
-
-    <View style="@style/divider"/>
-
-    <TextView
-        android:id="@+id/donate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="@string/donate"
-        android:textColor="@drawable/dialog_button"/>
+    </RelativeLayout>
 
 </LinearLayout>

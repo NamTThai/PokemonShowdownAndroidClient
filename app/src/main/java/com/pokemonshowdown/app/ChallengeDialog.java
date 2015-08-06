@@ -1,6 +1,7 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -35,7 +36,17 @@ public class ChallengeDialog extends DialogFragment {
     private PokemonTeamListArrayAdapter mRandomTeamAdapter;
     private ArrayAdapter<String> mNoTeamsAdapter;
     private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
+    private boolean challengeAccepted;
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        if(!challengeAccepted && mChallenged) {
+            //dialog has been cancelled, we reject
+            MyApplication.getMyApplication().sendClientMessage("|/reject " + mChallengerName);
+        }
+    }
 
     public static ChallengeDialog newInstance(String challenger, String format) {
         ChallengeDialog fragment = new ChallengeDialog();
@@ -54,6 +65,7 @@ public class ChallengeDialog extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        challengeAccepted = false;
         if (getArguments() != null) {
             mChallengerName = getArguments().getString(CHALLENGER_TAG);
             mFormatId = getArguments().getString(FORMAT_TAG);
@@ -205,6 +217,7 @@ public class ChallengeDialog extends DialogFragment {
                             MyApplication.getMyApplication().sendClientMessage("|/accept " + mChallengerName);
                         }
                     }
+                    challengeAccepted = true;
                 } else {
                     //we need to send the team for verification
                     Object pokemonTeamObject = teamSpinner.getSelectedItem();

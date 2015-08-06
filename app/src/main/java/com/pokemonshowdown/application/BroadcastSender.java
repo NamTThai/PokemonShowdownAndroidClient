@@ -23,6 +23,7 @@ public class BroadcastSender {
     public final static String EXTRA_LOGIN_SUCCESSFUL = "Login Successful";
     public final static String EXTRA_REPLAY_DATA = "Replay Data";
     public final static String EXTRA_UPDATE_CHALLENGE = "EXTRA_UPDATE_CHALLENGE";
+    public static final String EXTRA_CHANGELOG = "Changelog";
 
     private static BroadcastSender sBroadcastSender;
     private Context mContext;

@@ -163,10 +163,11 @@
     <!-- These are for Chat Room -->
     <string name="bar_chatroom">Community Lounge</string>
     <string name="hint_chatroom">Please login to chat</string>
+
     <string-array name="actions_user_chatroom">
         <item>Challenge</item>
     </string-array>
-
+    <string name="join_private_chatroom">Join other room</string>
 
     <!-- These are for teambuilder -->
     <string name="title_activity_team_building">Bill\'s PC</string>

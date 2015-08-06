@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,16 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.braintreepayments.api.dropin.BraintreePaymentActivity;
-import com.braintreepayments.api.dropin.Customization;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 import com.pokemonshowdown.application.BroadcastListener;
 import com.pokemonshowdown.application.BroadcastSender;
 import com.pokemonshowdown.application.MyApplication;
@@ -37,7 +34,7 @@ import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.data.Onboarding;
 
-import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +47,7 @@ public class BattleFieldActivity extends FragmentActivity {
     public final static int REQUEST_CODE_DONATION = 100;
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
+    private static final String CHALLENGE_DIALOG_TAG = "CHALLENGE_DIALOG_TAG";
     private float mDonationAmount;
     private int mPosition;
     private DrawerLayout mDrawerLayout;
@@ -86,9 +84,6 @@ public class BattleFieldActivity extends FragmentActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         switch (item.getItemId()) {
-            case R.id.donate:
-                enterDonationAmount();
-                return true;
             case R.id.team_building:
                 startActivity(new Intent(this, TeamBuildingActivity.class));
                 return true;
@@ -244,116 +239,6 @@ public class BattleFieldActivity extends FragmentActivity {
         outState.putInt(DRAWER_POSITION, mPosition);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_CODE_DONATION:
-                switch (resultCode) {
-                    case BraintreePaymentActivity.RESULT_OK:
-                        String paymentMethodNonce = data.getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
-                        sendPaymentToServer(paymentMethodNonce);
-                        return;
-                    default:
-                        new AlertDialog.Builder(this)
-                                .setMessage("Problem processing donation, please try again")
-                                .create()
-                                .show();
-                        return;
-                }
-            default:
-        }
-    }
-
-    public void donate(final float amount) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get("http://nthai.cs.trincoll.edu/Showdown/client_token.php", new TextHttpResponseHandler() {
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                new AlertDialog.Builder(BattleFieldActivity.this)
-                        .setMessage("Cannot access payment processing server, please try again")
-                        .create()
-                        .show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                DecimalFormat decimalFormat = new DecimalFormat("#.##");
-                mDonationAmount = Float.parseFloat(decimalFormat.format(amount));
-
-                Intent intent = new Intent(BattleFieldActivity.this, BraintreePaymentActivity.class);
-                Customization customization = new Customization.CustomizationBuilder()
-                        .primaryDescription("Donation")
-                        .amount("$" + Float.toString(mDonationAmount))
-                        .submitButtonText("Donate")
-                        .build();
-                intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, responseString);
-                intent.putExtra(BraintreePaymentActivity.EXTRA_CUSTOMIZATION, customization);
-
-                startActivityForResult(intent, REQUEST_CODE_DONATION);
-            }
-        });
-    }
-
-    public void enterDonationAmount() {
-        final View view = View.inflate(this, R.layout.dialog_donate, null);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.donate)
-                .setView(view)
-                .setPositiveButton("Donate", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        float amount;
-                        if (view.findViewById(R.id.donate_amount) != null) {
-                            try {
-                                amount = Float.parseFloat(((EditText) view.findViewById(R.id.donate_amount)).getText().toString());
-                            } catch (NumberFormatException e) {
-                                amount = 10f;
-                            }
-                        } else {
-                            amount = 10f;
-                        }
-                        dialog.dismiss();
-                        donate(amount);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create().show();
-    }
-
-    public void sendPaymentToServer(String nonce) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("nonce", nonce);
-        params.put("amount", mDonationAmount);
-        client.post("http://nthai.cs.trincoll.edu/Showdown/nonce.php", params,
-                new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d(BTAG, Arrays.toString(responseBody));
-                        new AlertDialog.Builder(BattleFieldActivity.this)
-                                .setMessage("Thanks :D")
-                                .create()
-                                .show();
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        new AlertDialog.Builder(BattleFieldActivity.this)
-                                .setMessage("Donation didn't go through :( Please try again")
-                                .create()
-                                .show();
-                    }
-                }
-        );
-    }
-
     public void processBroadcastMessage(Intent intent) {
         String details = intent.getExtras().getString(BroadcastSender.EXTRA_DETAILS);
         switch (details) {
@@ -361,9 +246,9 @@ public class BattleFieldActivity extends FragmentActivity {
                 String updateSearchStatus = intent.getExtras().getString(BroadcastSender.EXTRA_UPDATE_SEARCH);
                 try {
                     JSONObject updateSearchJSon = new JSONObject(updateSearchStatus);
-                    Object updateStatusObject = updateSearchJSon.get("searching");
+                    JSONArray updateStatusObject = updateSearchJSon.getJSONArray("searching");
                     // is only boolean when search is done or maybe canceled
-                    if (updateStatusObject instanceof Boolean) {
+                    if (updateStatusObject.length() == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -418,6 +303,17 @@ public class BattleFieldActivity extends FragmentActivity {
                 BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (fragment != null) {
                     fragment.processNewRoomRequest(roomId);
+                } else {
+                    fragment = BattleFieldFragment.newInstance(roomId);
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(0))
+                            .commit();
+
+                    mDrawerList.setItemChecked(0, true);
+                    setTitle(mLeftDrawerTitles[0]);
+                    mDrawerLayout.closeDrawer(mDrawerList);
+
                 }
                 return;
             case BroadcastSender.EXTRA_SERVER_MESSAGE:
@@ -448,6 +344,11 @@ public class BattleFieldActivity extends FragmentActivity {
                 return;
 
             case BroadcastSender.EXTRA_UPDATE_CHALLENGE:
+                Fragment challengeDialogExistingFragment = getSupportFragmentManager().findFragmentByTag(CHALLENGE_DIALOG_TAG);
+                if (challengeDialogExistingFragment != null) {
+                    //already a challenge dialog showing
+                    break;
+                }
                 String updateChallengeStatus = intent.getExtras().getString(BroadcastSender.EXTRA_UPDATE_CHALLENGE);
                 try {
                     JSONObject updateChallengeJSon = new JSONObject(updateChallengeStatus);
@@ -459,7 +360,7 @@ public class BattleFieldActivity extends FragmentActivity {
                         String format = from.getString(userName);
                         Log.d(BTAG, "Challenge from " + userName + ", format:" + format);
                         ChallengeDialog cd = ChallengeDialog.newInstance(userName, format);
-                        cd.show(getSupportFragmentManager(), userName);
+                        cd.show(getSupportFragmentManager(), CHALLENGE_DIALOG_TAG);
                         // we pop challenges 1 by 1
                         break;
                     }
@@ -514,19 +415,33 @@ public class BattleFieldActivity extends FragmentActivity {
 
             case BroadcastSender.EXTRA_UPDATE_AVAILABLE:
                 final String serverVersion = intent.getExtras().getString(BroadcastSender.EXTRA_SERVER_VERSION);
-                new AlertDialog.Builder(this)
-                        .setMessage(String.format(
-                                getResources().getString(R.string.update_available), serverVersion.trim()))
-                        .setPositiveButton(R.string.dialog_ok,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new DownloadUpdateTask(BattleFieldActivity.this).execute();
-                                    }
-                                })
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create()
-                        .show();
+                if (serverVersion != null) {
+                    final String changelog = intent.getExtras().getString(BroadcastSender.EXTRA_CHANGELOG);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    String serverVersionPrintable = String.format(
+                            getResources().getString(R.string.update_available), serverVersion.trim());
+
+                    builder.setTitle(serverVersionPrintable);
+                    if (changelog != null) {
+                        TextView message = new TextView(this);
+                        message.setMovementMethod(new ScrollingMovementMethod());
+                        message.setText(Html.fromHtml(changelog));
+                        builder.setView(message);
+                    }
+                    builder.setPositiveButton(R.string.dialog_ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    new DownloadUpdateTask(BattleFieldActivity.this).execute();
+                                }
+                            })
+                            .setNegativeButton(R.string.dialog_cancel, null)
+                            .create()
+                            .show();
+                }
+
                 break;
 
             case BroadcastSender.EXTRA_LOGIN_SUCCESSFUL:
@@ -539,6 +454,7 @@ public class BattleFieldActivity extends FragmentActivity {
                 new ExportReplayTask(this).execute(replayData);
                 break;
         }
+
     }
 
     /**
@@ -579,7 +495,7 @@ public class BattleFieldActivity extends FragmentActivity {
         switch (position) {
             case 0:
                 mPosition = 0;
-                fragment = BattleFieldFragment.newInstance();
+                fragment = BattleFieldFragment.newInstance(null);
                 break;
             case 1:
                 mPosition = 1;

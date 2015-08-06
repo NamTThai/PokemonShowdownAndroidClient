@@ -47,14 +47,17 @@ public class CommunityLoungeData {
     }
 
     public void leaveAllRooms() {
-        for (String roomId : mRoomList) {
+        //since we'll be removing rooms in the loop, we use a clone to not have a concurrentexception
+        //maybe fidn a cleaner way
+        ArrayList<String> tempRoomList = (ArrayList<String>) mRoomList.clone();
+        for (String roomId : tempRoomList) {
             leaveRoom(roomId);
         }
-        mRoomList.clear();
     }
 
     public void leaveRoom(String roomId) {
         MyApplication.getMyApplication().sendClientMessage("|/leave " + roomId);
+        mRoomList.remove(roomId);
     }
 
     public static class RoomData {
