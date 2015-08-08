@@ -30,7 +30,7 @@ public class Tiering {
     }
 
     private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> learnsetEntries = new HashMap<>();
+        HashMap<String, String> tierEntry = new HashMap<>();
         String jsonString;
         try {
             InputStream inputStream = appContext.getResources().openRawResource(R.raw.formats_data);
@@ -54,9 +54,10 @@ public class Tiering {
 
                 // entry is learnet
                 JSONObject entry = jsonObject.getJSONObject(key);
-                String tier = entry.getString("tier");
+                // no tiers on some megas?
+                String tier = entry.optString("tier", null);
 
-                learnsetEntries.put(key, tier);
+                tierEntry.put(key, tier);
             }
         } catch (JSONException e) {
             Log.d(PTAG, "JSON Exception");
@@ -64,7 +65,7 @@ public class Tiering {
             Log.d(PTAG, "Input Output problem");
         }
 
-        return learnsetEntries;
+        return tierEntry;
     }
 
 
@@ -75,7 +76,7 @@ public class Tiering {
         return sTiering;
     }
 
-    public HashMap<String,String> getTierList() {
+    public HashMap<String, String> getTierList() {
         return mTierList;
     }
 
