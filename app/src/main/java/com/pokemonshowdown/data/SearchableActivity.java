@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class SearchableActivity extends ListActivity {
@@ -32,12 +33,19 @@ public class SearchableActivity extends ListActivity {
     public final static int REQUEST_CODE_SEARCH_ITEM = 2;
     public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
+    public final static int REQUEST_CODE_SORT_ALPHA = 0;
+    public final static int REQUEST_CODE_SORT_TIER = 1;
+
     public final static String SEARCH_TYPE = "Search Type";
+    public final static String SORT_TYPE = "SORT_TYPE";
+    public final static String POKEMON_LEARNSET = "POKEMON_LEARNSET";
+
     public final static String SEARCH = "Search";
 
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mAdapterList;
     private int mSearchType;
+    private int mSortType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,11 +56,18 @@ public class SearchableActivity extends ListActivity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         mSearchType = getIntent().getExtras().getInt(SEARCH_TYPE);
+        mSortType = getIntent().getExtras().getInt(SORT_TYPE, REQUEST_CODE_SORT_ALPHA);
 
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:
                 HashMap<String, String> pokedex = Pokedex.get(getApplicationContext()).getPokedexEntries();
                 mAdapterList = new ArrayList<>(pokedex.keySet());
+                if (mSortType == REQUEST_CODE_SORT_ALPHA) {
+                    Collections.sort(mAdapterList);
+                } else {
+                    // todo implement tier sorting
+                    Collections.sort(mAdapterList);
+                }
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_pokemon);
@@ -60,6 +75,7 @@ public class SearchableActivity extends ListActivity {
             case REQUEST_CODE_SEARCH_ABILITY:
                 HashMap<String, String> abilityDex = AbilityDex.get(getApplicationContext()).getAbilityDexEntries();
                 mAdapterList = new ArrayList<>(abilityDex.keySet());
+                Collections.sort(mAdapterList);
                 mAdapter = new AbilityAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_ability);
@@ -67,13 +83,20 @@ public class SearchableActivity extends ListActivity {
             case REQUEST_CODE_SEARCH_ITEM:
                 HashMap<String, String> itemDex = ItemDex.get(getApplicationContext()).getItemDexEntries();
                 mAdapterList = new ArrayList<>(itemDex.keySet());
+                Collections.sort(mAdapterList);
                 mAdapter = new ItemAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_item);
                 break;
             case REQUEST_CODE_SEARCH_MOVES:
-                HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
-                mAdapterList = new ArrayList<>(moveDex.keySet());
+                String pokemonId = getIntent().getExtras().getString(POKEMON_LEARNSET, null);
+                if (pokemonId != null) {
+                    mAdapterList = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
+                } else {
+                    HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
+                    mAdapterList = new ArrayList<>(moveDex.keySet());
+                }
+                Collections.sort(mAdapterList);
                 mAdapter = new MovesAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
                 getActionBar().setTitle(R.string.search_label_moves);

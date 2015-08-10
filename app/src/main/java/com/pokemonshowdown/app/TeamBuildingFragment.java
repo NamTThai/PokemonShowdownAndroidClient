@@ -436,6 +436,7 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.POKEMON_LEARNSET, pokemon.getName());
                     mSelectedPos = position;
                     mSelectedMove = 1;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -448,6 +449,7 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.POKEMON_LEARNSET, pokemon.getName());
                     mSelectedPos = position;
                     mSelectedMove = 2;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -461,6 +463,7 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.POKEMON_LEARNSET, pokemon.getName());
                     mSelectedPos = position;
                     mSelectedMove = 3;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
@@ -474,6 +477,7 @@ public class TeamBuildingFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
+                    intent.putExtra(SearchableActivity.POKEMON_LEARNSET, pokemon.getName());
                     mSelectedPos = position;
                     mSelectedMove = 4;
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_MOVES);
