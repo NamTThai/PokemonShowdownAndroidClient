@@ -92,6 +92,10 @@ public class SearchableActivity extends ListActivity {
                 String pokemonId = getIntent().getExtras().getString(POKEMON_LEARNSET, null);
                 if (pokemonId != null) {
                     mAdapterList = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
+                    if (mAdapterList == null) {
+                        HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
+                        mAdapterList = new ArrayList<>(moveDex.keySet());
+                    }
                 } else {
                     HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
                     mAdapterList = new ArrayList<>(moveDex.keySet());

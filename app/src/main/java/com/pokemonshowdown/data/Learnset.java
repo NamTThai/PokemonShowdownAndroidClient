@@ -29,6 +29,13 @@ public class Learnset {
         mLearnsetEntries = readFile(appContext);
     }
 
+    public static Learnset get(Context c) {
+        if (sLearnset == null) {
+            sLearnset = new Learnset(c.getApplicationContext());
+        }
+        return sLearnset;
+    }
+
     private HashMap<String, ArrayList<String>> readFile(Context appContext) {
         HashMap<String, ArrayList<String>> learnsetEntries = new HashMap<>();
         String jsonString;
@@ -72,20 +79,20 @@ public class Learnset {
         return learnsetEntries;
     }
 
-
-    public static Learnset get(Context c) {
-        if (sLearnset == null) {
-            sLearnset = new Learnset(c.getApplicationContext());
-        }
-        return sLearnset;
-    }
-
     public HashMap<String, ArrayList<String>> getLearnsetEntries() {
         return mLearnsetEntries;
     }
 
     public ArrayList<String> getLearnetEntry(String pkmId) {
-        return mLearnsetEntries.get(MyApplication.toId(pkmId));
+        ArrayList<String> learnset = mLearnsetEntries.get(MyApplication.toId(pkmId));
+        if (learnset == null) {
+            // happens with megas or therian forms -> should use the base form entry
+            if (pkmId.contains("-")) {
+                learnset = mLearnsetEntries.get(MyApplication.toId(pkmId.substring(0, pkmId.indexOf("-"))));
+            }
+        }
+
+        return learnset;
     }
 
 }
