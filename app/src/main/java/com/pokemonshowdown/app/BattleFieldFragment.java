@@ -30,6 +30,7 @@ import java.util.Set;
 
 public class BattleFieldFragment extends Fragment {
     public final static String BTAG = BattleFieldFragment.class.getName();
+    private static final String OPTIONAL_ROOM_TAG = "OPTIONAL_ROOM_TAG";
     private BattleFieldPagerAdapter mBattleFieldPagerAdapter;
     private ViewPager mViewPager;
 
@@ -57,8 +58,12 @@ public class BattleFieldFragment extends Fragment {
 
     }
 
-    public static BattleFieldFragment newInstance() {
-        return new BattleFieldFragment();
+    public static BattleFieldFragment newInstance(String optionalRoomId) {
+        BattleFieldFragment battleFieldFragment = new BattleFieldFragment();
+        Bundle args = new Bundle();
+        args.putString(OPTIONAL_ROOM_TAG, optionalRoomId);
+        battleFieldFragment.setArguments(args);
+        return battleFieldFragment;
     }
 
     @Override
@@ -123,6 +128,11 @@ public class BattleFieldFragment extends Fragment {
                             .setText(i == 0 ? mRoomList.get(i) : "battle" + i)
                             .setTabListener(tabListener)
             );
+        }
+
+        if (getArguments().getString(OPTIONAL_ROOM_TAG) != null) {
+            String challengeRoom = getArguments().getString(OPTIONAL_ROOM_TAG);
+            processNewRoomRequest(challengeRoom);
         }
 
     }

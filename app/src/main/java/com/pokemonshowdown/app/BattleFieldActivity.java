@@ -1,6 +1,8 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,11 +38,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
     public final static int REQUEST_CODE_DONATION = 100;
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
+    private static final String CHALLENGE_DIALOG_TAG = "CHALLENGE_DIALOG_TAG";
     private float mDonationAmount;
     private int mPosition;
     private DrawerLayout mDrawerLayout;
@@ -295,6 +303,17 @@ public class BattleFieldActivity extends FragmentActivity {
                 BattleFieldFragment fragment = (BattleFieldFragment) getSupportFragmentManager().findFragmentByTag("Battle Field Drawer 0");
                 if (fragment != null) {
                     fragment.processNewRoomRequest(roomId);
+                } else {
+                    fragment = BattleFieldFragment.newInstance(roomId);
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .replace(R.id.fragmentContainer, fragment, "Battle Field Drawer " + Integer.toString(0))
+                            .commit();
+
+                    mDrawerList.setItemChecked(0, true);
+                    setTitle(mLeftDrawerTitles[0]);
+                    mDrawerLayout.closeDrawer(mDrawerList);
+
                 }
                 return;
             case BroadcastSender.EXTRA_SERVER_MESSAGE:
@@ -323,6 +342,60 @@ public class BattleFieldActivity extends FragmentActivity {
                     }
                 });
                 return;
+
+            case BroadcastSender.EXTRA_UPDATE_CHALLENGE:
+                Fragment challengeDialogExistingFragment = getSupportFragmentManager().findFragmentByTag(CHALLENGE_DIALOG_TAG);
+                if (challengeDialogExistingFragment != null) {
+                    //already a challenge dialog showing
+                    break;
+                }
+                String updateChallengeStatus = intent.getExtras().getString(BroadcastSender.EXTRA_UPDATE_CHALLENGE);
+                try {
+                    JSONObject updateChallengeJSon = new JSONObject(updateChallengeStatus);
+                    //seems like we can receive multiple challenges, but only send one
+                    JSONObject from = (JSONObject) updateChallengeJSon.get("challengesFrom");
+                    Iterator<?> fromKeys = from.keys();
+                    while (fromKeys.hasNext()) {
+                        String userName = (String) fromKeys.next();
+                        String format = from.getString(userName);
+                        Log.d(BTAG, "Challenge from " + userName + ", format:" + format);
+                        ChallengeDialog cd = ChallengeDialog.newInstance(userName, format);
+                        cd.show(getSupportFragmentManager(), CHALLENGE_DIALOG_TAG);
+                        // we pop challenges 1 by 1
+                        break;
+                    }
+
+                    if (updateChallengeJSon.getString("challengeTo").equals("null")) {
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                    } else {
+                        JSONObject to = (JSONObject) updateChallengeJSon.get("challengeTo");
+                        //"challengeTo":{"to":"tetonator","format":"randombattle"}
+                        final String userName = to.getString("to");
+                        String format = to.getString("format");
+                        Log.d(BTAG, "Challenge to " + userName + ", format:" + format);
+
+                        if (mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                                .setMessage(String.format(getResources().getString(R.string.waiting_challenge_dialog), userName, format))
+                                .create();
+                        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialogInterface) {
+                                MyApplication.getMyApplication().sendClientMessage("|/cancelchallenge " + userName);
+                            }
+                        });
+                        mDialog.setCancelable(true);
+                        mDialog.show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+
             case BroadcastSender.EXTRA_UNKNOWN_ERROR:
                 runOnUiThread(new Runnable() {
                     @Override
@@ -390,6 +463,7 @@ public class BattleFieldActivity extends FragmentActivity {
      * 0: battle
      * 1: chatroom
      */
+
     public void processMessage(int channel, String roomId, String message) {
         // Break down message to see which channel it has to go through
         if (channel == 1) {
@@ -421,7 +495,7 @@ public class BattleFieldActivity extends FragmentActivity {
         switch (position) {
             case 0:
                 mPosition = 0;
-                fragment = BattleFieldFragment.newInstance();
+                fragment = BattleFieldFragment.newInstance(null);
                 break;
             case 1:
                 mPosition = 1;

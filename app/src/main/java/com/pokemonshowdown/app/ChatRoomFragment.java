@@ -1,9 +1,12 @@
 package com.pokemonshowdown.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,14 +17,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.pokemonshowdown.data.CommunityLoungeData;
 import com.pokemonshowdown.application.MyApplication;
+import com.pokemonshowdown.data.CommunityLoungeData;
+import com.pokemonshowdown.data.Onboarding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,8 +70,36 @@ public class ChatRoomFragment extends android.support.v4.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
         mUserListData = new ArrayList<>();
         mUserAdapter = new UserAdapter(getActivity(), mUserListData);
-        ListView listView = (ListView) view.findViewById(R.id.user_list);
+        final ListView listView = (ListView) view.findViewById(R.id.user_list);
         listView.setAdapter(mUserAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final String userName = (String) listView.getItemAtPosition(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoomFragment.this.getActivity());
+                builder.setTitle(userName);
+                builder.setItems(getResources().getStringArray(R.array.actions_user_chatroom),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (item == 0) { // challenge
+                                    //first need to check if the user is logged in
+                                    Onboarding onboarding = Onboarding.get(getActivity().getApplicationContext());
+                                    if (!onboarding.isSignedIn()) {
+                                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                                        OnboardingDialog fragment = new OnboardingDialog();
+                                        fragment.show(fm, OnboardingDialog.OTAG);
+                                        return;
+                                    }
+                                    ChallengeDialog cd = ChallengeDialog.newInstance(userName, null);
+                                    cd.show(ChatRoomFragment.this.getActivity().getSupportFragmentManager(), userName);
+                                }
+                            }
+                        }
+
+                );
+                builder.show();
+            }
+        });
 
         if (getArguments() != null) {
             mRoomId = getArguments().getString(ROOM_ID);
