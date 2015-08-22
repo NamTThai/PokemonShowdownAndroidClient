@@ -91,10 +91,22 @@ public class SearchableActivity extends ListActivity {
             case REQUEST_CODE_SEARCH_MOVES:
                 String pokemonId = getIntent().getExtras().getString(POKEMON_LEARNSET, null);
                 if (pokemonId != null) {
-                    mAdapterList = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
-                    if (mAdapterList == null) {
-                        HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
-                        mAdapterList = new ArrayList<>(moveDex.keySet());
+                    mAdapterList = new ArrayList<>();
+                    while (pokemonId != null) {
+                        ArrayList<String> tempArray = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
+                        if (tempArray != null) {
+                            for (String move : tempArray) {
+                                if (!mAdapterList.contains(move)) {
+                                    mAdapterList.add(move);
+                                }
+                            }
+                        }
+                        try {
+                            pokemonId = Pokedex.get(getApplicationContext()).getPokemonJSONObject(MyApplication.toId(pokemonId)).has("prevo") ?
+                                    Pokedex.get(getApplicationContext()).getPokemonJSONObject(MyApplication.toId(pokemonId)).getString("prevo") : null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
