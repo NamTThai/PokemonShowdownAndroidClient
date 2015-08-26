@@ -139,6 +139,7 @@ public class TeamBuildingFragment extends Fragment {
                     mSelectedPos = -1;
                     Intent intent = new Intent(getActivity().getApplicationContext(), SearchableActivity.class);
                     intent.putExtra(SearchableActivity.SEARCH_TYPE, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
+                    intent.putExtra(SearchableActivity.CURRENT_TIER, mPokemonTeam.getTier());
                     startActivityForResult(intent, SearchableActivity.REQUEST_CODE_SEARCH_POKEMON);
                 }
             }

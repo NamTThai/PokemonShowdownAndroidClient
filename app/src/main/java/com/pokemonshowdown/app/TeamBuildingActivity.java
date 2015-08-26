@@ -48,6 +48,7 @@ public class TeamBuildingActivity extends FragmentActivity {
     private final static int PASTEBIN = 1;
     private final static int QR = 2;
 
+    private Spinner mPokemonTierSpinner;
     private Spinner mPokemonTeamSpinner;
     private List<PokemonTeam> mPokemonTeamList;
     private PokemonTeamListArrayAdapter mPokemonTeamListArrayAdapter;
@@ -81,6 +82,9 @@ public class TeamBuildingActivity extends FragmentActivity {
             case R.id.action_create_team:
                 pt = new PokemonTeam();
                 mPokemonTeamList.add(pt);
+                if(mPokemonTierSpinner.getSelectedItem() != null) {
+                    pt.setTier((String) mPokemonTierSpinner.getSelectedItem());
+                }
                 pt.setNickname("Team #" + mPokemonTeamList.size());
                 mPokemonTeamListArrayAdapter.notifyDataSetChanged();
                 mPokemonTeamSpinner.setSelection(mPokemonTeamList.size() - 1);
@@ -297,10 +301,9 @@ public class TeamBuildingActivity extends FragmentActivity {
                         .replace(R.id.teambuilding_fragmentcontainer, fragment, "")
                         .commit();
 
-                Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
-                ArrayAdapter adapter = (ArrayAdapter) tier_spinner.getAdapter();
+                ArrayAdapter adapter = (ArrayAdapter) mPokemonTierSpinner.getAdapter();
                 if (adapter != null && adapter.getPosition(pt.getTier()) != -1) {
-                    tier_spinner.setSelection(adapter.getPosition(pt.getTier()));
+                    mPokemonTierSpinner.setSelection(adapter.getPosition(pt.getTier()));
                 }
             }
 
@@ -310,7 +313,7 @@ public class TeamBuildingActivity extends FragmentActivity {
         });
 
         mFormatList = new ArrayList<>();
-        Spinner tier_spinner = (Spinner) findViewById(R.id.tier_spinner);
+        mPokemonTierSpinner = (Spinner) findViewById(R.id.tier_spinner);
         ArrayList<BattleFieldData.FormatType> formatTypes = BattleFieldData.get(this).getFormatTypes();
         for (BattleFieldData.FormatType formatType : formatTypes) {
             ArrayList<BattleFieldData.Format> result = formatType.getFormatList();
@@ -324,13 +327,13 @@ public class TeamBuildingActivity extends FragmentActivity {
 
         if (mFormatList.size() > 0) {
             ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mFormatList);
-            tier_spinner.setAdapter(adapter);
-            tier_spinner.setVisibility(View.VISIBLE);
+            mPokemonTierSpinner.setAdapter(adapter);
+            mPokemonTierSpinner.setVisibility(View.VISIBLE);
         } else {
-            tier_spinner.setVisibility(View.GONE);
+            mPokemonTierSpinner.setVisibility(View.GONE);
         }
 
-        tier_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mPokemonTierSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String tier = (String) adapterView.getItemAtPosition(i);

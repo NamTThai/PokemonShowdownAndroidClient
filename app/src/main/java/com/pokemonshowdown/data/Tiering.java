@@ -14,19 +14,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class Tiering {
+    public final static List<String> TIER_ORDER = new ArrayList<>(
+            Arrays.asList("Ubers", "OU", "BL", "UU", "BL2", "RU", "BL3", "NU", "BL4", "PU", "NFE", "LC Uber", "LC"));
 
     public final static String PTAG = Pokedex.class.getName();
     private static Tiering sTiering;
 
     // key is id of pokemon, value is array of moves id
-    private HashMap<String, String> mPokemonTierMap;
+    private HashMap<String, String> mPokemonTierMap = new HashMap<>();
 
     // key is tier, value is array of pokemons
-    private HashMap<String, ArrayList<String>> mTierList;
+    private HashMap<String, ArrayList<String>> mTierList = new HashMap<>();
 
     private Tiering(Context appContext) {
         readFile(appContext);

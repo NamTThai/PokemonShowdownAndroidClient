@@ -58,17 +58,28 @@ public class SearchableActivity extends ListActivity {
                 String tier = getIntent().getExtras().getString(CURRENT_TIER, null);
 
                 HashMap<String, String> pokedex = Pokedex.get(getApplicationContext()).getPokedexEntries();
-                mAdapterList = new ArrayList<>(pokedex.keySet());
-                if (tier == null) {
+                mAdapterList = new ArrayList<>();
+                // "" tier is only missingno lol
+                if (tier == null || "".equals(tier)) {
+                    mAdapterList.addAll(pokedex.keySet());
                     Collections.sort(mAdapterList);
                 } else {
                     HashMap<String, ArrayList<String>> tiers = Tiering.get(getApplicationContext()).getTierList();
                     // todo implement tier sorting
                     ArrayList<String> currentTier = tiers.get(tier);
-                    if(currentTier != null) {
+                    if (currentTier != null) {
+                        Collections.sort(currentTier);
                         mAdapterList.addAll(currentTier);
+                        int tierIndex = Tiering.TIER_ORDER.indexOf(currentTier);
+                        for (int i = tierIndex + 1; i < Tiering.TIER_ORDER.size(); i++) {
+                            ArrayList<String> nextTier = tiers.get(Tiering.TIER_ORDER.get(i));
+                            Collections.sort(nextTier);
+                            mAdapterList.addAll(nextTier);
+                        }
+                    } else {
+                        mAdapterList.addAll(pokedex.keySet());
+                        Collections.sort(mAdapterList);
                     }
-                    Collections.sort(mAdapterList);
                 }
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
