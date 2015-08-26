@@ -22,15 +22,24 @@ public class Tiering {
     public final static String PTAG = Pokedex.class.getName();
     private static Tiering sTiering;
 
-    // key is id of pokemon, valeu is array of moves id
-    private HashMap<String, String> mTierList;
+    // key is id of pokemon, value is array of moves id
+    private HashMap<String, String> mPokemonTierMap;
+
+    // key is tier, value is array of pokemons
+    private HashMap<String, ArrayList<String>> mTierList;
 
     private Tiering(Context appContext) {
-        mTierList = readFile(appContext);
+        readFile(appContext);
     }
 
-    private HashMap<String, String> readFile(Context appContext) {
-        HashMap<String, String> tierEntry = new HashMap<>();
+    public static Tiering get(Context c) {
+        if (sTiering == null) {
+            sTiering = new Tiering(c.getApplicationContext());
+        }
+        return sTiering;
+    }
+
+    private void readFile(Context appContext) {
         String jsonString;
         try {
             InputStream inputStream = appContext.getResources().openRawResource(R.raw.formats_data);
@@ -57,31 +66,32 @@ public class Tiering {
                 // no tiers on some megas?
                 String tier = entry.optString("tier", null);
 
-                tierEntry.put(key, tier);
+                mPokemonTierMap.put(key, tier);
+                if (tier != null) {
+                    if (mTierList.get(tier) != null) {
+                        mTierList.get(tier).add(key);
+                    } else {
+                        mTierList.put(tier, new ArrayList<String>());
+                        mTierList.get(tier).add(key);
+                    }
+                }
             }
         } catch (JSONException e) {
             Log.d(PTAG, "JSON Exception");
         } catch (IOException e) {
             Log.d(PTAG, "Input Output problem");
         }
-
-        return tierEntry;
     }
 
-
-    public static Tiering get(Context c) {
-        if (sTiering == null) {
-            sTiering = new Tiering(c.getApplicationContext());
-        }
-        return sTiering;
+    public HashMap<String, String> getPokemonToTierList() {
+        return mPokemonTierMap;
     }
 
-    public HashMap<String, String> getTierList() {
+    public String getPokemonTier(String pkmId) {
+        return mPokemonTierMap.get(MyApplication.toId(pkmId));
+    }
+
+    public HashMap<String, ArrayList<String>> getTierList() {
         return mTierList;
     }
-
-    public String getTier(String pkmId) {
-        return mTierList.get(MyApplication.toId(pkmId));
-    }
-
 }
