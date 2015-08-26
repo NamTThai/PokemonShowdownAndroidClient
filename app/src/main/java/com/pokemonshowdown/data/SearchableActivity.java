@@ -33,11 +33,8 @@ public class SearchableActivity extends ListActivity {
     public final static int REQUEST_CODE_SEARCH_ITEM = 2;
     public final static int REQUEST_CODE_SEARCH_MOVES = 3;
 
-    public final static int REQUEST_CODE_SORT_ALPHA = 0;
-    public final static int REQUEST_CODE_SORT_TIER = 1;
-
     public final static String SEARCH_TYPE = "Search Type";
-    public final static String SORT_TYPE = "SORT_TYPE";
+    public final static String CURRENT_TIER = "CURRENT_TIER";
     public final static String POKEMON_LEARNSET = "POKEMON_LEARNSET";
 
     public final static String SEARCH = "Search";
@@ -45,7 +42,6 @@ public class SearchableActivity extends ListActivity {
     private ArrayAdapter<String> mAdapter;
     private ArrayList<String> mAdapterList;
     private int mSearchType;
-    private int mSortType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,17 +52,34 @@ public class SearchableActivity extends ListActivity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         mSearchType = getIntent().getExtras().getInt(SEARCH_TYPE);
-        mSortType = getIntent().getExtras().getInt(SORT_TYPE, REQUEST_CODE_SORT_ALPHA);
 
         switch (mSearchType) {
             case REQUEST_CODE_SEARCH_POKEMON:
+                String tier = getIntent().getExtras().getString(CURRENT_TIER, null);
+
                 HashMap<String, String> pokedex = Pokedex.get(getApplicationContext()).getPokedexEntries();
-                mAdapterList = new ArrayList<>(pokedex.keySet());
-                if (mSortType == REQUEST_CODE_SORT_ALPHA) {
+                mAdapterList = new ArrayList<>();
+                // "" tier is only missingno lol
+                if (tier == null || "".equals(tier)) {
+                    mAdapterList.addAll(pokedex.keySet());
                     Collections.sort(mAdapterList);
                 } else {
+                    HashMap<String, ArrayList<String>> tiers = Tiering.get(getApplicationContext()).getTierList();
                     // todo implement tier sorting
-                    Collections.sort(mAdapterList);
+                    ArrayList<String> currentTier = tiers.get(tier);
+                    if (currentTier != null) {
+                        Collections.sort(currentTier);
+                        mAdapterList.addAll(currentTier);
+                        int tierIndex = Tiering.TIER_ORDER.indexOf(currentTier);
+                        for (int i = tierIndex + 1; i < Tiering.TIER_ORDER.size(); i++) {
+                            ArrayList<String> nextTier = tiers.get(Tiering.TIER_ORDER.get(i));
+                            Collections.sort(nextTier);
+                            mAdapterList.addAll(nextTier);
+                        }
+                    } else {
+                        mAdapterList.addAll(pokedex.keySet());
+                        Collections.sort(mAdapterList);
+                    }
                 }
                 mAdapter = new PokemonAdapter(this, mAdapterList);
                 setListAdapter(mAdapter);
@@ -91,10 +104,22 @@ public class SearchableActivity extends ListActivity {
             case REQUEST_CODE_SEARCH_MOVES:
                 String pokemonId = getIntent().getExtras().getString(POKEMON_LEARNSET, null);
                 if (pokemonId != null) {
-                    mAdapterList = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
-                    if (mAdapterList == null) {
-                        HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
-                        mAdapterList = new ArrayList<>(moveDex.keySet());
+                    mAdapterList = new ArrayList<>();
+                    while (pokemonId != null) {
+                        ArrayList<String> tempArray = Learnset.get(getApplicationContext()).getLearnetEntry(pokemonId);
+                        if (tempArray != null) {
+                            for (String move : tempArray) {
+                                if (!mAdapterList.contains(move)) {
+                                    mAdapterList.add(move);
+                                }
+                            }
+                        }
+                        try {
+                            pokemonId = Pokedex.get(getApplicationContext()).getPokemonJSONObject(MyApplication.toId(pokemonId)).has("prevo") ?
+                                    Pokedex.get(getApplicationContext()).getPokemonJSONObject(MyApplication.toId(pokemonId)).getString("prevo") : null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     HashMap<String, String> moveDex = MoveDex.get(getApplicationContext()).getMoveDexEntries();
