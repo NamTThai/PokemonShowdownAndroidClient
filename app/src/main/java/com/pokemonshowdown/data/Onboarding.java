@@ -30,6 +30,7 @@ public class Onboarding {
     public static final String ANIM_HEADER = "animation";
     public static final String COOKIES_HEADER = "cookie";
     public static final String ADV_HEADER = "advertising";
+    public static final String WARNING_HEADER = "warning";
 
     private static final String SET_COOKIES_HEADER = "Set-Cookie";
     private static final String AUTH_COOKIE = "sid=";
@@ -202,7 +203,7 @@ public class Onboarding {
     }
 
     public boolean propertyExists(String propName) {
-        return mAppProperties.getProperty(ANIM_HEADER) != null;
+        return mAppProperties.getProperty(propName) != null;
     }
 
     public boolean isAdvertising() {
@@ -215,6 +216,11 @@ public class Onboarding {
 
     public void setAdvertising(boolean advert) {
         mAppProperties.setProperty(ADV_HEADER, Boolean.toString(advert));
+        saveProperties();
+    }
+
+    public void setWarned() {
+        mAppProperties.setProperty(WARNING_HEADER, Boolean.toString(true));
         saveProperties();
     }
 

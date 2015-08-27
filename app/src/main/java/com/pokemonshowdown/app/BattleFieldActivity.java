@@ -232,6 +232,19 @@ public class BattleFieldActivity extends FragmentActivity {
         mBroadcastListener = BroadcastListener.get(this);
         mBroadcastListener.register(this);
 
+        if(!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.WARNING_HEADER)) {
+            mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
+                    .setMessage(R.string.warning_dialog)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Onboarding.get(getApplicationContext()).setWarned();
+                        }
+                    })
+                    .create();
+            mDialog.show();
+        }
+
         if(!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.ADV_HEADER)) {
             mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
                     .setMessage(R.string.advertise_dialog)
@@ -249,7 +262,6 @@ public class BattleFieldActivity extends FragmentActivity {
                     })
                     .create();
             mDialog.show();
-
         }
     }
 

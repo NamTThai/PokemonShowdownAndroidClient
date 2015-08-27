@@ -67,6 +67,7 @@
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
     <string name="advertise_dialog">Do you want to advertise for us? It will only send a short message at the start of each battle</string>
     <string name="advertise_message">I\'m playing on the PS Android application!</string>
+    <string name="warning_dialog">This application isn\'t endorsed by PS or Smogon. If you have a bug to report, go to : http://spo.ink/psandroidthread</string>
 
     <!-- These are for Battle Field Action Bar -->
     <string-array name="bar_left_drawer">
