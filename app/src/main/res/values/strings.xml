@@ -65,8 +65,8 @@
     <string name="accept_challenge">Accept</string>
     <string name="reject_challenge">Reject</string>
     <string name="searching_battle">Prepare for trouble, and make it double…</string>
-    <string name="advertise_dialog">Do you want to advertise for us? It will only send a short message at the start of each battle</string>
-    <string name="advertise_message">I\'m playing on the PS Android application!</string>
+    <string name="advertise_dialog">Do you want to tell people that you are playing on Android? We will only send a short message at the start of each battle</string>
+    <string name="advertise_message">I\'m playing on the PS Android application! For more information, check out http://spo.ink/psandroidthread</string>
     <string name="warning_dialog">This application isn\'t endorsed by PS or Smogon. If you have a bug to report, go to : http://spo.ink/psandroidthread</string>
 
     <!-- These are for Battle Field Action Bar -->
