@@ -34,6 +34,16 @@ public class SettingsDialog extends DialogFragment {
             }
         });
 
+        Switch advertiseSwitch = (Switch) view.findViewById(R.id.advertise_switch);
+        advertiseSwitch.setChecked(Onboarding.get(getActivity()).isAdvertising());
+        advertiseSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Onboarding.get(SettingsDialog.this.getActivity())
+                        .setAdvertising(isChecked);
+            }
+        });
+        
         return view;
     }
 }

@@ -400,6 +400,11 @@ public class BattleMessage {
                 break;
 
             case "start":
+                if (Onboarding.get(battleFragment.getActivity()).isAdvertising()) {
+                    // sending advertisement message
+                    String advertisement = battleFragment.getRoomId() + "|" + battleFragment.getActivity().getString(R.string.advertise_message);
+                    MyApplication.getMyApplication().sendClientMessage(advertisement);
+                }
                 battleFragment.getActivity().runOnUiThread(new RunWithNet() {
                     @Override
                     public void runWithNet() {

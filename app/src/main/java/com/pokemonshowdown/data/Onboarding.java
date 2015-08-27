@@ -27,8 +27,9 @@ public class Onboarding {
 
     private static final String PROPERTIES_FILE = "showdown.properties";
 
-    private static final String ANIM_HEADER = "animation";
-    private static final String COOKIES_HEADER = "cookie";
+    public static final String ANIM_HEADER = "animation";
+    public static final String COOKIES_HEADER = "cookie";
+    public static final String ADV_HEADER = "advertising";
 
     private static final String SET_COOKIES_HEADER = "Set-Cookie";
     private static final String AUTH_COOKIE = "sid=";
@@ -185,7 +186,7 @@ public class Onboarding {
     }
 
     public boolean isAnimation() {
-        if(mAppProperties.getProperty(ANIM_HEADER) !=null) {
+        if (mAppProperties.getProperty(ANIM_HEADER) != null) {
             return Boolean.parseBoolean(mAppProperties.getProperty(ANIM_HEADER));
         } else {
             // is by default true
@@ -197,6 +198,23 @@ public class Onboarding {
 
     public void setAnimation(boolean animation) {
         mAppProperties.setProperty(ANIM_HEADER, Boolean.toString(animation));
+        saveProperties();
+    }
+
+    public boolean propertyExists(String propName) {
+        return mAppProperties.getProperty(ANIM_HEADER) != null;
+    }
+
+    public boolean isAdvertising() {
+        if (mAppProperties.getProperty(ADV_HEADER) != null) {
+            return Boolean.parseBoolean(mAppProperties.getProperty(ADV_HEADER));
+        } else {
+            return false;
+        }
+    }
+
+    public void setAdvertising(boolean advert) {
+        mAppProperties.setProperty(ADV_HEADER, Boolean.toString(advert));
         saveProperties();
     }
 
