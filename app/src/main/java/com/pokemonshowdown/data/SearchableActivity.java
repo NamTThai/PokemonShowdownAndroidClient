@@ -70,7 +70,7 @@ public class SearchableActivity extends ListActivity {
                     if (currentTier != null) {
                         Collections.sort(currentTier);
                         mAdapterList.addAll(currentTier);
-                        int tierIndex = Tiering.TIER_ORDER.indexOf(currentTier);
+                        int tierIndex = Tiering.TIER_ORDER.indexOf(tier);
                         for (int i = tierIndex + 1; i < Tiering.TIER_ORDER.size(); i++) {
                             ArrayList<String> nextTier = tiers.get(Tiering.TIER_ORDER.get(i));
                             Collections.sort(nextTier);
