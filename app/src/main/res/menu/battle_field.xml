@@ -20,6 +20,13 @@
         android:title="@string/bar_cancel"/>
 
     <item
+        android:id="@+id/menu_bug_report"
+        android:icon="@drawable/ic_bug_report_black_24dp"
+        android:showAsAction="always"
+        android:title="@string/bug_report"/>
+
+
+    <item
         android:id="@+id/menu_pokedex"
         android:icon="@drawable/ic_pokedex"
         android:showAsAction="always"

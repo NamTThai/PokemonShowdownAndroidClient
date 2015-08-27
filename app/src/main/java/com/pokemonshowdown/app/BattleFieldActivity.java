@@ -1,11 +1,11 @@
 package com.pokemonshowdown.app;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +38,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class BattleFieldActivity extends FragmentActivity {
     public final static String BTAG = BattleFieldActivity.class.getName();
     public final static int REQUEST_CODE_DONATION = 100;
+    public final static int REQUEST_CODE_BUG_REPORT = 200;
+
     public final static String BATTLE_FIELD_FRAGMENT_TAG = "Battle Field Drawer 0";
     public final static String DRAWER_POSITION = "Drawer Position";
     private static final String CHALLENGE_DIALOG_TAG = "CHALLENGE_DIALOG_TAG";
@@ -123,6 +122,37 @@ public class BattleFieldActivity extends FragmentActivity {
                 return true;
             case R.id.menu_settings:
                 new SettingsDialog().show(getSupportFragmentManager(), SettingsDialog.STAG);
+                return true;
+            case R.id.menu_bug_report:
+                if (MyApplication.getMyApplication().getCaughtExceptions().size() > 0) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                            "mailto", "psandroidteam@gmail.com", null));
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bug report");
+                    StringBuilder bodyStringBuilder = new StringBuilder();
+                    int idx = 1;
+                    bodyStringBuilder.append("Version ");
+                    try {
+                        bodyStringBuilder.append(MyApplication.getMyApplication().getPackageManager()
+                                .getPackageInfo(MyApplication.getMyApplication().getApplicationContext().getPackageName(), 0)
+                                .versionCode);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        bodyStringBuilder.append("unknown");
+                    }
+                    bodyStringBuilder.append(System.getProperty("line.separator"));
+                    for (Exception e : MyApplication.getMyApplication().getCaughtExceptions()) {
+                        bodyStringBuilder.append("Bug ").append(idx++).append(System.getProperty("line.separator"));
+                        bodyStringBuilder.append(e.getMessage()).append(System.getProperty("line.separator"));
+                        for (StackTraceElement element : e.getStackTrace()) {
+                            bodyStringBuilder.append(element.toString());
+                            bodyStringBuilder.append(System.getProperty("line.separator"));
+                        }
+                    }
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, bodyStringBuilder.toString());
+
+                    startActivityForResult(Intent.createChooser(emailIntent, "Email your bug report"), REQUEST_CODE_BUG_REPORT);
+                } else {
+                    Toast.makeText(BattleFieldActivity.this, getText(R.string.no_bugs), Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -232,7 +262,7 @@ public class BattleFieldActivity extends FragmentActivity {
         mBroadcastListener = BroadcastListener.get(this);
         mBroadcastListener.register(this);
 
-        if(!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.WARNING_HEADER)) {
+        if (!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.WARNING_HEADER)) {
             mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
                     .setMessage(R.string.warning_dialog)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -245,7 +275,7 @@ public class BattleFieldActivity extends FragmentActivity {
             mDialog.show();
         }
 
-        if(!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.ADV_HEADER)) {
+        if (!Onboarding.get(getApplicationContext()).propertyExists(Onboarding.ADV_HEADER)) {
             mDialog = new AlertDialog.Builder(BattleFieldActivity.this)
                     .setMessage(R.string.advertise_dialog)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -550,5 +580,13 @@ public class BattleFieldActivity extends FragmentActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(mLeftDrawerTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_BUG_REPORT) {
+            // seems like gmail doenst tell us if the email hsa been sent or not
+            MyApplication.getMyApplication().clearCaughtExceptions();
+        }
     }
 }
