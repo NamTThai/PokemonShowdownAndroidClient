@@ -77,6 +77,9 @@
         <item>Credits</item>
     </string-array>
 
+    <string name="bug_captured">Bug captured!</string>
+    <string name="no_bugs">No bugs to report</string>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="bar_room">Room</string>
@@ -85,6 +88,7 @@
     <string name="refresh">Refresh</string>
     <string name="refreshing_patient">Refreshing, please be patient ^^</string>
     <string name="bar_cancel">Cancel</string>
+    <string name="bug_report">Report bug</string>
     <string name="team_builder">Team Builder</string>
     <string name="bar_pokedex">Pokedex</string>
     <string name="bar_dmg_calc">Damage Calculator</string>

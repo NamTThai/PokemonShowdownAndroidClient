@@ -5,7 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.pokemonshowdown.app.R;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.Onboarding;
 
@@ -18,8 +20,10 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Initialize all the data singletons
@@ -35,6 +39,7 @@ public class MyApplication extends Application {
     private int mUserCount;
     private int mBattleCount;
     private HashMap<String, JSONArray> mRoomCategoryList;
+    private List<Exception> mCaughtExceptions = new ArrayList<>();
 
     public static MyApplication getMyApplication() {
         return sMyApplication;
@@ -417,5 +422,18 @@ public class MyApplication extends Application {
             mRoomCategoryList = new HashMap<>();
         }
         return mRoomCategoryList;
+    }
+
+    public List<Exception> getCaughtExceptions() {
+        return mCaughtExceptions;
+    }
+
+    public void addCaughtException(Exception e) {
+        mCaughtExceptions.add(e);
+        Toast.makeText(this, getText(R.string.bug_captured), Toast.LENGTH_SHORT).show();
+    }
+
+    public void clearCaughtExceptions() {
+        mCaughtExceptions.clear();
     }
 }
