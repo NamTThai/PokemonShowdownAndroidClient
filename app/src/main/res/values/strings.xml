@@ -223,6 +223,10 @@
         <item>No teams!</item>
     </string-array>
     <string name="exportQR_inprogress">Exporting to pastebin for QR…</string>
+    <string name="happiness_min">Happiness changed to 0.</string>
+    <string name="happiness_max">Happiness changed to 255.</string>
+    <string name="speediv_modified">Speed IV modified.</string>
+    <string name="ivs_modified">IVs changed to match Hidden Power.</string>
 
     <string name="mega_evolution">Mega-evolve</string>
 

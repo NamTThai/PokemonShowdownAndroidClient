@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pokemonshowdown.data.ItemDex;
 import com.pokemonshowdown.data.MoveDex;
@@ -110,6 +111,182 @@ public class TeamBuildingFragment extends Fragment {
                     default:
                         break;
                 }
+
+                // hiddenpower X : change IV'
+                // furstration : set 0 happiness
+                // return get max happinnes
+
+                if ("frustration".equals(move)) {
+                    pkmn.setHappiness(0);
+                    Toast.makeText(getActivity(), getText(R.string.happiness_min), Toast.LENGTH_SHORT).show();
+                } else if ("return".equals(move)) {
+                    pkmn.setHappiness(255);
+                    Toast.makeText(getActivity(), getText(R.string.happiness_max), Toast.LENGTH_SHORT).show();
+                } else if ("gyroball".equals(move) || "trickroom".equals(move)) {
+                    boolean hasHP = false;
+                    for (int i = 1; i <= 4; i++) {
+                        if (pkmn.getMove(i) != null && (pkmn.getMove(i).contains("hiddenpower"))) {
+                            hasHP = true;
+                            break;
+                        }
+                    }
+
+                    if (hasHP) {
+                        pkmn.setSpdIV(pkmn.getSpdIV() % 4);
+                    } else {
+                        pkmn.setSpdIV(0);
+                    }
+
+                    Toast.makeText(getActivity(), getText(R.string.speediv_modified), Toast.LENGTH_SHORT).show();
+                } else if (move != null && move.contains("hiddenpower")) {
+                    if (move.length() > "hiddenpower".length()) {
+                        boolean needsLowSpeed = false;
+                        for (int i = 1; i <= 4; i++) {
+                            if (pkmn.getMove(i) != null && (pkmn.getMove(i).equals("gyroball") || pkmn.getMove(i).equals("trickroom"))) {
+                                needsLowSpeed = true;
+                                break;
+                            }
+                        }
+                        String hpType = move.substring("hiddenpower".length());
+                        switch (hpType) {
+                            case "bug":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "dark":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "dragon":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "electric":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "fighting":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(30);
+                                break;
+
+                            case "fire":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(30);
+                                break;
+
+                            case "flying":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(30);
+                                break;
+
+                            case "ghost":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "grass":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "ground":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "ice":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "poison":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "psychic":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(30);
+                                break;
+
+                            case "rock":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(30);
+                                break;
+
+                            case "steel":
+                                pkmn.setAtkIV(31);
+                                pkmn.setDefIV(31);
+                                pkmn.setSpAtkIV(31);
+                                pkmn.setSpDefIV(30);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            case "water":
+                                pkmn.setAtkIV(30);
+                                pkmn.setDefIV(30);
+                                pkmn.setSpAtkIV(30);
+                                pkmn.setSpDefIV(31);
+                                pkmn.setSpdIV(31);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        if (needsLowSpeed) {
+                            pkmn.setSpdIV(pkmn.getSpdIV() % 4);
+                        }
+                        Toast.makeText(getActivity(), getText(R.string.ivs_modified), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                 mPokemonListAdapter.notifyDataSetChanged();
             }
         }
