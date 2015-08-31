@@ -3679,7 +3679,12 @@ public class BattleMessage {
             return 0;
         } else {
             int remaining = Integer.parseInt(hpFraction.substring(0, fraction));
-            int total = Integer.parseInt(hpFraction.substring(fraction + 1));
+            String totalString = hpFraction.substring(fraction + 1);
+            if(totalString.indexOf('y') != -1 || totalString.indexOf('g') != -1) {
+                // remopving last character, wtf zarel
+                totalString = totalString.substring(0, totalString.length() - 1);
+            }
+            int total = Integer.parseInt(totalString);
             int toReturn = (int) (((float) remaining / (float) total) * 100);
             if (toReturn == 0 && remaining != 0) {
                 return 1;
