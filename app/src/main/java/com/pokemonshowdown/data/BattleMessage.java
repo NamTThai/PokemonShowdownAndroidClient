@@ -2074,7 +2074,7 @@ public class BattleMessage {
                             break;
 
                         case "intimidate":
-                            toAppendBuilder.append(attackerOutputName).append(" intimidates ").append(battleFragment.getPrintable(ofSource)).append("!");
+                            toAppendBuilder.append(attackerOutputName).append("'s Intimidate!");
                             break;
 
                         case "unnerve":
