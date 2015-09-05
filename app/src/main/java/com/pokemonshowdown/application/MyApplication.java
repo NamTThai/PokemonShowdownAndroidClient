@@ -430,7 +430,9 @@ public class MyApplication extends Application {
 
     public void addCaughtException(Exception e) {
         mCaughtExceptions.add(e);
-        Toast.makeText(this, getText(R.string.bug_captured), Toast.LENGTH_SHORT).show();
+        if (Onboarding.get(getApplicationContext()).isBugReporting()) {
+            Toast.makeText(this, getText(R.string.bug_captured), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void clearCaughtExceptions() {
