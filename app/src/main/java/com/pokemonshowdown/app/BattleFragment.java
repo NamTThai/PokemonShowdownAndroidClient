@@ -1631,6 +1631,21 @@ public class BattleFragment extends Fragment {
                             }
                         });
                     }
+                    for (int i = teamJson.length(); i < 6; i++) {
+                        // we set the rest to empty balls (for vgc)
+                        final int finalI = i;
+                        getActivity().runOnUiThread(new RunWithNet() {
+                            @Override
+                            public void runWithNet() {
+                                if (getView() == null) {
+                                    return;
+                                }
+                                ImageView icon = (ImageView) getView().findViewById(getIconId("p1", finalI));
+                                icon.setImageResource(R.drawable.pokeball_none);
+                            }
+                        });
+
+                    }
                 }
 
                 setRqid(requestJson.optInt("rqid", 0));
