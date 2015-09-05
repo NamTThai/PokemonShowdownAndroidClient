@@ -31,6 +31,7 @@ public class Onboarding {
     public static final String COOKIES_HEADER = "cookie";
     public static final String ADV_HEADER = "advertising";
     public static final String WARNING_HEADER = "warning";
+    private static final String BUG_HEADER = "bugreport";
 
     private static final String SET_COOKIES_HEADER = "Set-Cookie";
     private static final String AUTH_COOKIE = "sid=";
@@ -204,6 +205,19 @@ public class Onboarding {
 
     public boolean propertyExists(String propName) {
         return mAppProperties.getProperty(propName) != null;
+    }
+
+    public boolean isBugReporting() {
+        if (mAppProperties.getProperty(BUG_HEADER) != null) {
+            return Boolean.parseBoolean(mAppProperties.getProperty(BUG_HEADER));
+        } else {
+            return true;
+        }
+    }
+
+    public void setBugReporting(boolean bugreport) {
+        mAppProperties.setProperty(BUG_HEADER, Boolean.toString(bugreport));
+        saveProperties();
     }
 
     public boolean isAdvertising() {

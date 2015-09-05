@@ -43,7 +43,18 @@ public class SettingsDialog extends DialogFragment {
                         .setAdvertising(isChecked);
             }
         });
-        
+
+        Switch bugreportSwitch = (Switch) view.findViewById(R.id.bugreport_switch);
+        bugreportSwitch.setChecked(Onboarding.get(getActivity()).isBugReporting());
+        bugreportSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Onboarding.get(SettingsDialog.this.getActivity())
+                        .setBugReporting(isChecked);
+            }
+        });
+
+
         return view;
     }
 }
