@@ -1713,14 +1713,19 @@ public class BattleFragment extends Fragment {
         PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
         CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
 
-        if (currentPokemonInfo.canMegaEvo()) {
+      /*  if (currentPokemonInfo.canMegaEvo()) {
             checkBox.setVisibility(View.VISIBLE);
         } else {
             checkBox.setVisibility(View.GONE);
-        }
+        }*/
 
         try {
             JSONObject currentActive = active.getJSONObject(mCurrentActivePokemon);
+            if (currentActive.optBoolean("canMegaEvo", false)) {
+                checkBox.setVisibility(View.VISIBLE);
+            } else {
+                checkBox.setVisibility(View.GONE);
+            }
             JSONArray moves = currentActive.getJSONArray("moves");
             boolean trapped = currentActive.optBoolean("trapped", false) ||
                     currentActive.optBoolean("maybeTrapped");
