@@ -1732,7 +1732,11 @@ public class BattleFragment extends Fragment {
             if (!trapped || moves.length() != 1) {
                 for (int i = 0; i < moves.length(); i++) {
                     JSONObject moveJson = moves.getJSONObject(i);
-                    moveNames[i].setText(moveJson.getString("move"));
+                    if(moveJson.getString("move").startsWith("Return")) {
+                        moveNames[i].setText("Return");
+                    } else {
+                        moveNames[i].setText(moveJson.getString("move"));
+                    }
                     if (moveJson.optString("maxpp", "0").equals("0")) {
                         //sttruggle has noppinfo
                         movePps[i].setText("");
@@ -1998,6 +2002,9 @@ public class BattleFragment extends Fragment {
                         .getJSONObject(moveId);
 
                 String moveName = moveJson.getString("move");
+                if(moveName.startsWith("Return")) {
+                    moveName = "Return";
+                }
                 String command;
 
                 CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
