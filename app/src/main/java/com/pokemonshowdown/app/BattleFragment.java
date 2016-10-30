@@ -88,6 +88,8 @@ public class BattleFragment extends Fragment {
     private boolean mWaiting;
     private int mCurrentActivePokemon = 0;
     private int mTotalActivePokemon = 0;
+    private int mTotalAlivePokemon = 0;
+
     private StringBuilder mChooseCommand = new StringBuilder();
     private JSONObject mRequestJson;
     private JSONObject mUndoMessage;
@@ -1534,13 +1536,20 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    //function that stars a forceswitch
     public void chooseForceSwitch(JSONArray forceSwitch) throws JSONException {
-        if (mCurrentActivePokemon == mTotalActivePokemon) {
+        // 2nd condition :  in doubles / triples, when all the pokemon get knocked out, and we dont have as many switches as needed
+        if (mCurrentActivePokemon == mTotalActivePokemon || mCurrentActivePokemon >= mTotalAlivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
+            while(mCurrentActivePokemon < mTotalActivePokemon) {
+                addCommand("pass");
+                mCurrentActivePokemon++;
+            }
             sendCommands(mChooseCommand);
             setForceSwitch(false);
             return;
         }
+
 
         if (forceSwitch.getBoolean(mCurrentActivePokemon)) {
             triggerSwitchOptions(true);
@@ -1551,6 +1560,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
+    // call back when the user select a switch
     public void chooseSwitch(int id) throws JSONException {
         String chosen = mChooseCommand.toString();
         if (chosen.contains("switch " + (id + 1))) {
@@ -1579,9 +1589,13 @@ public class BattleFragment extends Fragment {
         mChooseCommand = new StringBuilder();
         mCurrentActivePokemon = 0;
         mTotalActivePokemon = 0;
+        mTotalAlivePokemon = 0;
         for (PokemonInfo pokemonInfo : getPlayer1Team()) {
             if (pokemonInfo.isActive()) {
                 mTotalActivePokemon++;
+            }
+            if (pokemonInfo.isAlive()) {
+                mTotalAlivePokemon++;
             }
         }
     }
@@ -1676,8 +1690,18 @@ public class BattleFragment extends Fragment {
             return;
         }
 
-        triggerSwitchOptions(true);
-        triggerAttackOptions(active);
+        // doubles/ triples : if the mon is dead it is still in the active object.... why?
+        while(!getPlayer1Team().get(mCurrentActivePokemon).isAlive() && mCurrentActivePokemon < mTotalActivePokemon ) {
+            mCurrentActivePokemon++;
+        }
+
+        if(mCurrentActivePokemon < mTotalActivePokemon) {
+            triggerSwitchOptions(true);
+            triggerAttackOptions(active);
+        } else {
+            mChooseCommand.insert(0, "|/choose ");
+            sendCommands(mChooseCommand);
+        }
     }
 
     private void triggerAttackOptions(final JSONArray active) {
@@ -1719,6 +1743,7 @@ public class BattleFragment extends Fragment {
             checkBox.setVisibility(View.GONE);
         }*/
 
+
         try {
             JSONObject currentActive = active.getJSONObject(mCurrentActivePokemon);
             if (currentActive.optBoolean("canMegaEvo", false)) {
@@ -1732,7 +1757,7 @@ public class BattleFragment extends Fragment {
             if (!trapped || moves.length() != 1) {
                 for (int i = 0; i < moves.length(); i++) {
                     JSONObject moveJson = moves.getJSONObject(i);
-                    if(moveJson.getString("move").startsWith("Return")) {
+                    if (moveJson.getString("move").startsWith("Return")) {
                         moveNames[i].setText("Return");
                     } else {
                         moveNames[i].setText(moveJson.getString("move"));
@@ -2002,7 +2027,7 @@ public class BattleFragment extends Fragment {
                         .getJSONObject(moveId);
 
                 String moveName = moveJson.getString("move");
-                if(moveName.startsWith("Return")) {
+                if (moveName.startsWith("Return")) {
                     moveName = "Return";
                 }
                 String command;
@@ -2040,7 +2065,7 @@ public class BattleFragment extends Fragment {
             PokemonInfo pkm = getPlayer1Team().get(i);
             ImageView icon = (ImageView) getView().findViewById(getIconId("p1", i));
             if (on) {
-                if (!pkm.isActive() && pkm.getHp() > 0) {
+                if (!pkm.isActive() && pkm.isAlive()) {
                     icon.setBackgroundResource(R.drawable.editable_frame);
                     icon.setOnClickListener(new PokemonSwitchListener(true, i));
                 }
