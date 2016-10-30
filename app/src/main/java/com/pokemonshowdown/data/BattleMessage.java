@@ -790,8 +790,8 @@ public class BattleMessage {
                 break;
 
             default:
-                toast = battleFragment.makeToast(message, BattleFragment.ANIMATION_LONG);
-                battleFragment.startAnimation(toast, message);
+                /*toast = battleFragment.makeToast(message, BattleFragment.ANIMATION_LONG);
+                battleFragment.startAnimation(toast, message);*/
                 logMessage = new SpannableString(message);
                 break;
         }
