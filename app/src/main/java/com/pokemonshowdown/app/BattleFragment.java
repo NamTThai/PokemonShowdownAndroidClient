@@ -1572,6 +1572,7 @@ public class BattleFragment extends Fragment {
         if (mCurrentActivePokemon == mTotalActivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
             sendCommands(mChooseCommand);
+            setForceSwitch(false);
         } else {
             if (isForceSwitch()) {
                 try {
@@ -1677,6 +1678,7 @@ public class BattleFragment extends Fragment {
                             JSONArray forceSwitchJsonArray = requestJson.getJSONArray("forceSwitch");
                             chooseForceSwitch(forceSwitchJsonArray);
                         } else {
+                            setForceSwitch(false);
                             startAction(requestJson.getJSONArray("active"));
                         }
                     }
