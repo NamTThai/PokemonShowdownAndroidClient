@@ -211,6 +211,7 @@ public class BattleMessage {
                 logMessage = new SpannableString(toAppendSpannable);
                 break;
 
+            case "choice":
             case "":
                 logMessage = new SpannableString(" ");
                 break;
@@ -3645,6 +3646,7 @@ public class BattleMessage {
         pkm.setNickname(nickname);
         String hp = info.getString("condition");
         pkm.setHp(processHpFraction(hp));
+        pkm.setStatus(processStatusFraction(hp));
         pkm.setActive(info.getBoolean("active"));
         JSONObject statsArray = info.getJSONObject("stats");
         int[] stats = new int[5];

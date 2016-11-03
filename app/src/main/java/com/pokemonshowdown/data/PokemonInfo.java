@@ -211,4 +211,8 @@ public class PokemonInfo implements Serializable {
     public boolean canMegaEvo() {
         return mCanMegaEvo;
     }
+
+    public boolean isAlive() {
+        return mStatus == null || !mStatus.contains("fnt");
+    }
 }
