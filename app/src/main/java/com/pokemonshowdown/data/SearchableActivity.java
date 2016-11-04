@@ -73,8 +73,10 @@ public class SearchableActivity extends ListActivity {
                         int tierIndex = Tiering.TIER_ORDER.indexOf(tier);
                         for (int i = tierIndex + 1; i < Tiering.TIER_ORDER.size(); i++) {
                             ArrayList<String> nextTier = tiers.get(Tiering.TIER_ORDER.get(i));
-                            Collections.sort(nextTier);
-                            mAdapterList.addAll(nextTier);
+                            if(nextTier != null) {
+                                Collections.sort(nextTier);
+                                mAdapterList.addAll(nextTier);
+                            }
                         }
                     } else {
                         mAdapterList.addAll(pokedex.keySet());
@@ -253,30 +255,34 @@ public class SearchableActivity extends ListActivity {
             textView.setText(Pokemon.getPokemonName(getApplicationContext(), pokemonName));
             textView.setCompoundDrawablesWithIntrinsicBounds(Pokemon.getPokemonIcon(getApplicationContext(), pokemonName), 0, 0, 0);
             Integer[] typesIcon = Pokemon.getPokemonTypeIcon(getApplicationContext(), pokemonName);
-            ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
-            type1.setImageResource(typesIcon[0]);
-            ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
-            if (typesIcon.length == 2) {
-                type2.setImageResource(typesIcon[1]);
-            } else {
-                type2.setImageResource(0);
+            if(typesIcon != null) {
+                ImageView type1 = (ImageView) convertView.findViewById(R.id.type_1);
+                type1.setImageResource(typesIcon[0]);
+                ImageView type2 = (ImageView) convertView.findViewById(R.id.type_2);
+                if (typesIcon.length == 2) {
+                    type2.setImageResource(typesIcon[1]);
+                } else {
+                    type2.setImageResource(0);
+                }
             }
             Integer[] baseStats = Pokemon.getPokemonBaseStats(getApplicationContext(), pokemonName);
-            TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
-            hp.setText(baseStats[0].toString());
-            TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
-            atk.setText(baseStats[1].toString());
-            TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
-            def.setText(baseStats[2].toString());
-            TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
-            spa.setText(baseStats[3].toString());
-            TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
-            spd.setText(baseStats[4].toString());
-            TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
-            spe.setText(baseStats[5].toString());
-            int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
-            TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
-            bst.setText(Integer.toString(BST));
+            if(baseStats != null) {
+                TextView hp = (TextView) convertView.findViewById(R.id.pokemon_short_hp);
+                hp.setText(baseStats[0].toString());
+                TextView atk = (TextView) convertView.findViewById(R.id.pokemon_short_Atk);
+                atk.setText(baseStats[1].toString());
+                TextView def = (TextView) convertView.findViewById(R.id.pokemon_short_Def);
+                def.setText(baseStats[2].toString());
+                TextView spa = (TextView) convertView.findViewById(R.id.pokemon_short_SpAtk);
+                spa.setText(baseStats[3].toString());
+                TextView spd = (TextView) convertView.findViewById(R.id.pokemon_short_SpDef);
+                spd.setText(baseStats[4].toString());
+                TextView spe = (TextView) convertView.findViewById(R.id.pokemon_short_Spd);
+                spe.setText(baseStats[5].toString());
+                int BST = baseStats[0] + baseStats[1] + baseStats[2] + baseStats[3] + baseStats[4] + baseStats[5];
+                TextView bst = (TextView) convertView.findViewById(R.id.pokemon_short_BST);
+                bst.setText(Integer.toString(BST));
+            }
             return convertView;
         }
     }
