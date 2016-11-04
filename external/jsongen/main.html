@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="formats-data.js"></script>
+
+    <script>
+	$(document).ready(function() {
+        $("button").click(function()
+           {
+             $("#text").text(JSON.stringify(json));
+			 $("button").hide();
+           }
+        );
+	});
+    </script>
+
+</head>
+
+<body>
+	  
+	  <p id="text">Loader</p>
+      <button>Get JSON</button>
+	  
+</body>
+</html>
