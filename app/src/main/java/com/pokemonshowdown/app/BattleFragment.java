@@ -1693,7 +1693,7 @@ public class BattleFragment extends Fragment {
         }
 
         // doubles/ triples : if the mon is dead it is still in the active object.... why?
-        while(!getPlayer1Team().get(mCurrentActivePokemon).isAlive() && mCurrentActivePokemon < mTotalActivePokemon ) {
+        while(mCurrentActivePokemon < mTotalActivePokemon && !getPlayer1Team().get(mCurrentActivePokemon).isAlive()) {
             mCurrentActivePokemon++;
         }
 
