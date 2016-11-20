@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1541,7 +1542,7 @@ public class BattleFragment extends Fragment {
         // 2nd condition :  in doubles / triples, when all the pokemon get knocked out, and we dont have as many switches as needed
         if (mCurrentActivePokemon == mTotalActivePokemon || mCurrentActivePokemon >= mTotalAlivePokemon) {
             mChooseCommand.insert(0, "|/choose ");
-            while(mCurrentActivePokemon < mTotalActivePokemon) {
+            while (mCurrentActivePokemon < mTotalActivePokemon) {
                 addCommand("pass");
                 mCurrentActivePokemon++;
             }
@@ -1693,11 +1694,11 @@ public class BattleFragment extends Fragment {
         }
 
         // doubles/ triples : if the mon is dead it is still in the active object.... why?
-        while(mCurrentActivePokemon < mTotalActivePokemon && !getPlayer1Team().get(mCurrentActivePokemon).isAlive()) {
+        while (mCurrentActivePokemon < mTotalActivePokemon && !getPlayer1Team().get(mCurrentActivePokemon).isAlive()) {
             mCurrentActivePokemon++;
         }
 
-        if(mCurrentActivePokemon < mTotalActivePokemon) {
+        if (mCurrentActivePokemon < mTotalActivePokemon) {
             triggerSwitchOptions(true);
             triggerAttackOptions(active);
         } else {
@@ -1706,15 +1707,8 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private void triggerAttackOptions(final JSONArray active) {
-        if (getView() == null) {
-            return;
-        }
+    private void setMoves(JSONArray active, boolean isZMove) throws JSONException {
 
-        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
-        frameLayout.removeAllViews();
-
-        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
         RelativeLayout[] moveViews = new RelativeLayout[4];
         moveViews[0] = (RelativeLayout) getView().findViewById(R.id.active_move1);
         moveViews[1] = (RelativeLayout) getView().findViewById(R.id.active_move2);
@@ -1736,48 +1730,94 @@ public class BattleFragment extends Fragment {
         moveIcons[2] = (ImageView) getView().findViewById(R.id.active_move3_icon);
         moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
-        PokemonInfo currentPokemonInfo = getCurrentActivePokemon();
-        CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
-
-      /*  if (currentPokemonInfo.canMegaEvo()) {
-            checkBox.setVisibility(View.VISIBLE);
+        final JSONArray moves;
+        if(isZMove) {
+            moves  = active.getJSONObject(mCurrentActivePokemon).getJSONArray("canZMove");
+            for (int i = 0; i < moves.length(); i++) {
+                String zmoveName = moves.getString(i);
+                moveNames[i].setText(zmoveName);
+                int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), MyApplication.toId(zmoveName));
+                moveIcons[i].setImageResource(typeIcon);
+                moveViews[i].setOnClickListener(parseMoveTarget(active,isZMove, i ));
+                movePps[i].setText("");
+            }
         } else {
-            checkBox.setVisibility(View.GONE);
-        }*/
+            moves  = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
+            for (int i = 0; i < moves.length(); i++) {
+                JSONObject moveJson = moves.getJSONObject(i);
+                if (moveJson.getString("move").startsWith("Return")) {
+                    moveNames[i].setText("Return");
+                } else {
+                    moveNames[i].setText(moveJson.getString("move"));
+                }
+                if (moveJson.optString("maxpp", "0").equals("0")) {
+                    //sttruggle has noppinfo
+                    movePps[i].setText("");
+                } else {
+                    movePps[i].setText(moveJson.optString("pp", "0"));
+                }
+                int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
+                moveIcons[i].setImageResource(typeIcon);
+                moveViews[i].setOnClickListener(parseMoveTarget(active,isZMove, i ));
+                if (moveJson.optBoolean("disabled", false)) {
+                    moveViews[i].setOnClickListener(null);
+                    moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
+                }
+            }
+        }
 
+
+    }
+
+    private void triggerAttackOptions(final JSONArray active) {
+        if (getView() == null) {
+            return;
+        }
+
+        FrameLayout frameLayout = (FrameLayout) getView().findViewById(R.id.action_interface);
+        frameLayout.removeAllViews();
+
+        getActivity().getLayoutInflater().inflate(R.layout.fragment_battle_action_moves, frameLayout);
+
+        CheckBox megaevocheckBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
+        CheckBox zmovecheckBox = (CheckBox) getView().findViewById(R.id.zmove_checkbox);
+
+        megaevocheckBox.setChecked(false);
+        zmovecheckBox.setChecked(false);
 
         try {
-            JSONObject currentActive = active.getJSONObject(mCurrentActivePokemon);
+            final JSONObject currentActive = active.getJSONObject(mCurrentActivePokemon);
+
             if (currentActive.optBoolean("canMegaEvo", false)) {
-                checkBox.setVisibility(View.VISIBLE);
+                megaevocheckBox.setVisibility(View.VISIBLE);
             } else {
-                checkBox.setVisibility(View.GONE);
+                megaevocheckBox.setVisibility(View.GONE);
             }
-            JSONArray moves = currentActive.getJSONArray("moves");
+
+            if (currentActive.optJSONArray("canZMove") != null) {
+                zmovecheckBox.setVisibility(View.VISIBLE);
+
+                zmovecheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        //checked, set moves to zmove
+                        try {
+                            setMoves(active, b);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+            } else {
+                zmovecheckBox.setVisibility(View.GONE);
+            }
+
+            JSONArray moves  = currentActive.getJSONArray("moves");
             boolean trapped = currentActive.optBoolean("trapped", false) ||
                     currentActive.optBoolean("maybeTrapped");
             if (!trapped || moves.length() != 1) {
-                for (int i = 0; i < moves.length(); i++) {
-                    JSONObject moveJson = moves.getJSONObject(i);
-                    if (moveJson.getString("move").startsWith("Return")) {
-                        moveNames[i].setText("Return");
-                    } else {
-                        moveNames[i].setText(moveJson.getString("move"));
-                    }
-                    if (moveJson.optString("maxpp", "0").equals("0")) {
-                        //sttruggle has noppinfo
-                        movePps[i].setText("");
-                    } else {
-                        movePps[i].setText(moveJson.optString("pp", "0"));
-                    }
-                    int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
-                    moveIcons[i].setImageResource(typeIcon);
-                    moveViews[i].setOnClickListener(parseMoveTarget(active, i));
-                    if (moveJson.optBoolean("disabled", false)) {
-                        moveViews[i].setOnClickListener(null);
-                        moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
-                    }
-                }
+                setMoves(active, false);
 
                 if (trapped) {
                     triggerSwitchOptions(false);
@@ -1795,7 +1835,7 @@ public class BattleFragment extends Fragment {
         }
     }
 
-    private View.OnClickListener parseMoveTarget(final JSONArray active, final int moveId) throws JSONException {
+    private View.OnClickListener parseMoveTarget(final JSONArray active, final boolean isZMove, final int moveId) throws JSONException {
         if (getView() == null) {
             return null;
         }
@@ -1806,7 +1846,7 @@ public class BattleFragment extends Fragment {
                 new RunWithNet() {
                     @Override
                     public void runWithNet() throws Exception {
-                        AlertDialog targetDialog = parseMoveTargetDialog(active, moveId);
+                        AlertDialog targetDialog = parseMoveTargetDialog(active, isZMove, moveId);
                         if (targetDialog == null) {
                             parseMoveCommandAndSend(active, moveId, 0);
                         } else {
@@ -1818,15 +1858,17 @@ public class BattleFragment extends Fragment {
         };
     }
 
-    private AlertDialog parseMoveTargetDialog(final JSONArray active, final int moveId) throws JSONException {
+    private AlertDialog parseMoveTargetDialog(final JSONArray active, final boolean isZMove, final int moveId) throws JSONException  {
         final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
                 .getJSONArray("moves")
                 .getJSONObject(moveId);
 
         // null happens with struggle
         String target = moveJson.optString("target", null);
-        if (target == null) {
+        if (target == null && !isZMove) {
             return null;
+        } else if (target == null && isZMove) {
+            target = "normal";
         }
         int maxAlly = 0;
         int maxFoe = 0;
@@ -2024,21 +2066,16 @@ public class BattleFragment extends Fragment {
         new RunWithNet() {
             @Override
             public void runWithNet() throws Exception {
-                JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
-                        .getJSONArray("moves")
-                        .getJSONObject(moveId);
-
-                String moveName = moveJson.getString("move");
-                if (moveName.startsWith("Return")) {
-                    moveName = "Return";
-                }
                 String command;
+                CheckBox zMovecheckBox = (CheckBox) getView().findViewById(R.id.zmove_checkbox);
 
                 CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
                 if (checkBox.isChecked()) {
-                    command = "move " + moveName + " mega";
+                    command = "move " + (moveId+1) + " mega";
+                } else if (zMovecheckBox.isChecked()){
+                    command = "move " + (moveId+1) + " zmove";
                 } else {
-                    command = "move " + moveName;
+                    command = "move " + (moveId+1);
                 }
 
                 if (position != 0) {

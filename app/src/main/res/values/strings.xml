@@ -244,5 +244,6 @@
     <string name="advertise">Advertise</string>
     <string name="animation">Animation</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="use_z_move">Use Z-Move</string>
 
 </resources>

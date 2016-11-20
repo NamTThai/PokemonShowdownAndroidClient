@@ -167,4 +167,13 @@
         android:text="@string/mega_evolution"
         android:visibility="gone"/>
 
+    <CheckBox
+        android:id="@+id/zmove_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/editable_frame_light_orange"
+        android:text="@string/use_z_move"
+        android:visibility="gone"/>
+
 </LinearLayout>
