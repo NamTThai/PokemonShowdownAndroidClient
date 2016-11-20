@@ -33,152 +33,214 @@ def cut_pokedex(image_path, json_path, outdir):
 
     for item in pokedex_json:
         position = pokedex_json[item]["num"]
-        pokemon_name = pokedex_json[item]["species"].lower().replace("-","_").replace(" ","").replace(".","").replace("'","")
+        pokemon_name = item.lower().replace("-","_").replace(" ","").replace(".","").replace("'","")
         if position > 0:
             cut_sprite(img, outdir + "/smallicons_" + pokemon_name + ".png", 40, 30, position)
     
     #unknown ?
     cut_sprite(img, outdir + "/smallicons_0.png", 40, 30, 0)
 
-    #forms
-    cut_sprite(img, outdir + "/smallicons_"+"unfezantf.png", 40, 30, 787)
-    cut_sprite(img, outdir + "/smallicons_"+"frillishf.png", 40, 30, 796)
-    cut_sprite(img, outdir + "/smallicons_"+"jellicentf.png", 40, 30, 797)
-    cut_sprite(img, outdir + "/smallicons_"+"meowsticf.png", 40, 30, 847)
-    #CAP
-    cut_sprite(img, outdir + "/smallicons_"+"syclant.png", 40, 30, 996)
-    cut_sprite(img, outdir + "/smallicons_"+"revenankh.png", 40, 30, 996 + 1)
-    cut_sprite(img, outdir + "/smallicons_"+"pyroak.png", 40, 30, 996 + 2)
-    cut_sprite(img, outdir + "/smallicons_"+"fidgit.png", 40, 30, 996 + 3)
-    cut_sprite(img, outdir + "/smallicons_"+"stratagem.png", 40, 30, 996 + 4)
-    cut_sprite(img, outdir + "/smallicons_"+"arghonaut.png", 40, 30, 996 + 5)
-    cut_sprite(img, outdir + "/smallicons_"+"kitsunoh.png", 40, 30, 996 + 6)
-    cut_sprite(img, outdir + "/smallicons_"+"cyclohm.png", 40, 30, 996 + 7)
-    cut_sprite(img, outdir + "/smallicons_"+"colossoil.png", 40, 30, 996 + 8)
-    cut_sprite(img, outdir + "/smallicons_"+"krilowatt.png", 40, 30, 996 + 9)
-    cut_sprite(img, outdir + "/smallicons_"+"voodoom.png", 40, 30, 996 + 10)
-    cut_sprite(img, outdir + "/smallicons_"+"tomohawk.png", 40, 30, 996 + 11)
-    cut_sprite(img, outdir + "/smallicons_"+"necturna.png", 40, 30, 996 + 12)
-    cut_sprite(img, outdir + "/smallicons_"+"mollux.png", 40, 30, 996 + 13)
-    cut_sprite(img, outdir + "/smallicons_"+"aurumoth.png", 40, 30, 996 + 14)
-    cut_sprite(img, outdir + "/smallicons_"+"malaconda.png", 40, 30, 996 + 15)
-    cut_sprite(img, outdir + "/smallicons_"+"cawmodore.png", 40, 30, 996 + 16)
-    cut_sprite(img, outdir + "/smallicons_"+"volkraken.png", 40, 30, 996 + 17)
-    #forms 2
+    #taken from battledata.js
+    alternameforms = {
+			"egg": 804 + 1,
+            "pikachubelle": 804 + 2,
+            "pikachulibre": 804 + 3,
+            "pikachuphd": 804 + 4,
+            "pikachupopstar": 804 + 5,
+            "pikachurockstar": 804 + 6,
+            "pikachucosplay": 804 + 7,
+            "castformrainy": 804 + 35,
+            "castformsnowy": 804 + 36,
+            "castformsunny": 804 + 37,
+            "deoxysattack": 804 + 38,
+            "deoxysdefense": 804 + 39,
+            "deoxysspeed": 804 + 40,
+            "burmysandy": 804 + 41,
+            "burmytrash": 804 + 42,
+            "wormadamsandy": 804 + 43,
+            "wormadamtrash": 804 + 44,
+            "cherrimsunshine": 804 + 45,
+            "shelloseast": 804 + 46,
+            "gastrodoneast": 804 + 47,
+            "rotomfan": 804 + 48,
+            "rotomfrost": 804 + 49,
+            "rotomheat": 804 + 50,
+            "rotommow": 804 + 51,
+            "rotomwash": 804 + 52,
+            "giratinaorigin": 804 + 53,
+            "shayminsky": 804 + 54,
+            "unfezantf": 804 + 55,
+            "basculinbluestriped": 804 + 56,
+            "darmanitanzen": 804 + 57,
+            "deerlingautumn": 804 + 58,
+            "deerlingsummer": 804 + 59,
+            "deerlingwinter": 804 + 60,
+            "sawsbuckautumn": 804 + 61,
+            "sawsbucksummer": 804 + 62,
+            "sawsbuckwinter": 804 + 63,
+            "frillishf": 804 + 64,
+            "jellicentf": 804 + 65,
+            "tornadustherian": 804 + 66,
+            "thundurustherian": 804 + 67,
+            "landorustherian": 804 + 68,
+            "kyuremblack": 804 + 69,
+            "kyuremwhite": 804 + 70,
+            "keldeoresolute": 804 + 71,
+            "meloettapirouette": 804 + 72,
+            "vivillonarchipelago": 804 + 73,
+            "vivilloncontinental": 804 + 74,
+            "vivillonelegant": 804 + 75,
+            "vivillonfancy": 804 + 76,
+            "vivillongarden": 804 + 77,
+            "vivillonhighplains": 804 + 78,
+            "vivillonicysnow": 804 + 79,
+            "vivillonjungle": 804 + 80,
+            "vivillonmarine": 804 + 81,
+            "vivillonmodern": 804 + 82,
+            "vivillonmonsoon": 804 + 83,
+            "vivillonocean": 804 + 84,
+            "vivillonpokeball": 804 + 85,
+            "vivillonpolar": 804 + 86,
+            "vivillonriver": 804 + 87,
+            "vivillonsandstorm": 804 + 88,
+            "vivillonsavanna": 804 + 89,
+            "vivillonsun": 804 + 90,
+            "vivillontundra": 804 + 91,
+            "pyroarf": 804 + 92,
+            "flabebeblue": 804 + 93,
+            "flabebeorange": 804 + 94,
+            "flabebewhite": 804 + 95,
+            "flabebeyellow": 804 + 96,
+            "floetteblue": 804 + 97,
+            "floetteeternal": 804 + 98,
+            "floetteorange": 804 + 99,
+            "floettewhite": 804 + 100,
+            "floetteyellow": 804 + 101,
+            "florgesblue": 804 + 102,
+            "florgesorange": 804 + 103,
+            "florgeswhite": 804 + 104,
+            "florgesyellow": 804 + 105,
+            "meowsticf": 804 + 115,
+            "aegislashblade": 804 + 116,
+            "hoopaunbound": 804 + 118,
+            "rattataalola": 804 + 119,
+            "raticatealola": 804 + 120,
+            "raichualola": 804 + 121,
+            "sandshrewalola": 804 + 122,
+            "sandslashalola": 804 + 123,
+            "vulpixalola": 804 + 124,
+            "ninetalesalola": 804 + 125,
+            "diglettalola": 804 + 126,
+            "dugtrioalola": 804 + 127,
+            "meowthalola": 804 + 128,
+            "persianalola": 804 + 129,
+            "geodudealola": 804 + 130,
+            "graveleralola": 804 + 131,
+            "golemalola": 804 + 132,
+            "grimeralola": 804 + 133,
+            "mukalola": 804 + 134,
+            "exeggutoralola": 804 + 135,
+            "marowakalola": 804 + 136,
+            "greninjaash": 804 + 137,
+            "zygarde10": 804 + 138,
+            "zygardecomplete": 804 + 139,
+            "oricoriopompom": 804 + 140,
+            "oricoriopau": 804 + 141,
+            "oricoriosensu": 804 + 142,
+            "lycanrocmidnight": 804 + 143,
+            "wishiwashischool": 804 + 144,
+            "miniorred": 804 + 145,
+            "miniororange": 804 + 146,
+            "minioryellow": 804 + 147,
+            "miniorgreen": 804 + 148,
+            "miniorblue": 804 + 149,
+            "miniorviolet": 804 + 150,
+            "miniorindigo": 804 + 151,
+            "magearnaoriginal": 804 + 152,
+            "pikachuoriginal": 804 + 153,
+            "pikachuhoenn": 804 + 154,
+            "pikachusinnoh": 804 + 155,
+            "pikachuunova": 804 + 156,
+            "pikachukalos": 804 + 157,
+            "pikachualola": 804 + 158,
+            "venusaurmega": 972 + 0,
+            "charizardmegax": 972 + 1,
+            "charizardmegay": 972 + 2,
+            "blastoisemega": 972 + 3,
+            "beedrillmega": 972 + 4,
+            "pidgeotmega": 972 + 5,
+            "alakazammega": 972 + 6,
+            "slowbromega": 972 + 7,
+            "gengarmega": 972 + 8,
+            "kangaskhanmega": 972 + 9,
+            "pinsirmega": 972 + 10,
+            "gyaradosmega": 972 + 11,
+            "aerodactylmega": 972 + 12,
+            "mewtwomegax": 972 + 13,
+            "mewtwomegay": 972 + 14,
+            "ampharosmega": 972 + 15,
+            "steelixmega": 972 + 16,
+            "scizormega": 972 + 17,
+            "heracrossmega": 972 + 18,
+            "houndoommega": 972 + 19,
+            "tyranitarmega": 972 + 20,
+            "sceptilemega": 972 + 21,
+            "blazikenmega": 972 + 22,
+            "swampertmega": 972 + 23,
+            "gardevoirmega": 972 + 24,
+            "sableyemega": 972 + 25,
+            "mawilemega": 972 + 26,
+            "aggronmega": 972 + 27,
+            "medichammega": 972 + 28,
+            "manectricmega": 972 + 29,
+            "sharpedomega": 972 + 30,
+            "cameruptmega": 972 + 31,
+            "altariamega": 972 + 32,
+            "banettemega": 972 + 33,
+            "absolmega": 972 + 34,
+            "glaliemega": 972 + 35,
+            "salamencemega": 972 + 36,
+            "metagrossmega": 972 + 37,
+            "latiasmega": 972 + 38,
+            "latiosmega": 972 + 39,
+            "kyogreprimal": 972 + 40,
+            "groudonprimal": 972 + 41,
+            "rayquazamega": 972 + 42,
+            "lopunnymega": 972 + 43,
+            "garchompmega": 972 + 44,
+            "lucariomega": 972 + 45,
+            "abomasnowmega": 972 + 46,
+            "gallademega": 972 + 47,
+            "audinomega": 972 + 48,
+            "dianciemega": 972 + 49,
 
-    cut_sprite(img, outdir + "/smallicons_"+"aegislashblade.png", 40, 30, 848)
-    cut_sprite(img, outdir + "/smallicons_"+"nidoranm.png", 40, 30, 32)
-    cut_sprite(img, outdir + "/smallicons_"+"nidoranf.png", 40, 30, 29)
-    cut_sprite(img, outdir + "/smallicons_"+"pichuspikyeared.png", 40, 30, 172)
-    cut_sprite(img, outdir + "/smallicons_"+"porygonz.png", 40, 30, 474)
-    cut_sprite(img, outdir + "/smallicons_"+"hooh.png", 40, 30, 250)
-    cut_sprite(img, outdir + "/smallicons_"+"genesectdouse.png", 40, 30, 649)
-    cut_sprite(img, outdir + "/smallicons_"+"genesectshock.png", 40, 30, 649)
-    cut_sprite(img, outdir + "/smallicons_"+"genesectburn.png", 40, 30, 649)
-    cut_sprite(img, outdir + "/smallicons_"+"genesectchill.png", 40, 30, 649)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusbug.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusdark.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusdragon.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceuselectric.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusfairy.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusfighting.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusfire.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusflying.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusghost.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusgrass.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusground.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusice.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceuspoison.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceuspsychic.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceusrock.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceussteel.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"arceuswater.png", 40, 30, 493)
-    cut_sprite(img, outdir + "/smallicons_"+"pumpkaboosmall.png", 40, 30, 710)
-    cut_sprite(img, outdir + "/smallicons_"+"pumpkaboolarge.png", 40, 30, 710)
-    cut_sprite(img, outdir + "/smallicons_"+"pumpkaboosuper.png", 40, 30, 710)
-    cut_sprite(img, outdir + "/smallicons_"+"gourgeistsmall.png", 40, 30, 711)
-    cut_sprite(img, outdir + "/smallicons_"+"gourgeistlarge.png", 40, 30, 711)
-    cut_sprite(img, outdir + "/smallicons_"+"gourgeistsuper.png", 40, 30, 711)
-    cut_sprite(img, outdir + "/smallicons_"+"egg.png", 40, 30, 733)
-    cut_sprite(img, outdir + "/smallicons_"+"rotomfan.png", 40, 30, 780)
-    cut_sprite(img, outdir + "/smallicons_"+"rotomfrost.png", 40, 30, 781)
-    cut_sprite(img, outdir + "/smallicons_"+"rotomheat.png", 40, 30, 782)
-    cut_sprite(img, outdir + "/smallicons_"+"rotommow.png", 40, 30, 783)
-    cut_sprite(img, outdir + "/smallicons_"+"rotomwash.png", 40, 30, 784)
-    cut_sprite(img, outdir + "/smallicons_"+"giratinaorigin.png", 40, 30, 785)
-    cut_sprite(img, outdir + "/smallicons_"+"shayminsky.png", 40, 30, 786)
-    cut_sprite(img, outdir + "/smallicons_"+"basculinbluestriped.png", 40, 30, 788)
-    cut_sprite(img, outdir + "/smallicons_"+"darmanitanzen.png", 40, 30, 789)
-    cut_sprite(img, outdir + "/smallicons_"+"deoxysattack.png", 40, 30, 770)
-    cut_sprite(img, outdir + "/smallicons_"+"deoxysdefense.png", 40, 30, 771)
-    cut_sprite(img, outdir + "/smallicons_"+"deoxysspeed.png", 40, 30, 772)
-    cut_sprite(img, outdir + "/smallicons_"+"wormadamsandy.png", 40, 30, 775)
-    cut_sprite(img, outdir + "/smallicons_"+"wormadamtrash.png", 40, 30, 776)
-    cut_sprite(img, outdir + "/smallicons_"+"cherrimsunshine.png", 40, 30, 777)
-    cut_sprite(img, outdir + "/smallicons_"+"castformrainy.png", 40, 30, 767)
-    cut_sprite(img, outdir + "/smallicons_"+"castformsnowy.png", 40, 30, 768)
-    cut_sprite(img, outdir + "/smallicons_"+"castformsunny.png", 40, 30, 769)
-    cut_sprite(img, outdir + "/smallicons_"+"meloettapirouette.png", 40, 30, 804)
-    cut_sprite(img, outdir + "/smallicons_"+"floetteeternalflower.png", 40, 30, 830)
-    cut_sprite(img, outdir + "/smallicons_"+"tornadustherian.png", 40, 30, 798)
-    cut_sprite(img, outdir + "/smallicons_"+"thundurustherian.png", 40, 30, 799)
-    cut_sprite(img, outdir + "/smallicons_"+"landorustherian.png", 40, 30, 800)
-    cut_sprite(img, outdir + "/smallicons_"+"kyuremblack.png", 40, 30, 801)
-    cut_sprite(img, outdir + "/smallicons_"+"kyuremwhite.png", 40, 30, 802)
-    cut_sprite(img, outdir + "/smallicons_"+"keldeoresolute.png", 40, 30, 803)
-    cut_sprite(img, outdir + "/smallicons_"+"hoopaunbound.png", 40, 30, 850)
-    #megas
-    cut_sprite(img, outdir + "/smallicons_"+"venusaurmega.png", 40, 30, 852)
-    cut_sprite(img, outdir + "/smallicons_"+"charizardmegax.png", 40, 30, 853)
-    cut_sprite(img, outdir + "/smallicons_"+"charizardmegay.png", 40, 30, 854)
-    cut_sprite(img, outdir + "/smallicons_"+"blastoisemega.png", 40, 30, 855)
-    cut_sprite(img, outdir + "/smallicons_"+"beedrillmega.png", 40, 30, 856)
-    cut_sprite(img, outdir + "/smallicons_"+"pidgeotmega.png", 40, 30, 857)
-    cut_sprite(img, outdir + "/smallicons_"+"alakazammega.png", 40, 30, 858)
-    cut_sprite(img, outdir + "/smallicons_"+"slowbromega.png", 40, 30, 859)
-    cut_sprite(img, outdir + "/smallicons_"+"gengarmega.png", 40, 30, 860)
-    cut_sprite(img, outdir + "/smallicons_"+"kangaskhanmega.png", 40, 30, 861)
-    cut_sprite(img, outdir + "/smallicons_"+"pinsirmega.png", 40, 30, 862)
-    cut_sprite(img, outdir + "/smallicons_"+"gyaradosmega.png", 40, 30, 863)
-    cut_sprite(img, outdir + "/smallicons_"+"aerodactylmega.png", 40, 30, 864)
-    cut_sprite(img, outdir + "/smallicons_"+"mewtwomegax.png", 40, 30, 865)
-    cut_sprite(img, outdir + "/smallicons_"+"mewtwomegay.png", 40, 30, 866)
-    cut_sprite(img, outdir + "/smallicons_"+"ampharosmega.png", 40, 30, 867)
-    cut_sprite(img, outdir + "/smallicons_"+"steelixmega.png", 40, 30, 868)
-    cut_sprite(img, outdir + "/smallicons_"+"scizormega.png", 40, 30, 869)
-    cut_sprite(img, outdir + "/smallicons_"+"heracrossmega.png", 40, 30, 870)
-    cut_sprite(img, outdir + "/smallicons_"+"houndoommega.png", 40, 30, 871)
-    cut_sprite(img, outdir + "/smallicons_"+"tyranitarmega.png", 40, 30, 872)
-    cut_sprite(img, outdir + "/smallicons_"+"sceptilemega.png", 40, 30, 873)
-    cut_sprite(img, outdir + "/smallicons_"+"blazikenmega.png", 40, 30, 874)
-    cut_sprite(img, outdir + "/smallicons_"+"swampertmega.png", 40, 30, 875)
-    cut_sprite(img, outdir + "/smallicons_"+"gardevoirmega.png", 40, 30, 876)
-    cut_sprite(img, outdir + "/smallicons_"+"sableyemega.png", 40, 30, 877)
-    cut_sprite(img, outdir + "/smallicons_"+"mawilemega.png", 40, 30, 878)
-    cut_sprite(img, outdir + "/smallicons_"+"aggronmega.png", 40, 30, 879)
-    cut_sprite(img, outdir + "/smallicons_"+"medichammega.png", 40, 30, 880)
-    cut_sprite(img, outdir + "/smallicons_"+"manectricmega.png", 40, 30, 881)
-    cut_sprite(img, outdir + "/smallicons_"+"sharpedomega.png", 40, 30, 882)
-    cut_sprite(img, outdir + "/smallicons_"+"cameruptmega.png", 40, 30, 883)
-    cut_sprite(img, outdir + "/smallicons_"+"altariamega.png", 40, 30, 884)
-    cut_sprite(img, outdir + "/smallicons_"+"banettemega.png", 40, 30, 885)
-    cut_sprite(img, outdir + "/smallicons_"+"absolmega.png", 40, 30, 886)
-    cut_sprite(img, outdir + "/smallicons_"+"glaliemega.png", 40, 30, 887)
-    cut_sprite(img, outdir + "/smallicons_"+"salamencemega.png", 40, 30, 888)
-    cut_sprite(img, outdir + "/smallicons_"+"metagrossmega.png", 40, 30, 889)
-    cut_sprite(img, outdir + "/smallicons_"+"latiasmega.png", 40, 30, 890)
-    cut_sprite(img, outdir + "/smallicons_"+"latiosmega.png", 40, 30, 891)
-    cut_sprite(img, outdir + "/smallicons_"+"kyogreprimal.png", 40, 30, 892)
-    cut_sprite(img, outdir + "/smallicons_"+"groudonprimal.png", 40, 30, 893)
-    cut_sprite(img, outdir + "/smallicons_"+"rayquazamega.png", 40, 30, 894)
-    cut_sprite(img, outdir + "/smallicons_"+"lopunnymega.png", 40, 30, 895)
-    cut_sprite(img, outdir + "/smallicons_"+"garchompmega.png", 40, 30, 896)
-    cut_sprite(img, outdir + "/smallicons_"+"lucariomega.png", 40, 30, 897)
-    cut_sprite(img, outdir + "/smallicons_"+"abomasnowmega.png", 40, 30, 898)
-    cut_sprite(img, outdir + "/smallicons_"+"gallademega.png", 40, 30, 899)
-    cut_sprite(img, outdir + "/smallicons_"+"audinomega.png", 40, 30, 900)
-    cut_sprite(img, outdir + "/smallicons_"+"dianciemega.png", 40, 30, 901)
-
-
-cut_items('itemicons-sheet.png', 'item.json', 'out_items')
-cut_pokedex('xyicons-sheet.png', 'pokedex.json', 'out_icons')
+            "syclant": 1140 + 0,
+            "revenankh": 1140 + 1,
+            "pyroak": 1140 + 2,
+            "fidgit": 1140 + 3,
+            "stratagem": 1140 + 4,
+            "arghonaut": 1140 + 5,
+            "kitsunoh": 1140 + 6,
+            "cyclohm": 1140 + 7,
+            "colossoil": 1140 + 8,
+            "krilowatt": 1140 + 9,
+            "voodoom": 1140 + 10,
+            "tomohawk": 1140 + 11,
+            "necturna": 1140 + 12,
+            "mollux": 1140 + 13,
+            "aurumoth": 1140 + 14,
+            "malaconda": 1140 + 15,
+            "cawmodore": 1140 + 16,
+            "volkraken": 1140 + 17,
+            "plasmanta": 1140 + 18,
+            "naviathan": 1140 + 19,
+            "crucibelle": 1140 + 20,
+            "crucibellemega": 1140 + 21,
+            "kerfluffle": 1140 + 22
+		}
+    
+    for name in alternameforms:
+        cut_sprite(img, outdir + "/smallicons_" + name + ".png", 40, 30, alternameforms[name])
+   
+#cut_items('itemicons-sheet.png', 'item.json', 'out_items')
+cut_pokedex('smicons-sheet.png', 'pokedex.json', 'out_icons')
