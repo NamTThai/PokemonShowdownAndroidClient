@@ -1731,18 +1731,18 @@ public class BattleFragment extends Fragment {
         moveIcons[3] = (ImageView) getView().findViewById(R.id.active_move4_icon);
 
         final JSONArray moves;
-        if(isZMove) {
-            moves  = active.getJSONObject(mCurrentActivePokemon).getJSONArray("canZMove");
+        if (isZMove) {
+            moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("canZMove");
             for (int i = 0; i < moves.length(); i++) {
                 String zmoveName = moves.getString(i);
                 moveNames[i].setText(zmoveName);
                 int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), MyApplication.toId(zmoveName));
                 moveIcons[i].setImageResource(typeIcon);
-                moveViews[i].setOnClickListener(parseMoveTarget(active,isZMove, i ));
+                moveViews[i].setOnClickListener(parseMoveTarget(active, isZMove, i));
                 movePps[i].setText("");
             }
         } else {
-            moves  = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
+            moves = active.getJSONObject(mCurrentActivePokemon).getJSONArray("moves");
             for (int i = 0; i < moves.length(); i++) {
                 JSONObject moveJson = moves.getJSONObject(i);
                 if (moveJson.getString("move").startsWith("Return")) {
@@ -1758,7 +1758,7 @@ public class BattleFragment extends Fragment {
                 }
                 int typeIcon = MoveDex.getMoveTypeIcon(getActivity(), moveJson.getString("id"));
                 moveIcons[i].setImageResource(typeIcon);
-                moveViews[i].setOnClickListener(parseMoveTarget(active,isZMove, i ));
+                moveViews[i].setOnClickListener(parseMoveTarget(active, isZMove, i));
                 if (moveJson.optBoolean("disabled", false)) {
                     moveViews[i].setOnClickListener(null);
                     moveViews[i].setBackgroundResource(R.drawable.uneditable_frame);
@@ -1813,7 +1813,7 @@ public class BattleFragment extends Fragment {
                 zmovecheckBox.setVisibility(View.GONE);
             }
 
-            JSONArray moves  = currentActive.getJSONArray("moves");
+            JSONArray moves = currentActive.getJSONArray("moves");
             boolean trapped = currentActive.optBoolean("trapped", false) ||
                     currentActive.optBoolean("maybeTrapped");
             if (!trapped || moves.length() != 1) {
@@ -1858,7 +1858,7 @@ public class BattleFragment extends Fragment {
         };
     }
 
-    private AlertDialog parseMoveTargetDialog(final JSONArray active, final boolean isZMove, final int moveId) throws JSONException  {
+    private AlertDialog parseMoveTargetDialog(final JSONArray active, final boolean isZMove, final int moveId) throws JSONException {
         final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
                 .getJSONArray("moves")
                 .getJSONObject(moveId);
@@ -1867,8 +1867,6 @@ public class BattleFragment extends Fragment {
         String target = moveJson.optString("target", null);
         if (target == null && !isZMove) {
             return null;
-        } else if (target == null && isZMove) {
-            target = "normal";
         }
         int maxAlly = 0;
         int maxFoe = 0;
@@ -2071,11 +2069,11 @@ public class BattleFragment extends Fragment {
 
                 CheckBox checkBox = (CheckBox) getView().findViewById(R.id.mega_evolution_checkbox);
                 if (checkBox.isChecked()) {
-                    command = "move " + (moveId+1) + " mega";
-                } else if (zMovecheckBox.isChecked()){
-                    command = "move " + (moveId+1) + " zmove";
+                    command = "move " + (moveId + 1) + " mega";
+                } else if (zMovecheckBox.isChecked()) {
+                    command = "move " + (moveId + 1) + " zmove";
                 } else {
-                    command = "move " + (moveId+1);
+                    command = "move " + (moveId + 1);
                 }
 
                 if (position != 0) {
