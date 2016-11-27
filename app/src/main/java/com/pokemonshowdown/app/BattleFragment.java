@@ -95,6 +95,7 @@ public class BattleFragment extends Fragment {
     private JSONObject mRequestJson;
     private JSONObject mUndoMessage;
     private int mTeamSize;
+    private boolean singles;
 
     public BattleFragment() {
 
@@ -1695,6 +1696,7 @@ public class BattleFragment extends Fragment {
 
         // doubles/ triples : if the mon is dead it is still in the active object.... why?
         while (mCurrentActivePokemon < mTotalActivePokemon && !getPlayer1Team().get(mCurrentActivePokemon).isAlive()) {
+            addCommand("pass");
             mCurrentActivePokemon++;
         }
 
@@ -1862,7 +1864,9 @@ public class BattleFragment extends Fragment {
         final JSONObject moveJson = active.getJSONObject(mCurrentActivePokemon)
                 .getJSONArray("moves")
                 .getJSONObject(moveId);
-
+        if(isSingles()) {
+            return null;
+        }
         // null happens with struggle
         String target = moveJson.optString("target", null);
         if (target == null && !isZMove) {
@@ -1924,9 +1928,6 @@ public class BattleFragment extends Fragment {
         final int allyOffset = startAlly;
         switch (target) {
             case "any": //can hit anything on the BG, filling the list
-                if ((foeIndex + allyIndex) < 2) {
-                    return null;
-                }
                 ArrayList<String> anyTargets = new ArrayList<>();
                 int anyFoes = 0;
                 for (int i = 0; i < getPlayer2Team().size(); i++) {
@@ -1956,10 +1957,6 @@ public class BattleFragment extends Fragment {
                             }
                         }).create();
             case "normal": // can hit everyone close to mCurrentActivePokemon
-                if ((foeIndex + allyIndex) < 2) {
-                    return null;
-                }
-
                 allTargets = new String[foeIndex + allyIndex];
                 System.arraycopy(foes, 0, allTargets, 0, foeIndex);
                 System.arraycopy(allies, 0, allTargets, foeIndex, allyIndex);
@@ -1976,10 +1973,6 @@ public class BattleFragment extends Fragment {
                             }
                         }).create();
             case "adjacentFoe":
-                if (foeIndex < 2) {
-                    return null;
-                }
-
                 allTargets = new String[foeIndex];
                 System.arraycopy(foes, 0, allTargets, 0, foeIndex);
                 return new AlertDialog.Builder(getActivity())
@@ -1991,10 +1984,6 @@ public class BattleFragment extends Fragment {
                             }
                         }).create();
             case "adjacentAlly":
-                if (allyIndex == 0) {
-                    return null;
-                }
-
                 allTargets = new String[allyIndex];
                 System.arraycopy(allies, 0, allTargets, 0, allyIndex);
                 return new AlertDialog.Builder(getActivity())
@@ -2007,10 +1996,6 @@ public class BattleFragment extends Fragment {
                             }
                         }).create();
             case "adjacentAllyOrSelf":
-                if (aosIndex < 2) {
-                    return null;
-                }
-
                 allTargets = new String[aosIndex];
                 System.arraycopy(allyOrSelf, 0, allTargets, 0, aosIndex);
                 return new AlertDialog.Builder(getActivity())
@@ -2278,6 +2263,14 @@ public class BattleFragment extends Fragment {
                 setCurrentBattleAnimation(null);
             }
         }
+    }
+
+    public void setSingles(boolean singles) {
+        this.singles = singles;
+    }
+
+    public boolean isSingles() {
+        return singles;
     }
 
     public class PokemonInfoListener implements View.OnClickListener {
