@@ -123,6 +123,12 @@ public class BattleMessage {
                 break;
 
             case "gametype":
+                if("singles".equals(messageDetails)) {
+                    battleFragment.setSingles(true);
+                } else {
+                    battleFragment.setSingles(false);
+                }
+                break;
             case "gen":
                 break;
 
