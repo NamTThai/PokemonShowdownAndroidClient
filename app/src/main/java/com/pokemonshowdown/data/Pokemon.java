@@ -165,16 +165,6 @@ public class Pokemon implements Serializable {
     public static int getPokemonIcon(Context appContext, String name) {
         try {
             name = MyApplication.toId(name);
-            if (name.length() >= 6) {
-                String surfix = name.substring(name.length() - 6);
-                if (surfix.contains("mega") && !name.equals("yanmega")) {
-                    name = name.substring(0, name.lastIndexOf("mega"));
-                } else {
-                    if (surfix.contains("primal")) {
-                        name = name.substring(0, name.lastIndexOf("primal"));
-                    }
-                }
-            }
             int toReturn = appContext.getResources()
                     .getIdentifier("smallicons_" + name, "drawable", appContext.getPackageName());
             return (toReturn == 0) ? R.drawable.smallicons_0 : toReturn;
