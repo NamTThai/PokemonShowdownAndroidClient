@@ -420,7 +420,7 @@ public class Pokemon implements Serializable {
         int currentMoveId = 1;
         for (int i = 1; i < pokemonStrings.length; i++) {
             String currentString = pokemonStrings[i];
-            if (currentString.contains("-")) {
+            if (currentString.startsWith("-")) {
                 // its a move!
                 // same as items, it's a real name , we need an id. Lowercasing and removing spaces  + - should do the trick
                 String move = currentString.substring(currentString.indexOf("-") + 1);
@@ -440,7 +440,7 @@ public class Pokemon implements Serializable {
                         break;
                 }
                 currentMoveId++;
-            } else if (currentString.contains("IVs:")) {
+            } else if (currentString.startsWith("IVs:")) {
                 String ivs = currentString.substring(currentString.indexOf(":") + 1);
                 String[] ivsSplit = ivs.split("/");
 
@@ -477,7 +477,7 @@ public class Pokemon implements Serializable {
                             break;
                     }
                 }
-            } else if (currentString.contains("EVs:")) {
+            } else if (currentString.startsWith("EVs:")) {
                 String evs = currentString.substring(currentString.indexOf(":") + 1);
                 String[] evssplit = evs.split("/");
 
@@ -514,10 +514,10 @@ public class Pokemon implements Serializable {
                             break;
                     }
                 }
-            } else if (currentString.contains("Nature")) {
+            } else if (currentString.contains("Nature")) { /** Example : Adamant Nature*/
                 String nature = currentString.substring(0, currentString.indexOf("Nature")).trim();
                 p.setNature(nature);
-            } else if (currentString.contains("Ability:")) {
+            } else if (currentString.startsWith("Ability:")) {
                 String abilityName = currentString.substring(currentString.indexOf(":") + 1).trim();
 
                 for (String s : p.getAbilityList().keySet()) {
@@ -526,14 +526,14 @@ public class Pokemon implements Serializable {
                         break;
                     }
                 }
-            } else if (currentString.contains("Level:")) {
+            } else if (currentString.startsWith("Level:")) {
                 String level = currentString.substring(currentString.indexOf(":") + 1).trim();
                 try {
                     p.setLevel(Integer.parseInt(level));
                 } catch (NumberFormatException e) {
                     break;
                 }
-            } else if (currentString.contains("Shiny")) {
+            } else if (currentString.startsWith("Shiny")) {
                 if (!p.isShiny()) {
                     p.switchShiny(appContext);
                 }
