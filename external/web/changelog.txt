@@ -1,3 +1,8 @@
+<b> Version 1.3.2: </b> <br />
+<b> Bug fixes: </b> <br />
+- Fixing pokemons with "-" in their abilities (eg: Magearna) not being imported/read correctly <br />
+- Data files update <br />
+
 <b> Version 1.3.1: </b> <br />
 <b> Bug fixes: </b> <br />
 - Mega icons <br />
