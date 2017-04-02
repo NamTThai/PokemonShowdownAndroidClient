@@ -1,6 +1,10 @@
 PokemonShowdown Android Client
 ===============
 
+## Deprecation notice
+
+Hey guys, unfortunately I am unable to continue working on this project, because [life and stuffs](https://www.youtube.com/watch?v=pXRviuL6vMY). My awesome friend is doing it right now!!! Check out it repository [here](https://github.com/McBeengs/PokemonShowdownAndroidClient)
+
 ## Requirements
 
 * AndroidStudio stable release
