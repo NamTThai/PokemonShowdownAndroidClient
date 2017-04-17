@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:minWidth="2000dp"
+    android:minHeight="2000dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="4dp"
-        android:text="@string/battlelog"
-        android:textColor="@drawable/dialog_button"/>
-
-    <View style="@style/divider"/>
+    <!-- Divider here -->
 
     <EditText
         android:id="@+id/battle_chat_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textNoSuggestions"/>
+        android:hint="Type here..."
+        android:inputType="textNoSuggestions" />
 
     <ScrollView
         android:id="@+id/battlelog_scrollview"
@@ -32,7 +27,7 @@
             android:id="@+id/battlelog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dp"/>
+            android:padding="4dp" />
 
     </ScrollView>
 

@@ -1,67 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pokemonshowdown.app" >
+    package="com.pokemonshowdown">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.pokemonshowdown.application.MyApplication"
+        android:name=".application.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".BattleFieldActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape" >
-        </activity>
-        <activity
-            android:name=".PokedexActivity"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BattleFieldActivity" />
-        </activity>
-        <activity
-            android:name=".DmgCalcActivity"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BattleFieldActivity" />
-        </activity>
-        <activity
-            android:name="com.pokemonshowdown.data.SearchableActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
-        <activity
-            android:name=".TeamBuildingActivity"
-            android:label="@string/title_activity_team_building"
-            android:parentActivityName=".BattleFieldActivity"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BattleFieldActivity" />
-        </activity>
-        <activity
-            android:name=".WelcomeActivity"
+            android:name=".activity.WelcomeActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar" >
+            android:theme="@style/AppTheme.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.PokedexActivity"
+            android:label="Pokédex"
+            android:parentActivityName=".activity.ContainerActivity" />
+        <activity android:name=".activity.ContainerActivity" />
+        <activity
+            android:name=".activity.DmgCalcActivity"
+            android:label="Damage Calculator"
+            android:parentActivityName=".activity.ContainerActivity" />
+        <activity android:name=".activity.ContainerActivity" />
+        <activity
+            android:name=".activity.TeamBuilderActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_team_building"
+            android:parentActivityName=".activity.ContainerActivity" />
+        <activity
+            android:name=".activity.TeamBuildingActivity"
+            android:configChanges="orientation|screenSize"
+            android:label=""
+            android:parentActivityName=".activity.TeamBuilderActivity" />
+        <activity
+            android:name=".activity.SearchableActivity"
+            android:label=""
+            android:parentActivityName=".activity.TeamBuildingActivity" />
+        <activity
+            android:name=".activity.PokemonActivity"
+            android:label=""
+            android:parentActivityName=".activity.TeamBuildingActivity" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label=""
+            android:parentActivityName=".activity.ContainerActivity" />
     </application>
 
 </manifest>

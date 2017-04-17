@@ -5,6 +5,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
+import android.support.annotation.Nullable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -12,9 +16,14 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.pokemonshowdown.app.BattleFragment;
-import com.pokemonshowdown.app.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
+import com.pokemonshowdown.fragment.BattleFragment;
 
 public class BattleAnimation {
     public final static String BTAG = BattleAnimation.class.getName();
@@ -25,15 +34,15 @@ public class BattleAnimation {
         if (battleFragment.getView() == null) {
             return null;
         }
-        Context context = battleFragment.getActivity();
+
         RelativeLayout wrapper = (RelativeLayout) battleFragment.getView().findViewById(R.id.animation_layout);
         RelativeLayout atkC = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[0]));
-        ImageView atk = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
+        SimpleDraweeView atk = (SimpleDraweeView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[0]));
         RelativeLayout defC = (RelativeLayout) battleFragment.getView().findViewById(battleFragment.getPkmLayoutId(split[2]));
-        ImageView def = (ImageView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[2]));
+        SimpleDraweeView def = (SimpleDraweeView) battleFragment.getView().findViewById(battleFragment.getSpriteId(split[2]));
         try {
             if (animationId == null) {
-                return fast(battleFragment.getActivity(), wrapper, atkC, atk, defC, def);
+                return fast(battleFragment, wrapper, atkC, atk, defC, def);
             } else {
                 switch (animationId) {
                     case SHAKE:
@@ -41,165 +50,165 @@ public class BattleAnimation {
                     case DANCE:
                         return dance(atkC, atk);
                     case FLIGHT:
-                        return flight(context, atkC, atk, defC);
+                        return flight(battleFragment, atkC, atk, defC);
                     case SPINATK:
-                        return spinAtk(context, atkC, atk, defC);
+                        return spinAtk(battleFragment, atkC, atk, defC);
                     case XATK:
-                        return xatk(context, atkC, atk, defC);
+                        return xatk(battleFragment, atkC, atk, defC);
                     case SELF:
-                        return self(context, atkC, atk);
+                        return self(battleFragment, atkC, atk);
                     case SELF_LIGHT:
-                        return selfLight(context, atkC, atk);
+                        return selfLight(battleFragment, atkC, atk);
                     case SELF_DARK:
-                        return selfDark(context, atkC, atk);
+                        return selfDark(battleFragment, atkC, atk);
                     case TRICK:
-                        return trick(context, wrapper, atkC, atk, defC, def);
+                        return trick(battleFragment, wrapper, atkC, atk, defC, def);
                     case CHARGE:
-                        return charge(context, atkC, atk, defC, def, split);
+                        return charge(battleFragment, atkC, atk, defC, def, split);
                     case SPREAD_LIGHT:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_electroball);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_electroball);
                     case SPREAD_ENERGY:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_energyball);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_energyball);
                     case SPREAD_MIST:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_mistball);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_mistball);
                     case SPREAD_SHADOW:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_shadowball);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_shadowball);
                     case SPREAD_POISON:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_poisonwisp);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_poisonwisp);
                     case SPREAD_WAVE:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_waterwisp);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_waterwisp);
                     case SPREAD_FIRE:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_fireball);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_fireball);
                     case SPREAD_ROCK:
-                        return spread(context, wrapper, atkC, atk, R.drawable.field_rocks);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.field_rocks);
                     case SPREAD_SPIKE:
-                        return spread(context, wrapper, atkC, atk, R.drawable.field_spikes);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.field_spikes);
                     case SPREAD_TSPIKE:
-                        return spread(context, wrapper, atkC, atk, R.drawable.field_tspikes);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.field_tspikes);
                     case SPREAD_WEB:
-                        return spread(context, wrapper, atkC, atk, R.drawable.battle_web);
+                        return spread(battleFragment, wrapper, atkC, atk, R.drawable.battle_web);
                     case CONTACT_ENERGY:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
                     case CONTACT_CLAW:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_leftclaw);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_leftclaw);
                     case CONTACT_KICK:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_foot);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_foot);
                     case CONTACT_WAVE:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
                     case CONTACT_BITE:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_bite);
                     case CONTACT_POISON:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
                     case CONTACT_PUNCH:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fist);
                     case CONTACT_SHADOW:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
                     case CONTACT_THUNDER:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_lightning);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_lightning);
                     case CONTACT_FIRE:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
                     case CONTACT_NEUTRAL:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
                     case CONTACT_MIST:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
                     case CONTACT_LIGHT:
-                        return contact(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                        return contact(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
                     case DRAIN:
-                        return drain(context, atkC, atk, defC);
+                        return drain(battleFragment, atkC, atk, defC);
                     case FAST:
-                        return fast(context, wrapper, atkC, atk, defC, def);
+                        return fast(battleFragment, wrapper, atkC, atk, defC, def);
                     case CONTACT_PUNCH_FIRE:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_fireball);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_fireball);
                     case CONTACT_PUNCH_ICE:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_icicle);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_icicle);
                     case CONTACT_PUNCH_THUNDER:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_lightning);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fist, R.drawable.battle_lightning);
                     case CONTACT_BITE_FIRE:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_fireball);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_fireball);
                     case CONTACT_BITE_ICE:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_icicle);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_icicle);
                     case CONTACT_BITE_THUNDER:
-                        return contactTwice(context, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_lightning);
+                        return contactTwice(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_bite, R.drawable.battle_lightning);
                     case STREAM_NEUTRAL:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
                     case STREAM_LIGHT:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
                     case STREAM_ENERGY:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
                     case STREAM_MIST:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
                     case STREAM_POISON:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
                     case STREAM_SHADOW:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
                     case STREAM_WATER:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
                     case STREAM_FIRE:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
                     case STREAM_ICE:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
                     case STREAM_ROCK:
-                        return stream(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
+                        return stream(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
                     case EARTH:
                         return earth(defC, def);
                     case PHAZE:
                         return phaze(def);
                     case THUNDER_STRONG:
-                        return thunderStrong(context, defC, def);
+                        return thunderStrong(battleFragment, defC, def);
                     case THUNDER_NEUTRAL:
-                        return thunderNeutral(context, defC, def);
+                        return thunderNeutral(battleFragment, defC, def);
                     case THUNDER_WEAK:
-                        return thunderWeak(context, atkC, atk, defC, def);
+                        return thunderWeak(battleFragment, atkC, atk, defC, def);
                     case STATUS_PSN:
-                        return status(context, defC, def, R.drawable.battle_poisonwisp);
+                        return status(battleFragment, defC, def, R.drawable.battle_poisonwisp);
                     case STATUS_PAR:
-                        return status(context, defC, def, R.drawable.battle_electroball);
+                        return status(battleFragment, defC, def, R.drawable.battle_electroball);
                     case STATUS_SLP:
-                        return status(context, defC, def, R.drawable.battle_energyball);
+                        return status(battleFragment, defC, def, R.drawable.battle_energyball);
                     case STATUS_BRN:
-                        return status(context, defC, def, R.drawable.battle_fireball);
+                        return status(battleFragment, defC, def, R.drawable.battle_fireball);
                     case BALL_NEUTRAL:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_wisp);
                     case BALL_LIGHT:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_electroball);
                     case BALL_ENERGY:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_energyball);
                     case BALL_MIST:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_mistball);
                     case BALL_POISON:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_poisonwisp);
                     case BALL_SHADOW:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_shadowball);
                     case BALL_WATER:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_waterwisp);
                     case BALL_FIRE:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_fireball);
                     case BALL_ICE:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.battle_icicle);
                     case BALL_ROCK:
-                        return ball(context, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
+                        return ball(battleFragment, wrapper, atkC, atk, defC, def, R.drawable.field_rocks);
                     case WISH:
-                        return wish(context, atkC, atk);
+                        return wish(battleFragment, atkC, atk);
                     case SLASH:
-                        return slash(context, defC);
+                        return slash(battleFragment, defC);
                     case BOMB_NEUTRAL:
-                        return bomb(context, defC, def, R.drawable.battle_wisp);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_wisp);
                     case BOMB_LIGHT:
-                        return bomb(context, defC, def, R.drawable.battle_electroball);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_electroball);
                     case BOMB_ENERGY:
-                        return bomb(context, defC, def, R.drawable.battle_energyball);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_energyball);
                     case BOMB_MIST:
-                        return bomb(context, defC, def, R.drawable.battle_mistball);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_mistball);
                     case BOMB_POISON:
-                        return bomb(context, defC, def, R.drawable.battle_poisonwisp);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_poisonwisp);
                     case BOMB_SHADOW:
-                        return bomb(context, defC, def, R.drawable.battle_shadowball);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_shadowball);
                     case BOMB_WATER:
-                        return bomb(context, defC, def, R.drawable.battle_waterwisp);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_waterwisp);
                     case BOMB_FIRE:
-                        return bomb(context, defC, def, R.drawable.battle_fireball);
+                        return bomb(battleFragment, defC, def, R.drawable.battle_fireball);
                     default:
-                        return self(context, atkC, atk);
+                        return self(battleFragment, atkC, atk);
                 }
             }
         } catch (NullPointerException e) {
@@ -207,11 +216,17 @@ public class BattleAnimation {
         }
     }
 
-    public static AnimatorSet fast(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
+    public static AnimatorSet fast(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView fast = new ImageView(context);
-        fast.setImageDrawable(atk.getDrawable());
+        final SimpleDraweeView fast = new SimpleDraweeView(context);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(getController(context, fast))
+                .setUri(Uri.parse(atk.getTag().toString()))
+                .setAutoPlayAnimations(true)
+                .build();
+        fast.setController(controller);
         fast.setX(atkC.getX() + atk.getX());
         fast.setY(atkC.getY() + atk.getY());
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -242,7 +257,7 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet shake(RelativeLayout atkC, ImageView atk) {
+    public static AnimatorSet shake(RelativeLayout atkC, SimpleDraweeView atk) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
         shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 6);
@@ -259,7 +274,7 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet dance(RelativeLayout atkC, ImageView atk) {
+    public static AnimatorSet dance(RelativeLayout atkC, SimpleDraweeView atk) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator shakeLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
         shakeLeft.setDuration(BattleFragment.ANIMATION_LONG / 4);
@@ -273,7 +288,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet flight(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+    public static AnimatorSet flight(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
@@ -320,7 +336,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet spinAtk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+    public static AnimatorSet spinAtk(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
@@ -329,8 +346,13 @@ public class BattleAnimation {
         flightTop.setDuration(BattleFragment.ANIMATION_LONG / 4);
         ObjectAnimator flightAlpha = ObjectAnimator.ofFloat(atk, "alpha", 0f);
         flightAlpha.setDuration(BattleFragment.ANIMATION_LONG / 4);
-        final ImageView spin = new ImageView(context);
-        spin.setImageDrawable(atk.getDrawable());
+        final SimpleDraweeView spin = new SimpleDraweeView(context);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(getController(context, spin))
+                .setUri(Uri.parse(atk.getTag().toString()))
+                .setAutoPlayAnimations(true)
+                .build();
+        spin.setController(controller);
         spin.setX(0);
         spin.setY(0);
         final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -370,7 +392,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet xatk(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+    public static AnimatorSet xatk(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator flightLeft = ObjectAnimator.ofFloat(atk, "x", 0f);
@@ -429,7 +452,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet self(Context context, final RelativeLayout atkC, final ImageView atk) {
+    public static AnimatorSet self(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView flash = new ImageView(context);
         flash.setImageResource(R.drawable.battle_wisp);
@@ -463,7 +487,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet selfLight(Context context, final RelativeLayout atkC, final ImageView atk) {
+    public static AnimatorSet selfLight(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView flash = new ImageView(context);
         flash.setImageResource(R.drawable.battle_electroball);
@@ -492,7 +517,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet selfDark(Context context, final RelativeLayout atkC, final ImageView atk) {
+    public static AnimatorSet selfDark(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView flash = new ImageView(context);
         flash.setImageResource(R.drawable.battle_shadowball);
@@ -521,7 +547,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet trick(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, ImageView def) {
+    public static AnimatorSet trick(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, SimpleDraweeView def) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView trick = new ImageView(context);
         trick.setImageResource(R.drawable.pokeball_available);
@@ -556,7 +583,7 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet charge(Context context, RelativeLayout atkC, final ImageView atk, RelativeLayout defC, ImageView def, String[] split) {
+    public static AnimatorSet charge(BattleFragment battleFragment, RelativeLayout atkC, final SimpleDraweeView atk, RelativeLayout defC, SimpleDraweeView def, String[] split) {
         final float initialAlpha = atk.getAlpha();
         if (split.length >= 4 && split[3].equals("[still]")) {
             AnimatorSet animatorSet = new AnimatorSet();
@@ -564,7 +591,8 @@ public class BattleAnimation {
             alpha.setDuration(BattleFragment.ANIMATION_LONG);
             return animatorSet;
         } else {
-            AnimatorSet animatorSet = flight(context, atkC, atk, defC);
+            Context context = battleFragment.getActivity();
+            AnimatorSet animatorSet = flight(battleFragment, atkC, atk, defC);
             animatorSet.addListener(new AnimatorListenerWithNet() {
                 @Override
                 public void onAnimationStartWithNet(Animator animation) {
@@ -575,7 +603,8 @@ public class BattleAnimation {
         }
     }
 
-    public static AnimatorSet spread(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, int spreadId) {
+    public static AnimatorSet spread(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, int spreadId) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView flash1 = new ImageView(context);
         flash1.setImageResource(spreadId);
@@ -685,11 +714,17 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet contact(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contactId) {
+    public static AnimatorSet contact(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def, int contactId) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView atkPkm = new ImageView(context);
-        atkPkm.setImageDrawable(atk.getDrawable());
+        final SimpleDraweeView atkPkm = new SimpleDraweeView(context);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(getController(context, atkPkm))
+                .setUri(Uri.parse(atk.getTag().toString()))
+                .setAutoPlayAnimations(true)
+                .build();
+        atkPkm.setController(controller);
         atkPkm.setX(atkC.getX() + atk.getX());
         atkPkm.setY(atkC.getY() + atk.getY());
         final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -702,8 +737,14 @@ public class BattleAnimation {
         attackX.addListener(new AnimatorListenerWithNet() {
             @Override
             public void onAnimationStartWithNet(Animator animation) {
-                atk.setAlpha(0f);
-                wrapper.addView(atkPkm, imageParams);
+                try {
+                    atk.setAlpha(0f);
+                    wrapper.addView(atkPkm, imageParams);
+                } catch (Exception ex) { // When skipping, there is a chance that the animator will try to execute
+                                         // his thing on a null view, with no greater damage. We suppress in order to prevent
+                                         // false-positives with "Bug Captured"
+                    ex.printStackTrace();
+                }
             }
         });
         final ImageView contact = new ImageView(context);
@@ -746,7 +787,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet drain(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC) {
+    public static AnimatorSet drain(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView attack = new ImageView(context);
         attack.setImageResource(R.drawable.battle_energyball);
@@ -799,11 +841,17 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet contactTwice(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int contact1Id, int contact2Id) {
+    public static AnimatorSet contactTwice(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def, int contact1Id, int contact2Id) {
+        Context context = battleFragment.getActivity();
         final float initialAlpha = atk.getAlpha();
         AnimatorSet animatorSet = new AnimatorSet();
-        final ImageView atkPkm = new ImageView(context);
-        atkPkm.setImageDrawable(atk.getDrawable());
+        final SimpleDraweeView atkPkm = new SimpleDraweeView(context);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(getController(context, atkPkm))
+                .setUri(Uri.parse(atk.getTag().toString()))
+                .setAutoPlayAnimations(true)
+                .build();
+        atkPkm.setController(controller);
         atkPkm.setX(atkC.getX() + atk.getX());
         atkPkm.setY(atkC.getY() + atk.getY());
         final ViewGroup.LayoutParams imageParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -888,7 +936,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet stream(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int spreadId) {
+    public static AnimatorSet stream(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def, int spreadId) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         int initialSize = 40;
         final ImageView flash1 = new ImageView(context);
@@ -1062,7 +1111,7 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet earth(final RelativeLayout defC, final ImageView def) {
+    public static AnimatorSet earth(final RelativeLayout defC, final SimpleDraweeView def) {
         AnimatorSet animatorSet = new AnimatorSet();
         float left = 0f;
         float right = defC.getWidth() - def.getWidth();
@@ -1072,7 +1121,7 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet phaze(final ImageView def) {
+    public static AnimatorSet phaze(final SimpleDraweeView def) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator spin = ObjectAnimator.ofFloat(def, "rotation", 1080f);
         spin.setDuration(BattleFragment.ANIMATION_LONG);
@@ -1087,7 +1136,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet thunderStrong(Context context, final RelativeLayout defC, final ImageView def) {
+    public static AnimatorSet thunderStrong(BattleFragment battleFragment, final RelativeLayout defC, final SimpleDraweeView def) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView thunder1 = new ImageView(context);
         thunder1.setImageResource(R.drawable.battle_lightning);
@@ -1119,7 +1169,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet thunderNeutral(Context context, final RelativeLayout defC, final ImageView def) {
+    public static AnimatorSet thunderNeutral(BattleFragment battleFragment, final RelativeLayout defC, final SimpleDraweeView def) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final ImageView thunder1 = new ImageView(context);
@@ -1183,7 +1234,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet thunderWeak(Context context, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def) {
+    public static AnimatorSet thunderWeak(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final ImageView glow = new ImageView(context);
@@ -1232,7 +1284,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet status(Context context, final RelativeLayout defC, final ImageView def, int statusId) {
+    public static AnimatorSet status(BattleFragment battleFragment, final RelativeLayout defC, final SimpleDraweeView def, int statusId) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView status = new ImageView(context);
         status.setImageResource(statusId);
@@ -1260,7 +1313,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet ball(Context context, final RelativeLayout wrapper, final RelativeLayout atkC, final ImageView atk, final RelativeLayout defC, final ImageView def, int ballId) {
+    public static AnimatorSet ball(BattleFragment battleFragment, final RelativeLayout wrapper, final RelativeLayout atkC, final SimpleDraweeView atk, final RelativeLayout defC, final SimpleDraweeView def, int ballId) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView ball = new ImageView(context);
         ball.setImageResource(ballId);
@@ -1277,7 +1331,9 @@ public class BattleAnimation {
             @Override
             public void onAnimationEndWithNet(Animator animation) {
                 wrapper.removeView(ball);
-            }            @Override
+            }
+
+            @Override
             public void onAnimationStartWithNet(Animator animation) {
                 wrapper.addView(ball);
             }
@@ -1288,7 +1344,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet wish(Context context, final RelativeLayout atkC, final ImageView atk) {
+    public static AnimatorSet wish(BattleFragment battleFragment, final RelativeLayout atkC, final SimpleDraweeView atk) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView wish = new ImageView(context);
         wish.setImageResource(R.drawable.battle_wisp);
@@ -1314,7 +1371,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet slash(Context context, final RelativeLayout defC) {
+    public static AnimatorSet slash(BattleFragment battleFragment, final RelativeLayout defC) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         final ImageView slash = new ImageView(context);
         slash.setImageResource(R.drawable.battle_leftclaw);
@@ -1339,7 +1397,8 @@ public class BattleAnimation {
         return animatorSet;
     }
 
-    public static AnimatorSet bomb(Context context, final RelativeLayout defC, final ImageView def, int bombId) {
+    public static AnimatorSet bomb(BattleFragment battleFragment, final RelativeLayout defC, final SimpleDraweeView def, int bombId) {
+        Context context = battleFragment.getActivity();
         AnimatorSet animatorSet = new AnimatorSet();
         int maxSize = 240;
         final ImageView bomb1 = new ImageView(context);
@@ -1425,9 +1484,59 @@ public class BattleAnimation {
 
     private static float[] getCenter(View view) {
         float[] toReturn = new float[2];
-        toReturn[0] = view.getX() + view.getWidth() * 0.5f;
-        toReturn[1] = view.getY() + view.getHeight() * 0.5f;
+//        toReturn[0] = view.getX() + view.getWidth() * 0.5f;
+//        toReturn[1] = view.getY() + view.getHeight() * 0.5f;
+        toReturn[0] = view.getX() + view.getWidth();
+        toReturn[1] = view.getY() + view.getHeight();
         return toReturn;
     }
 
+    private static BaseControllerListener<ImageInfo> getController(final Context context, final SimpleDraweeView view) {
+        return new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
+                if (imageInfo == null) {
+                    return;
+                }
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout
+                        .LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+
+                if (imageInfo.getHeight() < 80) {
+                    if (imageInfo.getHeight() <= 50) {
+                        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                30, context.getResources().getDisplayMetrics());
+                        params.setMargins(0, px, 0, px);
+                        view.setLayoutParams(params);
+                    } else if (imageInfo.getHeight() <= 60) {
+                        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                25, context.getResources().getDisplayMetrics());
+                        params.setMargins(0, px, 0, px);
+                        view.setLayoutParams(params);
+                    } else if (imageInfo.getHeight() <= 70) {
+                        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                20, context.getResources().getDisplayMetrics());
+                        params.setMargins(0, px, 0, px);
+                        view.setLayoutParams(params);
+                    } else if (imageInfo.getHeight() <= 80) {
+                        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                15, context.getResources().getDisplayMetrics());
+                        params.setMargins(0, px, 0, px);
+                        view.setLayoutParams(params);
+                    }
+                } else {
+                    params.setMargins(0, 0, 0, 0);
+                    view.setLayoutParams(params);
+                }
+            }
+
+            @Override
+            public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+            }
+
+            @Override
+            public void onFailure(String id, Throwable throwable) {
+            }
+        };
+    }
 }

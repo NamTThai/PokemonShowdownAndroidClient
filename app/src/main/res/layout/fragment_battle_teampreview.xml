@@ -1,107 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/p1a_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
-        android:id="@+id/p1b_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="34dp"
-        android:layout_marginLeft="48dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
-        android:id="@+id/p1c_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="28dp"
-        android:layout_marginLeft="96dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
-        android:id="@+id/p1d_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="22dp"
-        android:layout_marginLeft="144dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
-        android:id="@+id/p1e_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="192dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
-        android:id="@+id/p1f_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="240dp"
-        android:contentDescription="@string/pokemon_icon"/>
-
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2f_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="240dp"
         android:layout_marginTop="10dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2e_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="192dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2d_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="144dp"
         android:layout_marginTop="22dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2c_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="96dp"
         android:layout_marginTop="28dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2b_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="48dp"
         android:layout_marginTop="34dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/p2a_prev"
-        style="@style/fragment_battle_teampreview_pokemon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="40dp"
-        android:contentDescription="@string/pokemon_icon"/>
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1a_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/pokemon_icon"
+
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1b_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="34dp"
+        android:layout_marginLeft="58dp"
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1c_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:layout_marginLeft="106dp"
+        android:contentDescription="@string/pokemon_icon"
+
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1d_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginLeft="154dp"
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1e_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="202dp"
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/p1f_prev"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="250dp"
+        android:contentDescription="@string/pokemon_icon"
+        fresco:actualImageScaleType="centerInside" />
 
 </RelativeLayout>

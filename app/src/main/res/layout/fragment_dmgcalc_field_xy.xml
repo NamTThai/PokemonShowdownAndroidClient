@@ -34,8 +34,6 @@
                 android:text="@string/dmg_calc_field_singles"
                 android:textStyle="bold"/>
 
-            <View style="@style/divider_vertical"/>
-
             <TextView
                 android:id="@+id/dmg_calc_field_doubles"
                 android:layout_width="wrap_content"
@@ -86,8 +84,6 @@
             android:text="@string/dmg_calc_field_none"
             android:textStyle="bold"/>
 
-        <View style="@style/divider_vertical"/>
-
         <TextView
             android:id="@+id/dmg_calc_field_sun"
             android:layout_width="wrap_content"
@@ -97,8 +93,6 @@
             android:paddingRight="4dp"
             android:text="@string/dmg_calc_field_sun"
             android:textStyle="italic"/>
-
-        <View style="@style/divider_vertical"/>
 
         <TextView
             android:id="@+id/dmg_calc_field_rain"
@@ -110,8 +104,6 @@
             android:text="@string/dmg_calc_field_rain"
             android:textStyle="italic"/>
 
-        <View style="@style/divider_vertical"/>
-
         <TextView
             android:id="@+id/dmg_calc_field_sand"
             android:layout_width="wrap_content"
@@ -121,8 +113,6 @@
             android:paddingRight="4dp"
             android:text="@string/dmg_calc_field_sand"
             android:textStyle="italic"/>
-
-        <View style="@style/divider_vertical"/>
 
         <TextView
             android:id="@+id/dmg_calc_field_hail"
@@ -177,8 +167,6 @@
                 android:text="@string/dmg_calc_field_0spike"
                 android:textStyle="bold"/>
 
-            <View style="@style/divider_vertical"/>
-
             <TextView
                 android:id="@+id/dmg_calc_field_1spike"
                 android:layout_width="wrap_content"
@@ -189,8 +177,6 @@
                 android:text="@string/dmg_calc_field_1spike"
                 android:textStyle="italic"/>
 
-            <View style="@style/divider_vertical"/>
-
             <TextView
                 android:id="@+id/dmg_calc_field_2spike"
                 android:layout_width="wrap_content"
@@ -200,8 +186,6 @@
                 android:paddingRight="4dp"
                 android:text="@string/dmg_calc_field_2spike"
                 android:textStyle="italic"/>
-
-            <View style="@style/divider_vertical"/>
 
             <TextView
                 android:id="@+id/dmg_calc_field_3spike"
@@ -233,8 +217,6 @@
             android:paddingRight="4dp"
             android:text="@string/dmg_calc_field_reflect"
             android:textStyle="italic"/>
-
-        <View style="@style/divider_vertical"/>
 
         <TextView
             android:id="@+id/dmg_calc_field_lightscreen"

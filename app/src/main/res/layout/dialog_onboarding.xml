@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/loginUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textNoSuggestions"/>
-
-    <View style="@style/divider"/>
+        android:inputType="textNoSuggestions" />
 
     <TextView
+        android:background="?attr/selectableItemBackground"
         android:id="@+id/onboarding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:gravity="center"
-        android:padding="16dp"
-        android:text="@string/choose_username"
-        android:textColor="@drawable/dialog_button"/>
-
+        android:padding="16.0dip"
+        android:text="@string/choose_username" />
 </LinearLayout>
