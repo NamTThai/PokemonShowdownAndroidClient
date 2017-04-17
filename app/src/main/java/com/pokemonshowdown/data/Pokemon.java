@@ -2,8 +2,9 @@ package com.pokemonshowdown.data;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONArray;
@@ -42,9 +43,11 @@ public class Pokemon implements Serializable {
 
     private int mHappiness;
     private int mIcon;
-    private int mSprite;
+    private int mFrontSprite;
+    private int mBackSprite;
     private String mName;
     private String mNickName;
+    private String mBaseName;
     private int[] mStats;
     private int[] mBaseStats;
     private int[] mEVs;
@@ -67,83 +70,63 @@ public class Pokemon implements Serializable {
     private String mMove3;
     private String mMove4;
 
-    public Pokemon(Context appContext, String name, boolean placeHolder) throws JSONException, NullPointerException {
-        name = MyApplication.toId(name);
-        JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-        initializePokemon(appContext, jsonObject);
-    }
-
-    private void initializePokemon(Context appContext, JSONObject jsonObject) {
+    public Pokemon(Context appContext, String name) {
         try {
-            mName = jsonObject.getString("species");
-
-            mSprite = getPokemonSprite(appContext, mName, false, false, false);
-            mIcon = getPokemonIcon(appContext, mName);
-
-            setNickName(mName);
-            setStats(new int[6]);
-            setBaseStats(new int[6]);
-            JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
-            mBaseStats[0] = baseStats.getInt("hp");
-            mBaseStats[1] = baseStats.getInt("atk");
-            mBaseStats[2] = baseStats.getInt("def");
-            mBaseStats[3] = baseStats.getInt("spa");
-            mBaseStats[4] = baseStats.getInt("spd");
-            mBaseStats[5] = baseStats.getInt("spe");
-
-            mStages = new int[6];
-            Arrays.fill(mStages, 6); // Neutral Stage
-
-            setEVs(new int[6]);
-            setIVs(new int[6]);
-            Arrays.fill(mIVs, 31);
-            setLevel(100);
-            try {
-                setGender(jsonObject.getString("gender"));
-                mGenderAvailable = false;
-            } catch (JSONException e) {
-                mGenderAvailable = true;
-                setGender("M");
-            }
-            setHappiness(255);
-            setNature("Adamant");
-            setStats(calculateStats());
-            setShiny(false);
-            JSONArray types = jsonObject.getJSONArray("types");
-            setType(new String[types.length()]);
-            setTypeIcon(new int[types.length()]);
-            for (int i = 0; i < types.length(); i++) {
-                mType[i] = types.getString(i);
-                mTypeIcon[i] = appContext.getResources()
-                        .getIdentifier("types_" + mType[i].toLowerCase(), "drawable", appContext.getPackageName());
+            name = MyApplication.toId(name);
+            String unaltered = name;
+            String[] specialForms = new String[]{"burmysandy", "burmytrash", "shelloseast", "gastrodoneast", "deerlingsummer",
+                    "deerlingautumn", "deerlingwinter", "sawsbucksummer", "sawsbuckautumn", "sawsbuckwinter", "vivillonarchipelago",
+                    "vivilloncontinental", "vivillonelegant", "vivillongarden", "vivillonhighplains", "vivillonicysnow",
+                    "vivillonjungle", "vivillonmarine", "vivillonmodern", "vivillonmonsoon", "vivillonocean", "vivillonpolar",
+                    "vivillonriver", "vivillonsandstorm", "vivillonsavanna", "vivillonsun", "vivillontundra", "flabebeblue",
+                    "flabebeorange", "flabebewhite", "flabebeyellow", "floetteblue", "floetteorange", "floettewhite", "floetteyellow",
+                    "florgesblue", "florgesorange", "florgeswhite", "florgesyellow", "miniororange", "minioryellow", "miniorgreen",
+                    "miniorblue", "miniorindigo", "miniorviolet", "magearnaoriginal"};
+            for (String s : specialForms) {
+                if (name.equals(s)) {
+                    // We aren't using switch because of redundancy in names (E.g.: Vivillon)
+                    if (s.contains("burmy")) {
+                        name = "burmy";
+                    } else if (s.contains("shellos")) {
+                        name = "shellos";
+                    } else if (s.contains("gastrodon")) {
+                        name = "gastrodon";
+                    } else if (s.contains("deerling")) {
+                        name = "deerling";
+                    } else if (s.contains("sawsbuck")) {
+                        name = "sawsbuck";
+                    } else if (s.contains("vivillon")) {
+                        name = "vivillon";
+                    } else if (s.contains("flabebe")) {
+                        name = "flabebe";
+                    } else if (s.contains("floette")) {
+                        name = "floette";
+                    } else if (s.contains("florges")) {
+                        name = "florges";
+                    } else if (s.contains("minior")) {
+                        name = "minior";
+                    } else if (s.contains("magearna")) {
+                        name = "magearna";
+                    }
+                    break;
+                }
             }
 
-            JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
-            Iterator<String> keys = abilityList.keys();
-            mAbilityList = new HashMap<>();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                mAbilityList.put(key, abilityList.getString(key));
+            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
+            if (name.equals(unaltered)) {
+                initializePokemon(appContext, jsonObject, false, unaltered);
+            } else {
+                initializePokemon(appContext, jsonObject, true, unaltered);
             }
-            setAbilityTag("0");
-
-            setWeight(Double.parseDouble(jsonObject.getString("weightkg")));
-
-            setItem("");
-
-            setMove1("");
-            setMove2("");
-            setMove3("");
-            setMove4("");
-        } catch (JSONException e) {
-            Log.d(PTAG, e.toString());
+        } catch (NullPointerException e) {
+            Log.e(PTAG, "Can't find pokemon " + name + " with error log " + e.toString());
         }
     }
 
-    public static int getPokemonSprite(Context appContext, String name, boolean back, boolean female, boolean shiny) {
+    public static int getPokemonFrontSprite(Context appContext, String name, boolean back, boolean female, boolean shiny) {
         try {
             name = MyApplication.toId(name);
-            String prefix = (shiny) ? "sprshiny_" : "sprites_";
+            String prefix = (shiny) ? "sprshiny_front_" : "sprites_front_";
             int toReturn;
             if (female) {
                 String drawableName = prefix + name + "f";
@@ -156,15 +139,46 @@ public class Pokemon implements Serializable {
                 String drawableName = prefix + name;
                 toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
             }
-            return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
+            //return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
+            return toReturn;
         } catch (NullPointerException e) {
-            return R.drawable.sprites_0;
+            //return R.drawable.sprites_0;
         }
+
+        return 0;
+    }
+
+    public static int getPokemonBackSprite(Context appContext, String name, boolean back, boolean female, boolean shiny) {
+        try {
+            name = MyApplication.toId(name);
+            String prefix = (shiny) ? "sprshiny_back_" : "sprites_back_";
+            int toReturn;
+            if (female) {
+                //String drawableName = prefix + name + "f";
+                String drawableName = prefix + name;
+                toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+                if (toReturn == 0) {
+                    drawableName = prefix + name;
+                    toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+                }
+            } else {
+                String drawableName = prefix + name;
+                toReturn = appContext.getResources().getIdentifier(drawableName, "drawable", appContext.getPackageName());
+            }
+            //return (toReturn == 0) ? R.drawable.sprites_0 : toReturn;
+            return toReturn;
+        } catch (NullPointerException e) {
+            //return R.drawable.sprites_0;
+        }
+
+        return 0;
     }
 
     public static int getPokemonIcon(Context appContext, String name) {
         try {
+            name = name.toLowerCase().replace("-", "").trim();
             name = MyApplication.toId(name);
+
             int toReturn = appContext.getResources()
                     .getIdentifier("smallicons_" + name, "drawable", appContext.getPackageName());
             return (toReturn == 0) ? R.drawable.smallicons_0 : toReturn;
@@ -173,188 +187,24 @@ public class Pokemon implements Serializable {
         }
     }
 
-    public int[] calculateStats() {
-        int[] stats = new int[6];
-        stats[0] = calculateHP();
-        stats[1] = calculateAtk();
-        stats[2] = calculateDef();
-        stats[3] = calculateSpAtk();
-        stats[4] = calculateSpDef();
-        stats[5] = calculateSpd();
-        return stats;
-    }
-
-    public int calculateHP() {
-        return ((getHPIV() + 2 * getBaseHP() + getHPEV() / 4 + 100) * getLevel() / 100 + 10);
-    }
-
-    public int calculateAtk() {
-        return (int) (((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1] * STAGES_MAIN_STATS[mStages[1]]);
-    }
-
-    public int calculateDef() {
-        return (int) (((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2] * STAGES_MAIN_STATS[mStages[2]]);
-    }
-
-    public int calculateSpAtk() {
-        return (int) (((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3] * STAGES_MAIN_STATS[mStages[3]]);
-    }
-
-    public int calculateSpDef() {
-        return (int) (((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4] * STAGES_MAIN_STATS[mStages[4]]);
-    }
-
-    public int calculateSpd() {
-        return (int) (((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5] * STAGES_MAIN_STATS[mStages[5]]);
-    }
-
-    public int getHPIV() {
-        return mIVs[0];
-    }
-
-    public int getBaseHP() {
-        return mBaseStats[0];
-    }
-
-    public int getHPEV() {
-        return mEVs[0];
-    }
-
-    public void setHPEV(int HP) {
-        mEVs[0] = HP;
-    }
-
-    public int getLevel() {
-        return mLevel;
-    }
-
-    public int getAtkIV() {
-        return mIVs[1];
-    }
-
-    public int getBaseAtk() {
-        return mBaseStats[1];
-    }
-
-    public int getAtkEV() {
-        return mEVs[1];
-    }
-
-    public void setAtkEV(int Atk) {
-        mEVs[1] = Atk;
-    }
-
-    public int getDefIV() {
-        return mIVs[2];
-    }
-
-    public int getBaseDef() {
-        return mBaseStats[2];
-    }
-
-    public int getDefEV() {
-        return mEVs[2];
-    }
-
-    public void setDefEV(int Def) {
-        mEVs[2] = Def;
-    }
-
-    public int getSpAtkIV() {
-        return mIVs[3];
-    }
-
-    public int getBaseSpAtk() {
-        return mBaseStats[3];
-    }
-
-    public int getSpAtkEV() {
-        return mEVs[3];
-    }
-
-    public void setSpAtkEV(int SpAtk) {
-        mEVs[3] = SpAtk;
-    }
-
-    public int getSpDefIV() {
-        return mIVs[4];
-    }
-
-    public int getBaseSpDef() {
-        return mBaseStats[4];
-    }
-
-    public int getSpDefEV() {
-        return mEVs[4];
-    }
-
-    public void setSpDefEV(int SpDef) {
-        mEVs[4] = SpDef;
-    }
-
-    public int getSpdIV() {
-        return mIVs[5];
-    }
-
-    public int getBaseSpd() {
-        return mBaseStats[5];
-    }
-
-    public int getSpdEV() {
-        return mEVs[5];
-    }
-
-    public void setSpdEV(int Spd) {
-        mEVs[5] = Spd;
-    }
-
-    public void setSpdIV(int Spd) {
-        mIVs[5] = Spd;
-    }
-
-    public void setSpDefIV(int SpDef) {
-        mIVs[4] = SpDef;
-    }
-
-    public void setSpAtkIV(int SpAtk) {
-        mIVs[3] = SpAtk;
-    }
-
-    public void setDefIV(int Def) {
-        mIVs[2] = Def;
-    }
-
-    public void setAtkIV(int Atk) {
-        mIVs[1] = Atk;
-    }
-
-    public void setLevel(int level) {
-        mLevel = level;
-    }
-
-    public void setHPIV(int HP) {
-        mIVs[0] = HP;
-    }
-
-    public Pokemon(Context appContext, String name) {
-        try {
-            name = MyApplication.toId(name);
-            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
-            initializePokemon(appContext, jsonObject);
-        } catch (NullPointerException e) {
-            Log.e(PTAG, "Can't find pokemon " + name + " with error log " + e.toString());
-        }
-    }
-
     public static Pokemon importPokemon(String importString, Context appContext, boolean withAppContext) {
         String[] pokemonStrings = importString.split("\n");
         if (pokemonStrings.length == 0) {
             return null;
         }
-        String pokemonMainData = pokemonStrings[0]; // split 0 is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
+
+        String pokemonMainData = "";
+        // We need to bypass g between mons on the import, causing split[0] to be != null
+        for (String s : pokemonStrings) {
+            if (!s.trim().isEmpty()) {
+                pokemonMainData = s; // is Name @ Item or Name or nickname (Name) or  nickname (Name) @ Item
+                break;
+            }
+        }
         String pokemonName = "", pokemonNickname = null, pokemonItem = null, pokemonGender = null;
         Pokemon p = null;
         boolean isGender = false; // no nickname, but gender
+
         if (pokemonMainData.contains("@")) {
             String[] nameItem = pokemonMainData.split("@");
             pokemonItem = nameItem[1];
@@ -395,11 +245,13 @@ public class Pokemon implements Serializable {
             pokemonName = pokemonMainData;
         }
 
+        //Toast.makeText(appContext, pokemonName, Toast.LENGTH_SHORT).show();
         // replace for different formes
+
         pokemonName = MyApplication.toId(pokemonName);
         try {
-            p = new Pokemon(appContext, pokemonName, true);
-        } catch (JSONException | NullPointerException e) {
+            p = new Pokemon(appContext, pokemonName);
+        } catch (NullPointerException e) {
             return null;
         }
 
@@ -420,7 +272,7 @@ public class Pokemon implements Serializable {
         int currentMoveId = 1;
         for (int i = 1; i < pokemonStrings.length; i++) {
             String currentString = pokemonStrings[i];
-            if (currentString.startsWith("-")) {
+            if (currentString.contains("-") && !currentString.contains("Ability")) { // Magearna's Soul-Heart messes with whis
                 // its a move!
                 // same as items, it's a real name , we need an id. Lowercasing and removing spaces  + - should do the trick
                 String move = currentString.substring(currentString.indexOf("-") + 1);
@@ -440,7 +292,7 @@ public class Pokemon implements Serializable {
                         break;
                 }
                 currentMoveId++;
-            } else if (currentString.startsWith("IVs:")) {
+            } else if (currentString.contains("IVs:")) {
                 String ivs = currentString.substring(currentString.indexOf(":") + 1);
                 String[] ivsSplit = ivs.split("/");
 
@@ -477,7 +329,7 @@ public class Pokemon implements Serializable {
                             break;
                     }
                 }
-            } else if (currentString.startsWith("EVs:")) {
+            } else if (currentString.contains("EVs:")) {
                 String evs = currentString.substring(currentString.indexOf(":") + 1);
                 String[] evssplit = evs.split("/");
 
@@ -514,10 +366,10 @@ public class Pokemon implements Serializable {
                             break;
                     }
                 }
-            } else if (currentString.contains("Nature")) { /** Example : Adamant Nature*/
+            } else if (currentString.contains("Nature")) {
                 String nature = currentString.substring(0, currentString.indexOf("Nature")).trim();
                 p.setNature(nature);
-            } else if (currentString.startsWith("Ability:")) {
+            } else if (currentString.contains("Ability:")) {
                 String abilityName = currentString.substring(currentString.indexOf(":") + 1).trim();
 
                 for (String s : p.getAbilityList().keySet()) {
@@ -526,49 +378,28 @@ public class Pokemon implements Serializable {
                         break;
                     }
                 }
-            } else if (currentString.startsWith("Level:")) {
+            } else if (currentString.contains("Level:")) {
                 String level = currentString.substring(currentString.indexOf(":") + 1).trim();
                 try {
                     p.setLevel(Integer.parseInt(level));
                 } catch (NumberFormatException e) {
                     break;
                 }
-            } else if (currentString.startsWith("Shiny")) {
+            } else if (currentString.contains("Shiny")) {
                 if (!p.isShiny()) {
-                    p.switchShiny(appContext);
+                    p.switchFrontShiny(appContext, true);
+                    p.switchBackShiny(appContext, true);
                 }
             }
         }
+
+        Log.d("dfjd", p.exportPokemon(appContext));
         return p;
-    }
-
-    public HashMap<String, String> getAbilityList() {
-        return mAbilityList;
-    }
-
-    public boolean isShiny() {
-        return mShiny;
-    }
-
-    public void setShiny(boolean shiny) {
-        mShiny = shiny;
-    }
-
-    public void switchShiny(Context c) {
-        setShiny(!isShiny());
-        setSprite(getPokemonSprite(c, mName, false, getGender().equals("F"), isShiny()));
-    }
-
-    public String getGender() {
-        return mGender;
-    }
-
-    public void setGender(String gender) {
-        mGender = gender;
     }
 
     public static String getPokemonName(Context appContext, String name) {
         try {
+            name = MyApplication.toId(name);
             JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
             return jsonObject.getString("species");
         } catch (JSONException e) {
@@ -596,6 +427,26 @@ public class Pokemon implements Serializable {
         } catch (NullPointerException e) {
             return null;
         }
+        return null;
+    }
+
+    public static String[] getPokemonAbilities(Context appContext, String name) {
+        try {
+            JSONObject jsonObject = Pokedex.get(appContext).getPokemonJSONObject(name);
+            jsonObject = (JSONObject) jsonObject.get("abilities");
+            Iterator<String> keys = jsonObject.keys();
+            String[] abilities = new String[jsonObject.length()];
+            int i = 0;
+            while (keys.hasNext()) {
+                String key = keys.next();
+                abilities[i] = jsonObject.getString(key);
+                i++;
+            }
+            return abilities;
+        } catch (JSONException ex) {
+            Log.d(PTAG, ex.toString());
+        }
+
         return null;
     }
 
@@ -689,6 +540,301 @@ public class Pokemon implements Serializable {
         return (int) (((SpdIV + 2 * baseSpd + SpdEV / 4) * level / 100 + 5) * natureMultiplier);
     }
 
+    private void initializePokemon(Context appContext, JSONObject jsonObject, boolean isForm, String form) {
+        try {
+            if (!isForm) {
+                mName = jsonObject.getString("species");
+            } else {
+                int size = jsonObject.getString("species").length();
+                form = form.substring(size);
+                mName = jsonObject.getString("species");
+                mBaseName = jsonObject.getString("species") + "-" + form.substring(0, 1).toUpperCase() + form.substring(1, form.length());
+            }
+
+            mFrontSprite = getPokemonFrontSprite(appContext, mBaseName == null ? mName : mBaseName, false, false, false);
+            mBackSprite = getPokemonBackSprite(appContext, mBaseName == null ? mName : mBaseName, false, false, false);
+            mIcon = getPokemonIcon(appContext, mBaseName == null ? mName : mBaseName);
+
+            setNickName(mName);
+            setStats(new int[6]);
+            setBaseStats(new int[6]);
+            JSONObject baseStats = (JSONObject) jsonObject.get("baseStats");
+            mBaseStats[0] = baseStats.getInt("hp");
+            mBaseStats[1] = baseStats.getInt("atk");
+            mBaseStats[2] = baseStats.getInt("def");
+            mBaseStats[3] = baseStats.getInt("spa");
+            mBaseStats[4] = baseStats.getInt("spd");
+            mBaseStats[5] = baseStats.getInt("spe");
+
+            mStages = new int[6];
+            Arrays.fill(mStages, 6); // Neutral Stage
+
+            setEVs(new int[6]);
+            setIVs(new int[6]);
+            Arrays.fill(mIVs, 31);
+            setLevel(100);
+            try {
+                setGender(jsonObject.getString("gender"));
+                mGenderAvailable = false;
+            } catch (JSONException e) {
+                mGenderAvailable = true;
+                setGender("M");
+            }
+            setHappiness(255);
+            setNature("Adamant");
+            setStats(calculateStats());
+            setShiny(false);
+            JSONArray types = jsonObject.getJSONArray("types");
+            setType(new String[types.length()]);
+            setTypeIcon(new int[types.length()]);
+            for (int i = 0; i < types.length(); i++) {
+                mType[i] = types.getString(i);
+                mTypeIcon[i] = appContext.getResources()
+                        .getIdentifier("types_" + mType[i].toLowerCase(), "drawable", appContext.getPackageName());
+            }
+
+            JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
+            Iterator<String> keys = abilityList.keys();
+            mAbilityList = new HashMap<>();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                mAbilityList.put(key, abilityList.getString(key));
+            }
+            setAbilityTag("0");
+
+            setWeight(Double.parseDouble(jsonObject.getString("weightkg")));
+
+            setItem("");
+
+            setMove1("");
+            setMove2("");
+            setMove3("");
+            setMove4("");
+        } catch (JSONException e) {
+            Log.d(PTAG, e.toString());
+        }
+    }
+
+    public int[] calculateStats() {
+        int[] stats = new int[6];
+        stats[0] = calculateHP();
+        stats[1] = calculateAtk();
+        stats[2] = calculateDef();
+        stats[3] = calculateSpAtk();
+        stats[4] = calculateSpDef();
+        stats[5] = calculateSpd();
+        return stats;
+    }
+
+    public int calculateHP() {
+        if (mName.equals("Shedinja")) {
+            return 1;
+        }
+        return ((getHPIV() + 2 * getBaseHP() + getHPEV() / 4 + 100) * getLevel() / 100 + 10);
+    }
+
+    public int calculateAtk() {
+        return (int) (((getAtkIV() + 2 * getBaseAtk() + getAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[1] * STAGES_MAIN_STATS[mStages[1]]);
+    }
+
+    public int calculateDef() {
+        return (int) (((getDefIV() + 2 * getBaseDef() + getDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[2] * STAGES_MAIN_STATS[mStages[2]]);
+    }
+
+    public int calculateSpAtk() {
+        return (int) (((getSpAtkIV() + 2 * getBaseSpAtk() + getSpAtkEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[3] * STAGES_MAIN_STATS[mStages[3]]);
+    }
+
+    public int calculateSpDef() {
+        return (int) (((getSpDefIV() + 2 * getBaseSpDef() + getSpDefEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[4] * STAGES_MAIN_STATS[mStages[4]]);
+    }
+
+    public int calculateSpd() {
+        return (int) (((getSpdIV() + 2 * getBaseSpd() + getSpdEV() / 4) * getLevel() / 100 + 5) * mNatureMultiplier[5] * STAGES_MAIN_STATS[mStages[5]]);
+    }
+
+    public int getHPIV() {
+        return mIVs[0];
+    }
+
+    public void setHPIV(int HP) {
+        mIVs[0] = HP;
+    }
+
+    public int getBaseHP() {
+        return mBaseStats[0];
+    }
+
+    public void setBaseHP(int i) {
+        mBaseStats[0] = i;
+    }
+
+    public int getHPEV() {
+        return mEVs[0];
+    }
+
+    public void setHPEV(int HP) {
+        mEVs[0] = HP;
+    }
+
+    public int getLevel() {
+        return mLevel;
+    }
+
+    public void setLevel(int level) {
+        mLevel = level;
+    }
+
+    public int getAtkIV() {
+        return mIVs[1];
+    }
+
+    public void setAtkIV(int Atk) {
+        mIVs[1] = Atk;
+    }
+
+    public int getBaseAtk() {
+        return mBaseStats[1];
+    }
+
+    public void setBaseAtk(int i) {
+        mBaseStats[1] = i;
+    }
+
+    public int getAtkEV() {
+        return mEVs[1];
+    }
+
+    public void setAtkEV(int Atk) {
+        mEVs[1] = Atk;
+    }
+
+    public int getDefIV() {
+        return mIVs[2];
+    }
+
+    public void setDefIV(int Def) {
+        mIVs[2] = Def;
+    }
+
+    public int getBaseDef() {
+        return mBaseStats[2];
+    }
+
+    public void setBaseDef(int i) {
+        mBaseStats[2] = i;
+    }
+
+    public int getDefEV() {
+        return mEVs[2];
+    }
+
+    public void setDefEV(int Def) {
+        mEVs[2] = Def;
+    }
+
+    public int getSpAtkIV() {
+        return mIVs[3];
+    }
+
+    public void setSpAtkIV(int SpAtk) {
+        mIVs[3] = SpAtk;
+    }
+
+    public int getBaseSpAtk() {
+        return mBaseStats[3];
+    }
+
+    public void setBaseSpAtk(int i) {
+        mBaseStats[3] = i;
+    }
+
+    public int getSpAtkEV() {
+        return mEVs[3];
+    }
+
+    public void setSpAtkEV(int SpAtk) {
+        mEVs[3] = SpAtk;
+    }
+
+    public int getSpDefIV() {
+        return mIVs[4];
+    }
+
+    public void setSpDefIV(int SpDef) {
+        mIVs[4] = SpDef;
+    }
+
+    public int getBaseSpDef() {
+        return mBaseStats[4];
+    }
+
+    public void setBaseSpDef(int i) {
+        mBaseStats[4] = i;
+    }
+
+    public int getSpDefEV() {
+        return mEVs[4];
+    }
+
+    public void setSpDefEV(int SpDef) {
+        mEVs[4] = SpDef;
+    }
+
+    public int getSpdIV() {
+        return mIVs[5];
+    }
+
+    public void setSpdIV(int Spd) {
+        mIVs[5] = Spd;
+    }
+
+    public int getBaseSpd() {
+        return mBaseStats[5];
+    }
+
+    public void setBaseSpd(int i) {
+        mBaseStats[5] = i;
+    }
+
+    public int getSpdEV() {
+        return mEVs[5];
+    }
+
+    public void setSpdEV(int Spd) {
+        mEVs[5] = Spd;
+    }
+
+    public HashMap<String, String> getAbilityList() {
+        return mAbilityList;
+    }
+
+    public boolean isShiny() {
+        return mShiny;
+    }
+
+    public void setShiny(boolean shiny) {
+        mShiny = shiny;
+    }
+
+    public void switchFrontShiny(Context c, boolean shiny) {
+        setShiny(shiny);
+        setFrontSprite(getPokemonFrontSprite(c, mBaseName == null ? mName : mBaseName, false, getGender().equals("F"), isShiny()));
+    }
+
+    public void switchBackShiny(Context c, boolean shiny) {
+        setShiny(shiny);
+        setBackSprite(getPokemonBackSprite(c, mBaseName == null ? mName : mBaseName, false, getGender().equals("F"), isShiny()));
+    }
+
+    public String getGender() {
+        return mGender;
+    }
+
+    public void setGender(String gender) {
+        mGender = gender;
+    }
+
     public String exportForVerification() {
         StringBuilder sb = new StringBuilder();
         if (!getNickName().equals(getName())) {
@@ -746,12 +892,25 @@ public class Pokemon implements Serializable {
         return mNickName;
     }
 
+    public void setNickName(String nickName) {
+        mNickName = nickName;
+    }
+
     public String getName() {
+        return mBaseName == null ? mName : mBaseName;
+    }
+
+    // Necessary for getting the unchanged form of the pokemon when selecting another form on PokemonActivity
+    public String getRealName() {
         return mName;
     }
 
     public String getItem() {
         return mItem;
+    }
+
+    public void setItem(String item) {
+        mItem = item;
     }
 
     public String getAbilityTag() {
@@ -790,6 +949,10 @@ public class Pokemon implements Serializable {
         return mMove4;
     }
 
+    public void setMove4(String move4) {
+        mMove4 = move4;
+    }
+
     public String getNature() {
         return mNature;
     }
@@ -807,18 +970,6 @@ public class Pokemon implements Serializable {
         mHappiness = happiness;
     }
 
-    public void setMove4(String move4) {
-        mMove4 = move4;
-    }
-
-    public void setItem(String item) {
-        mItem = item;
-    }
-
-    public void setNickName(String nickName) {
-        mNickName = nickName;
-    }
-
     /**
      * Exporting function
      *
@@ -826,6 +977,10 @@ public class Pokemon implements Serializable {
      */
     public String exportPokemon(Context appContext) {
         StringBuilder sb = new StringBuilder();
+        if (getName() == null) {
+            return "";
+        }
+
         if (getName().length() > 0) {
             if (!getNickName().equals(getName())) {
                 sb.append(getNickName()).append(" (").append(getName()).append(")");
@@ -849,8 +1004,8 @@ public class Pokemon implements Serializable {
             }
             sb.append("\n");
         }
-        if (getAbility().length() > 0) {
-            sb.append("Ability: ").append(getAbility()).append("\n");
+        if (getAbility(appContext).length() > 0) {
+            sb.append("Ability: ").append(getAbility(appContext)).append("\n");
         }
 
         if (getLevel() != 100) {
@@ -1064,8 +1219,35 @@ public class Pokemon implements Serializable {
         return sb.toString();
     }
 
-    public String getAbility() {
-        return getAbilityList().get(mAbility);
+    public String getAbility(Context context) {
+        // Necessary maneuvers to counter Null Exceptions when giving up from choosing a custom ability
+        // When having a custom ability already.
+        try {
+            String ability = getAbilityList().get(mAbility);
+            if (ability == null || ability.equals("null") || ability.isEmpty()) {
+                return AbilityDex.get(context).getAbilityJsonObject(mAbility).getString("name");
+            }
+            return getAbilityList().get(mAbility);
+        } catch (Exception ex) {
+            try {
+                JSONObject jsonObject = Pokedex.get(context).getPokemonJSONObject(getName());
+                JSONObject abilityList = (JSONObject) jsonObject.get("abilities");
+                Iterator<String> keys = abilityList.keys();
+                mAbilityList = new HashMap<>();
+
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    mAbilityList.put(key, abilityList.getString(key));
+                }
+
+                setAbilityTag("0");
+
+                Toast.makeText(context, "Failed to set a custom ability. Setting the first available instead", Toast.LENGTH_SHORT).show();
+                return getAbilityList().get("0");
+            } catch (JSONException ex2) {
+                return null;
+            }
+        }
     }
 
     public int[] getEVs() {
@@ -1084,12 +1266,20 @@ public class Pokemon implements Serializable {
         mIVs = IVs;
     }
 
-    public int getSprite() {
-        return mSprite;
+    public int getFrontSprite() {
+        return mFrontSprite;
     }
 
-    public void setSprite(int sprite) {
-        mSprite = sprite;
+    public void setFrontSprite(int sprite) {
+        mFrontSprite = sprite;
+    }
+
+    public int getBackSprite() {
+        return mBackSprite;
+    }
+
+    public void setBackSprite(int sprite) {
+        mBackSprite = sprite;
     }
 
     public int getIcon() {
@@ -1230,12 +1420,12 @@ public class Pokemon implements Serializable {
         switch (mGender) {
             case "M":
                 setGender("F");
-                setSprite(getPokemonSprite(c, mName, false, true, isShiny()));
+                setFrontSprite(getPokemonFrontSprite(c, mName, false, true, isShiny()));
                 setIcon(getPokemonIcon(c, mName));
                 return;
             case "F":
                 setGender("M");
-                setSprite(getPokemonSprite(c, mName, false, false, isShiny()));
+                setFrontSprite(getPokemonFrontSprite(c, mName, false, false, isShiny()));
                 setIcon(getPokemonIcon(c, mName));
         }
     }

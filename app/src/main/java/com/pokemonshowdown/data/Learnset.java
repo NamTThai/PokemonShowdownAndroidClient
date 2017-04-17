@@ -3,7 +3,7 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    >
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="15dp">
 
     <TableLayout
         android:layout_width="wrap_content"
@@ -19,298 +19,198 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_HP"
-                />
+                android:text="@string/stats_HP" />
+
+            <SeekBar
+                android:id="@+id/bar_HP"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_HP"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_HP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_HP"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_HP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_HP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
+                android:layout_marginRight="8dp" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_Atk"
-                />
+                android:text="@string/stats_Atk" />
+
+            <SeekBar
+                android:id="@+id/bar_Atk"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_Atk"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_Atk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_Atk"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_Atk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_Atk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
-
-            <Spinner
-                android:id="@+id/Stages_Atk"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
-
+                android:layout_marginRight="8dp" />
         </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_Def"
-                />
+                android:text="@string/stats_Def" />
+
+            <SeekBar
+                android:id="@+id/bar_Def"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_Def"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_Def"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_Def"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_Def"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_Def"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
-
-            <Spinner
-                android:id="@+id/Stages_Def"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
-
+                android:layout_marginRight="8dp" />
         </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_SpAtk"
-                />
+                android:text="@string/stats_SpAtk" />
+
+            <SeekBar
+                android:id="@+id/bar_SpAtk"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_SpAtk"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_SpAtk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_SpAtk"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_SpAtk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_SpAtk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
-
-            <Spinner
-                android:id="@+id/Stages_SpAtk"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
-
+                android:layout_marginRight="8dp" />
         </TableRow>
 
         <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_SpDef"
-                />
+                android:text="@string/stats_SpDef" />
+
+            <SeekBar
+                android:id="@+id/bar_SpDef"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_SpDef"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_SpDef"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_SpDef"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_SpDef"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_SpDef"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
-
-            <Spinner
-                android:id="@+id/Stages_SpDef"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
-
+                android:layout_marginRight="8dp" />
         </TableRow>
 
         <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="@string/stats_Spd"
-                />
+                android:text="@string/stats_Spd" />
+
+            <SeekBar
+                android:id="@+id/bar_Spd"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:max="63" />
+
+            <TextView
+                android:id="@+id/EV_Spd"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/final_Spd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                />
-
-            <SeekBar
-                android:id="@+id/bar_Spd"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:max="63"
-                />
-
-            <TextView
-                android:id="@+id/EV_Spd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/dialog_button"
-                />
-
-            <EditText
-                android:id="@+id/IV_Spd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                />
-
-            <Spinner
-                android:id="@+id/Stages_Spd"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
-
+                android:layout_marginRight="8dp" />
         </TableRow>
-
     </TableLayout>
-
-    <View style="@style/divider"/>
 
     <TextView
         android:id="@+id/save_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
         android:padding="16dp"
-        android:text="@string/save"
-        android:textColor="@drawable/dialog_button"/>
-
+        android:text="@string/save" />
 </LinearLayout>

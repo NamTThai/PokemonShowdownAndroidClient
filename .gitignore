@@ -1,8 +1,9 @@
+*.iml
 .gradle
 /local.properties
+/.idea/workspace.xml
+/.idea/libraries
 .DS_Store
-*.iml
-app/app.iml
-.idea
-build
-sprite-sheet-processor
+/build
+/captures
+.externalNativeBuild

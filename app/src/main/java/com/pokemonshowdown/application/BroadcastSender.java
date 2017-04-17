@@ -58,8 +58,8 @@ public class BroadcastSender {
         }
         Intent intent = new Intent(ACTION_FROM_MY_APPLICATION)
                 .putExtra(EXTRA_DETAILS, s[0]);
-        for (int i = 0; i < s.length - 1; i+=2) {
-            intent.putExtra(s[i], s[i+1]);
+        for (int i = 0; i < s.length - 1; i += 2) {
+            intent.putExtra(s[i], s[i + 1]);
         }
         sendBroadcast(intent);
     }

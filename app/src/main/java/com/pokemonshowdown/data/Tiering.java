@@ -3,7 +3,7 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
@@ -22,6 +22,7 @@ import java.util.List;
 public class Tiering {
     public final static List<String> TIER_ORDER = new ArrayList<>(
             Arrays.asList("Ubers", "OU", "BL", "UU", "BL2", "RU", "BL3", "NU", "BL4", "PU", "NFE", "LC Uber", "LC"));
+
     public final static String PTAG = Pokedex.class.getName();
     private static Tiering sTiering;
 
@@ -72,7 +73,7 @@ public class Tiering {
                 mPokemonTierMap.put(key, tier);
                 if (tier != null) {
                     // servers tier name is Ubers but file name is Uber...
-                    if(tier.equals("Uber")) {
+                    if (tier.equals("Uber")) {
                         tier = "Ubers";
                     }
                     if (mTierList.get(tier) != null) {

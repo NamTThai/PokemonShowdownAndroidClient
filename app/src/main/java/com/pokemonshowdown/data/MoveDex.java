@@ -3,7 +3,7 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
@@ -25,6 +25,62 @@ public class MoveDex {
     private MoveDex(Context appContext) {
         mMoveDexEntries = readFile(appContext);
         initializeAnimationEntries();
+    }
+
+    public static String getMoveMaxPP(Context appContext, String name) {
+        try {
+            name = MyApplication.toId(name);
+            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
+            return getMaxPP(moveJson.getString("pp"));
+        } catch (JSONException | NullPointerException e) {
+            return "0";
+        }
+    }
+
+    public static MoveDex get(Context c) {
+        if (sMoveDex == null) {
+            sMoveDex = new MoveDex(c.getApplicationContext());
+        }
+        return sMoveDex;
+    }
+
+    public static String getMaxPP(String pp) {
+        int ppInt = Integer.parseInt(pp);
+        ppInt *= 1.6;
+        return Integer.toString(ppInt);
+    }
+
+    public static String getMoveName(Context appContext, String name) {
+        try {
+            name = MyApplication.toId(name);
+            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
+            return moveJson.getString("name");
+        } catch (JSONException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    public static int getMoveTypeIcon(Context appContext, String move) {
+        try {
+            move = MyApplication.toId(move);
+            MoveDex moveDex;
+            moveDex = MoveDex.get(appContext);
+            String types = moveDex.getMoveJsonObject(move).getString("type");
+            return appContext.getResources()
+                    .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
+        } catch (JSONException | NullPointerException e) {
+            return 0;
+        }
+    }
+
+    public static int getTypeIcon(Context appContext, String types) {
+        return appContext.getResources()
+                .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
+    }
+
+    public static int getCategoryIcon(Context appContext, String category) {
+        return appContext.getResources()
+                .getIdentifier("category_" + MyApplication.toId(category), "drawable", appContext.getPackageName());
     }
 
     private HashMap<String, String> readFile(Context appContext) {
@@ -414,16 +470,6 @@ public class MoveDex {
         }
     }
 
-    public static String getMoveMaxPP(Context appContext, String name) {
-        try {
-            name = MyApplication.toId(name);
-            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
-            return getMaxPP(moveJson.getString("pp"));
-        } catch (JSONException | NullPointerException e) {
-            return "0";
-        }
-    }
-
     public JSONObject getMoveJsonObject(String name) {
         name = MyApplication.toId(name);
         try {
@@ -434,52 +480,6 @@ public class MoveDex {
         }
     }
 
-    public static MoveDex get(Context c) {
-        if (sMoveDex == null) {
-            sMoveDex = new MoveDex(c.getApplicationContext());
-        }
-        return sMoveDex;
-    }
-
-    public static String getMaxPP(String pp) {
-        int ppInt = Integer.parseInt(pp);
-        ppInt *= 1.6;
-        return Integer.toString(ppInt);
-    }
-
-    public static String getMoveName(Context appContext, String name) {
-        try {
-            name = MyApplication.toId(name);
-            JSONObject moveJson = MoveDex.get(appContext).getMoveJsonObject(name);
-            return moveJson.getString("name");
-        } catch (JSONException | NullPointerException e) {
-            return null;
-        }
-    }
-
-    public static int getMoveTypeIcon(Context appContext, String move) {
-        try {
-            move = MyApplication.toId(move);
-            MoveDex moveDex;
-            moveDex = MoveDex.get(appContext);
-            String types = moveDex.getMoveJsonObject(move).getString("type");
-            return appContext.getResources()
-                    .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
-        } catch (JSONException | NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public static int getTypeIcon(Context appContext, String types) {
-        return appContext.getResources()
-                .getIdentifier("types_" + MyApplication.toId(types), "drawable", appContext.getPackageName());
-    }
-
-    public static int getCategoryIcon(Context appContext, String category) {
-        return appContext.getResources()
-                .getIdentifier("category_" + MyApplication.toId(category), "drawable", appContext.getPackageName());
-    }
-
     public HashMap<String, String> getMoveDexEntries() {
         return mMoveDexEntries;
     }
@@ -488,7 +488,7 @@ public class MoveDex {
         return mMoveAnimationEntries.get(move);
     }
 
-    public static enum Moves {
+    public enum Moves {
         SHAKE, DANCE, FLIGHT, SPINATK, XATK, SELF, SELF_LIGHT, SELF_DARK, TRICK, CHARGE,
         SPREAD_LIGHT, SPREAD_ENERGY, SPREAD_MIST, SPREAD_SHADOW, SPREAD_POISON, SPREAD_WAVE, SPREAD_FIRE, SPREAD_ROCK, SPREAD_SPIKE, SPREAD_TSPIKE, SPREAD_WEB,
         CONTACT_ENERGY, CONTACT_CLAW, CONTACT_KICK, CONTACT_WAVE, CONTACT_BITE, CONTACT_POISON, CONTACT_PUNCH, CONTACT_SHADOW, CONTACT_THUNDER, CONTACT_FIRE, CONTACT_NEUTRAL, CONTACT_MIST, CONTACT_LIGHT,

@@ -1,7 +1,9 @@
 package com.pokemonshowdown.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.pokemonshowdown.application.MyApplication;
@@ -24,13 +26,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Onboarding {
     public final static String OTAG = Onboarding.class.getName();
-
-    private static final String PROPERTIES_FILE = "showdown.properties";
-
     public static final String ANIM_HEADER = "animation";
     public static final String COOKIES_HEADER = "cookie";
     public static final String ADV_HEADER = "advertising";
     public static final String WARNING_HEADER = "warning";
+    private static final String PROPERTIES_FILE = "showdown.properties";
     private static final String BUG_HEADER = "bugreport";
 
     private static final String SET_COOKIES_HEADER = "Set-Cookie";
@@ -188,19 +188,8 @@ public class Onboarding {
     }
 
     public boolean isAnimation() {
-        if (mAppProperties.getProperty(ANIM_HEADER) != null) {
-            return Boolean.parseBoolean(mAppProperties.getProperty(ANIM_HEADER));
-        } else {
-            // is by default true
-            mAppProperties.setProperty(ANIM_HEADER, Boolean.toString(true));
-            saveProperties();
-            return true;
-        }
-    }
-
-    public void setAnimation(boolean animation) {
-        mAppProperties.setProperty(ANIM_HEADER, Boolean.toString(animation));
-        saveProperties();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+        return sharedPref.getBoolean("pref_key_moves", true);
     }
 
     public boolean propertyExists(String propName) {
@@ -208,28 +197,19 @@ public class Onboarding {
     }
 
     public boolean isBugReporting() {
-        if (mAppProperties.getProperty(BUG_HEADER) != null) {
-            return Boolean.parseBoolean(mAppProperties.getProperty(BUG_HEADER));
-        } else {
-            return true;
-        }
-    }
-
-    public void setBugReporting(boolean bugreport) {
-        mAppProperties.setProperty(BUG_HEADER, Boolean.toString(bugreport));
-        saveProperties();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+        return sharedPref.getBoolean("pref_key_bugs", true);
     }
 
     public boolean isAdvertising() {
-        if (mAppProperties.getProperty(ADV_HEADER) != null) {
-            return Boolean.parseBoolean(mAppProperties.getProperty(ADV_HEADER));
-        } else {
-            return false;
-        }
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+        return sharedPref.getBoolean("pref_key_ad", true);
     }
 
-    public void setAdvertising(boolean advert) {
-        mAppProperties.setProperty(ADV_HEADER, Boolean.toString(advert));
+    public void setAdvertising(boolean is) {
+        mAppProperties.setProperty(ADV_HEADER, Boolean.toString(is));
+        SharedPreferences.Editor sharedPref = PreferenceManager.getDefaultSharedPreferences(mAppContext).edit();
+        sharedPref.putBoolean("pref_key_ad", is).apply();
         saveProperties();
     }
 

@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.pokemonshowdown.app.BattleFieldActivity;
+import com.pokemonshowdown.activity.ContainerActivity;
 
 import java.util.ArrayList;
 
 public class BroadcastListener extends BroadcastReceiver {
+
     private static BroadcastListener sBroadcastListener;
     private Context mContext;
-
-    private BattleFieldActivity mBattleFieldActivity;
+    private ContainerActivity mBattleFieldActivity;
     private ArrayList<Intent> mPendingIntents;
     private boolean mListening;
 
@@ -51,7 +51,7 @@ public class BroadcastListener extends BroadcastReceiver {
         return mListening;
     }
 
-    public void register(BattleFieldActivity battleFieldActivity) {
+    public void register(ContainerActivity battleFieldActivity) {
         mBattleFieldActivity = battleFieldActivity;
         mListening = true;
         LocalBroadcastManager.getInstance(mBattleFieldActivity).registerReceiver(this,

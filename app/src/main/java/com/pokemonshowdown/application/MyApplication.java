@@ -7,7 +7,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.pokemonshowdown.app.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.data.BattleFieldData;
 import com.pokemonshowdown.data.Onboarding;
 
@@ -55,8 +56,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         sMyApplication = this;
+        Fresco.initialize(this);
 
         mRoomCategoryList = getRoomCategoryList();
     }
@@ -79,7 +80,6 @@ public class MyApplication extends Application {
 
     public WebSocketClient openNewConnection() {
         if (getServerAddress() == null) {
-            Log.d(MTAG, "Setver address is null");
             return null;
         }
 
@@ -296,6 +296,12 @@ public class MyApplication extends Application {
                             BroadcastSender.EXTRA_UPDATE_SEARCH, searchStatus);
                     break;
                 case "pm":
+                    channel = -1;
+                    String user = messageDetail.substring(5, messageDetail.indexOf("|", 5));
+                    String log = messageDetail.substring(messageDetail.lastIndexOf("|"));
+
+                    Toast.makeText(sMyApplication, "User \"" + user + "\" said: " + log, Toast.LENGTH_LONG).show();
+                    break;
                 case "usercount":
                 case "updatechallenges":
                     channel = -1;
@@ -303,7 +309,6 @@ public class MyApplication extends Application {
                     BroadcastSender.get(this).sendBroadcastFromMyApplication(
                             BroadcastSender.EXTRA_UPDATE_CHALLENGE, challengesStatus);
                     break;
-
                 case "deinit":
                     channel = -1;
                     Log.d(MTAG, message);

@@ -1,9 +1,7 @@
 package com.pokemonshowdown.data;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import com.pokemonshowdown.app.R;
 import com.pokemonshowdown.application.MyApplication;
 
 public abstract class RunWithNet implements Runnable {

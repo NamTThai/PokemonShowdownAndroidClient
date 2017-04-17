@@ -1,55 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:paddingLeft="4dp"
         android:text="@string/name_has_been_registered"
         android:textColor="#CC0000"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/username"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_margin="4dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Username:" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:gravity="center_vertical"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="4dp"
-        android:textStyle="bold"/>
+        android:layout_margin="4dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password:" />
 
-    <View style="@style/divider"/>
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:inputType="textPassword" />
+    </LinearLayout>
+
+    <!--<View style="@style/divider"/>-->
 
     <TextView
         android:id="@+id/onboarding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
         android:padding="16dp"
-        android:text="@string/sign_in"
-        android:textColor="@drawable/dialog_button"/>
+        android:text="@string/sign_in" />
 
-    <View style="@style/divider"/>
+    <!--<View style="@style/divider"/>-->
 
     <TextView
         android:id="@+id/new_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
         android:padding="16dp"
-        android:text="@string/pick_another_name"
-        android:textColor="@drawable/dialog_button"/>
+        android:text="@string/pick_another_name" />
 
 </LinearLayout>

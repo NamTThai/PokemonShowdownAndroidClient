@@ -3,7 +3,7 @@ package com.pokemonshowdown.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.pokemonshowdown.app.R;
+import com.pokemonshowdown.R;
 import com.pokemonshowdown.application.MyApplication;
 
 import org.json.JSONException;
@@ -23,6 +23,18 @@ public class Pokedex {
 
     private Pokedex(Context appContext) {
         mPokedexEntries = readFile(appContext);
+    }
+
+    public static Pokedex get(Context c) {
+        if (sPokedex == null) {
+            sPokedex = new Pokedex(c.getApplicationContext());
+        }
+        return sPokedex;
+    }
+
+    public static int getUnownIcon(Context appContext, String name) {
+        return appContext.getResources()
+                .getIdentifier("unown_" + name.toLowerCase().charAt(0), "drawable", appContext.getPackageName());
     }
 
     private HashMap<String, String> readFile(Context appContext) {
@@ -57,18 +69,6 @@ public class Pokedex {
         }
 
         return pokedexEntries;
-    }
-
-    public static Pokedex get(Context c) {
-        if (sPokedex == null) {
-            sPokedex = new Pokedex(c.getApplicationContext());
-        }
-        return sPokedex;
-    }
-
-    public static int getUnownIcon(Context appContext, String name) {
-        return appContext.getResources()
-                .getIdentifier("unown_" + name.toLowerCase().charAt(0), "drawable", appContext.getPackageName());
     }
 
     public HashMap<String, String> getPokedexEntries() {
