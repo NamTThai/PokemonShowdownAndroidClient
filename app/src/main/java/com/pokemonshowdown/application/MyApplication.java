@@ -79,7 +79,7 @@ public class MyApplication extends Application {
 
     public WebSocketClient openNewConnection() {
         if (getServerAddress() == null) {
-            Log.d(MTAG, "Setver address is null");
+            Log.d(MTAG, "Server address is null");
             return null;
         }
 
